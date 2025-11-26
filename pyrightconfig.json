@@ -1,0 +1,10 @@
+{
+  "typeCheckingMode": "basic",
+  // "reportMissingTypeStubs": true,
+  "pythonVersion": "3.10",
+  "include" : ["."],
+  // "djangoSettingsModule": "rootGame.settings",
+  // "python.analysis.stubPaths": [
+  //   "C:/Users/Mati/miniconda3/envs/spyderweb/lib/site-packages"
+  // ]
+}

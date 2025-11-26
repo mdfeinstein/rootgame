@@ -1,0 +1,18 @@
+# Python / Django
+.venv/
+env/
+venv/
+__pycache__/
+*.pyc
+*.sqlite3
+.DS_Store # macOS files
+manage.pyc
+
+# Node / React
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+
+# Environment Variables
+.env
+.env.local

@@ -1,0 +1,6880 @@
+[
+{
+  "model": "contenttypes.contenttype",
+  "pk": 1,
+  "fields": {
+    "app_label": "admin",
+    "model": "logentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 2,
+  "fields": {
+    "app_label": "auth",
+    "model": "permission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 3,
+  "fields": {
+    "app_label": "auth",
+    "model": "group"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 4,
+  "fields": {
+    "app_label": "auth",
+    "model": "user"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 5,
+  "fields": {
+    "app_label": "contenttypes",
+    "model": "contenttype"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 6,
+  "fields": {
+    "app_label": "sessions",
+    "model": "session"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 7,
+  "fields": {
+    "app_label": "game",
+    "model": "birdbirdsong"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 8,
+  "fields": {
+    "app_label": "game",
+    "model": "birddaylight"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 9,
+  "fields": {
+    "app_label": "game",
+    "model": "birdevening"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 10,
+  "fields": {
+    "app_label": "game",
+    "model": "piece"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 11,
+  "fields": {
+    "app_label": "game",
+    "model": "card"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 12,
+  "fields": {
+    "app_label": "game",
+    "model": "catbirdsong"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 13,
+  "fields": {
+    "app_label": "game",
+    "model": "catdaylight"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 14,
+  "fields": {
+    "app_label": "game",
+    "model": "catevening"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 15,
+  "fields": {
+    "app_label": "game",
+    "model": "wabirdsong"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 16,
+  "fields": {
+    "app_label": "game",
+    "model": "wadaylight"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 17,
+  "fields": {
+    "app_label": "game",
+    "model": "waevening"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 18,
+  "fields": {
+    "app_label": "game",
+    "model": "building"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 19,
+  "fields": {
+    "app_label": "game",
+    "model": "token"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 20,
+  "fields": {
+    "app_label": "game",
+    "model": "warrior"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 21,
+  "fields": {
+    "app_label": "game",
+    "model": "clearing"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 22,
+  "fields": {
+    "app_label": "game",
+    "model": "buildingslot"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 23,
+  "fields": {
+    "app_label": "game",
+    "model": "game"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 24,
+  "fields": {
+    "app_label": "game",
+    "model": "factionchoiceentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 25,
+  "fields": {
+    "app_label": "game",
+    "model": "discardpileentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 26,
+  "fields": {
+    "app_label": "game",
+    "model": "deckentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 27,
+  "fields": {
+    "app_label": "game",
+    "model": "item"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 28,
+  "fields": {
+    "app_label": "game",
+    "model": "craftableitementry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 29,
+  "fields": {
+    "app_label": "game",
+    "model": "player"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 30,
+  "fields": {
+    "app_label": "game",
+    "model": "handentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 31,
+  "fields": {
+    "app_label": "game",
+    "model": "fieldhospitalevent"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 32,
+  "fields": {
+    "app_label": "game",
+    "model": "decreeentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 33,
+  "fields": {
+    "app_label": "game",
+    "model": "crafteditementry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 34,
+  "fields": {
+    "app_label": "game",
+    "model": "craftedcardentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 35,
+  "fields": {
+    "app_label": "game",
+    "model": "catturn"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 36,
+  "fields": {
+    "app_label": "game",
+    "model": "catssimplesetup"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 37,
+  "fields": {
+    "app_label": "game",
+    "model": "birdturn"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 38,
+  "fields": {
+    "app_label": "game",
+    "model": "birdssimplesetup"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 39,
+  "fields": {
+    "app_label": "game",
+    "model": "birdleader"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 40,
+  "fields": {
+    "app_label": "game",
+    "model": "ruin"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 41,
+  "fields": {
+    "app_label": "game",
+    "model": "supporterstackentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 42,
+  "fields": {
+    "app_label": "game",
+    "model": "waturn"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 43,
+  "fields": {
+    "app_label": "game",
+    "model": "birdroost"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 44,
+  "fields": {
+    "app_label": "game",
+    "model": "recruiter"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 45,
+  "fields": {
+    "app_label": "game",
+    "model": "sawmill"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 46,
+  "fields": {
+    "app_label": "game",
+    "model": "wabase"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 47,
+  "fields": {
+    "app_label": "game",
+    "model": "workshop"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 48,
+  "fields": {
+    "app_label": "game",
+    "model": "catkeep"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 49,
+  "fields": {
+    "app_label": "game",
+    "model": "catwood"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 50,
+  "fields": {
+    "app_label": "game",
+    "model": "wasympathy"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 51,
+  "fields": {
+    "app_label": "game",
+    "model": "warriorsupplyentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 52,
+  "fields": {
+    "app_label": "game",
+    "model": "officerentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 53,
+  "fields": {
+    "app_label": "game",
+    "model": "battle"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 54,
+  "fields": {
+    "app_label": "game",
+    "model": "gamesimplesetup"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "pqss4camsuatc3pvtvu45whqgqge0s5h",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hAYmJa6dO8ZyDAMtmpKUtqV8e7apAvd_vfef6lI2zrGrckSp6zOCtTpd0vED5l3kO8036rmOq_LlPSu6IM2fa1ZnpfD_TsYqY3fGosnlCEk5B6EcQAyDvoChOAtBmODFLbWJMbk2HVCgp7BdlwyelDvD9wRN78:1vGhuz:iult06G6GT5PjR1IRfCpVdhqcZBPWazGapg94etzm-Y",
+    "expire_date": "2025-11-19T18:07:37.910Z"
+  }
+},
+{
+  "model": "game.factionchoiceentry",
+  "pk": 1,
+  "fields": {
+    "game": 1,
+    "faction": "ca",
+    "chosen": true
+  }
+},
+{
+  "model": "game.factionchoiceentry",
+  "pk": 2,
+  "fields": {
+    "game": 1,
+    "faction": "bi",
+    "chosen": true
+  }
+},
+{
+  "model": "game.factionchoiceentry",
+  "pk": 3,
+  "fields": {
+    "game": 1,
+    "faction": "wa",
+    "chosen": true
+  }
+},
+{
+  "model": "game.clearing",
+  "pk": 1,
+  "fields": {
+    "game": 1,
+    "clearing_number": 1,
+    "suit": "r",
+    "connected_clearings": [
+      5,
+      9,
+      10
+    ],
+    "water_connected_clearings": []
+  }
+},
+{
+  "model": "game.clearing",
+  "pk": 2,
+  "fields": {
+    "game": 1,
+    "clearing_number": 2,
+    "suit": "o",
+    "connected_clearings": [
+      5,
+      6,
+      10
+    ],
+    "water_connected_clearings": []
+  }
+},
+{
+  "model": "game.clearing",
+  "pk": 3,
+  "fields": {
+    "game": 1,
+    "clearing_number": 3,
+    "suit": "y",
+    "connected_clearings": [
+      6,
+      7,
+      11
+    ],
+    "water_connected_clearings": []
+  }
+},
+{
+  "model": "game.clearing",
+  "pk": 4,
+  "fields": {
+    "game": 1,
+    "clearing_number": 4,
+    "suit": "y",
+    "connected_clearings": [
+      8,
+      9,
+      12
+    ],
+    "water_connected_clearings": [
+      7
+    ]
+  }
+},
+{
+  "model": "game.clearing",
+  "pk": 5,
+  "fields": {
+    "game": 1,
+    "clearing_number": 5,
+    "suit": "y",
+    "connected_clearings": [
+      1,
+      2
+    ],
+    "water_connected_clearings": []
+  }
+},
+{
+  "model": "game.clearing",
+  "pk": 6,
+  "fields": {
+    "game": 1,
+    "clearing_number": 6,
+    "suit": "r",
+    "connected_clearings": [
+      2,
+      3,
+      11
+    ],
+    "water_connected_clearings": []
+  }
+},
+{
+  "model": "game.clearing",
+  "pk": 7,
+  "fields": {
+    "game": 1,
+    "clearing_number": 7,
+    "suit": "o",
+    "connected_clearings": [
+      3,
+      8,
+      12
+    ],
+    "water_connected_clearings": [
+      11
+    ]
+  }
+},
+{
+  "model": "game.clearing",
+  "pk": 8,
+  "fields": {
+    "game": 1,
+    "clearing_number": 8,
+    "suit": "r",
+    "connected_clearings": [
+      4,
+      7
+    ],
+    "water_connected_clearings": []
+  }
+},
+{
+  "model": "game.clearing",
+  "pk": 9,
+  "fields": {
+    "game": 1,
+    "clearing_number": 9,
+    "suit": "o",
+    "connected_clearings": [
+      1,
+      4,
+      12
+    ],
+    "water_connected_clearings": []
+  }
+},
+{
+  "model": "game.clearing",
+  "pk": 10,
+  "fields": {
+    "game": 1,
+    "clearing_number": 10,
+    "suit": "y",
+    "connected_clearings": [
+      1,
+      2,
+      12
+    ],
+    "water_connected_clearings": [
+      5
+    ]
+  }
+},
+{
+  "model": "game.clearing",
+  "pk": 11,
+  "fields": {
+    "game": 1,
+    "clearing_number": 11,
+    "suit": "o",
+    "connected_clearings": [
+      3,
+      6,
+      12
+    ],
+    "water_connected_clearings": [
+      10
+    ]
+  }
+},
+{
+  "model": "game.clearing",
+  "pk": 12,
+  "fields": {
+    "game": 1,
+    "clearing_number": 12,
+    "suit": "r",
+    "connected_clearings": [
+      4,
+      7,
+      9,
+      10,
+      11
+    ],
+    "water_connected_clearings": []
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 1,
+  "fields": {
+    "clearing": 1,
+    "building_slot_number": 0
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 2,
+  "fields": {
+    "clearing": 2,
+    "building_slot_number": 0
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 3,
+  "fields": {
+    "clearing": 2,
+    "building_slot_number": 1
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 4,
+  "fields": {
+    "clearing": 3,
+    "building_slot_number": 0
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 5,
+  "fields": {
+    "clearing": 4,
+    "building_slot_number": 0
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 6,
+  "fields": {
+    "clearing": 5,
+    "building_slot_number": 0
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 7,
+  "fields": {
+    "clearing": 5,
+    "building_slot_number": 1
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 8,
+  "fields": {
+    "clearing": 6,
+    "building_slot_number": 0
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 9,
+  "fields": {
+    "clearing": 6,
+    "building_slot_number": 1
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 10,
+  "fields": {
+    "clearing": 7,
+    "building_slot_number": 0
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 11,
+  "fields": {
+    "clearing": 7,
+    "building_slot_number": 1
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 12,
+  "fields": {
+    "clearing": 8,
+    "building_slot_number": 0
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 13,
+  "fields": {
+    "clearing": 8,
+    "building_slot_number": 1
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 14,
+  "fields": {
+    "clearing": 9,
+    "building_slot_number": 0
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 15,
+  "fields": {
+    "clearing": 9,
+    "building_slot_number": 1
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 16,
+  "fields": {
+    "clearing": 10,
+    "building_slot_number": 0
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 17,
+  "fields": {
+    "clearing": 10,
+    "building_slot_number": 1
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 18,
+  "fields": {
+    "clearing": 11,
+    "building_slot_number": 0
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 19,
+  "fields": {
+    "clearing": 11,
+    "building_slot_number": 1
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 20,
+  "fields": {
+    "clearing": 11,
+    "building_slot_number": 2
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 21,
+  "fields": {
+    "clearing": 12,
+    "building_slot_number": 0
+  }
+},
+{
+  "model": "game.buildingslot",
+  "pk": 22,
+  "fields": {
+    "clearing": 12,
+    "building_slot_number": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 1,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 2,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 3,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 4,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 5,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 6,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 7,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 8,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 9,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 10,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 11,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 12,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 13,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 14,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 15,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 16,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 17,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 18,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 19,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 20,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 21,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 22,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 23,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 24,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 25,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 26,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 27,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 28,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 29,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 30,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 31,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 32,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 33,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 34,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 35,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 36,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 37,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 38,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 39,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 40,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 41,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 42,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 43,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 44,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 45,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 46,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 47,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 48,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 49,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 50,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 51,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 52,
+  "fields": {
+    "player": 1
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 53,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 54,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 55,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 56,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 57,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 58,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 59,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 60,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 61,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 62,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 63,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 64,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 65,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 66,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 67,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 68,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 69,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 70,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 71,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 72,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 73,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 74,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 75,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 76,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 77,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 78,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 79,
+  "fields": {
+    "player": 2
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 80,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 81,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 82,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 83,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 84,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 85,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 86,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 87,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 88,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 89,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 90,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 91,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 92,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 93,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 94,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 95,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 96,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 97,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 98,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 99,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 100,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 101,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.piece",
+  "pk": 102,
+  "fields": {
+    "player": 3
+  }
+},
+{
+  "model": "game.building",
+  "pk": 35,
+  "fields": {
+    "building_slot": 6
+  }
+},
+{
+  "model": "game.building",
+  "pk": 36,
+  "fields": {
+    "building_slot": 16
+  }
+},
+{
+  "model": "game.building",
+  "pk": 37,
+  "fields": {
+    "building_slot": 1
+  }
+},
+{
+  "model": "game.building",
+  "pk": 38,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 39,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 40,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 41,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 42,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 43,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 44,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 45,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 46,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 47,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 48,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 49,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 50,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 51,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 52,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 73,
+  "fields": {
+    "building_slot": 4
+  }
+},
+{
+  "model": "game.building",
+  "pk": 74,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 75,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 76,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 77,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 78,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 79,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 100,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 101,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.building",
+  "pk": 102,
+  "fields": {
+    "building_slot": null
+  }
+},
+{
+  "model": "game.ruin",
+  "pk": 1,
+  "fields": {
+    "game": 1,
+    "building_slot": 9,
+    "item": 1
+  }
+},
+{
+  "model": "game.ruin",
+  "pk": 2,
+  "fields": {
+    "game": 1,
+    "building_slot": 17,
+    "item": 2
+  }
+},
+{
+  "model": "game.ruin",
+  "pk": 3,
+  "fields": {
+    "game": 1,
+    "building_slot": 20,
+    "item": 3
+  }
+},
+{
+  "model": "game.ruin",
+  "pk": 4,
+  "fields": {
+    "game": 1,
+    "building_slot": 22,
+    "item": 4
+  }
+},
+{
+  "model": "game.token",
+  "pk": 26,
+  "fields": {
+    "clearing": 1
+  }
+},
+{
+  "model": "game.token",
+  "pk": 27,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 28,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 29,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 30,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 31,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 32,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 33,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 34,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 90,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 91,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 92,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 93,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 94,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 95,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 96,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 97,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 98,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.token",
+  "pk": 99,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 1,
+  "fields": {
+    "clearing": 1
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 2,
+  "fields": {
+    "clearing": 2
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 3,
+  "fields": {
+    "clearing": 4
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 4,
+  "fields": {
+    "clearing": 5
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 5,
+  "fields": {
+    "clearing": 6
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 6,
+  "fields": {
+    "clearing": 7
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 7,
+  "fields": {
+    "clearing": 8
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 8,
+  "fields": {
+    "clearing": 9
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 9,
+  "fields": {
+    "clearing": 10
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 10,
+  "fields": {
+    "clearing": 11
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 11,
+  "fields": {
+    "clearing": 12
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 12,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 13,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 14,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 15,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 16,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 17,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 18,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 19,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 20,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 21,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 22,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 23,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 24,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 25,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 53,
+  "fields": {
+    "clearing": 3
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 54,
+  "fields": {
+    "clearing": 3
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 55,
+  "fields": {
+    "clearing": 3
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 56,
+  "fields": {
+    "clearing": 3
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 57,
+  "fields": {
+    "clearing": 3
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 58,
+  "fields": {
+    "clearing": 3
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 59,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 60,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 61,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 62,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 63,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 64,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 65,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 66,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 67,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 68,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 69,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 70,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 71,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 72,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 80,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 81,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 82,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 83,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 84,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 85,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 86,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 87,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 88,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.warrior",
+  "pk": 89,
+  "fields": {
+    "clearing": null
+  }
+},
+{
+  "model": "game.card",
+  "pk": 1,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "SABOTEURS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 2,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "SOUP_KITCHENS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 3,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "BOAT_BUILDERS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 4,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "CORVID_PLANNERS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 5,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "EYRIE_EMIGRE"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 6,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "INFORMANTS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 7,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "RABBIT_PARTISANS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 8,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "TUNNELS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 9,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "TUNNELS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 10,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "CHARM_OFFENSIVE"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 11,
+  "fields": {
+    "game": 1,
+    "suit": "o",
+    "card_type": "LEAGUE_OF_ADVENTURERS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 12,
+  "fields": {
+    "game": 1,
+    "suit": "o",
+    "card_type": "MURINE_BROKERS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 13,
+  "fields": {
+    "game": 1,
+    "suit": "o",
+    "card_type": "MASTER_ENGRAVERS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 14,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "SABOTEURS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 15,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "SABOTEURS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 16,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "TRAVEL_GEAR_RED"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 17,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "PROTECTION_RACKET"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 18,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "FOXFOLK_STEEL"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 19,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "ANVIL"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 20,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "BIRDY_BINDLE"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 21,
+  "fields": {
+    "game": 1,
+    "suit": "o",
+    "card_type": "TRAVEL_GEAR_ORANGE"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 22,
+  "fields": {
+    "game": 1,
+    "suit": "o",
+    "card_type": "ROOT_TEA_ORANGE"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 23,
+  "fields": {
+    "game": 1,
+    "suit": "o",
+    "card_type": "MOUSE_IN_A_SACK"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 24,
+  "fields": {
+    "game": 1,
+    "suit": "o",
+    "card_type": "SWORD"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 25,
+  "fields": {
+    "game": 1,
+    "suit": "o",
+    "card_type": "CROSSBOW_ORANGE"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 26,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "DOMINANCE_WILD"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 27,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "DOMINANCE_RED"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 28,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "DOMINANCE_YELLOW"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 29,
+  "fields": {
+    "game": 1,
+    "suit": "o",
+    "card_type": "DOMINANCE_ORANGE"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 30,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "FOX_PARTISANS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 31,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "PROPAGANDA_BUREAU"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 32,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "FALSE_ORDERS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 33,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "FALSE_ORDERS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 34,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "INFORMANTS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 35,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "COFFIN_MAKERS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 36,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "SWAP_MEET"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 37,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "SWAP_MEET"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 38,
+  "fields": {
+    "game": 1,
+    "suit": "o",
+    "card_type": "MOUSE_PARTISANS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 39,
+  "fields": {
+    "game": 1,
+    "suit": "o",
+    "card_type": "LEAGUE_OF_ADVENTURERS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 40,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "WOODLAND_RUNNERS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 41,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "ARMS_TRADER"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 42,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "CROSSBOW_WILD"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 43,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "GENTLY_USED_KNAPSACK"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 44,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "ROOT_TEA_RED"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 45,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "SMUGGLERS_TRAIL"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 46,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "ROOT_TEA_YELLOW"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 47,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "A_VISIT_TO_FRIENDS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 48,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "BAKE_SALE"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 49,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "INVESTMENTS"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 50,
+  "fields": {
+    "game": 1,
+    "suit": "r",
+    "card_type": "AMBUSH_RED"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 51,
+  "fields": {
+    "game": 1,
+    "suit": "y",
+    "card_type": "AMBUSH_YELLOW"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 52,
+  "fields": {
+    "game": 1,
+    "suit": "o",
+    "card_type": "AMBUSH_ORANGE"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 53,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "AMBUSH_WILD"
+  }
+},
+{
+  "model": "game.card",
+  "pk": 54,
+  "fields": {
+    "game": 1,
+    "suit": "b",
+    "card_type": "AMBUSH_WILD"
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 13,
+  "fields": {
+    "game": 1,
+    "card": 16,
+    "spot": 12
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 14,
+  "fields": {
+    "game": 1,
+    "card": 25,
+    "spot": 13
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 15,
+  "fields": {
+    "game": 1,
+    "card": 50,
+    "spot": 14
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 16,
+  "fields": {
+    "game": 1,
+    "card": 10,
+    "spot": 15
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 17,
+  "fields": {
+    "game": 1,
+    "card": 12,
+    "spot": 16
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 18,
+  "fields": {
+    "game": 1,
+    "card": 30,
+    "spot": 17
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 19,
+  "fields": {
+    "game": 1,
+    "card": 23,
+    "spot": 18
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 20,
+  "fields": {
+    "game": 1,
+    "card": 48,
+    "spot": 19
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 21,
+  "fields": {
+    "game": 1,
+    "card": 42,
+    "spot": 20
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 22,
+  "fields": {
+    "game": 1,
+    "card": 7,
+    "spot": 21
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 23,
+  "fields": {
+    "game": 1,
+    "card": 22,
+    "spot": 22
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 24,
+  "fields": {
+    "game": 1,
+    "card": 43,
+    "spot": 23
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 25,
+  "fields": {
+    "game": 1,
+    "card": 11,
+    "spot": 24
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 26,
+  "fields": {
+    "game": 1,
+    "card": 37,
+    "spot": 25
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 27,
+  "fields": {
+    "game": 1,
+    "card": 31,
+    "spot": 26
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 28,
+  "fields": {
+    "game": 1,
+    "card": 3,
+    "spot": 27
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 29,
+  "fields": {
+    "game": 1,
+    "card": 41,
+    "spot": 28
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 30,
+  "fields": {
+    "game": 1,
+    "card": 21,
+    "spot": 29
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 31,
+  "fields": {
+    "game": 1,
+    "card": 47,
+    "spot": 30
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 32,
+  "fields": {
+    "game": 1,
+    "card": 44,
+    "spot": 31
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 33,
+  "fields": {
+    "game": 1,
+    "card": 5,
+    "spot": 32
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 34,
+  "fields": {
+    "game": 1,
+    "card": 19,
+    "spot": 33
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 35,
+  "fields": {
+    "game": 1,
+    "card": 38,
+    "spot": 34
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 36,
+  "fields": {
+    "game": 1,
+    "card": 45,
+    "spot": 35
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 37,
+  "fields": {
+    "game": 1,
+    "card": 4,
+    "spot": 36
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 38,
+  "fields": {
+    "game": 1,
+    "card": 9,
+    "spot": 37
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 39,
+  "fields": {
+    "game": 1,
+    "card": 18,
+    "spot": 38
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 40,
+  "fields": {
+    "game": 1,
+    "card": 33,
+    "spot": 39
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 41,
+  "fields": {
+    "game": 1,
+    "card": 40,
+    "spot": 40
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 42,
+  "fields": {
+    "game": 1,
+    "card": 14,
+    "spot": 41
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 43,
+  "fields": {
+    "game": 1,
+    "card": 24,
+    "spot": 42
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 44,
+  "fields": {
+    "game": 1,
+    "card": 51,
+    "spot": 43
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 45,
+  "fields": {
+    "game": 1,
+    "card": 6,
+    "spot": 44
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 46,
+  "fields": {
+    "game": 1,
+    "card": 28,
+    "spot": 45
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 47,
+  "fields": {
+    "game": 1,
+    "card": 13,
+    "spot": 46
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 48,
+  "fields": {
+    "game": 1,
+    "card": 39,
+    "spot": 47
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 49,
+  "fields": {
+    "game": 1,
+    "card": 1,
+    "spot": 48
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 50,
+  "fields": {
+    "game": 1,
+    "card": 8,
+    "spot": 49
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 51,
+  "fields": {
+    "game": 1,
+    "card": 17,
+    "spot": 50
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 52,
+  "fields": {
+    "game": 1,
+    "card": 34,
+    "spot": 51
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 53,
+  "fields": {
+    "game": 1,
+    "card": 53,
+    "spot": 52
+  }
+},
+{
+  "model": "game.deckentry",
+  "pk": 54,
+  "fields": {
+    "game": 1,
+    "card": 46,
+    "spot": 53
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 12,
+  "fields": {
+    "player": 1,
+    "warrior": 12
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 13,
+  "fields": {
+    "player": 1,
+    "warrior": 13
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 14,
+  "fields": {
+    "player": 1,
+    "warrior": 14
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 15,
+  "fields": {
+    "player": 1,
+    "warrior": 15
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 16,
+  "fields": {
+    "player": 1,
+    "warrior": 16
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 17,
+  "fields": {
+    "player": 1,
+    "warrior": 17
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 18,
+  "fields": {
+    "player": 1,
+    "warrior": 18
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 19,
+  "fields": {
+    "player": 1,
+    "warrior": 19
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 20,
+  "fields": {
+    "player": 1,
+    "warrior": 20
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 21,
+  "fields": {
+    "player": 1,
+    "warrior": 21
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 22,
+  "fields": {
+    "player": 1,
+    "warrior": 22
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 23,
+  "fields": {
+    "player": 1,
+    "warrior": 23
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 24,
+  "fields": {
+    "player": 1,
+    "warrior": 24
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 25,
+  "fields": {
+    "player": 1,
+    "warrior": 25
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 32,
+  "fields": {
+    "player": 2,
+    "warrior": 59
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 33,
+  "fields": {
+    "player": 2,
+    "warrior": 60
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 34,
+  "fields": {
+    "player": 2,
+    "warrior": 61
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 35,
+  "fields": {
+    "player": 2,
+    "warrior": 62
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 36,
+  "fields": {
+    "player": 2,
+    "warrior": 63
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 37,
+  "fields": {
+    "player": 2,
+    "warrior": 64
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 38,
+  "fields": {
+    "player": 2,
+    "warrior": 65
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 39,
+  "fields": {
+    "player": 2,
+    "warrior": 66
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 40,
+  "fields": {
+    "player": 2,
+    "warrior": 67
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 41,
+  "fields": {
+    "player": 2,
+    "warrior": 68
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 42,
+  "fields": {
+    "player": 2,
+    "warrior": 69
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 43,
+  "fields": {
+    "player": 2,
+    "warrior": 70
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 44,
+  "fields": {
+    "player": 2,
+    "warrior": 71
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 45,
+  "fields": {
+    "player": 2,
+    "warrior": 72
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 46,
+  "fields": {
+    "player": 3,
+    "warrior": 80
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 47,
+  "fields": {
+    "player": 3,
+    "warrior": 81
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 48,
+  "fields": {
+    "player": 3,
+    "warrior": 82
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 49,
+  "fields": {
+    "player": 3,
+    "warrior": 83
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 50,
+  "fields": {
+    "player": 3,
+    "warrior": 84
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 51,
+  "fields": {
+    "player": 3,
+    "warrior": 85
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 52,
+  "fields": {
+    "player": 3,
+    "warrior": 86
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 53,
+  "fields": {
+    "player": 3,
+    "warrior": 87
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 54,
+  "fields": {
+    "player": 3,
+    "warrior": 88
+  }
+},
+{
+  "model": "game.warriorsupplyentry",
+  "pk": 55,
+  "fields": {
+    "player": 3,
+    "warrior": 89
+  }
+},
+{
+  "model": "game.item",
+  "pk": 1,
+  "fields": {
+    "game": 1,
+    "item_type": "4",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 2,
+  "fields": {
+    "game": 1,
+    "item_type": "4",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 3,
+  "fields": {
+    "game": 1,
+    "item_type": "4",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 4,
+  "fields": {
+    "game": 1,
+    "item_type": "4",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 5,
+  "fields": {
+    "game": 1,
+    "item_type": "0",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 6,
+  "fields": {
+    "game": 1,
+    "item_type": "0",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 7,
+  "fields": {
+    "game": 1,
+    "item_type": "1",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 8,
+  "fields": {
+    "game": 1,
+    "item_type": "1",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 9,
+  "fields": {
+    "game": 1,
+    "item_type": "2",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 10,
+  "fields": {
+    "game": 1,
+    "item_type": "3",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 11,
+  "fields": {
+    "game": 1,
+    "item_type": "4",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 12,
+  "fields": {
+    "game": 1,
+    "item_type": "4",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 13,
+  "fields": {
+    "game": 1,
+    "item_type": "5",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 14,
+  "fields": {
+    "game": 1,
+    "item_type": "5",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 15,
+  "fields": {
+    "game": 1,
+    "item_type": "6",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.item",
+  "pk": 16,
+  "fields": {
+    "game": 1,
+    "item_type": "6",
+    "exhausted": false
+  }
+},
+{
+  "model": "game.craftableitementry",
+  "pk": 1,
+  "fields": {
+    "game": 1,
+    "item": 5
+  }
+},
+{
+  "model": "game.craftableitementry",
+  "pk": 2,
+  "fields": {
+    "game": 1,
+    "item": 6
+  }
+},
+{
+  "model": "game.craftableitementry",
+  "pk": 3,
+  "fields": {
+    "game": 1,
+    "item": 7
+  }
+},
+{
+  "model": "game.craftableitementry",
+  "pk": 4,
+  "fields": {
+    "game": 1,
+    "item": 8
+  }
+},
+{
+  "model": "game.craftableitementry",
+  "pk": 5,
+  "fields": {
+    "game": 1,
+    "item": 9
+  }
+},
+{
+  "model": "game.craftableitementry",
+  "pk": 6,
+  "fields": {
+    "game": 1,
+    "item": 10
+  }
+},
+{
+  "model": "game.craftableitementry",
+  "pk": 7,
+  "fields": {
+    "game": 1,
+    "item": 11
+  }
+},
+{
+  "model": "game.craftableitementry",
+  "pk": 8,
+  "fields": {
+    "game": 1,
+    "item": 12
+  }
+},
+{
+  "model": "game.craftableitementry",
+  "pk": 9,
+  "fields": {
+    "game": 1,
+    "item": 13
+  }
+},
+{
+  "model": "game.craftableitementry",
+  "pk": 10,
+  "fields": {
+    "game": 1,
+    "item": 14
+  }
+},
+{
+  "model": "game.craftableitementry",
+  "pk": 11,
+  "fields": {
+    "game": 1,
+    "item": 15
+  }
+},
+{
+  "model": "game.craftableitementry",
+  "pk": 12,
+  "fields": {
+    "game": 1,
+    "item": 16
+  }
+},
+{
+  "model": "game.handentry",
+  "pk": 1,
+  "fields": {
+    "player": 1,
+    "card": 29
+  }
+},
+{
+  "model": "game.handentry",
+  "pk": 2,
+  "fields": {
+    "player": 1,
+    "card": 52
+  }
+},
+{
+  "model": "game.handentry",
+  "pk": 3,
+  "fields": {
+    "player": 1,
+    "card": 49
+  }
+},
+{
+  "model": "game.handentry",
+  "pk": 4,
+  "fields": {
+    "player": 2,
+    "card": 27
+  }
+},
+{
+  "model": "game.handentry",
+  "pk": 5,
+  "fields": {
+    "player": 2,
+    "card": 26
+  }
+},
+{
+  "model": "game.handentry",
+  "pk": 6,
+  "fields": {
+    "player": 2,
+    "card": 15
+  }
+},
+{
+  "model": "game.handentry",
+  "pk": 7,
+  "fields": {
+    "player": 3,
+    "card": 54
+  }
+},
+{
+  "model": "game.handentry",
+  "pk": 8,
+  "fields": {
+    "player": 3,
+    "card": 20
+  }
+},
+{
+  "model": "game.handentry",
+  "pk": 9,
+  "fields": {
+    "player": 3,
+    "card": 2
+  }
+},
+{
+  "model": "game.birdroost",
+  "pk": 73,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.birdroost",
+  "pk": 74,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.birdroost",
+  "pk": 75,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.birdroost",
+  "pk": 76,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.birdroost",
+  "pk": 77,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.birdroost",
+  "pk": 78,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.birdroost",
+  "pk": 79,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.birdleader",
+  "pk": 1,
+  "fields": {
+    "player": 2,
+    "leader": "0",
+    "available": true,
+    "active": false
+  }
+},
+{
+  "model": "game.birdleader",
+  "pk": 2,
+  "fields": {
+    "player": 2,
+    "leader": "1",
+    "available": true,
+    "active": false
+  }
+},
+{
+  "model": "game.birdleader",
+  "pk": 3,
+  "fields": {
+    "player": 2,
+    "leader": "2",
+    "available": true,
+    "active": false
+  }
+},
+{
+  "model": "game.birdleader",
+  "pk": 4,
+  "fields": {
+    "player": 2,
+    "leader": "3",
+    "available": true,
+    "active": true
+  }
+},
+{
+  "model": "game.birdssimplesetup",
+  "pk": 1,
+  "fields": {
+    "player": 2,
+    "step": "4"
+  }
+},
+{
+  "model": "game.workshop",
+  "pk": 35,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.workshop",
+  "pk": 38,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.workshop",
+  "pk": 41,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.workshop",
+  "pk": 44,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.workshop",
+  "pk": 47,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.workshop",
+  "pk": 50,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.sawmill",
+  "pk": 37,
+  "fields": {
+    "used": false
+  }
+},
+{
+  "model": "game.sawmill",
+  "pk": 40,
+  "fields": {
+    "used": false
+  }
+},
+{
+  "model": "game.sawmill",
+  "pk": 43,
+  "fields": {
+    "used": false
+  }
+},
+{
+  "model": "game.sawmill",
+  "pk": 46,
+  "fields": {
+    "used": false
+  }
+},
+{
+  "model": "game.sawmill",
+  "pk": 49,
+  "fields": {
+    "used": false
+  }
+},
+{
+  "model": "game.sawmill",
+  "pk": 52,
+  "fields": {
+    "used": false
+  }
+},
+{
+  "model": "game.recruiter",
+  "pk": 36,
+  "fields": {
+    "used": false
+  }
+},
+{
+  "model": "game.recruiter",
+  "pk": 39,
+  "fields": {
+    "used": false
+  }
+},
+{
+  "model": "game.recruiter",
+  "pk": 42,
+  "fields": {
+    "used": false
+  }
+},
+{
+  "model": "game.recruiter",
+  "pk": 45,
+  "fields": {
+    "used": false
+  }
+},
+{
+  "model": "game.recruiter",
+  "pk": 48,
+  "fields": {
+    "used": false
+  }
+},
+{
+  "model": "game.recruiter",
+  "pk": 51,
+  "fields": {
+    "used": false
+  }
+},
+{
+  "model": "game.catssimplesetup",
+  "pk": 1,
+  "fields": {
+    "player": 1,
+    "step": "4",
+    "recruiter_placed": true,
+    "sawmill_placed": true,
+    "workshop_placed": true
+  }
+},
+{
+  "model": "game.catwood",
+  "pk": 27,
+  "fields": {}
+},
+{
+  "model": "game.catwood",
+  "pk": 28,
+  "fields": {}
+},
+{
+  "model": "game.catwood",
+  "pk": 29,
+  "fields": {}
+},
+{
+  "model": "game.catwood",
+  "pk": 30,
+  "fields": {}
+},
+{
+  "model": "game.catwood",
+  "pk": 31,
+  "fields": {}
+},
+{
+  "model": "game.catwood",
+  "pk": 32,
+  "fields": {}
+},
+{
+  "model": "game.catwood",
+  "pk": 33,
+  "fields": {}
+},
+{
+  "model": "game.catwood",
+  "pk": 34,
+  "fields": {}
+},
+{
+  "model": "game.catkeep",
+  "pk": 26,
+  "fields": {
+    "destroyed": false
+  }
+},
+{
+  "model": "game.wabase",
+  "pk": 100,
+  "fields": {
+    "suit": "r"
+  }
+},
+{
+  "model": "game.wabase",
+  "pk": 101,
+  "fields": {
+    "suit": "y"
+  }
+},
+{
+  "model": "game.wabase",
+  "pk": 102,
+  "fields": {
+    "suit": "o"
+  }
+},
+{
+  "model": "game.supporterstackentry",
+  "pk": 1,
+  "fields": {
+    "player": 3,
+    "card": 36
+  }
+},
+{
+  "model": "game.supporterstackentry",
+  "pk": 2,
+  "fields": {
+    "player": 3,
+    "card": 32
+  }
+},
+{
+  "model": "game.supporterstackentry",
+  "pk": 3,
+  "fields": {
+    "player": 3,
+    "card": 35
+  }
+},
+{
+  "model": "game.wasympathy",
+  "pk": 90,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.wasympathy",
+  "pk": 91,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.wasympathy",
+  "pk": 92,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.wasympathy",
+  "pk": 93,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.wasympathy",
+  "pk": 94,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.wasympathy",
+  "pk": 95,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.wasympathy",
+  "pk": 96,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.wasympathy",
+  "pk": 97,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.wasympathy",
+  "pk": 98,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.wasympathy",
+  "pk": 99,
+  "fields": {
+    "crafted_with": false
+  }
+},
+{
+  "model": "game.gamesimplesetup",
+  "pk": 1,
+  "fields": {
+    "game": 1,
+    "status": "c"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 1,
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 2,
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 3,
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 4,
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 5,
+  "fields": {
+    "name": "Can add permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 6,
+  "fields": {
+    "name": "Can change permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 7,
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 8,
+  "fields": {
+    "name": "Can view permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 9,
+  "fields": {
+    "name": "Can add group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 10,
+  "fields": {
+    "name": "Can change group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 11,
+  "fields": {
+    "name": "Can delete group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 12,
+  "fields": {
+    "name": "Can view group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 13,
+  "fields": {
+    "name": "Can add user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "add_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 14,
+  "fields": {
+    "name": "Can change user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "change_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 15,
+  "fields": {
+    "name": "Can delete user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "delete_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 16,
+  "fields": {
+    "name": "Can view user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "view_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 17,
+  "fields": {
+    "name": "Can add content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 18,
+  "fields": {
+    "name": "Can change content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 19,
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 20,
+  "fields": {
+    "name": "Can view content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 21,
+  "fields": {
+    "name": "Can add session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 22,
+  "fields": {
+    "name": "Can change session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 23,
+  "fields": {
+    "name": "Can delete session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 24,
+  "fields": {
+    "name": "Can view session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 25,
+  "fields": {
+    "name": "Can add bird birdsong",
+    "content_type": [
+      "game",
+      "birdbirdsong"
+    ],
+    "codename": "add_birdbirdsong"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 26,
+  "fields": {
+    "name": "Can change bird birdsong",
+    "content_type": [
+      "game",
+      "birdbirdsong"
+    ],
+    "codename": "change_birdbirdsong"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 27,
+  "fields": {
+    "name": "Can delete bird birdsong",
+    "content_type": [
+      "game",
+      "birdbirdsong"
+    ],
+    "codename": "delete_birdbirdsong"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 28,
+  "fields": {
+    "name": "Can view bird birdsong",
+    "content_type": [
+      "game",
+      "birdbirdsong"
+    ],
+    "codename": "view_birdbirdsong"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 29,
+  "fields": {
+    "name": "Can add bird daylight",
+    "content_type": [
+      "game",
+      "birddaylight"
+    ],
+    "codename": "add_birddaylight"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 30,
+  "fields": {
+    "name": "Can change bird daylight",
+    "content_type": [
+      "game",
+      "birddaylight"
+    ],
+    "codename": "change_birddaylight"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 31,
+  "fields": {
+    "name": "Can delete bird daylight",
+    "content_type": [
+      "game",
+      "birddaylight"
+    ],
+    "codename": "delete_birddaylight"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 32,
+  "fields": {
+    "name": "Can view bird daylight",
+    "content_type": [
+      "game",
+      "birddaylight"
+    ],
+    "codename": "view_birddaylight"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 33,
+  "fields": {
+    "name": "Can add bird evening",
+    "content_type": [
+      "game",
+      "birdevening"
+    ],
+    "codename": "add_birdevening"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 34,
+  "fields": {
+    "name": "Can change bird evening",
+    "content_type": [
+      "game",
+      "birdevening"
+    ],
+    "codename": "change_birdevening"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 35,
+  "fields": {
+    "name": "Can delete bird evening",
+    "content_type": [
+      "game",
+      "birdevening"
+    ],
+    "codename": "delete_birdevening"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 36,
+  "fields": {
+    "name": "Can view bird evening",
+    "content_type": [
+      "game",
+      "birdevening"
+    ],
+    "codename": "view_birdevening"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 37,
+  "fields": {
+    "name": "Can add piece",
+    "content_type": [
+      "game",
+      "piece"
+    ],
+    "codename": "add_piece"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 38,
+  "fields": {
+    "name": "Can change piece",
+    "content_type": [
+      "game",
+      "piece"
+    ],
+    "codename": "change_piece"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 39,
+  "fields": {
+    "name": "Can delete piece",
+    "content_type": [
+      "game",
+      "piece"
+    ],
+    "codename": "delete_piece"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 40,
+  "fields": {
+    "name": "Can view piece",
+    "content_type": [
+      "game",
+      "piece"
+    ],
+    "codename": "view_piece"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 41,
+  "fields": {
+    "name": "Can add card",
+    "content_type": [
+      "game",
+      "card"
+    ],
+    "codename": "add_card"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 42,
+  "fields": {
+    "name": "Can change card",
+    "content_type": [
+      "game",
+      "card"
+    ],
+    "codename": "change_card"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 43,
+  "fields": {
+    "name": "Can delete card",
+    "content_type": [
+      "game",
+      "card"
+    ],
+    "codename": "delete_card"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 44,
+  "fields": {
+    "name": "Can view card",
+    "content_type": [
+      "game",
+      "card"
+    ],
+    "codename": "view_card"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 45,
+  "fields": {
+    "name": "Can add cat birdsong",
+    "content_type": [
+      "game",
+      "catbirdsong"
+    ],
+    "codename": "add_catbirdsong"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 46,
+  "fields": {
+    "name": "Can change cat birdsong",
+    "content_type": [
+      "game",
+      "catbirdsong"
+    ],
+    "codename": "change_catbirdsong"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 47,
+  "fields": {
+    "name": "Can delete cat birdsong",
+    "content_type": [
+      "game",
+      "catbirdsong"
+    ],
+    "codename": "delete_catbirdsong"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 48,
+  "fields": {
+    "name": "Can view cat birdsong",
+    "content_type": [
+      "game",
+      "catbirdsong"
+    ],
+    "codename": "view_catbirdsong"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 49,
+  "fields": {
+    "name": "Can add cat daylight",
+    "content_type": [
+      "game",
+      "catdaylight"
+    ],
+    "codename": "add_catdaylight"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 50,
+  "fields": {
+    "name": "Can change cat daylight",
+    "content_type": [
+      "game",
+      "catdaylight"
+    ],
+    "codename": "change_catdaylight"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 51,
+  "fields": {
+    "name": "Can delete cat daylight",
+    "content_type": [
+      "game",
+      "catdaylight"
+    ],
+    "codename": "delete_catdaylight"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 52,
+  "fields": {
+    "name": "Can view cat daylight",
+    "content_type": [
+      "game",
+      "catdaylight"
+    ],
+    "codename": "view_catdaylight"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 53,
+  "fields": {
+    "name": "Can add cat evening",
+    "content_type": [
+      "game",
+      "catevening"
+    ],
+    "codename": "add_catevening"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 54,
+  "fields": {
+    "name": "Can change cat evening",
+    "content_type": [
+      "game",
+      "catevening"
+    ],
+    "codename": "change_catevening"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 55,
+  "fields": {
+    "name": "Can delete cat evening",
+    "content_type": [
+      "game",
+      "catevening"
+    ],
+    "codename": "delete_catevening"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 56,
+  "fields": {
+    "name": "Can view cat evening",
+    "content_type": [
+      "game",
+      "catevening"
+    ],
+    "codename": "view_catevening"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 57,
+  "fields": {
+    "name": "Can add wa birdsong",
+    "content_type": [
+      "game",
+      "wabirdsong"
+    ],
+    "codename": "add_wabirdsong"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 58,
+  "fields": {
+    "name": "Can change wa birdsong",
+    "content_type": [
+      "game",
+      "wabirdsong"
+    ],
+    "codename": "change_wabirdsong"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 59,
+  "fields": {
+    "name": "Can delete wa birdsong",
+    "content_type": [
+      "game",
+      "wabirdsong"
+    ],
+    "codename": "delete_wabirdsong"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 60,
+  "fields": {
+    "name": "Can view wa birdsong",
+    "content_type": [
+      "game",
+      "wabirdsong"
+    ],
+    "codename": "view_wabirdsong"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 61,
+  "fields": {
+    "name": "Can add wa daylight",
+    "content_type": [
+      "game",
+      "wadaylight"
+    ],
+    "codename": "add_wadaylight"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 62,
+  "fields": {
+    "name": "Can change wa daylight",
+    "content_type": [
+      "game",
+      "wadaylight"
+    ],
+    "codename": "change_wadaylight"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 63,
+  "fields": {
+    "name": "Can delete wa daylight",
+    "content_type": [
+      "game",
+      "wadaylight"
+    ],
+    "codename": "delete_wadaylight"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 64,
+  "fields": {
+    "name": "Can view wa daylight",
+    "content_type": [
+      "game",
+      "wadaylight"
+    ],
+    "codename": "view_wadaylight"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 65,
+  "fields": {
+    "name": "Can add wa evening",
+    "content_type": [
+      "game",
+      "waevening"
+    ],
+    "codename": "add_waevening"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 66,
+  "fields": {
+    "name": "Can change wa evening",
+    "content_type": [
+      "game",
+      "waevening"
+    ],
+    "codename": "change_waevening"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 67,
+  "fields": {
+    "name": "Can delete wa evening",
+    "content_type": [
+      "game",
+      "waevening"
+    ],
+    "codename": "delete_waevening"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 68,
+  "fields": {
+    "name": "Can view wa evening",
+    "content_type": [
+      "game",
+      "waevening"
+    ],
+    "codename": "view_waevening"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 69,
+  "fields": {
+    "name": "Can add building",
+    "content_type": [
+      "game",
+      "building"
+    ],
+    "codename": "add_building"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 70,
+  "fields": {
+    "name": "Can change building",
+    "content_type": [
+      "game",
+      "building"
+    ],
+    "codename": "change_building"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 71,
+  "fields": {
+    "name": "Can delete building",
+    "content_type": [
+      "game",
+      "building"
+    ],
+    "codename": "delete_building"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 72,
+  "fields": {
+    "name": "Can view building",
+    "content_type": [
+      "game",
+      "building"
+    ],
+    "codename": "view_building"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 73,
+  "fields": {
+    "name": "Can add token",
+    "content_type": [
+      "game",
+      "token"
+    ],
+    "codename": "add_token"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 74,
+  "fields": {
+    "name": "Can change token",
+    "content_type": [
+      "game",
+      "token"
+    ],
+    "codename": "change_token"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 75,
+  "fields": {
+    "name": "Can delete token",
+    "content_type": [
+      "game",
+      "token"
+    ],
+    "codename": "delete_token"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 76,
+  "fields": {
+    "name": "Can view token",
+    "content_type": [
+      "game",
+      "token"
+    ],
+    "codename": "view_token"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 77,
+  "fields": {
+    "name": "Can add warrior",
+    "content_type": [
+      "game",
+      "warrior"
+    ],
+    "codename": "add_warrior"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 78,
+  "fields": {
+    "name": "Can change warrior",
+    "content_type": [
+      "game",
+      "warrior"
+    ],
+    "codename": "change_warrior"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 79,
+  "fields": {
+    "name": "Can delete warrior",
+    "content_type": [
+      "game",
+      "warrior"
+    ],
+    "codename": "delete_warrior"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 80,
+  "fields": {
+    "name": "Can view warrior",
+    "content_type": [
+      "game",
+      "warrior"
+    ],
+    "codename": "view_warrior"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 81,
+  "fields": {
+    "name": "Can add clearing",
+    "content_type": [
+      "game",
+      "clearing"
+    ],
+    "codename": "add_clearing"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 82,
+  "fields": {
+    "name": "Can change clearing",
+    "content_type": [
+      "game",
+      "clearing"
+    ],
+    "codename": "change_clearing"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 83,
+  "fields": {
+    "name": "Can delete clearing",
+    "content_type": [
+      "game",
+      "clearing"
+    ],
+    "codename": "delete_clearing"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 84,
+  "fields": {
+    "name": "Can view clearing",
+    "content_type": [
+      "game",
+      "clearing"
+    ],
+    "codename": "view_clearing"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 85,
+  "fields": {
+    "name": "Can add building slot",
+    "content_type": [
+      "game",
+      "buildingslot"
+    ],
+    "codename": "add_buildingslot"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 86,
+  "fields": {
+    "name": "Can change building slot",
+    "content_type": [
+      "game",
+      "buildingslot"
+    ],
+    "codename": "change_buildingslot"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 87,
+  "fields": {
+    "name": "Can delete building slot",
+    "content_type": [
+      "game",
+      "buildingslot"
+    ],
+    "codename": "delete_buildingslot"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 88,
+  "fields": {
+    "name": "Can view building slot",
+    "content_type": [
+      "game",
+      "buildingslot"
+    ],
+    "codename": "view_buildingslot"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 89,
+  "fields": {
+    "name": "Can add game",
+    "content_type": [
+      "game",
+      "game"
+    ],
+    "codename": "add_game"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 90,
+  "fields": {
+    "name": "Can change game",
+    "content_type": [
+      "game",
+      "game"
+    ],
+    "codename": "change_game"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 91,
+  "fields": {
+    "name": "Can delete game",
+    "content_type": [
+      "game",
+      "game"
+    ],
+    "codename": "delete_game"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 92,
+  "fields": {
+    "name": "Can view game",
+    "content_type": [
+      "game",
+      "game"
+    ],
+    "codename": "view_game"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 93,
+  "fields": {
+    "name": "Can add faction choice entry",
+    "content_type": [
+      "game",
+      "factionchoiceentry"
+    ],
+    "codename": "add_factionchoiceentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 94,
+  "fields": {
+    "name": "Can change faction choice entry",
+    "content_type": [
+      "game",
+      "factionchoiceentry"
+    ],
+    "codename": "change_factionchoiceentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 95,
+  "fields": {
+    "name": "Can delete faction choice entry",
+    "content_type": [
+      "game",
+      "factionchoiceentry"
+    ],
+    "codename": "delete_factionchoiceentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 96,
+  "fields": {
+    "name": "Can view faction choice entry",
+    "content_type": [
+      "game",
+      "factionchoiceentry"
+    ],
+    "codename": "view_factionchoiceentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 97,
+  "fields": {
+    "name": "Can add discard pile entry",
+    "content_type": [
+      "game",
+      "discardpileentry"
+    ],
+    "codename": "add_discardpileentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 98,
+  "fields": {
+    "name": "Can change discard pile entry",
+    "content_type": [
+      "game",
+      "discardpileentry"
+    ],
+    "codename": "change_discardpileentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 99,
+  "fields": {
+    "name": "Can delete discard pile entry",
+    "content_type": [
+      "game",
+      "discardpileentry"
+    ],
+    "codename": "delete_discardpileentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 100,
+  "fields": {
+    "name": "Can view discard pile entry",
+    "content_type": [
+      "game",
+      "discardpileentry"
+    ],
+    "codename": "view_discardpileentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 101,
+  "fields": {
+    "name": "Can add deck entry",
+    "content_type": [
+      "game",
+      "deckentry"
+    ],
+    "codename": "add_deckentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 102,
+  "fields": {
+    "name": "Can change deck entry",
+    "content_type": [
+      "game",
+      "deckentry"
+    ],
+    "codename": "change_deckentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 103,
+  "fields": {
+    "name": "Can delete deck entry",
+    "content_type": [
+      "game",
+      "deckentry"
+    ],
+    "codename": "delete_deckentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 104,
+  "fields": {
+    "name": "Can view deck entry",
+    "content_type": [
+      "game",
+      "deckentry"
+    ],
+    "codename": "view_deckentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 105,
+  "fields": {
+    "name": "Can add item",
+    "content_type": [
+      "game",
+      "item"
+    ],
+    "codename": "add_item"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 106,
+  "fields": {
+    "name": "Can change item",
+    "content_type": [
+      "game",
+      "item"
+    ],
+    "codename": "change_item"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 107,
+  "fields": {
+    "name": "Can delete item",
+    "content_type": [
+      "game",
+      "item"
+    ],
+    "codename": "delete_item"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 108,
+  "fields": {
+    "name": "Can view item",
+    "content_type": [
+      "game",
+      "item"
+    ],
+    "codename": "view_item"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 109,
+  "fields": {
+    "name": "Can add craftable item entry",
+    "content_type": [
+      "game",
+      "craftableitementry"
+    ],
+    "codename": "add_craftableitementry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 110,
+  "fields": {
+    "name": "Can change craftable item entry",
+    "content_type": [
+      "game",
+      "craftableitementry"
+    ],
+    "codename": "change_craftableitementry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 111,
+  "fields": {
+    "name": "Can delete craftable item entry",
+    "content_type": [
+      "game",
+      "craftableitementry"
+    ],
+    "codename": "delete_craftableitementry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 112,
+  "fields": {
+    "name": "Can view craftable item entry",
+    "content_type": [
+      "game",
+      "craftableitementry"
+    ],
+    "codename": "view_craftableitementry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 113,
+  "fields": {
+    "name": "Can add player",
+    "content_type": [
+      "game",
+      "player"
+    ],
+    "codename": "add_player"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 114,
+  "fields": {
+    "name": "Can change player",
+    "content_type": [
+      "game",
+      "player"
+    ],
+    "codename": "change_player"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 115,
+  "fields": {
+    "name": "Can delete player",
+    "content_type": [
+      "game",
+      "player"
+    ],
+    "codename": "delete_player"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 116,
+  "fields": {
+    "name": "Can view player",
+    "content_type": [
+      "game",
+      "player"
+    ],
+    "codename": "view_player"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 117,
+  "fields": {
+    "name": "Can add hand entry",
+    "content_type": [
+      "game",
+      "handentry"
+    ],
+    "codename": "add_handentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 118,
+  "fields": {
+    "name": "Can change hand entry",
+    "content_type": [
+      "game",
+      "handentry"
+    ],
+    "codename": "change_handentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 119,
+  "fields": {
+    "name": "Can delete hand entry",
+    "content_type": [
+      "game",
+      "handentry"
+    ],
+    "codename": "delete_handentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 120,
+  "fields": {
+    "name": "Can view hand entry",
+    "content_type": [
+      "game",
+      "handentry"
+    ],
+    "codename": "view_handentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 121,
+  "fields": {
+    "name": "Can add field hospital event",
+    "content_type": [
+      "game",
+      "fieldhospitalevent"
+    ],
+    "codename": "add_fieldhospitalevent"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 122,
+  "fields": {
+    "name": "Can change field hospital event",
+    "content_type": [
+      "game",
+      "fieldhospitalevent"
+    ],
+    "codename": "change_fieldhospitalevent"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 123,
+  "fields": {
+    "name": "Can delete field hospital event",
+    "content_type": [
+      "game",
+      "fieldhospitalevent"
+    ],
+    "codename": "delete_fieldhospitalevent"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 124,
+  "fields": {
+    "name": "Can view field hospital event",
+    "content_type": [
+      "game",
+      "fieldhospitalevent"
+    ],
+    "codename": "view_fieldhospitalevent"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 125,
+  "fields": {
+    "name": "Can add decree entry",
+    "content_type": [
+      "game",
+      "decreeentry"
+    ],
+    "codename": "add_decreeentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 126,
+  "fields": {
+    "name": "Can change decree entry",
+    "content_type": [
+      "game",
+      "decreeentry"
+    ],
+    "codename": "change_decreeentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 127,
+  "fields": {
+    "name": "Can delete decree entry",
+    "content_type": [
+      "game",
+      "decreeentry"
+    ],
+    "codename": "delete_decreeentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 128,
+  "fields": {
+    "name": "Can view decree entry",
+    "content_type": [
+      "game",
+      "decreeentry"
+    ],
+    "codename": "view_decreeentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 129,
+  "fields": {
+    "name": "Can add crafted item entry",
+    "content_type": [
+      "game",
+      "crafteditementry"
+    ],
+    "codename": "add_crafteditementry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 130,
+  "fields": {
+    "name": "Can change crafted item entry",
+    "content_type": [
+      "game",
+      "crafteditementry"
+    ],
+    "codename": "change_crafteditementry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 131,
+  "fields": {
+    "name": "Can delete crafted item entry",
+    "content_type": [
+      "game",
+      "crafteditementry"
+    ],
+    "codename": "delete_crafteditementry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 132,
+  "fields": {
+    "name": "Can view crafted item entry",
+    "content_type": [
+      "game",
+      "crafteditementry"
+    ],
+    "codename": "view_crafteditementry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 133,
+  "fields": {
+    "name": "Can add crafted card entry",
+    "content_type": [
+      "game",
+      "craftedcardentry"
+    ],
+    "codename": "add_craftedcardentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 134,
+  "fields": {
+    "name": "Can change crafted card entry",
+    "content_type": [
+      "game",
+      "craftedcardentry"
+    ],
+    "codename": "change_craftedcardentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 135,
+  "fields": {
+    "name": "Can delete crafted card entry",
+    "content_type": [
+      "game",
+      "craftedcardentry"
+    ],
+    "codename": "delete_craftedcardentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 136,
+  "fields": {
+    "name": "Can view crafted card entry",
+    "content_type": [
+      "game",
+      "craftedcardentry"
+    ],
+    "codename": "view_craftedcardentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 137,
+  "fields": {
+    "name": "Can add cat turn",
+    "content_type": [
+      "game",
+      "catturn"
+    ],
+    "codename": "add_catturn"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 138,
+  "fields": {
+    "name": "Can change cat turn",
+    "content_type": [
+      "game",
+      "catturn"
+    ],
+    "codename": "change_catturn"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 139,
+  "fields": {
+    "name": "Can delete cat turn",
+    "content_type": [
+      "game",
+      "catturn"
+    ],
+    "codename": "delete_catturn"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 140,
+  "fields": {
+    "name": "Can view cat turn",
+    "content_type": [
+      "game",
+      "catturn"
+    ],
+    "codename": "view_catturn"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 141,
+  "fields": {
+    "name": "Can add cats simple setup",
+    "content_type": [
+      "game",
+      "catssimplesetup"
+    ],
+    "codename": "add_catssimplesetup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 142,
+  "fields": {
+    "name": "Can change cats simple setup",
+    "content_type": [
+      "game",
+      "catssimplesetup"
+    ],
+    "codename": "change_catssimplesetup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 143,
+  "fields": {
+    "name": "Can delete cats simple setup",
+    "content_type": [
+      "game",
+      "catssimplesetup"
+    ],
+    "codename": "delete_catssimplesetup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 144,
+  "fields": {
+    "name": "Can view cats simple setup",
+    "content_type": [
+      "game",
+      "catssimplesetup"
+    ],
+    "codename": "view_catssimplesetup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 145,
+  "fields": {
+    "name": "Can add bird turn",
+    "content_type": [
+      "game",
+      "birdturn"
+    ],
+    "codename": "add_birdturn"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 146,
+  "fields": {
+    "name": "Can change bird turn",
+    "content_type": [
+      "game",
+      "birdturn"
+    ],
+    "codename": "change_birdturn"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 147,
+  "fields": {
+    "name": "Can delete bird turn",
+    "content_type": [
+      "game",
+      "birdturn"
+    ],
+    "codename": "delete_birdturn"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 148,
+  "fields": {
+    "name": "Can view bird turn",
+    "content_type": [
+      "game",
+      "birdturn"
+    ],
+    "codename": "view_birdturn"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 149,
+  "fields": {
+    "name": "Can add birds simple setup",
+    "content_type": [
+      "game",
+      "birdssimplesetup"
+    ],
+    "codename": "add_birdssimplesetup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 150,
+  "fields": {
+    "name": "Can change birds simple setup",
+    "content_type": [
+      "game",
+      "birdssimplesetup"
+    ],
+    "codename": "change_birdssimplesetup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 151,
+  "fields": {
+    "name": "Can delete birds simple setup",
+    "content_type": [
+      "game",
+      "birdssimplesetup"
+    ],
+    "codename": "delete_birdssimplesetup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 152,
+  "fields": {
+    "name": "Can view birds simple setup",
+    "content_type": [
+      "game",
+      "birdssimplesetup"
+    ],
+    "codename": "view_birdssimplesetup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 153,
+  "fields": {
+    "name": "Can add bird leader",
+    "content_type": [
+      "game",
+      "birdleader"
+    ],
+    "codename": "add_birdleader"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 154,
+  "fields": {
+    "name": "Can change bird leader",
+    "content_type": [
+      "game",
+      "birdleader"
+    ],
+    "codename": "change_birdleader"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 155,
+  "fields": {
+    "name": "Can delete bird leader",
+    "content_type": [
+      "game",
+      "birdleader"
+    ],
+    "codename": "delete_birdleader"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 156,
+  "fields": {
+    "name": "Can view bird leader",
+    "content_type": [
+      "game",
+      "birdleader"
+    ],
+    "codename": "view_birdleader"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 157,
+  "fields": {
+    "name": "Can add ruin",
+    "content_type": [
+      "game",
+      "ruin"
+    ],
+    "codename": "add_ruin"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 158,
+  "fields": {
+    "name": "Can change ruin",
+    "content_type": [
+      "game",
+      "ruin"
+    ],
+    "codename": "change_ruin"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 159,
+  "fields": {
+    "name": "Can delete ruin",
+    "content_type": [
+      "game",
+      "ruin"
+    ],
+    "codename": "delete_ruin"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 160,
+  "fields": {
+    "name": "Can view ruin",
+    "content_type": [
+      "game",
+      "ruin"
+    ],
+    "codename": "view_ruin"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 161,
+  "fields": {
+    "name": "Can add supporter stack entry",
+    "content_type": [
+      "game",
+      "supporterstackentry"
+    ],
+    "codename": "add_supporterstackentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 162,
+  "fields": {
+    "name": "Can change supporter stack entry",
+    "content_type": [
+      "game",
+      "supporterstackentry"
+    ],
+    "codename": "change_supporterstackentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 163,
+  "fields": {
+    "name": "Can delete supporter stack entry",
+    "content_type": [
+      "game",
+      "supporterstackentry"
+    ],
+    "codename": "delete_supporterstackentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 164,
+  "fields": {
+    "name": "Can view supporter stack entry",
+    "content_type": [
+      "game",
+      "supporterstackentry"
+    ],
+    "codename": "view_supporterstackentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 165,
+  "fields": {
+    "name": "Can add wa turn",
+    "content_type": [
+      "game",
+      "waturn"
+    ],
+    "codename": "add_waturn"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 166,
+  "fields": {
+    "name": "Can change wa turn",
+    "content_type": [
+      "game",
+      "waturn"
+    ],
+    "codename": "change_waturn"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 167,
+  "fields": {
+    "name": "Can delete wa turn",
+    "content_type": [
+      "game",
+      "waturn"
+    ],
+    "codename": "delete_waturn"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 168,
+  "fields": {
+    "name": "Can view wa turn",
+    "content_type": [
+      "game",
+      "waturn"
+    ],
+    "codename": "view_waturn"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 169,
+  "fields": {
+    "name": "Can add bird roost",
+    "content_type": [
+      "game",
+      "birdroost"
+    ],
+    "codename": "add_birdroost"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 170,
+  "fields": {
+    "name": "Can change bird roost",
+    "content_type": [
+      "game",
+      "birdroost"
+    ],
+    "codename": "change_birdroost"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 171,
+  "fields": {
+    "name": "Can delete bird roost",
+    "content_type": [
+      "game",
+      "birdroost"
+    ],
+    "codename": "delete_birdroost"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 172,
+  "fields": {
+    "name": "Can view bird roost",
+    "content_type": [
+      "game",
+      "birdroost"
+    ],
+    "codename": "view_birdroost"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 173,
+  "fields": {
+    "name": "Can add recruiter",
+    "content_type": [
+      "game",
+      "recruiter"
+    ],
+    "codename": "add_recruiter"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 174,
+  "fields": {
+    "name": "Can change recruiter",
+    "content_type": [
+      "game",
+      "recruiter"
+    ],
+    "codename": "change_recruiter"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 175,
+  "fields": {
+    "name": "Can delete recruiter",
+    "content_type": [
+      "game",
+      "recruiter"
+    ],
+    "codename": "delete_recruiter"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 176,
+  "fields": {
+    "name": "Can view recruiter",
+    "content_type": [
+      "game",
+      "recruiter"
+    ],
+    "codename": "view_recruiter"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 177,
+  "fields": {
+    "name": "Can add sawmill",
+    "content_type": [
+      "game",
+      "sawmill"
+    ],
+    "codename": "add_sawmill"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 178,
+  "fields": {
+    "name": "Can change sawmill",
+    "content_type": [
+      "game",
+      "sawmill"
+    ],
+    "codename": "change_sawmill"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 179,
+  "fields": {
+    "name": "Can delete sawmill",
+    "content_type": [
+      "game",
+      "sawmill"
+    ],
+    "codename": "delete_sawmill"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 180,
+  "fields": {
+    "name": "Can view sawmill",
+    "content_type": [
+      "game",
+      "sawmill"
+    ],
+    "codename": "view_sawmill"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 181,
+  "fields": {
+    "name": "Can add wa base",
+    "content_type": [
+      "game",
+      "wabase"
+    ],
+    "codename": "add_wabase"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 182,
+  "fields": {
+    "name": "Can change wa base",
+    "content_type": [
+      "game",
+      "wabase"
+    ],
+    "codename": "change_wabase"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 183,
+  "fields": {
+    "name": "Can delete wa base",
+    "content_type": [
+      "game",
+      "wabase"
+    ],
+    "codename": "delete_wabase"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 184,
+  "fields": {
+    "name": "Can view wa base",
+    "content_type": [
+      "game",
+      "wabase"
+    ],
+    "codename": "view_wabase"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 185,
+  "fields": {
+    "name": "Can add workshop",
+    "content_type": [
+      "game",
+      "workshop"
+    ],
+    "codename": "add_workshop"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 186,
+  "fields": {
+    "name": "Can change workshop",
+    "content_type": [
+      "game",
+      "workshop"
+    ],
+    "codename": "change_workshop"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 187,
+  "fields": {
+    "name": "Can delete workshop",
+    "content_type": [
+      "game",
+      "workshop"
+    ],
+    "codename": "delete_workshop"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 188,
+  "fields": {
+    "name": "Can view workshop",
+    "content_type": [
+      "game",
+      "workshop"
+    ],
+    "codename": "view_workshop"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 189,
+  "fields": {
+    "name": "Can add cat keep",
+    "content_type": [
+      "game",
+      "catkeep"
+    ],
+    "codename": "add_catkeep"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 190,
+  "fields": {
+    "name": "Can change cat keep",
+    "content_type": [
+      "game",
+      "catkeep"
+    ],
+    "codename": "change_catkeep"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 191,
+  "fields": {
+    "name": "Can delete cat keep",
+    "content_type": [
+      "game",
+      "catkeep"
+    ],
+    "codename": "delete_catkeep"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 192,
+  "fields": {
+    "name": "Can view cat keep",
+    "content_type": [
+      "game",
+      "catkeep"
+    ],
+    "codename": "view_catkeep"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 193,
+  "fields": {
+    "name": "Can add cat wood",
+    "content_type": [
+      "game",
+      "catwood"
+    ],
+    "codename": "add_catwood"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 194,
+  "fields": {
+    "name": "Can change cat wood",
+    "content_type": [
+      "game",
+      "catwood"
+    ],
+    "codename": "change_catwood"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 195,
+  "fields": {
+    "name": "Can delete cat wood",
+    "content_type": [
+      "game",
+      "catwood"
+    ],
+    "codename": "delete_catwood"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 196,
+  "fields": {
+    "name": "Can view cat wood",
+    "content_type": [
+      "game",
+      "catwood"
+    ],
+    "codename": "view_catwood"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 197,
+  "fields": {
+    "name": "Can add wa sympathy",
+    "content_type": [
+      "game",
+      "wasympathy"
+    ],
+    "codename": "add_wasympathy"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 198,
+  "fields": {
+    "name": "Can change wa sympathy",
+    "content_type": [
+      "game",
+      "wasympathy"
+    ],
+    "codename": "change_wasympathy"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 199,
+  "fields": {
+    "name": "Can delete wa sympathy",
+    "content_type": [
+      "game",
+      "wasympathy"
+    ],
+    "codename": "delete_wasympathy"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 200,
+  "fields": {
+    "name": "Can view wa sympathy",
+    "content_type": [
+      "game",
+      "wasympathy"
+    ],
+    "codename": "view_wasympathy"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 201,
+  "fields": {
+    "name": "Can add warrior supply entry",
+    "content_type": [
+      "game",
+      "warriorsupplyentry"
+    ],
+    "codename": "add_warriorsupplyentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 202,
+  "fields": {
+    "name": "Can change warrior supply entry",
+    "content_type": [
+      "game",
+      "warriorsupplyentry"
+    ],
+    "codename": "change_warriorsupplyentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 203,
+  "fields": {
+    "name": "Can delete warrior supply entry",
+    "content_type": [
+      "game",
+      "warriorsupplyentry"
+    ],
+    "codename": "delete_warriorsupplyentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 204,
+  "fields": {
+    "name": "Can view warrior supply entry",
+    "content_type": [
+      "game",
+      "warriorsupplyentry"
+    ],
+    "codename": "view_warriorsupplyentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 205,
+  "fields": {
+    "name": "Can add officer entry",
+    "content_type": [
+      "game",
+      "officerentry"
+    ],
+    "codename": "add_officerentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 206,
+  "fields": {
+    "name": "Can change officer entry",
+    "content_type": [
+      "game",
+      "officerentry"
+    ],
+    "codename": "change_officerentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 207,
+  "fields": {
+    "name": "Can delete officer entry",
+    "content_type": [
+      "game",
+      "officerentry"
+    ],
+    "codename": "delete_officerentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 208,
+  "fields": {
+    "name": "Can view officer entry",
+    "content_type": [
+      "game",
+      "officerentry"
+    ],
+    "codename": "view_officerentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 209,
+  "fields": {
+    "name": "Can add battle",
+    "content_type": [
+      "game",
+      "battle"
+    ],
+    "codename": "add_battle"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 210,
+  "fields": {
+    "name": "Can change battle",
+    "content_type": [
+      "game",
+      "battle"
+    ],
+    "codename": "change_battle"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 211,
+  "fields": {
+    "name": "Can delete battle",
+    "content_type": [
+      "game",
+      "battle"
+    ],
+    "codename": "delete_battle"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 212,
+  "fields": {
+    "name": "Can view battle",
+    "content_type": [
+      "game",
+      "battle"
+    ],
+    "codename": "view_battle"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 213,
+  "fields": {
+    "name": "Can add game simple setup",
+    "content_type": [
+      "game",
+      "gamesimplesetup"
+    ],
+    "codename": "add_gamesimplesetup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 214,
+  "fields": {
+    "name": "Can change game simple setup",
+    "content_type": [
+      "game",
+      "gamesimplesetup"
+    ],
+    "codename": "change_gamesimplesetup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 215,
+  "fields": {
+    "name": "Can delete game simple setup",
+    "content_type": [
+      "game",
+      "gamesimplesetup"
+    ],
+    "codename": "delete_gamesimplesetup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 216,
+  "fields": {
+    "name": "Can view game simple setup",
+    "content_type": [
+      "game",
+      "gamesimplesetup"
+    ],
+    "codename": "view_gamesimplesetup"
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$OTHvVa4cloG0DAyAvEjsKS$m4qdHflI+6D4e/znWO6oHoQbgYg4Uz8MtBKG+AxGftM=",
+    "last_login": "2025-11-05T18:07:37.863Z",
+    "is_superuser": false,
+    "username": "user1",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-11-05T18:07:36.866Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$3pC4YKUoLtIkKCC6gB8DCI$nsZnKadRS6nP6EJGmUL0TwyNZOqNI2hm4e4FDJhwXxM=",
+    "last_login": "2025-11-05T18:07:37.910Z",
+    "is_superuser": false,
+    "username": "user2",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-11-05T18:07:37.145Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$AlHmORMxwNGRzKcSgZjkXP$YlIrABzONIp+QilIonvrcYgN+KXhuKavS372ui7X2b0=",
+    "last_login": "2025-11-05T18:07:37.753Z",
+    "is_superuser": false,
+    "username": "user3",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-11-05T18:07:37.425Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "game.game",
+  "pk": 1,
+  "fields": {
+    "boardmap": "0",
+    "owner": [
+      "user1"
+    ],
+    "status": "1"
+  }
+},
+{
+  "model": "game.player",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "user1"
+    ],
+    "game": 1,
+    "faction": "ca",
+    "score": 4,
+    "turn_order": 0,
+    "is_turn": true
+  }
+},
+{
+  "model": "game.player",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "user2"
+    ],
+    "game": 1,
+    "faction": "bi",
+    "score": 0,
+    "turn_order": 2,
+    "is_turn": false
+  }
+},
+{
+  "model": "game.player",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "user3"
+    ],
+    "game": 1,
+    "faction": "wa",
+    "score": 0,
+    "turn_order": 1,
+    "is_turn": false
+  }
+}
+]
