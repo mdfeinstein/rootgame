@@ -29,7 +29,14 @@ function App() {
         </div>
         <DevSignIn />
       </div>
-      <SvgBoard width={800} height={800} />
+      <div
+        style={{
+          width: "800px",
+          height: "800px",
+        }}
+      >
+        <SvgBoard width={800} height={800} />
+      </div>
     </GameActionProvider>
   );
 }

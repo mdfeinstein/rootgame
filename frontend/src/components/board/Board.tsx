@@ -162,9 +162,9 @@ export default function SvgBoard({
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
-      width="100%"
-      height="100%"
-      style={{ maxWidth: width }}
+      // width="100%"
+      // height="100%"
+      // style={{ maxWidth: width }}
     >
       <defs>
         <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">

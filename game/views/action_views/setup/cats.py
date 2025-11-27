@@ -1,9 +1,14 @@
-from game.db_selectors.general import available_building_slot
+from game.queries.general import available_building_slot
 from game.models.cats.buildings import CatBuildingTypes
 from game.models.cats.setup import CatsSimpleSetup
 from game.models.cats.tokens import CatKeep
 from game.models.events.setup import GameSimpleSetup
 from game.models.game_models import Clearing, Faction, Game, Player
+from game.queries.setup.cats import (
+    validate_building_type,
+    validate_keep_is_here_or_adjacent,
+    validate_timing,
+)
 from game.serializers.general_serializers import (
     GameActionSerializer,
     GameActionStepSerializer,
@@ -91,14 +96,10 @@ class CatsPickCornerView(GameActionView):
 
     def validate_timing(self, game: Game, player: Player):
         """raises if not this player's turn or correct step"""
-        game_setup = GameSimpleSetup.objects.get(game=game)
-        if game_setup.status != GameSimpleSetup.GameSetupStatus.CATS_SETUP:
-            raise ValidationError("Not this player's setup turn")
-        cat_setup = CatsSimpleSetup.objects.get(player=player)
-        if cat_setup.step != CatsSimpleSetup.Steps.PICKING_CORNER:
-            raise ValidationError(
-                {"detail": f"Wrong step. Current step: {cat_setup.step}"}
-            )
+        try:
+            validate_timing(player, CatsSimpleSetup.Steps.PICKING_CORNER)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
 
 
 class CatsPlaceBuildingView(GameActionView):
@@ -154,13 +155,7 @@ class CatsPlaceBuildingView(GameActionView):
         self.validate_timing(game, player)
         building_type: str = request.data["building_type"]
         # check that building type is valid
-        self.validate_building_type(building_type)
-        # check that building type hasn't been placed yet in setup
-        cat_setup = CatsSimpleSetup.objects.get(player=player)
-        if getattr(cat_setup, f"{building_type.lower()}_placed"):
-            raise ValidationError(
-                {"detail": f"Building ({building_type}) has already been placed"}
-            )
+        self.validate_building_type(player, building_type)
 
         serializer = GameActionStepSerializer(
             {
@@ -201,20 +196,20 @@ class CatsPlaceBuildingView(GameActionView):
 
     def validate_timing(self, game: Game, player: Player):
         """raises if not this player's turn or correct step"""
-        game_setup = GameSimpleSetup.objects.get(game=game)
-        if game_setup.status != GameSimpleSetup.GameSetupStatus.CATS_SETUP:
-            raise ValidationError("Not this player's setup turn")
-        cat_setup = CatsSimpleSetup.objects.get(player=player)
-        if cat_setup.step != CatsSimpleSetup.Steps.PLACING_BUILDINGS:
-            raise ValidationError(
-                {"detail": f"Wrong step. Current step: {cat_setup.step}"}
-            )
+        try:
+            validate_timing(player, CatsSimpleSetup.Steps.PLACING_BUILDINGS)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
 
-    def validate_building_type(self, building_type: str):
-        if building_type.capitalize() not in [
-            member.value for member in CatBuildingTypes
-        ]:
+    def validate_building_type(self, player: Player, building_type: str):
+        try:
+            building_type_enum = CatBuildingTypes(building_type.capitalize())
+        except ValueError:
             raise ValidationError({"detail": f"Invalid building type: {building_type}"})
+        try:
+            validate_building_type(player, building_type_enum)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
 
     def validate_clearing_number(
         self, clearing_number: int, game: Game, player: Player
@@ -224,14 +219,7 @@ class CatsPlaceBuildingView(GameActionView):
         except Clearing.DoesNotExist as e:
             raise ValidationError({"detail": str(e)})
         # check that the clearing is adjacent to the keep or is the same as the keep
-        keep = CatKeep.objects.filter(player=player).first()
-        if keep is None:
-            raise ValueError("No keep belongs to this player")
-        adjacent = keep.clearing.connected_clearings.filter(pk=clearing.pk).exists()
-        if not adjacent and clearing.pk != keep.clearing.pk:
-            raise ValueError(
-                "Clearing is not adjacent to the keep or in the same clearing"
-            )
+        validate_keep_is_here_or_adjacent(player, clearing)
         # check that there is a free building slot
         building_slot = available_building_slot(clearing)
         if building_slot is None:
@@ -264,11 +252,7 @@ class CatsConfirmCompletedSetupView(GameActionView):
 
     def validate_timing(self, game: Game, player: Player):
         """raises if not this player's turn or correct step"""
-        game_setup = GameSimpleSetup.objects.get(game=game)
-        if game_setup.status != GameSimpleSetup.GameSetupStatus.CATS_SETUP:
-            raise ValidationError("Not this player's setup turn")
-        cat_setup = CatsSimpleSetup.objects.get(player=player)
-        if cat_setup.step != CatsSimpleSetup.Steps.PENDING_CONFIRMATION:
-            raise ValidationError(
-                {"detail": f"Wrong step. Current step: {cat_setup.step}"}
-            )
+        try:
+            validate_timing(player, CatsSimpleSetup.Steps.PENDING_CONFIRMATION)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})

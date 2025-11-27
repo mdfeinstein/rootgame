@@ -20,7 +20,7 @@ from game.models import (
     Token,
     Warrior,
 )
-from game.db_selectors.general import determine_clearing_rule
+from game.queries.general import determine_clearing_rule
 from game.game_data.cards.exiles_and_partisans import Card as CardDetails
 from game.game_data.general.crafting import crafting_piece_models
 from django.db import models

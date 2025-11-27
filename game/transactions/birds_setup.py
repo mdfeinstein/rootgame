@@ -4,10 +4,11 @@ from game.models.birds.setup import BirdsSimpleSetup
 from game.models import Clearing, Player, Warrior, WarriorSupplyEntry
 from django.db import transaction
 
-from game.db_selectors.general import available_building_slot
+from game.queries.general import available_building_slot
 from game.models.cats.tokens import CatKeep
 from game.models.events.setup import GameSimpleSetup
 from game.models.game_models import Faction
+from game.queries.setup.birds import validate_corner
 from game.utility.textchoice import next_choice
 
 
@@ -61,17 +62,7 @@ def pick_corner(player: Player, clearing: Clearing):
         raise ValueError("this has been triggered at the wrong step")
     # If cats keep is out, pick roost opposite
     game = player.game
-    try:
-        cat_player = Player.objects.get(game=game, faction=Faction.CATS)
-        keep = CatKeep.objects.get(player=cat_player)
-        opposite_clearing_number = ((keep.clearing.clearing_number - 1 + 2) % 4) + 1
-        opposite_clearing = Clearing.objects.get(
-            game=game, clearing_number=opposite_clearing_number
-        )
-        if opposite_clearing != clearing:
-            raise ValueError("Keep is not in the opposite corner")
-    except (Player.DoesNotExist, CatKeep.DoesNotExist):
-        pass
+    validate_corner(game, clearing)
     # place roost, assuming a free building slot
     roost = BirdRoost.objects.filter(player=player, building_slot=None).first()
     assert roost is not None, "no available roost found in setup!"

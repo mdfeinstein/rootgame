@@ -2,6 +2,7 @@ from game.models.birds.player import BirdLeader
 from game.models.birds.setup import BirdsSimpleSetup
 from game.models.events.setup import GameSimpleSetup
 from game.models.game_models import Clearing, Faction, Game, Player
+from game.queries.setup.birds import validate_corner
 from game.serializers.general_serializers import GameActionStepSerializer
 from game.transactions.birds_setup import (
     choose_leader_initial,
@@ -43,10 +44,12 @@ class BirdsPickCornerView(GameActionView):
         self.validate_timing(game, player)
         # check that corner is valid
         clearing_number = int(request.data["corner_clearing_number"])
-        if clearing_number not in [1, 2, 3, 4]:
-            raise ValidationError(
-                {"detail": f"Invalid clearing number: {clearing_number}"}
+        try:
+            validate_corner(
+                game, Clearing.objects.get(game=game, clearing_number=clearing_number)
             )
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
         # serialize the next step
         serializer = GameActionStepSerializer(
             {

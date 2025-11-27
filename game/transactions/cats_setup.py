@@ -16,9 +16,14 @@ from game.models import (
     Warrior,
     WarriorSupplyEntry,
 )
-from game.db_selectors.general import available_building_slot
+from game.queries.general import available_building_slot
 from game.models.events.setup import GameSimpleSetup
 
+from game.queries.setup.cats import (
+    validate_building_type,
+    validate_keep_is_here_or_adjacent,
+    validate_timing,
+)
 from game.utility.textchoice import next_choice
 
 
@@ -72,16 +77,11 @@ def start_simple_cats_setup(player: Player) -> CatsSimpleSetup:
 def pick_corner(player: Player, clearing: Clearing):
     """picks a corner for the keep"""
     # check that it is cats setup
-    simple_setup = GameSimpleSetup.objects.get(game=player.game)
-    if simple_setup.status != GameSimpleSetup.GameSetupStatus.CATS_SETUP:
-        raise ValueError("Not this player's setup turn")
-    # check that the step is picking a corner
-    cats_setup = CatsSimpleSetup.objects.get(player=player)
-    if cats_setup.step != CatsSimpleSetup.Steps.PICKING_CORNER:
-        raise ValueError(f"This has been called at the wrong step: {cats_setup.step}")
+    validate_timing(player, CatsSimpleSetup.Steps.PICKING_CORNER)
     keep = CatKeep.objects.get(player=player)
     keep.clearing = clearing
     keep.save()
+    cats_setup = CatsSimpleSetup.objects.get(player=player)
     cats_setup.step = next_choice(CatsSimpleSetup.Steps, cats_setup.step)
     print(cats_setup.step)
     cats_setup.save()
@@ -174,31 +174,14 @@ def place_initial_building(
     In clearings adjacent to the keep.
     """
     # check that it is cats setup
-    simple_setup = GameSimpleSetup.objects.get(game=player.game)
-    if simple_setup.status != GameSimpleSetup.GameSetupStatus.CATS_SETUP:
-        raise ValueError("Not this player's setup turn")
-    # check that the step is placing buildings
-    setup = CatsSimpleSetup.objects.get(player=player)
-    if setup.step != CatsSimpleSetup.Steps.PLACING_BUILDINGS:
-        raise ValueError(f"This has been called at the wrong step: {setup.step}")
-    # check that building_type has not been placed yet
-    placed_field_mapper = {
-        CatBuildingTypes.WORKSHOP: "workshop_placed",
-        CatBuildingTypes.SAWMILL: "sawmill_placed",
-        CatBuildingTypes.RECRUITER: "recruiter_placed",
-    }
-    if getattr(setup, placed_field_mapper[building_type]):
-        raise ValueError(f"Building ({building_type.value}) has already been placed")
+    validate_timing(player, CatsSimpleSetup.Steps.PLACING_BUILDINGS)
 
+    setup = CatsSimpleSetup.objects.get(player=player)
+    # check that building_type has not been placed yet
+    validate_building_type(player, building_type)
     # check that the clearing is adjacent to the keep or is the same as the keep
-    keep = CatKeep.objects.filter(player=player).first()
-    if keep is None:
-        raise ValueError("No keep belongs to this player")
-    adjacent = keep.clearing.connected_clearings.filter(pk=clearing.pk).exists()
-    if not adjacent and clearing.pk != keep.clearing.pk:
-        raise ValueError("Clearing is not adjacent to the keep or in the same clearing")
-    # check that there is a free building slot
-    # TODO: this free slot check is broadly applicable, should be extracted.
+    validate_keep_is_here_or_adjacent(player, clearing)
+
     building_slot = available_building_slot(clearing)
     if building_slot is None:
         raise ValueError("No free building slots")
@@ -207,6 +190,11 @@ def place_initial_building(
     building_slots = BuildingSlot.objects.filter(clearing=clearing)
 
     # update setup
+    placed_field_mapper = {
+        CatBuildingTypes.WORKSHOP: "workshop_placed",
+        CatBuildingTypes.SAWMILL: "sawmill_placed",
+        CatBuildingTypes.RECRUITER: "recruiter_placed",
+    }
     setattr(setup, placed_field_mapper[building_type], True)
     # check if all buildings have been placed
     all_placed = all(

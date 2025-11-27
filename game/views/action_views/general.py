@@ -1,7 +1,7 @@
 from rest_framework.views import APIView, Response
 from rest_framework.exceptions import ValidationError
 
-from game.db_selectors.general import player_has_warriors_in_clearing
+from game.queries.general import player_has_warriors_in_clearing
 from game.models.game_models import Clearing, Faction, Game, Player
 
 from game.serializers.general_serializers import (

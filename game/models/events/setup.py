@@ -8,7 +8,7 @@ class GameSimpleSetup(models.Model):
         INITIAL_SETUP = "0", "Initial Setup"
         CATS_SETUP = "a", "Cats Setup"
         BIRDS_SETUP = "b", "Birds Setup"
-        WOODLAND_ALLIANCE_SETUP = "c", "Woodland Alliance Setup"
+        # WOODLAND_ALLIANCE_SETUP = "c", "Woodland Alliance Setup"
         ALL_SETUP_COMPLETED = "2", "All Setup Completed"
 
     game = models.ForeignKey(
