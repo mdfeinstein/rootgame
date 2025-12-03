@@ -16,8 +16,8 @@ class Battle(models.Model):
         COMPLETED = "7", "Completed"
 
     event = models.OneToOneField(Event, on_delete=models.CASCADE, related_name="battle")
-    attacker = models.CharField(max_length=1, choices=Faction.choices)
-    defender = models.CharField(max_length=1, choices=Faction.choices)
+    attacker = models.CharField(max_length=2, choices=Faction.choices)
+    defender = models.CharField(max_length=2, choices=Faction.choices)
     clearing = models.ForeignKey(Clearing, on_delete=models.CASCADE)
     step = models.CharField(
         max_length=1,
