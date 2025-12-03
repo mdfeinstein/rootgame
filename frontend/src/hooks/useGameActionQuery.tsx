@@ -88,9 +88,14 @@ const useGameActionQuery = (gameId: number) => {
       actionRouteDataUpdatedAt,
     ],
     queryFn: async (): Promise<GameActionStep> => {
-      const response = await fetch(`${djangoUrl}/${actionRoute?.route}`).then(
-        (r) => r.json()
-      );
+      const response = await fetch(
+        `${djangoUrl}/${actionRoute?.route}?game_id=${gameId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      ).then((r) => r.json());
       console.log("action info", response);
       return response;
     },
@@ -116,7 +121,11 @@ const useGameActionQuery = (gameId: number) => {
       );
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.detail);
+        if (error.detail) {
+          throw new Error(error.detail);
+        } else {
+          throw new Error(error);
+        }
       }
 
       return response.json();

@@ -96,7 +96,7 @@ def move_warriors(
 
 
 @transaction.atomic
-def craft_card(card_in_hand: HandEntry, crafting_pieces: list[type[Piece]]):
+def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
     """crafts a card. If it is an item, scores the points and discards it
     If not, moves the card to the player's crafted card box
     """
@@ -115,7 +115,7 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[type[Piece]]):
 
     # check that crafting pieces are actually crafting pieces
     for crafting_piece in crafting_pieces:
-        if not issubclass(crafting_piece, CraftingPieceMixin):
+        if not issubclass(type(crafting_piece), CraftingPieceMixin):
             raise ValueError("not all crafting pieces are CraftingPieceMixins")
     # check that pieces havent been used yet
     for crafting_piece in crafting_pieces:
@@ -173,11 +173,6 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[type[Piece]]):
 @transaction.atomic
 def next_players_turn(game: Game):
     """moves to the next player's turn"""
-    players = Player.objects.filter(game=game)
-    current_player = Player.objects.get(game=game, is_turn=True)
-    next_player = players.get(turn_order=(current_player.turn_order + 1) % len(players))
-    current_player.is_turn = False
-    next_player.is_turn = True
-    current_player.save()
-    next_player.save()
-    # TODO: create players turn object?
+    player_count = Player.objects.filter(game=game).count()
+    game.current_turn = (game.current_turn + 1) % player_count
+    game.save()

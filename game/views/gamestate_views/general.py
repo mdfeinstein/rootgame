@@ -6,6 +6,7 @@ from rest_framework.exceptions import ValidationError
 
 from game.models.birds.setup import BirdsSimpleSetup
 from game.models.cats.setup import CatsSimpleSetup
+from game.models.cats.turn import CatBirdsong, CatDaylight, CatTurn
 from game.models.events.setup import GameSimpleSetup
 from game.models.game_models import (
     Clearing,
@@ -15,6 +16,8 @@ from game.models.game_models import (
     HandEntry,
     Player,
 )
+from game.queries.cats.turn import get_phase as get_cat_phase
+from game.queries.general import get_current_player
 from game.serializers.general_serializers import (
     CardSerializer,
     ClearingSerializer,
@@ -109,6 +112,27 @@ def get_current_action(request, game_id: int):
             return Response({"route": reverse("birds-setup-confirm-completed-setup")})
         else:
             raise ValidationError("Invalid birds setup step")
+
+    elif setup.status == GameSimpleSetup.GameSetupStatus.ALL_SETUP_COMPLETED:
+        # figure out whose turn it is
+        player = get_current_player(game)
+
+        if player.faction == Faction.CATS:
+            phase = get_cat_phase(player)
+            if type(phase) == CatBirdsong:
+                if phase.step == CatBirdsong.CatBirdsongSteps.PLACING_WOOD:
+                    return Response({"route": reverse("cats-birdsong-place-wood")})
+                else:
+                    raise ValidationError("Not yet implemented")
+            elif type(phase) == CatDaylight:
+                if phase.step == CatDaylight.CatDaylightSteps.CRAFTING:
+                    return Response({"route": reverse("cats-daylight-craft")})
+                elif phase.step == CatDaylight.CatDaylightSteps.ACTIONS:
+                    return Response({"route": reverse("cats-daylight-actions")})
+                else:
+                    raise ValidationError("Not yet implemented")
+            else:
+                raise ValidationError("Not yet implemented")
 
     else:
         raise ValidationError("Not yet implemented")

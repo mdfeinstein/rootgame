@@ -32,6 +32,7 @@ class GameActionView(APIView):
     def player(self, request, game_id: int):
         """Return the player. helper method. raises if player not found"""
         try:
+            print(request.user)
             return Player.objects.get(game=game_id, user=request.user)
         except Player.DoesNotExist:
             raise ValidationError("Player not found")

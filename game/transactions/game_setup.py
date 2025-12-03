@@ -70,11 +70,11 @@ def player_picks_faction(player: Player, faction: FactionChoiceEntry):
 def assign_turn_order(game: Game):
     players = Player.objects.filter(game=game)
     turn_orders = [i for i in range(len(players))]
-    shuffle(turn_orders)
+    # shuffle(turn_orders)
+    # for now, set turn order to be cats, birds, woodland alliance
+    turn_orders = [0, 1, 2]
     for i, player in enumerate(players):
         player.turn_order = turn_orders[i]
-        if turn_orders[i] == 0:
-            player.is_turn = True
         player.save()
 
 

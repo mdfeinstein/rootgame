@@ -203,11 +203,13 @@ class PayloadEntry(serializers.Serializer):
 
 
 class GameActionStepSerializer(serializers.Serializer):
-    faction = serializers.CharField()
+    faction = serializers.CharField(required=False)
     name = serializers.CharField()
-    prompt = serializers.CharField()
-    endpoint = serializers.CharField()
-    payload_details = serializers.ListField(child=PayloadEntry(), allow_empty=True)
+    prompt = serializers.CharField(required=False)
+    endpoint = serializers.CharField(required=False)
+    payload_details = serializers.ListField(
+        child=PayloadEntry(), allow_empty=True, required=False
+    )
     accumulated_payload = serializers.JSONField(required=False)
 
 
@@ -235,11 +237,7 @@ class GameStatusSerializer(serializers.Serializer):
     @classmethod
     def from_game(cls, game: Game):
         setup_status = GameSimpleSetup.objects.get(game=game).status
-        current_player = (
-            Player.objects.filter(game=game, is_turn=True)
-            .select_related("user")
-            .first()
-        )
+        current_player = Player.objects.get(game=game, turn_order=game.current_turn)
         # if in setup, use setup turn objects
         if game.status == Game.GameStatus.STARTED:
             turn_object_dict = {

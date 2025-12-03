@@ -11,6 +11,15 @@ from game.serializers.bird_serializers import BirdSerializer
 from game.serializers.cat_serializers import CatSerializer
 
 
+def login_client(client: APIClient, user: str):
+    response = client.post(
+        "/api/token/", data={"username": user, "password": "password"}
+    )
+    print(response.json())
+    token = response.json()["access"]
+    client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+
+
 class CreateGameTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -200,19 +209,24 @@ class CatsSetupTestCase(TestCase):
         self.user1 = User.objects.create_user(username="user1", password="password")
         self.user2 = User.objects.create_user(username="user2", password="password")
         self.user3 = User.objects.create_user(username="user3", password="password")
-        self.client.force_login(user=self.user1)
+        # self.client.force_login(user=self.user1)
+        login_client(self.client, self.user1.username)
         response = create_game(self.client, data={"map_label": "Autumn"})
+        print(response.data)
         self.game_id = response.data["game_id"]
         join_game(self.client, self.game_id)
         pick_faction(self.client, self.game_id, "Cats")
-        self.client.force_login(user=self.user2)
+        # self.client.force_login(user=self.user2)
+        login_client(self.client, self.user2.username)
         join_game(self.client, self.game_id)
         pick_faction(self.client, self.game_id, "Birds")
-        self.client.force_login(user=self.user3)
+        # self.client.force_login(user=self.user3)
+        login_client(self.client, self.user3.username)
         join_game(self.client, self.game_id)
         pick_faction(self.client, self.game_id, "Woodland Alliance")
         self.client.logout()
-        self.client.force_login(user=self.user1)
+        # self.client.force_login(user=self.user1)
+        login_client(self.client, self.user1.username)
         start_game(self.client, self.game_id)
 
     def test_components_created(self):
@@ -256,7 +270,7 @@ class CatsSetupTestCase(TestCase):
 
     def test_cats_full_setup(self):
         """test the "happy path" of a fully valid cats setup"""
-        self.client.force_login(user=self.user1)
+        login_client(self.client, self.user1.username)
         # call_command(
         #     "dumpdata",
         #     "game",
@@ -295,6 +309,7 @@ class CatsSetupTestCase(TestCase):
         endpoint = data["endpoint"]
         payload_details = data["payload_details"]  # expect this to be empty
         to_send = data["accumulated_payload"]
+        to_send["confirm"] = True
         response = self.client.post(f"{route_base}{endpoint}/", data=to_send)
         print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -324,6 +339,18 @@ class CatsSetupTestCase(TestCase):
         except ValueError:
             print(response)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        call_command(
+            "dumpdata",
+            "game",
+            "auth.user",
+            "--natural-foreign",
+            "--indent=2",
+            "--exclude=contenttypes",
+            "--exclude=auth.permission",
+            "--exclude=admin",
+            "--exclude=sessions",
+            output="game/fixtures/cats_done_setup.json",
+        )
 
         # response = cats_confirm_completed_setup(self.client, self.game_id)
         # self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -366,6 +393,7 @@ class CatsSetupTestCase(TestCase):
         data = response.json()
         endpoint = data["endpoint"]
         to_send = data["accumulated_payload"]
+        to_send["confirm"] = True
         print(f"{route_base}{endpoint}/")
         print(to_send)
         response = self.client.post(f"{route_base}{endpoint}/", data=to_send)

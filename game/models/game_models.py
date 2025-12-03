@@ -48,6 +48,7 @@ class Game(models.Model):
     status = models.CharField(
         max_length=1, choices=GameStatus.choices, default=GameStatus.NOT_STARTED
     )
+    current_turn = models.PositiveSmallIntegerField(default=0)
 
 
 class FactionChoiceEntry(models.Model):
@@ -239,21 +240,10 @@ class Player(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name="players")
     faction = models.CharField(max_length=2, choices=Faction.choices, null=True)
     score = models.IntegerField(default=0)
-
-    class TurnOrder(models.IntegerChoices):
-        FIRST = 0, "First"
-        SECOND = 1, "Second"
-        THIRD = 2, "Third"
-        FOURTH = 3, "Fourth"
-        FIFTH = 4, "Fifth"
-        SIXTH = 5, "Sixth"
-
     turn_order = models.PositiveSmallIntegerField(
-        choices=TurnOrder.choices,
         default=None,
         null=True,
     )
-    is_turn = models.BooleanField(default=False)
 
 
 class WarriorSupplyEntry(models.Model):

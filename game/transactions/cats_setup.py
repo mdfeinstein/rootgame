@@ -24,6 +24,7 @@ from game.queries.setup.cats import (
     validate_keep_is_here_or_adjacent,
     validate_timing,
 )
+from game.transactions.cats import create_cats_turn
 from game.utility.textchoice import next_choice
 
 
@@ -223,3 +224,5 @@ def confirm_completed_setup(player: Player):
         GameSimpleSetup.GameSetupStatus, simple_setup.status
     )
     simple_setup.save()
+    # create first turn
+    create_cats_turn(player)

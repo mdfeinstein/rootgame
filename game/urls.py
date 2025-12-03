@@ -1,6 +1,8 @@
 from django.urls import path
 
 from game.views.DevLoginView import DevLoginView
+from game.views.action_views.cats.birdsong import CatPlaceWoodView
+from game.views.action_views.cats.daylight import CatActionsView, CatCraftStepView
 from game.views.action_views.setup.birds import (
     BirdsChooseLeaderInitialView,
     BirdsConfirmCompletedSetupView,
@@ -113,28 +115,55 @@ urlpatterns = [
         "api/birds/setup/confirm-completed-setup/<int:game_id>/<str:route>/",
         BirdsConfirmCompletedSetupView.as_view(),
     ),
+    # path(
+    #     "api/cats/pick-corner/<int:game_id>/<int:clearing_number>/",
+    #     cats.pick_corner_view,
+    # ),
+    # path(
+    #     "api/cats/place-initial-building/<int:game_id>/<int:clearing_number>/<str:building_type>/",
+    #     cats.place_initial_building_view,
+    # ),
+    # path(
+    #     "api/cats/confirm-completed-setup/<int:game_id>/",
+    #     cats.confirm_completed_setup_view,
+    # ),
+    # path(
+    #     "api/birds/pick-corner/<int:game_id>/<int:clearing_number>/",
+    #     birds.pick_corner,
+    # ),
+    # path(
+    #     "api/birds/choose-leader-initial/<int:game_id>/<str:leader>/",
+    #     birds.choose_leader_initial,
+    # ),
+    # path(
+    #     "api/birds/confirm-completed-setup/<int:game_id>/",
+    #     birds.confirm_completed_setup,
+    # ),
     path(
-        "api/cats/pick-corner/<int:game_id>/<int:clearing_number>/",
-        cats.pick_corner_view,
+        "api/cats/birdsong/place-wood/",
+        CatPlaceWoodView.as_view(),
+        name="cats-birdsong-place-wood",
     ),
     path(
-        "api/cats/place-initial-building/<int:game_id>/<int:clearing_number>/<str:building_type>/",
-        cats.place_initial_building_view,
+        "api/cats/birdsong/place-wood/<int:game_id>/<str:route>/",
+        CatPlaceWoodView.as_view(),
     ),
     path(
-        "api/cats/confirm-completed-setup/<int:game_id>/",
-        cats.confirm_completed_setup_view,
+        "api/cats/daylight/craft/",
+        CatCraftStepView.as_view(),
+        name="cats-daylight-craft",
     ),
     path(
-        "api/birds/pick-corner/<int:game_id>/<int:clearing_number>/",
-        birds.pick_corner,
+        "api/cats/daylight/craft/<int:game_id>/<str:route>/",
+        CatCraftStepView.as_view(),
     ),
     path(
-        "api/birds/choose-leader-initial/<int:game_id>/<str:leader>/",
-        birds.choose_leader_initial,
+        "api/cats/daylight/actions/",
+        CatActionsView.as_view(),
+        name="cats-daylight-actions",
     ),
     path(
-        "api/birds/confirm-completed-setup/<int:game_id>/",
-        birds.confirm_completed_setup,
+        "api/cats/daylight/actions/<int:game_id>/<str:route>/",
+        CatActionsView.as_view(),
     ),
 ]

@@ -1,5 +1,8 @@
 from django.db import models
 
+from game.models.game_models import Clearing, Faction
+from game.models.events.event import Event
+
 
 class Battle(models.Model):
     class BattleSteps(models.TextChoices):
@@ -12,6 +15,10 @@ class Battle(models.Model):
         ATTACKER_CHOOSE_HITS = "6", "Attacker Chooses Hits"
         COMPLETED = "7", "Completed"
 
+    event = models.OneToOneField(Event, on_delete=models.CASCADE, related_name="battle")
+    attacker = models.CharField(max_length=1, choices=Faction.choices)
+    defender = models.CharField(max_length=1, choices=Faction.choices)
+    clearing = models.ForeignKey(Clearing, on_delete=models.CASCADE)
     step = models.CharField(
         max_length=1,
         choices=BattleSteps.choices,

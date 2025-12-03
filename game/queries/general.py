@@ -9,6 +9,7 @@ from game.models import (
     Token,
     Warrior,
 )
+from game.models.game_models import Game
 
 
 def available_building_slot(clearing: Clearing) -> BuildingSlot | None:
@@ -68,3 +69,7 @@ def determine_clearing_rule(clearing: Clearing) -> Player | None:
 def player_has_warriors_in_clearing(player: Player, clearing: Clearing) -> bool:
     """returns True if player has warriors in clearing"""
     return Warrior.objects.filter(clearing=clearing, player=player).exists()
+
+
+def get_current_player(game: Game) -> Player:
+    return Player.objects.get(game=game, turn_order=game.current_turn)

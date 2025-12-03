@@ -7,6 +7,7 @@ import useGameActionQuery from "../hooks/useGameActionQuery";
 export type SubmitPayload = {
   clearing_number?: number;
   building_type?: string;
+  piece_type?: string;
   leader?: string;
 };
 
