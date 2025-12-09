@@ -112,12 +112,13 @@ def get_crafting_pieces(player: Player, card: CardsEP) -> list[Piece]:
 
 
 def validate_player_has_card_in_hand(player: Player, card: CardsEP) -> HandEntry:
-    """returns HandEntry instance if player has card in hand, else raises ValueError"""
-    try:
-        card_instance = Card.objects.get(game=player.game, card_type=card.name)
-    except Card.DoesNotExist:
-        raise ValueError(f"Card not found. card name: {card.name}")
-    try:
-        return HandEntry.objects.get(player=player, card=card_instance)
-    except HandEntry.DoesNotExist:
+    """
+    returns HandEntry instance if player has card in hand, else raises ValueError
+    If multiple cards of the same name are in the player's hand, returns the first one
+    """
+    card_in_hand = HandEntry.objects.filter(
+        player=player, card__card_type=card.name
+    ).first()
+    if card_in_hand is None:
         raise ValueError(f"Player does not have card in hand. card name: {card.name}")
+    return card_in_hand

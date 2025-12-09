@@ -4,6 +4,7 @@ import { GameActionProvider } from "./contexts/GameActionContext";
 import Prompter from "./components/board/Prompter";
 import Input from "./components/board/Input";
 import DevSignIn from "./components/DevSignIn";
+import Hand from "./components/cards/Hand";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
       >
         <SvgBoard width={800} height={800} />
       </div>
+      <Hand />
     </GameActionProvider>
   );
 }

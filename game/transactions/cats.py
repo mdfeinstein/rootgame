@@ -3,7 +3,7 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.cats.buildings import CatBuildingTypes, Sawmill
 from game.models.cats.tokens import CatWood
 from game.models.cats.turn import CatBirdsong, CatDaylight, CatTurn
-from game.models.game_models import Clearing, HandEntry, Player
+from game.models.game_models import Clearing, HandEntry, Player, Suit
 from game.queries.cats.building import (
     get_score_after_placement,
     get_usable_wood_for_building,
@@ -158,6 +158,10 @@ def birds_for_hire(player: Player, card: CardsEP):
     """uses the given card to gain an action"""
     # check that player has card in hand/get card instance
     hand_entry = validate_player_has_card_in_hand(player, card)
+    # check that card is a bird card
+    if card.value.suit != Suit.WILD:
+        print(card.value.suit)
+        raise ValueError("Not a bird card")
     # check that there is a daylight phase
     daylight = get_phase(player)
     if type(daylight) != CatDaylight:

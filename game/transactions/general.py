@@ -59,13 +59,14 @@ def draw_card_from_deck(player: Player):
     card_in_deck.delete()
 
 
+@transaction.atomic
 def discard_card_from_hand(player: Player, card_in_hand: HandEntry):
     # check that card is in player's hand
     if player != card_in_hand.player:
         raise ValueError("card is not in player's hand")
     # add card to discard pile
     spot = DiscardPileEntry.objects.filter(game=player.game).count()
-    DiscardPileEntry(player=player, card=card_in_hand.card, spot=spot).save()
+    DiscardPileEntry(game=player.game, card=card_in_hand.card, spot=spot).save()
     # delete card from player's hand
     card_in_hand.delete()
 

@@ -27,7 +27,7 @@ class Card:
 class CardsEP(Enum):
     SABOTEURS = Card(
         suit=Suit.WILD,
-        title="Saboteur",
+        title="Saboteurs",
         craftable=True,
         cost=[Suit.WILD],
         text="At start of Birdsong, may discard this card to discard an enemy's crafted card.",

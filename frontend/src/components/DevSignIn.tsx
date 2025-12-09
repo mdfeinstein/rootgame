@@ -1,8 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import useGetPlayerHandQuery from "../hooks/useGetPlayerHandQuery";
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
 
 export default function DevSignIn() {
+  const playerHand = useGetPlayerHandQuery();
   const signIn = useMutation({
     mutationFn: async (loginData: { username: string; password: string }) => {
       const response = await fetch(`${djangoUrl}/api/token/`, {

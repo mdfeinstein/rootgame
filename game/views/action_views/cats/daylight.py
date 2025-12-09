@@ -683,13 +683,14 @@ class CatActionsView(GameActionView):
         return Response(serializer.data)
 
     def post_overwork_card(self, request, game_id: int):
-        card_name = request.data["overwork_card"].upper()
+        card_name = request.data["overwork_card"].upper().replace(" ", "_")
         card_data = CardsEP[card_name]
         self.validate_player(request, game_id)
         self.validate_timing(request, game_id)
         validate_player_has_card_in_hand(self.player(request, game_id), card_data)
         # check that player has a sawmill in the correct colored suit
         textchoice_suit = card_data.value.suit
+
         sawmills = get_sawmills_by_suit(self.player(request, game_id), textchoice_suit)
         if not sawmills.exists():
             raise ValidationError("No sawmills in that suit")
@@ -720,19 +721,27 @@ class CatActionsView(GameActionView):
             raise ValidationError({"detail": str(e)})
         card_name = request.data["overwork_card"].upper()
         card_data = CardsEP[card_name]
-        overwork(self.player(request, game_id), clearing, card_data)
+        try:
+            overwork(self.player(request, game_id), clearing, card_data)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
         step = {
             "name": "completed",
         }
         serializer = GameActionStepSerializer(step)
+        return Response(serializer.data)
 
     def post_birdsforhire_card(self, request, game_id: int):
-        card_name = request.data["birdsforhire_card"].upper()
-        birds_for_hire(self.player(request, game_id), CardsEP[card_name])
+        card_name = request.data["birdsforhire_card"].upper().replace(" ", "_")
+        try:
+            birds_for_hire(self.player(request, game_id), CardsEP[card_name])
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
         step = {
             "name": "completed",
         }
         serializer = GameActionStepSerializer(step)
+        return Response(serializer.data)
 
     def end_step(self, request, game_id: int):
         player = self.player(request, game_id)
