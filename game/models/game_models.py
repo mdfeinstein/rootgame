@@ -1,3 +1,4 @@
+from typing import cast
 from django.db import models
 
 # from django.contrib.auth.models import User
@@ -171,7 +172,7 @@ class Card(models.Model):
         self,
     ) -> list[str]:
         # convert list of enums to list of strings
-        return [suit.value[1] for suit in self.enum.value.cost]
+        return [cast(str, suit.label) for suit in self.enum.value.cost]
 
     @property
     def text(self) -> str:

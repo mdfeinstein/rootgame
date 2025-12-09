@@ -1,10 +1,11 @@
 # suit enum
 from enum import Enum
+from django.db import models
 
 # from game.models.game_models import Suit as SuitTextChoice
 
 
-class Suit(Enum):
+class Suit(models.TextChoices):
     # should this just inherit from models.textchoice? will need to test this
     RED = "r", "Fox"
     YELLOW = "y", "Rabbit"
@@ -16,13 +17,13 @@ class Suit(Enum):
 
 
 # faction enum
-class Faction(Enum):
+class Faction(models.TextChoices):
     CATS = "ca", "Cats"
     BIRDS = "bi", "Birds"
     WOODLAND_ALLIANCE = "wa", "Woodland Alliance"
 
 
-class ItemTypes(Enum):
+class ItemTypes(models.TextChoices):
     BOOTS = "0", "Boots"
     BAG = "1", "Bag"
     CROSSBOW = "2", "Crossbow"
