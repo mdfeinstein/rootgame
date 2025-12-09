@@ -43,15 +43,12 @@ def get_discard_pile(request, game_id: int):
 
 
 @api_view(["GET"])
-def get_player_hand(request, player_id: int):
+def get_player_hand(request):
     # TODO: add auth: valid player or spectator
-    # grab player
     try:
-        player = Player.objects.get(pk=player_id)
+        player = Player.objects.get(user=request.user)
     except Player.DoesNotExist:
-        return Response(
-            {"message": "Player does not exist"}, status=status.HTTP_404_NOT_FOUND
-        )
+        return ValidationError("Player does not exist")
     hand_cards = HandEntry.objects.filter(player=player)
     serializer = CardSerializer([card.card for card in hand_cards], many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

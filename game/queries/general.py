@@ -9,7 +9,7 @@ from game.models import (
     Token,
     Warrior,
 )
-from game.models.game_models import Game
+from game.models.game_models import Card, Game, HandEntry, Piece
 
 
 def available_building_slot(clearing: Clearing) -> BuildingSlot | None:
@@ -71,5 +71,53 @@ def player_has_warriors_in_clearing(player: Player, clearing: Clearing) -> bool:
     return Warrior.objects.filter(clearing=clearing, player=player).exists()
 
 
+def warrior_count_in_clearing(player: Player, clearing: Clearing) -> int:
+    """returns the number of warriors in clearing belonging to player"""
+    return Warrior.objects.filter(clearing=clearing, player=player).count()
+
+
+def player_has_pieces_in_clearing(player: Player, clearing: Clearing) -> bool:
+    """returns True if player has any pieces in clearing"""
+    return any(
+        [
+            Warrior.objects.filter(clearing=clearing, player=player).exists(),
+            Building.objects.filter(
+                building_slot__clearing=clearing, player=player
+            ).exists(),
+            Token.objects.filter(clearing=clearing, player=player).exists(),
+        ]
+    )
+
+
+def count_player_pieces_in_clearing(player: Player, clearing: Clearing) -> int:
+    """returns the number of pieces in clearing belonging to player"""
+    return sum(
+        [
+            Warrior.objects.filter(clearing=clearing, player=player).count(),
+            Building.objects.filter(
+                building_slot__clearing=clearing, player=player
+            ).count(),
+            Token.objects.filter(clearing=clearing, player=player).count(),
+        ]
+    )
+
+
 def get_current_player(game: Game) -> Player:
     return Player.objects.get(game=game, turn_order=game.current_turn)
+
+
+def get_crafting_pieces(player: Player, card: CardsEP) -> list[Piece]:
+    """returns a list of crafting pieces for the given card"""
+    pass
+
+
+def validate_player_has_card_in_hand(player: Player, card: CardsEP) -> HandEntry:
+    """returns HandEntry instance if player has card in hand, else raises ValueError"""
+    try:
+        card_instance = Card.objects.get(game=player.game, card_type=card.name)
+    except Card.DoesNotExist:
+        raise ValueError(f"Card not found. card name: {card.name}")
+    try:
+        return HandEntry.objects.get(player=player, card=card_instance)
+    except HandEntry.DoesNotExist:
+        raise ValueError(f"Player does not have card in hand. card name: {card.name}")

@@ -4,7 +4,8 @@ from django.db import models
 
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.game_data.general.game_enums import ItemTypes
-from game.game_data.general.game_enums import Suit as SuitEnum
+
+# from game.game_data.general.game_enums import Suit as SuitEnum
 
 
 class Faction(models.TextChoices):
@@ -97,6 +98,7 @@ class Building(Piece):
         blank=True,
         unique=True,
         related_name="building",
+        default=None,
     )
 
 

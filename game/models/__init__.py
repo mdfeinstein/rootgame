@@ -2,6 +2,7 @@ from .game_models import *
 from .birds import *
 from .cats import *
 from .wa import *
+from .events import *
 
 __all__ = [
     "Faction",

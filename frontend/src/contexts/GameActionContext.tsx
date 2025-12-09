@@ -28,6 +28,7 @@ const GameActionProvider = ({
     isError,
     isSuccess,
     submitPayloadMutation,
+    cancelProcess,
   } = useGameActionQuery(gameId);
 
   const callBack = (submitPayload: SubmitPayload) => {
@@ -60,6 +61,7 @@ const GameActionProvider = ({
         actionPrompt: actionInfo?.prompt,
         error,
         submitPayloadCallback: callBack,
+        cancelProcess,
       }}
     >
       {children}

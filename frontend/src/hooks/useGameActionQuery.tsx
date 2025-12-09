@@ -161,6 +161,15 @@ const useGameActionQuery = (gameId: number) => {
     },
   });
 
+  const cancelProcess = async () => {
+    await queryClient.invalidateQueries({
+      queryKey: ["current-action", gameId],
+    });
+    await queryClient.invalidateQueries({
+      queryKey: ["current-action-info", gameId],
+    });
+  };
+
   return {
     baseEndpoint: actionRoute?.route,
     actionInfo,
@@ -169,6 +178,7 @@ const useGameActionQuery = (gameId: number) => {
     isError: actionInfoIsError,
     isSuccess: actionInfoIsSuccess,
     submitPayloadMutation,
+    cancelProcess,
   };
 };
 

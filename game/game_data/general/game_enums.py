@@ -1,12 +1,18 @@
 # suit enum
 from enum import Enum
 
+# from game.models.game_models import Suit as SuitTextChoice
+
 
 class Suit(Enum):
+    # should this just inherit from models.textchoice? will need to test this
     RED = "r", "Fox"
     YELLOW = "y", "Rabbit"
     ORANGE = "o", "Mouse"
     WILD = "b", "Bird"
+
+    # def convert_to_textchoice(self) -> SuitTextChoice:
+    #     return SuitTextChoice(self.value[0])
 
 
 # faction enum

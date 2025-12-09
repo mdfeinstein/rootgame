@@ -1,5 +1,6 @@
 from django.urls import reverse
 from game.models.game_models import Faction, Game, Player
+from game.queries.current_action.events import get_current_event_action
 from game.queries.general import get_current_player
 from game.queries.cats.turn import get_phase as get_cat_phase
 from game.queries.birds.turn import get_phase as get_birds_phase
@@ -11,7 +12,10 @@ def get_current_turn_action(game: Game) -> str | None:
     """Return the current turn action route for the game.
     Returns None if the next set of actions should be examined.
     Raises if there is an inconsistency"""
-
+    # check for event
+    event_action = get_current_event_action(game)
+    if event_action is not None:
+        return event_action
     player = get_current_player(game)
     match player.faction:
         case Faction.CATS:

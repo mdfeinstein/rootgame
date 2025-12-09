@@ -36,3 +36,15 @@ def get_choice_value_by_label_or_value(
     raise ValueError(
         f"{label_or_value!r} is not a valid choice for {choice_class.__name__}"
     )
+
+
+def get_choice_label_by_value(choice_class: Type[TextChoices], value: str) -> str:
+    """
+    returns the label of the choice with the given value, or validates that the value is valid
+    """
+    for choice in choice_class.choices:
+        if choice[0] == value:
+            return choice[1]
+        if choice[1] == value:
+            return choice[1]
+    raise ValueError(f"{value!r} is not a valid choice for {choice_class.__name__}")

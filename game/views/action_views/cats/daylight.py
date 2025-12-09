@@ -1,17 +1,37 @@
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.game_data.general.game_enums import Suit
-from game.models.cats.buildings import Workshop
+from game.models.cats.buildings import CatBuildingTypes, Workshop
+from game.models.cats.tokens import CatWood
 from game.models.cats.turn import CatDaylight
-from game.models.game_models import Card, Clearing, Faction, HandEntry, Piece, Warrior
+from game.models.game_models import (
+    Card,
+    Clearing,
+    Faction,
+    Game,
+    HandEntry,
+    Piece,
+    Player,
+    Warrior,
+)
+from game.queries.cats.building import get_usable_wood_for_building, get_wood_cost
 from game.queries.cats.crafting import (
     get_unused_workshop_by_clearing_number,
     validate_unused_workshops_by_clearing_number,
 )
 from game.queries.cats.turn import get_actions_remaining, get_phase
-from game.queries.general import determine_clearing_rule, get_current_player
+from game.queries.cats.wood import get_sawmills_by_suit
+from game.queries.general import (
+    determine_clearing_rule,
+    get_current_player,
+    validate_player_has_card_in_hand,
+    player_has_pieces_in_clearing,
+    player_has_warriors_in_clearing,
+)
 from game.serializers.general_serializers import GameActionStepSerializer
+from game.transactions.battle import start_battle
+from game.transactions.cats import action_used, birds_for_hire, build_building, overwork
 from game.transactions.general import craft_card, move_warriors
-from game.utility.textchoice import next_choice
+from game.utility.textchoice import get_choice_value_by_label_or_value, next_choice
 from game.views.action_views.general import GameActionView
 from rest_framework.views import Response
 from rest_framework.exceptions import ValidationError
@@ -243,16 +263,33 @@ class CatActionsView(GameActionView):
         return super().get(request)
 
     def post(self, request, game_id: int, route: str):
-        if route == "action":
-            return self.post_action(request, game_id)
-        elif route == "march-clearing-origin":
-            return self.post_march_clearing_origin(request, game_id)
-        elif route == "march-clearing-destination":
-            return self.post_march_clearing_destination(request, game_id)
-        elif route == "march-count":
-            return self.post_march_count(request, game_id)
-
-        return Response({"error": "Invalid route"}, status=status.HTTP_400_BAD_REQUEST)
+        match route:
+            case "action":
+                return self.post_action(request, game_id)
+            case "march-clearing-origin":
+                return self.post_march_clearing_origin(request, game_id)
+            case "march-clearing-destination":
+                return self.post_march_clearing_destination(request, game_id)
+            case "march-count":
+                return self.post_march_count(request, game_id)
+            case "battle-clearing":
+                return self.post_battle_clearing(request, game_id)
+            case "battle-defender":
+                return self.post_battle_defender(request, game_id)
+            case "build-building":
+                return self.post_build_building(request, game_id)
+            case "build-clearing":
+                return self.post_build_clearing(request, game_id)
+            case "overwork-card":
+                return self.post_overwork_card(request, game_id)
+            case "overwork-clearing":
+                return self.post_overwork_clearing(request, game_id)
+            case "birdsforhire-card":
+                return self.post_birdsforhire_card(request, game_id)
+            case _:
+                return Response(
+                    {"error": "Invalid route"}, status=status.HTTP_400_BAD_REQUEST
+                )
 
     def post_action(self, request, game_id: int):
         self.validate_timing(request, game_id)
@@ -262,7 +299,7 @@ class CatActionsView(GameActionView):
 
         actions_remaining = get_actions_remaining(self.player(request, game_id))
         if actions_remaining == 0:
-            raise ValidationError(detail="No actions remaining")
+            raise ValidationError("No actions remaining")
         match request.data["action"]:
             case "march":
                 step = {
@@ -276,13 +313,41 @@ class CatActionsView(GameActionView):
                 }
                 pass
             case "battle":
-                pass
+                step = {
+                    "faction": self.faction_string,
+                    "name": "select_clearing",
+                    "prompt": "Select a clearing to battle in",
+                    "endpoint": "battle-clearing",
+                    "payload_details": [
+                        {"type": "clearing_number", "name": "battle_clearing_number"}
+                    ],
+                }
             case "build":
-                pass
+                step = {
+                    "faction": self.faction_string,
+                    "name": "select_build_building",
+                    "prompt": "Select a building to build",
+                    "endpoint": "build-building",
+                    "payload_details": [
+                        {"type": "building_type", "name": "building_type"}
+                    ],
+                }
             case "overwork":
-                pass
+                step = {
+                    "faction": self.faction_string,
+                    "name": "select_overwork_card",
+                    "prompt": "Select a card to overwork",
+                    "endpoint": "overwork-card",
+                    "payload_details": [{"type": "card", "name": "overwork_card"}],
+                }
             case "birds-for-hire":
-                pass
+                step = {
+                    "faction": self.faction_string,
+                    "name": "select_birdsforhire_card",
+                    "prompt": "Select a card to birds-for-hire",
+                    "endpoint": "birdsforhire-card",
+                    "payload_details": [{"type": "card", "name": "birdsforhire_card"}],
+                }
             case _:
                 raise ValidationError("Invalid action type")
         serializer = GameActionStepSerializer(step)
@@ -303,6 +368,7 @@ class CatActionsView(GameActionView):
         ).exists():
             raise ValidationError({"detail": "No cat warrior in that clearing to move"})
         daylight = get_phase(self.player(request, game_id))
+        assert type(daylight) == CatDaylight
         march_number = "first" if not daylight.midmarch else "second"
         step = {
             "faction": self.faction_string,
@@ -339,6 +405,7 @@ class CatActionsView(GameActionView):
                 "Neither the origin or destination clearing is ruled by this player"
             )
         daylight = get_phase(self.player(request, game_id))
+        assert type(daylight) == CatDaylight
         march_number = "first" if not daylight.midmarch else "second"
         step = {
             "faction": self.faction_string,
@@ -390,15 +457,6 @@ class CatActionsView(GameActionView):
         if not daylight.midmarch:
             daylight.midmarch = True
             daylight.save()
-            # step = {
-            #     "faction": self.faction_string,
-            #     "name": "select_move_clearing_origin",
-            #     "prompt": "Select a clearing to move from for second move of march.",
-            #     "endpoint": "march-clearing-origin",
-            #     "payload_details": [
-            #         {"type": "clearing_number", "name": "origin_clearing_number"}
-            #     ],
-            # }
             step = {
                 "faction": self.faction_string,
                 "name": "completed",
@@ -413,6 +471,269 @@ class CatActionsView(GameActionView):
         serializer = GameActionStepSerializer(step)
         return Response(serializer.data)
 
+    def post_battle_clearing(self, request, game_id: int):
+        game = self.game(game_id)
+        player = self.player(request, game_id)
+        self.validate_timing(request, game_id)
+        clearing_number = int(request.data["battle_clearing_number"])
+        self.validate_battle_clearing(game, player, clearing_number)
+        step = {
+            "faction": self.faction_string,
+            "name": "select_defender",
+            "prompt": "Select a defender",
+            "endpoint": "battle-defender",
+            "payload_details": [
+                {"type": "faction", "name": "defender_faction"},
+            ],
+            "accumulated_payload": {
+                "battle_clearing_number": clearing_number,
+            },
+        }
+        serializer = GameActionStepSerializer(step)
+        return Response(serializer.data)
+
+    @transaction.atomic
+    def post_battle_defender(self, request, game_id: int):
+        game = self.game(game_id)
+        player = self.player(request, game_id)
+        self.validate_timing(request, game_id)
+        clearing_number = int(request.data["battle_clearing_number"])
+        defender_faction = get_choice_value_by_label_or_value(
+            Faction, request.data["defender_faction"].capitalize()
+        )
+        print(defender_faction)
+        defender = Player.objects.get(game=game, faction=defender_faction)
+        valid_defenders = self.validate_battle_clearing(game, player, clearing_number)
+        if defender not in valid_defenders:
+            raise ValidationError("Not a valid defender - does not have pieces here")
+        clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
+        start_battle(game, player.faction, defender.faction, clearing)
+        daylight = get_phase(player)
+        assert type(daylight) == CatDaylight
+        daylight.actions_left -= 1
+        daylight.save()
+
+        return Response({"name": "completed"})
+
+    def post_build_building(self, request, game_id: int):
+        game = self.game(game_id)
+        player = self.player(request, game_id)
+        self.validate_timing(request, game_id)
+        building_type_string = request.data["building_type"]
+        # validate this building type is buildable (check that building is in the supply, and that enough wood is out of the supply that its theoretically possible)
+        try:
+            building_type = CatBuildingTypes(building_type_string.capitalize())
+        except ValueError:
+            raise ValidationError(
+                f"Invalid building type. passed: {building_type_string}"
+            )
+        wood_cost = get_wood_cost(player, building_type)
+        if wood_cost is None:
+            raise ValidationError(f"No building of that type in supply")
+        # validate that there is enough wood on the board
+        wood_on_board = CatWood.objects.filter(
+            player=player, clearing__isnull=False
+        ).count()
+        if wood_on_board < wood_cost:
+            raise ValidationError(
+                f"Not enough wood on board to build this building. Needed: {wood_cost}, on board: {wood_on_board}"
+            )
+        # all validated. proceed to clearing selection
+        step = {
+            "faction": self.faction_string,
+            "name": "select_build_clearing",
+            "prompt": "Select a clearing to build in",
+            "endpoint": "build-clearing",
+            "payload_details": [
+                {"type": "clearing_number", "name": "build_clearing_number"},
+            ],
+            "accumulated_payload": {
+                "building_type": building_type_string,
+            },
+        }
+        serializer = GameActionStepSerializer(step)
+        return Response(serializer.data)
+
+    @transaction.atomic
+    def post_build_clearing(self, request, game_id: int):
+        game = self.game(game_id)
+        player = self.player(request, game_id)
+        self.validate_timing(request, game_id)
+        clearing_number = int(request.data["build_clearing_number"])
+        building_type_string = request.data["building_type"]
+        try:
+            clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
+        except Clearing.DoesNotExist as e:
+            raise ValidationError({"detail": str(e)})
+        try:
+            building_type = CatBuildingTypes(building_type_string.capitalize())
+        except KeyError:
+            raise ValidationError(
+                f"Invalid building type. passed: {building_type_string}"
+            )
+        # get usable wood tokens
+        usable_wood = get_usable_wood_for_building(player, building_type, clearing)
+        if usable_wood is None:
+            raise ValidationError(f"Not enough connected wood to build")
+        # if usable wood is precisely enough, build the building
+        if len(usable_wood) == get_wood_cost(player, building_type):
+            try:
+                build_building(
+                    player,
+                    building_type,
+                    clearing,
+                    usable_wood,
+                )
+            except ValueError as e:
+                raise ValidationError({"detail": str(e)})
+            # update daylight step
+            action_used(player)
+            return Response({"name": "completed"})
+        else:
+            # if not, go to wood selection step
+            step = {
+                "faction": self.faction_string,
+                "name": "select_build_wood",
+                "prompt": "Select wood to build with."
+                + f"Needed: {get_wood_cost(player, building_type)}. Selected: 0",
+                "endpoint": "build-wood",
+                "payload_details": [
+                    {"type": "clearing_number", "name": "wood_clearing_number"},
+                ],
+                "accumulated_payload": {
+                    "building_type": building_type_string,
+                    "Build_clearing_number": clearing_number,
+                    "wood_token_clearing_numbers": [],  # will track wood tokens to use
+                },
+            }
+            serializer = GameActionStepSerializer(step)
+            return Response(serializer.data)
+
+    def post_build_wood(self, request, game_id: int):
+        game = self.game(game_id)
+        player = self.player(request, game_id)
+        self.validate_timing(request, game_id)
+        building_type_string = request.data["building_type"]
+        try:
+            building_type = CatBuildingTypes(building_type_string.upper())
+        except KeyError:
+            raise ValidationError(
+                f"Invalid building type. passed: {building_type_string}"
+            )
+        build_clearing_number = int(request.data["build_clearing_number"])
+        try:
+            clearing = Clearing.objects.get(
+                game=game, clearing_number=build_clearing_number
+            )
+        except Clearing.DoesNotExist as e:
+            raise ValidationError({"detail": str(e)})
+        old_clearing_numbers = request.data["wood_token_clearing_numbers"]
+        new_clearing_number = int(request.data["wood_clearing_number"])
+        wood_count_by_clearing_number = {new_clearing_number: 1}
+        for clearing_number in old_clearing_numbers:
+            clearing_number = int(clearing_number)
+            if clearing_number in wood_count_by_clearing_number:
+                wood_count_by_clearing_number[clearing_number] += 1
+            else:
+                wood_count_by_clearing_number[clearing_number] = 1
+        # get usable wood tokens
+        total_wood: list[CatWood] = []
+        for clearing_number in wood_count_by_clearing_number:
+            wood_count = wood_count_by_clearing_number[clearing_number]
+            woods = CatWood.objects.filter(
+                clearing__game=game, clearing__clearing_number=clearing_number
+            )[:wood_count]
+            if len(woods) != wood_count:
+                raise ValidationError(
+                    f"More wood than exists selected in clearing {clearing_number}. Selected: {wood_count}, Existing: {len(woods)}"
+                )
+            total_wood.extend(woods)
+        # if provided wood is precisely enough, build the building
+        if len(total_wood) == get_wood_cost(player, building_type):
+
+            build_building(
+                player,
+                building_type,
+                clearing,
+                total_wood,
+            )
+            # update daylight step
+            action_used(player)
+            return Response({"name": "completed"})
+        # if not, continue wood selection step
+        selected_wood_clearings = [int(c) for c in old_clearing_numbers] + [
+            new_clearing_number
+        ]
+        step = {
+            "faction": self.faction_string,
+            "name": "select_build_wood",
+            "prompt": "Select wood to build with."
+            + f"Needed: {get_wood_cost(player, building_type)}. Selected: {len(total_wood)}",
+            "endpoint": "build-wood",
+            "payload_details": [
+                {"type": "clearing_number", "name": "wood_clearing_number"},
+            ],
+            "accumulated_payload": {
+                "building_type": building_type_string,
+                "Build_clearing_number": build_clearing_number,
+                "wood_token_clearing_numbers": selected_wood_clearings,
+            },
+        }
+        serializer = GameActionStepSerializer(step)
+        return Response(serializer.data)
+
+    def post_overwork_card(self, request, game_id: int):
+        card_name = request.data["overwork_card"].upper()
+        card_data = CardsEP[card_name]
+        self.validate_player(request, game_id)
+        self.validate_timing(request, game_id)
+        validate_player_has_card_in_hand(self.player(request, game_id), card_data)
+        # check that player has a sawmill in the correct colored suit
+        textchoice_suit = card_data.value.suit
+        sawmills = get_sawmills_by_suit(self.player(request, game_id), textchoice_suit)
+        if not sawmills.exists():
+            raise ValidationError("No sawmills in that suit")
+
+        step = {
+            "faction": self.faction_string,
+            "name": "select_overwork_clearing",
+            "prompt": "Select a clearing to overwork in",
+            "endpoint": "overwork-clearing",
+            "payload_details": [
+                {"type": "clearing_number", "name": "overwork_clearing_number"}
+            ],
+            "accumulated_payload": {
+                "overwork_card": card_name,
+            },
+        }
+        serializer = GameActionStepSerializer(step)
+        return Response(serializer.data)
+
+    def post_overwork_clearing(self, request, game_id: int):
+        game = self.game(game_id)
+        player = self.player(request, game_id)
+        self.validate_timing(request, game_id)
+        clearing_number = int(request.data["overwork_clearing_number"])
+        try:
+            clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
+        except Clearing.DoesNotExist as e:
+            raise ValidationError({"detail": str(e)})
+        card_name = request.data["overwork_card"].upper()
+        card_data = CardsEP[card_name]
+        overwork(self.player(request, game_id), clearing, card_data)
+        step = {
+            "name": "completed",
+        }
+        serializer = GameActionStepSerializer(step)
+
+    def post_birdsforhire_card(self, request, game_id: int):
+        card_name = request.data["birdsforhire_card"].upper()
+        birds_for_hire(self.player(request, game_id), CardsEP[card_name])
+        step = {
+            "name": "completed",
+        }
+        serializer = GameActionStepSerializer(step)
+
     def end_step(self, request, game_id: int):
         player = self.player(request, game_id)
         daylight = get_phase(player)
@@ -423,6 +744,8 @@ class CatActionsView(GameActionView):
 
     def validate_timing(self, request, game_id: int):
         """raises if not this player's turn or correct step"""
+        # validate requesting player is cats first, since get_phase assumes the player is cats
+        self.validate_player(request, game_id)
         phase = get_phase(self.player(request, game_id))
         if type(phase) != CatDaylight:
             raise ValidationError("Not Daylight phase")
@@ -432,3 +755,34 @@ class CatActionsView(GameActionView):
             )
         if get_current_player(self.game(game_id)) != self.player(request, game_id):
             raise ValidationError("Not this player's turn")
+
+    def validate_battle_clearing(
+        self, game: Game, player: Player, clearing_number: int
+    ) -> list[Player]:
+        try:
+            clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
+        except Clearing.DoesNotExist as e:
+            raise ValidationError({"detail": str(e)})
+        if not player_has_warriors_in_clearing(player, clearing):
+            raise ValidationError(
+                f"{self.faction_string} do not have warriors in that clearing"
+            )
+        # check that there are pieces of another player in the clearing
+        players = Player.objects.filter(game=game)
+        valid_defenders = []
+        for player_ in players:
+            if player_ != player:
+                if player_has_pieces_in_clearing(player_, clearing):
+                    valid_defenders.append(player_)
+        if len(valid_defenders) == 0:
+            raise ValidationError(f"No rival pieces in this clearing")
+        return valid_defenders
+
+    def cat_player(self, request, game_id: int):
+        return Player.objects.get(game=self.game(game_id), faction=Faction.CATS)
+
+    def validate_player(self, request, game_id: int):
+        """validate that player making a post request is the cat player"""
+        player = self.player(request, game_id)
+        if player != self.cat_player(request, game_id):
+            raise ValidationError("Cat players turn, only they can make a move")

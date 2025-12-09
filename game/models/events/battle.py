@@ -6,7 +6,7 @@ from game.models.events.event import Event
 
 class Battle(models.Model):
     class BattleSteps(models.TextChoices):
-        NOT_STARTED = "0", "Not Started"
+        # NOT_STARTED = "0", "Not Started"
         DEFENDER_AMBUSH_CHECK = "1", "Defender Ambush"
         ATTACKER_AMBUSH_CANCEL_CHECK = "2", "Attacker Ambush"
         ATTACKER_CHOOSE_AMBUSH_HITS = "3", "Attacker Chooses Ambush Hits"
@@ -20,9 +20,9 @@ class Battle(models.Model):
     defender = models.CharField(max_length=2, choices=Faction.choices)
     clearing = models.ForeignKey(Clearing, on_delete=models.CASCADE)
     step = models.CharField(
-        max_length=1,
+        max_length=2,
         choices=BattleSteps.choices,
-        default=BattleSteps.NOT_STARTED,
+        default=BattleSteps.DEFENDER_AMBUSH_CHECK,
     )
     defender_ambush = models.BooleanField(default=False)
     attacker_cancel_ambush = models.BooleanField(default=False)

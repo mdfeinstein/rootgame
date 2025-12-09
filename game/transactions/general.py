@@ -20,7 +20,7 @@ from game.models import (
     Token,
     Warrior,
 )
-from game.queries.general import determine_clearing_rule
+from game.queries.general import determine_clearing_rule, warrior_count_in_clearing
 from game.game_data.cards.exiles_and_partisans import Card as CardDetails
 from game.game_data.general.crafting import crafting_piece_models
 from django.db import models
@@ -93,6 +93,21 @@ def move_warriors(
     for warrior in warriors:
         warrior.clearing = clearing_end
     Warrior.objects.bulk_update(warriors, ["clearing"])
+
+
+@transaction.atomic
+def remove_warriors_from_clearing(
+    player: Player, clearing: Clearing, number: int, exact: bool = True
+):
+    """
+    removes warriors from the given clearing
+    if exact, will raise if not enough warriors to remove. otehrwise, will remove as many as possible
+    """
+    if exact and warrior_count_in_clearing(player, clearing) < number:
+        raise ValueError("Not enough warriors in clearing to remove")
+    Warrior.objects.filter(clearing=clearing, player=player)[:number].update(
+        clearing=None
+    )
 
 
 @transaction.atomic
@@ -176,3 +191,15 @@ def next_players_turn(game: Game):
     player_count = Player.objects.filter(game=game).count()
     game.current_turn = (game.current_turn + 1) % player_count
     game.save()
+
+
+@transaction.atomic
+def raise_score(player: Player, amount: int):
+    """
+    raise a player's score, and check any relevant score related conditions, such as winning the game.
+    """
+    player.score += amount
+    player.save()
+    # TODO: check if player has won
+    if player.score >= 30:
+        raise ValueError("Player has won. TODO: implement winning logic")

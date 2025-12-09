@@ -1,6 +1,7 @@
 from django.urls import path
 
 from game.views.DevLoginView import DevLoginView
+from game.views.action_views.battle import BattleActionView
 from game.views.action_views.cats.birdsong import CatPlaceWoodView
 from game.views.action_views.cats.daylight import CatActionsView, CatCraftStepView
 from game.views.action_views.setup.birds import (
@@ -48,7 +49,7 @@ urlpatterns = [
     path("api/birds/player-info/<int:game_id>/", get_bird_player_public),
     path("api/clearings/<int:game_id>/", get_clearings),
     path("api/discard-pile/<int:game_id>/", get_discard_pile),
-    path("api/player-hand/<int:player_id>/", get_player_hand),
+    path("api/player-hand/", get_player_hand),
     path("api/turn-info/<int:game_id>/", get_turn_info),
     # setup views
     path("api/game/create/", create_game),
@@ -165,5 +166,14 @@ urlpatterns = [
     path(
         "api/cats/daylight/actions/<int:game_id>/<str:route>/",
         CatActionsView.as_view(),
+    ),
+    path(
+        "api/battle/",
+        BattleActionView.as_view(),
+        name="battle",
+    ),
+    path(
+        "api/battle/<int:game_id>/<str:route>/",
+        BattleActionView.as_view(),
     ),
 ]
