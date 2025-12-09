@@ -3,8 +3,8 @@ import type { CardType } from "../../hooks/useGetPlayerHandQuery";
 import { GameActionContext } from "../../contexts/GameActionContext";
 const Card = ({ cardData }: { cardData: CardType }) => {
   const { submitPayloadCallback } = useContext(GameActionContext);
-  const submitPayloadOnClick = (cardName: string) => {
-    submitPayloadCallback({ card: cardData.title });
+  const submitPayloadOnClick = () => {
+    submitPayloadCallback({ card: cardData.card_name });
   };
   const colormap = {
     r: "red",
@@ -23,7 +23,7 @@ const Card = ({ cardData }: { cardData: CardType }) => {
         height: "100%",
         background: "#00000095",
       }}
-      onClick={() => submitPayloadOnClick(cardData.title)}
+      onClick={() => submitPayloadOnClick()}
     >
       <div style={{ color: colormap[cardData.suit] }}>{cardData.suit}</div>
       <div>{cardData.title}</div>

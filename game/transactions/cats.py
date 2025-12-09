@@ -1,21 +1,22 @@
 from django.db import transaction
 from game.game_data.cards.exiles_and_partisans import CardsEP
-from game.models.cats.buildings import CatBuildingTypes, Sawmill
+from game.models.cats.buildings import CatBuildingTypes, Sawmill, Workshop
 from game.models.cats.tokens import CatWood
 from game.models.cats.turn import CatBirdsong, CatDaylight, CatTurn
-from game.models.game_models import Clearing, HandEntry, Player, Suit
+from game.models.game_models import Clearing, HandEntry, Piece, Player, Suit
 from game.queries.cats.building import (
     get_score_after_placement,
     get_usable_wood_for_building,
     get_wood_cost,
 )
+from game.queries.cats.crafting import validate_crafting_pieces_satisfy_requirements
 from game.queries.cats.turn import get_phase
 from game.queries.cats.wood import get_sawmills_by_suit
 from game.queries.general import (
     available_building_slot,
     validate_player_has_card_in_hand,
 )
-from game.transactions.general import discard_card_from_hand, raise_score
+from game.transactions.general import craft_card, discard_card_from_hand, raise_score
 from game.utility.textchoice import next_choice
 from django.apps import apps
 
@@ -171,3 +172,12 @@ def birds_for_hire(player: Player, card: CardsEP):
     daylight.save()
     # remove card from player's hand
     discard_card_from_hand(player, hand_entry)
+
+
+@transaction.atomic
+def cat_craft_card(player: Player, card: CardsEP, crafting_pieces: list[Workshop]):
+
+    card_in_hand = validate_player_has_card_in_hand(player, card)
+    if not validate_crafting_pieces_satisfy_requirements(player, card, crafting_pieces):
+        raise ValueError("Not enough crafting pieces to craft card")
+    craft_card(card_in_hand, crafting_pieces)

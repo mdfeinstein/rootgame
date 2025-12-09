@@ -3,6 +3,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type CardType = {
+  card_name: string;
   suit: "r" | "y" | "o" | "b";
   title: string;
   text: string;

@@ -113,8 +113,11 @@ def remove_warriors_from_clearing(
 
 @transaction.atomic
 def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
-    """crafts a card. If it is an item, scores the points and discards it
-    If not, moves the card to the player's crafted card box
+    """crafts a card with the given pieces. If it is an item, scores the points and discards it
+    If not, moves the card to the player's crafted card box.
+    NOTE: this function does not check if the player has enough crafting pieces to craft the card.
+    It is assumed that the caller has already done this check, since this may be faction specific.
+    The faction crafting transactions should call this function with the appropriate pieces.
     """
     card: CardDetails = card_in_hand.card.enum.value
     if not card.craftable:
@@ -122,7 +125,7 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
     item = card.item
     points = card.crafted_points
     crafting_cost = card.cost
-    ## this first batch of logic can be a selector (can_craft)
+
     # check that card is an item card
     if item is not None:
         # check that item is still in the craftable pool
@@ -142,29 +145,12 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
     for crafting_piece in crafting_pieces:
         if crafting_piece.player != card_in_hand.player:
             raise ValueError("player does not own the pieces")
-    # check off requirements
-    # sort so wild requirements are last, as they are the most flexible
-    crafting_cost.sort(key=lambda x: 1 if x.suit == Suit.WILD else 0)
-    for cost in crafting_cost:
-        found = False
-        for crafting_piece in crafting_pieces:
-            assert isinstance(crafting_piece, CraftingPieceMixin)
-            if isinstance(crafting_piece, Building):
-                suit = crafting_piece.building_slot.clearing.suit
-            elif isinstance(crafting_piece, (Token, Warrior)):
-                suit = crafting_piece.clearing.suit
-            else:
-                raise ValueError("unknown piece type. need to add logic for this")
-
-            if (cost == Suit.WILD or cost == suit) and not crafting_piece.crafted_with:
-                crafting_piece.crafted_with = True
-                # update here. cant bulk save since it may be different models
-                crafting_piece.save()
-                found = True
-                break
-        if not found:
-            raise ValueError("could not find a piece to use." + f" cost: {cost}")
-    ## this second batch belongs in a transaction
+    # assume that the caller has already checked that the player has enough crafting pieces to craft the card
+    # mark crafting pieces as used
+    for crafting_piece in crafting_pieces:
+        assert isinstance(crafting_piece, CraftingPieceMixin)
+        crafting_piece.crafted_with = True
+        crafting_piece.save()
 
     if item is not None:
         # move item from pool to player's inventory

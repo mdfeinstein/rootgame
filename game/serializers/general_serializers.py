@@ -21,7 +21,7 @@ from game.models.wa.turn import WATurn
 
 
 class CardSerializer(serializers.ModelSerializer):
-
+    card_name = serializers.SerializerMethodField()
     suit_name = serializers.CharField(source="get_suit_display", required=False)
     title = serializers.CharField()
     text = serializers.CharField()
@@ -35,6 +35,7 @@ class CardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
         fields = [
+            "card_name",
             "suit",
             "suit_name",
             "title",
@@ -46,6 +47,9 @@ class CardSerializer(serializers.ModelSerializer):
             "ambush",
             "dominance",
         ]
+
+    def get_card_name(self, card: Card):
+        return card.enum.name
 
 
 class WarriorSerializer(serializers.ModelSerializer):

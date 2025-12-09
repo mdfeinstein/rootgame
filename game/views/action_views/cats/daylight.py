@@ -15,7 +15,9 @@ from game.models.game_models import (
 )
 from game.queries.cats.building import get_usable_wood_for_building, get_wood_cost
 from game.queries.cats.crafting import (
+    get_all_unused_workshops,
     get_unused_workshop_by_clearing_number,
+    validate_crafting_pieces_satisfy_requirements,
     validate_unused_workshops_by_clearing_number,
 )
 from game.queries.cats.turn import get_actions_remaining, get_phase
@@ -29,7 +31,13 @@ from game.queries.general import (
 )
 from game.serializers.general_serializers import GameActionStepSerializer
 from game.transactions.battle import start_battle
-from game.transactions.cats import action_used, birds_for_hire, build_building, overwork
+from game.transactions.cats import (
+    action_used,
+    birds_for_hire,
+    build_building,
+    cat_craft_card,
+    overwork,
+)
 from game.transactions.general import craft_card, move_warriors
 from game.utility.textchoice import get_choice_value_by_label_or_value, next_choice
 from game.views.action_views.general import GameActionView
@@ -63,15 +71,25 @@ class CatCraftStepView(GameActionView):
         return Response({"error": "Invalid route"}, status=status.HTTP_400_BAD_REQUEST)
 
     def post_card(self, request, game_id: int):
-        if request.data["card_to_craft"] is "":
+        if request.data["card_to_craft"] == "":
             self.end_step(request, game_id)
             return Response({"name": "completed"})
         self.validate(request, game_id)
+        card_type = CardsEP[request.data["card_to_craft"]]
+        suits_needed = [suit.label for suit in card_type.value.cost]
+        workshop_count = get_all_unused_workshops(self.player(request, game_id)).count()
+        print(f"workshop count: {workshop_count}")
+        print(f"suits needed: {suits_needed}")
+        if workshop_count < len(suits_needed):
+            raise ValidationError(
+                f"Not enough unused workshops to craft this card. ({workshop_count} unused workshops remaining)"
+            )
         serializer = GameActionStepSerializer(
             {
                 "faction": self.faction_string,
                 "name": "select_piece",
-                "prompt": "Select a crafting piece to craft with",
+                "prompt": "Select a crafting piece to craft with. "
+                + f"Needed: {suits_needed}",
                 "endpoint": "piece",
                 "payload_details": [
                     {"type": "clearing_number", "name": "cn_0"},
@@ -84,20 +102,27 @@ class CatCraftStepView(GameActionView):
         return Response(serializer.data)
 
     def post_piece(self, request, game_id: int):
-        suits_needed, _ = self.validate(request, game_id)
+        satisfied, crafting_pieces = self.validate(request, game_id)
         # check if we have enough pieces. if so, go to confirm. if not, go to piece
-        accumulated_payload = [{"card_to_craft": request.data["card_to_craft"]}]
+        accumulated_payload = {"card_to_craft": request.data["card_to_craft"]}
         cn_count = 0
         for key, value in request.data.items():
             if "cn_" in key:
-                accumulated_payload.append({key: value})
+                accumulated_payload[key] = value
                 cn_count += 1
 
-        if len(suits_needed) > 0:  # need to select more crafting pieces
+        if not satisfied:  # need to select more crafting pieces
+            card_type = CardsEP[request.data["card_to_craft"]]
+            suits_needed = [suit.label for suit in card_type.value.cost]
+            suits_selected = [
+                Suit(workshop.building_slot.clearing.suit).label
+                for workshop in crafting_pieces
+            ]
             step = {
                 "faction": self.faction_string,
                 "name": "select_piece",
-                "prompt": "Select a crafting piece to craft with",
+                "prompt": "Select a crafting piece to craft with ."
+                + f"Needed: {suits_needed}. Selected: {suits_selected}",
                 "endpoint": "piece",
                 "payload_details": [
                     {"type": "clearing_number", "name": f"cn_{cn_count}"},
@@ -117,25 +142,27 @@ class CatCraftStepView(GameActionView):
         return Response(serializer.data)
 
     def post_confirm(self, request, game_id: int):
-        _, crafting_pieces = self.validate(request, game_id)
+        satisfied, crafting_pieces = self.validate(request, game_id)
         # craft
         card_type = CardsEP[request.data["card_to_craft"].upper()]
-        card = Card.objects.get(game=self.game(game_id), card_type=card_type.name)
-        card_in_hand = HandEntry.objects.get(
-            player=self.player(request, game_id), card=card
-        )
-        craft_card(card_in_hand, crafting_pieces)
+        if not satisfied:
+            raise ValidationError("Not enough crafting pieces to craft card")
+        try:
+            cat_craft_card(self.player(request, game_id), card_type, crafting_pieces)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
+        return Response({"name": "completed"})
 
-    def validate(self, request, game_id: int) -> tuple[list[Suit], list[Piece]]:
+    def validate(self, request, game_id: int) -> tuple[bool, list[Workshop]]:
         # validate timing
         self.validate_timing(request, game_id)
         # validate card in hand and return card info
         card = self.validate_card(request, game_id)
         # get crafting pieces (or determine if not possible)
-        suits_needed, crafting_pieces = self.validate_crafting_pieces(
+        satisfied, crafting_pieces = self.validate_crafting_pieces(
             request, game_id, card
         )
-        return suits_needed, crafting_pieces
+        return satisfied, crafting_pieces
 
     def validate_timing(self, request, game_id: int):
         """raises if not this player's turn or correct step"""
@@ -149,31 +176,24 @@ class CatCraftStepView(GameActionView):
 
     def validate_card(self, request, game_id: int) -> CardsEP:
         """raises if card is not in players hand or is not craftable"""
-        card_info = request.data["card_to_craft"].upper()
-        if card_info is None:
-            raise ValidationError("No card selected")
-        try:
-            card_type = CardsEP[card_info].name
-        except KeyError:
-            raise ValidationError("Invalid card")
-        card = Card.objects.get(game=self.game(game_id), card_type=card_type)
-        if card is None:
-            raise ValidationError("Card not found in game?")
-        if not HandEntry.objects.filter(
-            player=self.player(request, game_id), card=card
-        ).exists():
-            raise ValidationError("Card not in player's hand")
+        card_info = request.data["card_to_craft"]
+        card = CardsEP[card_info]
+        validate_player_has_card_in_hand(self.player(request, game_id), card)
         # check that card is craftable
-        card_details = CardsEP[card_info].value
+        card_details = card.value
         if card_details.craftable is False:
             raise ValidationError("Card is not craftable")
         return CardsEP[card_info]
 
     def validate_crafting_pieces(
         self, request, game_id: int, card: CardsEP
-    ) -> tuple[list[Suit], list[Piece]]:
-        """returns a tuple of (list of suits needed, list of crafting pieces)"""
-        crafting_piece_clearing_numbers = {}  # clearing_number: piece_count
+    ) -> tuple[bool, list[Workshop]]:
+        """returns a tuple of (crafting_satisfied, list of crafting pieces)
+        the first item can be used to confirm that we have enough crafting pieces to craft the card
+        """
+        crafting_piece_clearing_numbers: dict[int, int] = (
+            {}
+        )  # clearing_number: piece_count
         for key, value in request.data.items():
             if "cn_" in key:
                 try:
@@ -183,37 +203,22 @@ class CatCraftStepView(GameActionView):
         game = self.game(game_id)
         player = self.player(request, game_id)
         # check that we have workshops in the given clearing numbers
+        crafting_pieces: list[Workshop] = []
         for clearing_number in crafting_piece_clearing_numbers:
             try:
-                validate_unused_workshops_by_clearing_number(
+                workshops = validate_unused_workshops_by_clearing_number(
                     player,
                     clearing_number,
                     crafting_piece_clearing_numbers[clearing_number],
                 )
+                crafting_pieces.extend(workshops)
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
 
-        # compare the suits needed to the crafting pieces
-        suits_needed = card.value.cost
-        for clearing_number in crafting_piece_clearing_numbers:
-            suit = Clearing.objects.get(game=game, clearing_number=clearing_number).suit
-            for _ in range(len(crafting_piece_clearing_numbers[clearing_number])):
-                suit_idx = suits_needed.index(suit)
-                if suit_idx == -1:
-                    suit_idx = suits_needed.index(Suit.WILD)
-                    if suit_idx == -1:
-                        raise ValueError(
-                            "Selected crafting piece does not match crafting requirements"
-                        )
-                suits_needed.pop(suit_idx)
-        crafting_pieces = []
-        for clearing_number in crafting_piece_clearing_numbers:
-            clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
-            workshops = list(
-                Workshop.objects.filter(player=player, building_slot__clearing=clearing)
-            )
-            crafting_pieces.extend(workshops)
-        return suits_needed, crafting_pieces
+        satisfied = validate_crafting_pieces_satisfy_requirements(
+            player, card, crafting_pieces
+        )
+        return satisfied, crafting_pieces
 
     def end_step(self, request, game_id: int):
         player = self.player(request, game_id)
@@ -293,7 +298,7 @@ class CatActionsView(GameActionView):
 
     def post_action(self, request, game_id: int):
         self.validate_timing(request, game_id)
-        if request.data["action"] is "":
+        if request.data["action"] == "":
             self.end_step(request, game_id)
             return Response({"name": "completed"})
 
