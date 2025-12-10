@@ -64,7 +64,13 @@ def get_cats_daylight_turn_action(phase: CatDaylight):
 
 
 def get_cats_evening_turn_action(phase: CatEvening):
-    raise ValueError("Not yet implemented")
+    match phase.step:
+        case CatEvening.CatEveningSteps.DRAWING:
+            return reverse("cats-evening-draw-cards")
+        case CatEvening.CatEveningSteps.DISCARDING:
+            return reverse("cats-evening-discard-cards")
+        case _:
+            raise ValueError("Invalid cats evening step")
 
 
 def get_birds_birdsong_turn_action(phase: BirdBirdsong):

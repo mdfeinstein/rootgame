@@ -27,6 +27,7 @@ from rest_framework import status
 
 class CatsPickCornerView(GameActionView):
     action_name = "CATS_PICK_CORNER"
+    faction = Faction.CATS
     faction_string = Faction.CATS.label
     first_step = {
         "faction": faction_string,
@@ -38,7 +39,7 @@ class CatsPickCornerView(GameActionView):
         ],
     }
 
-    def post(self, request, game_id: int, route: str):
+    def route_post(self, request, game_id: int, route: str):
         if route == "corner":
             return self.post_corner(request, game_id)
         elif route == "confirm":
@@ -49,7 +50,7 @@ class CatsPickCornerView(GameActionView):
     def post_corner(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(game, player)
+        self.validate_timing(request, game_id)
         # check that corner is valid
         clearing_number = int(request.data["corner_clearing_number"])
         if clearing_number not in [1, 2, 3, 4]:
@@ -79,7 +80,7 @@ class CatsPickCornerView(GameActionView):
         if not confirmation:
             # client will reset and check for its next options.
             return Response({"name": "canceled"})
-        self.validate_timing(game, player)
+        self.validate_timing(request, game_id)
         try:
             clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
         except Clearing.DoesNotExist as e:
@@ -94,10 +95,12 @@ class CatsPickCornerView(GameActionView):
         # need formal way to signal action completed, look for next action
         return Response({"name": "completed"})
 
-    def validate_timing(self, game: Game, player: Player):
+    def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""
         try:
-            validate_timing(player, CatsSimpleSetup.Steps.PICKING_CORNER)
+            validate_timing(
+                self.player(request, game_id), CatsSimpleSetup.Steps.PICKING_CORNER
+            )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
 
@@ -116,7 +119,7 @@ class CatsPlaceBuildingView(GameActionView):
         ],
     }
 
-    def post(self, request, game_id: int, route: str):
+    def route_post(self, request, game_id: int, route: str):
         if route == "clearing":
             return self.post_clearing(request, game_id)
         elif route == "building_type":
@@ -128,7 +131,6 @@ class CatsPlaceBuildingView(GameActionView):
     def post_clearing(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(game, player)
         clearing_number = int(request.data["building_clearing_number"])
         try:
             self.validate_clearing_number(clearing_number, game, player)
@@ -152,7 +154,6 @@ class CatsPlaceBuildingView(GameActionView):
     def post_building_type(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(game, player)
         building_type: str = request.data["building_type"]
         # check that building type is valid
         self.validate_building_type(player, building_type)
@@ -175,8 +176,7 @@ class CatsPlaceBuildingView(GameActionView):
         return Response(serializer.data)
 
     def post_confirm(self, request, game_id: int):
-        # game = self.game(request)
-        # self.validate_timing(game)
+
         confirmation = bool(request.data["confirm"])
         if not confirmation:
             # client will reset and check for its next options.
@@ -194,10 +194,12 @@ class CatsPlaceBuildingView(GameActionView):
             raise ValidationError({"detail": str(e)})
         return Response({"name": "completed"})
 
-    def validate_timing(self, game: Game, player: Player):
+    def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""
         try:
-            validate_timing(player, CatsSimpleSetup.Steps.PLACING_BUILDINGS)
+            validate_timing(
+                self.player(request, game_id), CatsSimpleSetup.Steps.PLACING_BUILDINGS
+            )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
 
@@ -228,6 +230,7 @@ class CatsPlaceBuildingView(GameActionView):
 
 class CatsConfirmCompletedSetupView(GameActionView):
     action_name = "CATS_CONFIRM_COMPLETED_SETUP"
+    faction = Faction.CATS
     faction_string = Faction.CATS.label
 
     first_step = {
@@ -238,21 +241,22 @@ class CatsConfirmCompletedSetupView(GameActionView):
         "payload_details": [],
     }
 
-    def post(self, request, game_id: int, route: str):
+    def route_post(self, request, game_id: int, route: str):
         if route != "confirm":
             raise ValidationError("Invalid route")
-        game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(game, player)
         try:
             confirm_completed_setup(player)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return Response({"name": "completed"})
 
-    def validate_timing(self, game: Game, player: Player):
+    def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""
         try:
-            validate_timing(player, CatsSimpleSetup.Steps.PENDING_CONFIRMATION)
+            validate_timing(
+                self.player(request, game_id),
+                CatsSimpleSetup.Steps.PENDING_CONFIRMATION,
+            )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})

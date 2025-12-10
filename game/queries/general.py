@@ -122,3 +122,8 @@ def validate_player_has_card_in_hand(player: Player, card: CardsEP) -> HandEntry
     if card_in_hand is None:
         raise ValueError(f"Player does not have card in hand. card name: {card.name}")
     return card_in_hand
+
+
+def get_player_hand_size(player: Player) -> int:
+    """returns the number of cards in the player's hand"""
+    return HandEntry.objects.filter(player=player).count()

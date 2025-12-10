@@ -4,6 +4,7 @@ from game.views.DevLoginView import DevLoginView
 from game.views.action_views.battle import BattleActionView
 from game.views.action_views.cats.birdsong import CatPlaceWoodView
 from game.views.action_views.cats.daylight import CatActionsView, CatCraftStepView
+from game.views.action_views.cats.evening import CatsDrawCardsView
 from game.views.action_views.setup.birds import (
     BirdsChooseLeaderInitialView,
     BirdsConfirmCompletedSetupView,
@@ -166,6 +167,24 @@ urlpatterns = [
     path(
         "api/cats/daylight/actions/<int:game_id>/<str:route>/",
         CatActionsView.as_view(),
+    ),
+    path(
+        "api/cats/evening/draw-cards/",
+        CatsDrawCardsView.as_view(),
+        name="cats-evening-draw-cards",
+    ),
+    path(
+        "api/cats/evening/draw-cards/<int:game_id>/<str:route>/",
+        CatsDrawCardsView.as_view(),
+    ),
+    path(
+        "api/cats/evening/discard-cards/",
+        CatsDrawCardsView.as_view(),
+        name="cats-evening-discard-cards",
+    ),
+    path(
+        "api/cats/evening/discard-cards/<int:game_id>/<str:route>/",
+        CatsDrawCardsView.as_view(),
     ),
     path(
         "api/battle/",

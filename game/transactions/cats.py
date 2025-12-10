@@ -1,24 +1,48 @@
+from typing import Iterable, Sequence
 from django.db import transaction
 from game.game_data.cards.exiles_and_partisans import CardsEP
-from game.models.cats.buildings import CatBuildingTypes, Sawmill, Workshop
+from game.models.cats.buildings import CatBuildingTypes, Recruiter, Sawmill, Workshop
 from game.models.cats.tokens import CatWood
-from game.models.cats.turn import CatBirdsong, CatDaylight, CatTurn
-from game.models.game_models import Clearing, HandEntry, Piece, Player, Suit
+from game.models.cats.turn import CatBirdsong, CatDaylight, CatEvening, CatTurn
+from game.models.game_models import (
+    Clearing,
+    Faction,
+    HandEntry,
+    Piece,
+    Player,
+    Suit,
+    Warrior,
+)
 from game.queries.cats.building import (
+    buildings_on_board,
     get_score_after_placement,
     get_usable_wood_for_building,
     get_wood_cost,
 )
 from game.queries.cats.crafting import validate_crafting_pieces_satisfy_requirements
-from game.queries.cats.turn import get_phase
+from game.queries.cats.recruit import (
+    is_enough_reserve,
+    is_recruit_used,
+    unused_recruiters,
+)
+from game.queries.cats.turn import get_actions_remaining, get_phase, get_turn
 from game.queries.cats.wood import get_sawmills_by_suit
 from game.queries.general import (
     available_building_slot,
+    get_current_player,
+    get_player_hand_size,
     validate_player_has_card_in_hand,
 )
-from game.transactions.general import craft_card, discard_card_from_hand, raise_score
+from game.transactions.general import (
+    craft_card,
+    discard_card_from_hand,
+    draw_card_from_deck,
+    next_players_turn,
+    raise_score,
+)
 from game.utility.textchoice import next_choice
 from django.apps import apps
+from django.db.models import QuerySet
 
 
 @transaction.atomic
@@ -138,7 +162,7 @@ def overwork(player: Player, clearing: Clearing, card: CardsEP):
     # check that player has card in hand
     hand_entry = validate_player_has_card_in_hand(player, card)
     # check that player has a sawmill in given clearing, and that the suit matches the card
-    sawmills = get_sawmills_by_suit(player, card.value.suit.convert_to_textchoice())
+    sawmills = get_sawmills_by_suit(player, card.value.suit)
     if not sawmills.filter(clearing=clearing).exists():
         raise ValueError("No sawmill in that clearing")
     # check that there is wood left to produce
@@ -181,3 +205,136 @@ def cat_craft_card(player: Player, card: CardsEP, crafting_pieces: list[Workshop
     if not validate_crafting_pieces_satisfy_requirements(player, card, crafting_pieces):
         raise ValueError("Not enough crafting pieces to craft card")
     craft_card(card_in_hand, crafting_pieces)
+
+
+@transaction.atomic
+def cat_recruit(player: Player, recruiters: QuerySet[Recruiter]):
+    """recruits warriors from the given recruiter stations"""
+    # check that recruit hasn't been used this turn
+    if is_recruit_used(player):
+        raise ValueError("Recruit has already been used this turn")
+    # check none of the given recruiters have been used yet and are on the board
+    if not all(
+        [
+            (not recruiter.used and recruiter.building_slot is not None)
+            for recruiter in recruiters
+        ]
+    ):
+        raise ValueError("Not all recruiters have been used")
+    # chekc that there are enough warriors in the supply for recruiters given
+    if Warrior.objects.filter(player=player, clearing=None).count() < len(recruiters):
+        raise ValueError(
+            f"Not enough warriors in supply to recruit at {len(recruiters)} recruiter stations"
+        )
+    # check timing
+    if get_current_player(player.game) != player:
+        raise ValueError("Not this player's turn")
+    daylight = get_phase(player)
+    if type(daylight) != CatDaylight:
+        raise ValueError("Not Daylight phase")
+    if daylight.step != CatDaylight.CatDaylightSteps.ACTIONS:
+        raise ValueError("Not actions step")
+    # check that there are acitons available
+    if get_actions_remaining(player) < 1:
+        raise ValueError("No actions remaining")
+    # place warriors at each recruiter station
+    for recruiter in recruiters:
+        warrior = Warrior.objects.filter(clearing=None, player=player).first()
+        assert warrior is not None, "no warriors left to place"
+        warrior.clearing = recruiter.building_slot.clearing
+        warrior.save()
+        recruiter.used = True
+        recruiter.save()
+    # update daylight step
+    daylight.recruit_used = True
+    daylight.actions_left -= 1
+    daylight.save()
+
+
+@transaction.atomic
+def cat_recruit_all(player: Player):
+    """recruits at every recruiter station on the board
+    Assumes that there are enough warriors in the supply for all recruiters on the board
+    """
+    recruiters = unused_recruiters(player)
+    if is_enough_reserve(player):
+        cat_recruit(player, recruiters)
+    else:
+        raise ValueError("Not enough recruiters on the board to recruit all")
+
+
+@transaction.atomic
+def end_action_step(self, request, game_id: int):
+    """ends the current action step, moving to the next step and possibly the next phase"""
+    player = self.player(request, game_id)
+    daylight = get_phase(player)
+    if type(daylight) != CatDaylight:
+        raise ValueError("Not Daylight phase")
+    if daylight.step != CatDaylight.CatDaylightSteps.ACTIONS:
+        raise ValueError("Not actions step")
+    daylight.step = next_choice(CatDaylight.CatDaylightSteps, daylight.step)
+    daylight.save()
+    # if daylight.step == CatDaylight.CatDaylightSteps.COMPLETED:
+    #     # move to evening
+    #     turn = get_turn(player)
+    #     turn.
+
+
+@transaction.atomic
+def cat_evening_draw(player: Player):
+    """draws cards from the deck and adds it to the cat player's hand
+    number of cards depends on recruiters on the board
+    """
+    # verify player is cats
+    if player.faction != Faction.CATS:
+        raise ValueError("Not a cats player")
+    # check that it is the cats players turn
+    if get_current_player(player.game) != player:
+        raise ValueError("Not this player's turn")
+    # check that it is evening and the draw step
+    evening = get_phase(player)
+    if type(evening) != CatEvening:
+        raise ValueError("Not Evening phase")
+    if evening.step != CatEvening.CatEveningSteps.DRAWING:
+        raise ValueError("Not Drawing step")
+    # draw cards according to recruiters on board
+    cards_drawn_by_recruiters_on_board = [
+        1,
+        1,
+        2,
+        2,
+        3,
+        3,
+    ]  # idx: recruiters  on board, val: number of cards drawn
+    recruiter_count = buildings_on_board(player, CatBuildingTypes.RECRUITER)
+    cards_to_draw = cards_drawn_by_recruiters_on_board[recruiter_count]
+    for _ in range(cards_to_draw):
+        draw_card_from_deck(player)
+    # move to next step (discard, presumably)
+    evening.step = next_choice(CatEvening.CatEveningSteps, evening.step)
+    if (
+        evening.step == CatEvening.CatEveningSteps.DISCARDING
+        and get_player_hand_size(player) <= 5
+    ):
+        # nothing to discard, move to end of turn
+        evening.step = next_choice(CatEvening.CatEveningSteps, evening.step)
+        evening.save()
+        if evening.step == CatEvening.CatEveningSteps.COMPLETED:
+            # move to next turn
+            next_players_turn(player.game)
+            # create next cats turn
+            create_cats_turn(player)
+
+
+@transaction.atomic
+def cat_end_turn(player: Player):
+    """ends the current turn, generating the next turn and moving to the next players phase
+    careful where this is called. will move evening to completed if called.
+    """
+    evening = get_phase(player)
+    if type(evening) != CatEvening:
+        raise ValueError("Not Evening phase")
+    evening.step = CatEvening.CatEveningSteps.COMPLETED
+    evening.save()
+    create_cats_turn(player)
+    next_players_turn(player.game)

@@ -9,11 +9,14 @@ def get_phase(player: Player) -> BirdBirdsong | BirdDaylight | BirdEvening:
     if bird_turn is None:
         raise ValueError("No turns found")
     # get phase
-    if bird_turn.birdsong.step != BirdBirdsong.BirdBirdsongSteps.COMPLETED:
-        return bird_turn.birdsong
-    elif bird_turn.daylight.step != BirdDaylight.BirdDaylightSteps.COMPLETED:
-        return bird_turn.daylight
-    elif bird_turn.evening.step != BirdEvening.BirdEveningSteps.COMPLETED:
-        return bird_turn.evening
+    birdsong = BirdBirdsong.objects.get(turn=bird_turn)
+    daylight = BirdDaylight.objects.get(turn=bird_turn)
+    evening = BirdEvening.objects.get(turn=bird_turn)
+    if birdsong.step != BirdBirdsong.BirdBirdsongSteps.COMPLETED:
+        return birdsong
+    elif daylight.step != BirdDaylight.BirdDaylightSteps.COMPLETED:
+        return daylight
+    elif evening.step != BirdEvening.BirdEveningSteps.COMPLETED:
+        return evening
     else:
         raise ValueError("All phases of this turn completed")

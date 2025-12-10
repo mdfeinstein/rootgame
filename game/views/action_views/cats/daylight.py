@@ -20,6 +20,12 @@ from game.queries.cats.crafting import (
     validate_crafting_pieces_satisfy_requirements,
     validate_unused_workshops_by_clearing_number,
 )
+from game.queries.cats.recruit import (
+    is_enough_reserve,
+    is_recruit_used,
+    troops_in_reserve,
+    unused_recruiters,
+)
 from game.queries.cats.turn import get_actions_remaining, get_phase
 from game.queries.cats.wood import get_sawmills_by_suit
 from game.queries.general import (
@@ -36,6 +42,8 @@ from game.transactions.cats import (
     birds_for_hire,
     build_building,
     cat_craft_card,
+    cat_recruit_all,
+    end_action_step,
     overwork,
 )
 from game.transactions.general import craft_card, move_warriors
@@ -51,6 +59,7 @@ from django.db import transaction
 class CatCraftStepView(GameActionView):
     action_name = "CAT_CRAFT_STEP"
     faction_string = Faction.CATS.label
+    faction = Faction.CATS
 
     first_step = {
         "faction": faction_string,
@@ -60,7 +69,7 @@ class CatCraftStepView(GameActionView):
         "payload_details": [{"type": "card", "name": "card_to_craft"}],
     }
 
-    def post(self, request, game_id: int, route: str):
+    def route_post(self, request, game_id: int, route: str):
         if route == "card":
             return self.post_card(request, game_id)
         elif route == "piece":
@@ -154,8 +163,7 @@ class CatCraftStepView(GameActionView):
         return Response({"name": "completed"})
 
     def validate(self, request, game_id: int) -> tuple[bool, list[Workshop]]:
-        # validate timing
-        self.validate_timing(request, game_id)
+
         # validate card in hand and return card info
         card = self.validate_card(request, game_id)
         # get crafting pieces (or determine if not possible)
@@ -164,7 +172,7 @@ class CatCraftStepView(GameActionView):
         )
         return satisfied, crafting_pieces
 
-    def validate_timing(self, request, game_id: int):
+    def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""
         phase = get_phase(self.player(request, game_id))
         if type(phase) != CatDaylight:
@@ -222,14 +230,13 @@ class CatCraftStepView(GameActionView):
 
     def end_step(self, request, game_id: int):
         player = self.player(request, game_id)
-        daylight = get_phase(player)
-        daylight.step = next_choice(CatDaylight.CatDaylightSteps, daylight.step)
-        daylight.save()
+        end_action_step(self, request, game_id)
 
 
 class CatActionsView(GameActionView):
     action_name = "CAT_ACTIONS"
     faction_string = Faction.CATS.label
+    faction = Faction.CATS
 
     first_step = {
         "faction": faction_string,
@@ -259,7 +266,7 @@ class CatActionsView(GameActionView):
             step = {
                 "faction": self.faction_string,
                 "name": "select_action",
-                "prompt": "Select action: march, battle, build, overwork, or birds-for-hire. Or, choose nothing to end action step. "
+                "prompt": "Select action: march, battle, build, overwork, recruit, or birds-for-hire. Or, choose nothing to end action step. "
                 + f"Actions remaining: {daylight.actions_left}",
                 "endpoint": "action",
                 "payload_details": [{"type": "action_type", "name": "action"}],
@@ -267,7 +274,7 @@ class CatActionsView(GameActionView):
         self.first_step = step
         return super().get(request)
 
-    def post(self, request, game_id: int, route: str):
+    def route_post(self, request, game_id: int, route: str):
         match route:
             case "action":
                 return self.post_action(request, game_id)
@@ -289,6 +296,10 @@ class CatActionsView(GameActionView):
                 return self.post_overwork_card(request, game_id)
             case "overwork-clearing":
                 return self.post_overwork_clearing(request, game_id)
+            case "recruit-all":
+                return self.post_recruit_all(request, game_id)
+            case "recruit-clearing":
+                return self.post_recruit_clearing(request, game_id)
             case "birdsforhire-card":
                 return self.post_birdsforhire_card(request, game_id)
             case _:
@@ -297,13 +308,12 @@ class CatActionsView(GameActionView):
                 )
 
     def post_action(self, request, game_id: int):
-        self.validate_timing(request, game_id)
         if request.data["action"] == "":
             self.end_step(request, game_id)
             return Response({"name": "completed"})
 
         actions_remaining = get_actions_remaining(self.player(request, game_id))
-        if actions_remaining == 0:
+        if actions_remaining == 0 and request.data["action"] != "birds-for-hire":
             raise ValidationError("No actions remaining")
         match request.data["action"]:
             case "march":
@@ -345,6 +355,36 @@ class CatActionsView(GameActionView):
                     "endpoint": "overwork-card",
                     "payload_details": [{"type": "card", "name": "overwork_card"}],
                 }
+            case "recruit":
+                if is_recruit_used(self.player(request, game_id)):
+                    raise ValidationError("Recruit has already been used this turn")
+                # if more reserve warriors than recruiters on board, go to all
+                # else, go to clearing route to iteratively select recruiters
+                if is_enough_reserve(self.player(request, game_id)):
+                    to_recruit = unused_recruiters(
+                        self.player(request, game_id)
+                    ).count()
+                    step = {
+                        "faction": self.faction_string,
+                        "name": "select_recruit_all",
+                        "prompt": f"Confirm to recruit {to_recruit} warriors",
+                        "endpoint": "recruit-all",
+                        "payload_details": [{"type": "confirm", "name": "confirm"}],
+                    }
+                else:
+                    troops = troops_in_reserve(self.player(request, game_id))
+                    step = {
+                        "faction": self.faction_string,
+                        "name": "select_recruit_clearing",
+                        "prompt": f"Only {troops} warriors in reserve. Select recruiter clearing to recruit in.",
+                        "endpoint": "recruit-clearing",
+                        "payload_details": [
+                            {
+                                "type": "clearing_number",
+                                "name": "recruiter_clearing_number",
+                            }
+                        ],
+                    }
             case "birds-for-hire":
                 step = {
                     "faction": self.faction_string,
@@ -359,7 +399,6 @@ class CatActionsView(GameActionView):
         return Response(serializer.data)
 
     def post_march_clearing_origin(self, request, game_id: int):
-        self.validate_timing(request, game_id)
         clearing_number = int(request.data["origin_clearing_number"])
         try:
             clearing = Clearing.objects.get(
@@ -391,7 +430,6 @@ class CatActionsView(GameActionView):
         return Response(serializer.data)
 
     def post_march_clearing_destination(self, request, game_id: int):
-        self.validate_timing(request, game_id)
         destination_clearing_number = int(request.data["destination_clearing_number"])
         origin_clearing_number = int(request.data["origin_clearing_number"])
         # validate rulership of either clearing
@@ -428,7 +466,6 @@ class CatActionsView(GameActionView):
 
     @transaction.atomic
     def post_march_count(self, request, game_id: int):
-        self.validate_timing(request, game_id)
         count = int(request.data["warriors_to_move"])
         origin_clearing = Clearing.objects.get(
             game=self.game(game_id),
@@ -479,7 +516,6 @@ class CatActionsView(GameActionView):
     def post_battle_clearing(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(request, game_id)
         clearing_number = int(request.data["battle_clearing_number"])
         self.validate_battle_clearing(game, player, clearing_number)
         step = {
@@ -501,7 +537,6 @@ class CatActionsView(GameActionView):
     def post_battle_defender(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(request, game_id)
         clearing_number = int(request.data["battle_clearing_number"])
         defender_faction = get_choice_value_by_label_or_value(
             Faction, request.data["defender_faction"].capitalize()
@@ -523,7 +558,6 @@ class CatActionsView(GameActionView):
     def post_build_building(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(request, game_id)
         building_type_string = request.data["building_type"]
         # validate this building type is buildable (check that building is in the supply, and that enough wood is out of the supply that its theoretically possible)
         try:
@@ -563,7 +597,6 @@ class CatActionsView(GameActionView):
     def post_build_clearing(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(request, game_id)
         clearing_number = int(request.data["build_clearing_number"])
         building_type_string = request.data["building_type"]
         try:
@@ -617,7 +650,6 @@ class CatActionsView(GameActionView):
     def post_build_wood(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(request, game_id)
         building_type_string = request.data["building_type"]
         try:
             building_type = CatBuildingTypes(building_type_string.upper())
@@ -690,8 +722,6 @@ class CatActionsView(GameActionView):
     def post_overwork_card(self, request, game_id: int):
         card_name = request.data["overwork_card"].upper().replace(" ", "_")
         card_data = CardsEP[card_name]
-        self.validate_player(request, game_id)
-        self.validate_timing(request, game_id)
         validate_player_has_card_in_hand(self.player(request, game_id), card_data)
         # check that player has a sawmill in the correct colored suit
         textchoice_suit = card_data.value.suit
@@ -718,7 +748,6 @@ class CatActionsView(GameActionView):
     def post_overwork_clearing(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(request, game_id)
         clearing_number = int(request.data["overwork_clearing_number"])
         try:
             clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
@@ -735,6 +764,24 @@ class CatActionsView(GameActionView):
         }
         serializer = GameActionStepSerializer(step)
         return Response(serializer.data)
+
+    def post_recruit_all(self, request, game_id: int):
+        try:
+            cat_recruit_all(self.player(request, game_id))
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
+        step = {
+            "name": "completed",
+        }
+        serializer = GameActionStepSerializer(step)
+        return Response(serializer.data)
+
+    def post_recruit_clearing(self, request, game_id: int):
+        """
+        need to step by step guide player thru selecting enough recruiters. once there are enough,
+        use cat_recruit to place warriors at the selected recruiters
+        """
+        raise ValidationError("Not yet implemented")
 
     def post_birdsforhire_card(self, request, game_id: int):
         card_name = request.data["birdsforhire_card"].upper().replace(" ", "_")
@@ -756,10 +803,9 @@ class CatActionsView(GameActionView):
         daylight.step = next_choice(CatDaylight.CatDaylightSteps, daylight.step)
         daylight.save()
 
-    def validate_timing(self, request, game_id: int):
+    def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""
         # validate requesting player is cats first, since get_phase assumes the player is cats
-        self.validate_player(request, game_id)
         phase = get_phase(self.player(request, game_id))
         if type(phase) != CatDaylight:
             raise ValidationError("Not Daylight phase")
@@ -795,8 +841,8 @@ class CatActionsView(GameActionView):
     def cat_player(self, request, game_id: int):
         return Player.objects.get(game=self.game(game_id), faction=Faction.CATS)
 
-    def validate_player(self, request, game_id: int):
-        """validate that player making a post request is the cat player"""
-        player = self.player(request, game_id)
-        if player != self.cat_player(request, game_id):
-            raise ValidationError("Cat players turn, only they can make a move")
+    # def validate_player(self, request, game_id: int):
+    #     """validate that player making a post request is the cat player"""
+    #     player = self.player(request, game_id)
+    #     if player != self.cat_player(request, game_id):
+    #         raise ValidationError("Cat players turn, only they can make a move")

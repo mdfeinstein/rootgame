@@ -5,9 +5,23 @@ from game.models import Player
 class BirdTurn(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     turn_number = models.PositiveSmallIntegerField()
-    birdsong = models.ForeignKey("BirdBirdsong", on_delete=models.CASCADE)
-    daylight = models.ForeignKey("BirdDaylight", on_delete=models.CASCADE)
-    evening = models.ForeignKey("BirdEvening", on_delete=models.CASCADE)
+
+    @classmethod
+    def create_turn(cls, player: Player):
+        """creates a new turn for the player"""
+
+        turn_counts = cls.objects.filter(player=player).count()
+        # create turn
+        turn = cls(
+            player=player,
+            turn_number=turn_counts,
+        )
+        turn.save()
+        # create phases
+        birdsong = BirdBirdsong.objects.create(turn=turn)
+        daylight = BirdDaylight.objects.create(turn=turn)
+        evening = BirdEvening.objects.create(turn=turn)
+        return turn
 
 
 class BirdBirdsong(models.Model):
@@ -18,6 +32,9 @@ class BirdBirdsong(models.Model):
         EMERGENCY_ROOSTING = "3", "Emergency roosting"
         COMPLETED = "4", "Completed"
 
+    turn = models.ForeignKey(
+        BirdTurn, on_delete=models.CASCADE, related_name="birdsong"
+    )
     step = models.CharField(
         max_length=1,
         choices=BirdBirdsongSteps.choices,
@@ -42,6 +59,9 @@ class BirdDaylight(models.Model):
         PURGE = "b", "Purge"
         DEPOSE = "c", "Depose"
 
+    turn = models.ForeignKey(
+        BirdTurn, on_delete=models.CASCADE, related_name="daylight"
+    )
     step = models.CharField(
         max_length=1,
         choices=BirdDaylightSteps.choices,
@@ -58,6 +78,7 @@ class BirdEvening(models.Model):
         DISCARDING = "3", "Discarding Cards"
         COMPLETED = "4", "Completed"
 
+    turn = models.ForeignKey(BirdTurn, on_delete=models.CASCADE, related_name="evening")
     step = models.CharField(
         max_length=1,
         choices=BirdEveningSteps.choices,

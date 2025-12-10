@@ -15,6 +15,7 @@ from rest_framework import status
 
 class CatPlaceWoodView(GameActionView):
     action_name = "CAT_PLACE_WOOD"
+    faction = Faction.CATS
     faction_string = Faction.CATS.label
 
     def player(self, request, game_id: int):
@@ -33,7 +34,7 @@ class CatPlaceWoodView(GameActionView):
         self.first_step = step
         return super().get(request)
 
-    def post(self, request, game_id: int, route: str):
+    def route_post(self, request, game_id: int, route: str):
         if route == "clearing":
             return self.post_clearing(request, game_id)
         elif route == "confirm_all":
@@ -43,7 +44,6 @@ class CatPlaceWoodView(GameActionView):
     @transaction.atomic
     def post_confirm_all(self, request, game_id: int):
         player = self.player(request, game_id)
-        self.validate_timing(game_id)
         sawmills = Sawmill.objects.filter(
             player=player, used=False, building_slot__isnull=False
         )
@@ -64,7 +64,6 @@ class CatPlaceWoodView(GameActionView):
         No separate confirm step for this as of now.
         """
         player = self.player(request, game_id)
-        self.validate_timing(game_id)
         clearing_number = int(request.data["wood_clearing_number"])
         sawmill = get_unused_sawmill_by_clearing_number(player, clearing_number)
         if sawmill is None:
@@ -102,7 +101,7 @@ class CatPlaceWoodView(GameActionView):
             }
         return step
 
-    def validate_timing(self, game_id: int):
+    def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""
         phase = get_phase(self.player(self.request, game_id))
         if type(phase) != CatBirdsong:

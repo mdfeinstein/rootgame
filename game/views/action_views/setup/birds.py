@@ -19,6 +19,7 @@ from rest_framework.exceptions import ValidationError
 
 class BirdsPickCornerView(GameActionView):
     action_name = "BIRDS_PICK_CORNER"
+    faction = Faction.BIRDS
     faction_string = Faction.BIRDS.label
     first_step = {
         "faction": faction_string,
@@ -31,7 +32,7 @@ class BirdsPickCornerView(GameActionView):
         ],
     }
 
-    def post(self, request, game_id: int, route: str):
+    def route_post(self, request, game_id: int, route: str):
         if route == "corner":
             return self.post_corner(request, game_id)
         elif route == "confirm":
@@ -41,7 +42,6 @@ class BirdsPickCornerView(GameActionView):
     def post_corner(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(game, player)
         # check that corner is valid
         clearing_number = int(request.data["corner_clearing_number"])
         try:
@@ -73,7 +73,6 @@ class BirdsPickCornerView(GameActionView):
         if not confirmation:
             # client will reset and check for its next options.
             return Response({"name": "canceled"})
-        self.validate_timing(game, player)
         try:
             clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
         except Clearing.DoesNotExist as e:
@@ -86,8 +85,10 @@ class BirdsPickCornerView(GameActionView):
         # need formal way to signal action completed, look for next action
         return Response({"name": "completed"})
 
-    def validate_timing(self, game: Game, player: Player):
+    def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""
+        game = self.game(game_id)
+        player = self.player(request, game_id)
         game_setup = GameSimpleSetup.objects.get(game=game)
         if game_setup.status != GameSimpleSetup.GameSetupStatus.BIRDS_SETUP:
             raise ValidationError("Not this player's setup turn")
@@ -100,6 +101,7 @@ class BirdsPickCornerView(GameActionView):
 
 class BirdsChooseLeaderInitialView(GameActionView):
     action_name = "BIRDS_CHOOSE_LEADER_INITIAL"
+    faction = Faction.BIRDS
     faction_string = Faction.BIRDS.label
     first_step = {
         "faction": faction_string,
@@ -109,7 +111,7 @@ class BirdsChooseLeaderInitialView(GameActionView):
         "payload_details": [{"type": "leader", "name": "leader"}],
     }
 
-    def post(self, request, game_id: int, route: str):
+    def route_post(self, request, game_id: int, route: str):
         if route == "leader":
             return self.post_leader(request, game_id)
         elif route == "confirm":
@@ -119,7 +121,6 @@ class BirdsChooseLeaderInitialView(GameActionView):
     def post_leader(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(game, player)
         leader = request.data["leader"]
         # check that leader is valid
         try:
@@ -147,7 +148,6 @@ class BirdsChooseLeaderInitialView(GameActionView):
     def post_confirm(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(game, player)
         confirmation = bool(request.data["confirm"])
         if not confirmation:
             # client will reset and check for its next options.
@@ -160,8 +160,10 @@ class BirdsChooseLeaderInitialView(GameActionView):
         choose_leader_initial(player, BirdLeader.BirdLeaders(leader_value))
         return Response({"name": "completed"})
 
-    def validate_timing(self, game: Game, player: Player):
+    def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""
+        game = self.game(game_id)
+        player = self.player(request, game_id)
         game_setup = GameSimpleSetup.objects.get(game=game)
         if game_setup.status != GameSimpleSetup.GameSetupStatus.BIRDS_SETUP:
             raise ValidationError("Not this player's setup turn")
@@ -174,6 +176,7 @@ class BirdsChooseLeaderInitialView(GameActionView):
 
 class BirdsConfirmCompletedSetupView(GameActionView):
     action_name = "BIRDS_CONFIRM_COMPLETED_SETUP"
+    faction = Faction.BIRDS
     faction_string = Faction.BIRDS.label
 
     first_step = {
@@ -184,20 +187,20 @@ class BirdsConfirmCompletedSetupView(GameActionView):
         "payload_details": [{"type": "confirm", "name": "confirm"}],
     }
 
-    def post(self, request, game_id: int, route: str):
+    def route_post(self, request, game_id: int, route: str):
         if route != "confirm":
             raise ValidationError("Invalid route")
-        game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(game, player)
         try:
             confirm_completed_setup(player)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return Response({"name": "completed"})
 
-    def validate_timing(self, game: Game, player: Player):
+    def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""
+        game = self.game(game_id)
+        player = self.player(request, game_id)
         game_setup = GameSimpleSetup.objects.get(game=game)
         if game_setup.status != GameSimpleSetup.GameSetupStatus.BIRDS_SETUP:
             raise ValidationError("Not this player's setup turn")

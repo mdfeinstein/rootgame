@@ -4,6 +4,7 @@ from game.models.birds.setup import BirdsSimpleSetup
 from game.models import Clearing, Player, Warrior, WarriorSupplyEntry
 from django.db import transaction
 
+from game.models.birds.turn import BirdTurn
 from game.queries.general import available_building_slot
 from game.models.cats.tokens import CatKeep
 from game.models.events.setup import GameSimpleSetup
@@ -122,3 +123,10 @@ def confirm_completed_setup(player: Player):
         GameSimpleSetup.GameSetupStatus, simple_setup.status
     )
     simple_setup.save()
+    create_birds_turn(player)
+
+
+@transaction.atomic
+def create_birds_turn(player: Player):
+    # create turn
+    turn = BirdTurn.create_turn(player)

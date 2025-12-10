@@ -4,6 +4,7 @@ from game.models import DeckEntry, Player, Suit, Warrior, WarriorSupplyEntry
 from game.models.wa.buildings import WABase
 from game.models.wa.player import SupporterStackEntry
 from game.models.wa.tokens import WASympathy
+from game.models.wa.turn import WATurn
 
 
 # TODO: create warrior supply could be a general function. only number of warriors is different
@@ -64,3 +65,9 @@ def wa_setup(player: Player):
     create_sympathy_tokens(player)
     create_wa_buildings(player)
     draw_supporters(player)
+    create_wa_turn(player)
+
+
+def create_wa_turn(player: Player):
+    # create turn
+    turn = WATurn.create_turn(player)
