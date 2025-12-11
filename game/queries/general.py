@@ -76,6 +76,11 @@ def warrior_count_in_clearing(player: Player, clearing: Clearing) -> int:
     return Warrior.objects.filter(clearing=clearing, player=player).count()
 
 
+def warrior_count_in_supply(player: Player) -> int:
+    """returns the number of warriors in the player's supply"""
+    return Warrior.objects.filter(player=player, clearing=None).count()
+
+
 def player_has_pieces_in_clearing(player: Player, clearing: Clearing) -> bool:
     """returns True if player has any pieces in clearing"""
     return any(
@@ -103,6 +108,7 @@ def count_player_pieces_in_clearing(player: Player, clearing: Clearing) -> int:
 
 
 def get_current_player(game: Game) -> Player:
+    """returns the player whose turn it is"""
     return Player.objects.get(game=game, turn_order=game.current_turn)
 
 
@@ -127,3 +133,30 @@ def validate_player_has_card_in_hand(player: Player, card: CardsEP) -> HandEntry
 def get_player_hand_size(player: Player) -> int:
     """returns the number of cards in the player's hand"""
     return HandEntry.objects.filter(player=player).count()
+
+
+def validate_legal_move(
+    player: Player, clearing_start: Clearing, clearing_end: Clearing
+):
+    """checks if warriors in origin clearing have any legal moves.
+    also raises if no warriors in origin clearing
+    """
+    if not Warrior.objects.filter(clearing=clearing_start, player=player).exists():
+        raise ValueError("No warriors in origin clearing")
+    # check clearing adjacency
+    if not clearing_start.connected_clearings.filter(pk=clearing_end.pk).exists():
+        raise ValueError("clearing_start is not adjacent to clearing_end")
+    # check rule of clearings
+    rule_target_or_origin = determine_clearing_rule(
+        clearing_end
+    ) or determine_clearing_rule(clearing_start)
+    if not rule_target_or_origin:
+        raise ValueError("player does not control either origin or target clearing")
+
+
+def validate_has_legal_moves(player: Player, clearing: Clearing):
+    """raises if no legal moves from the given clearing"""
+    # get adjacent clearings
+    adjacent_clearings = clearing.connected_clearings.all()
+    for adjacent_clearing in adjacent_clearings:
+        validate_legal_move(player, clearing, adjacent_clearing)

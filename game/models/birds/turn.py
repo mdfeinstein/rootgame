@@ -26,7 +26,7 @@ class BirdTurn(models.Model):
 
 class BirdBirdsong(models.Model):
     class BirdBirdsongSteps(models.TextChoices):
-        NOT_STARTED = "0", "Not Started"
+        # NOT_STARTED = "0", "Not Started"
         EMERGENCY_DRAWING = "1", "Emergency drawing"
         ADD_TO_DECREE = "2", "Add to Decree"
         EMERGENCY_ROOSTING = "3", "Emergency roosting"
@@ -38,7 +38,7 @@ class BirdBirdsong(models.Model):
     step = models.CharField(
         max_length=1,
         choices=BirdBirdsongSteps.choices,
-        default=BirdBirdsongSteps.NOT_STARTED,
+        default=BirdBirdsongSteps.EMERGENCY_DRAWING,
     )
     cards_drawn = models.IntegerField(default=0)
     cards_added_to_decree = models.IntegerField(default=0)
@@ -47,7 +47,7 @@ class BirdBirdsong(models.Model):
 
 class BirdDaylight(models.Model):
     class BirdDaylightSteps(models.TextChoices):
-        NOT_STARTED = "0", "Not Started"
+        # NOT_STARTED = "0", "Not Started"
         CRAFTING = "1", "Crafting"
         RECRUITING = "2", "Recruiting"
         MOVING = "3", "Moving"
@@ -65,14 +65,14 @@ class BirdDaylight(models.Model):
     step = models.CharField(
         max_length=1,
         choices=BirdDaylightSteps.choices,
-        default=BirdDaylightSteps.NOT_STARTED,
+        default=BirdDaylightSteps.CRAFTING,
     )
     # decree model will track which cards have been used
 
 
 class BirdEvening(models.Model):
     class BirdEveningSteps(models.TextChoices):
-        NOT_STARTED = "0", "Not Started"
+        # NOT_STARTED = "0", "Not Started"
         SCORING = "1", "Scoring"
         DRAWING = "2", "Drawing Cards"
         DISCARDING = "3", "Discarding Cards"
@@ -82,6 +82,6 @@ class BirdEvening(models.Model):
     step = models.CharField(
         max_length=1,
         choices=BirdEveningSteps.choices,
-        default=BirdEveningSteps.NOT_STARTED,
+        default=BirdEveningSteps.SCORING,
     )
     cards_drawn = models.IntegerField(default=0)

@@ -1,5 +1,5 @@
 from game.models.birds.buildings import BirdRoost
-from game.models.birds.player import BirdLeader
+from game.models.birds.player import BirdLeader, Vizier
 from game.models.birds.setup import BirdsSimpleSetup
 from game.models import Clearing, Player, Warrior, WarriorSupplyEntry
 from django.db import transaction
@@ -105,6 +105,8 @@ def choose_leader_initial(player: Player, leader: BirdLeader.BirdLeaders):
     picked_leader = BirdLeader.objects.get(player=player, leader=leader)
     picked_leader.active = True
     picked_leader.save()
+    # create viziers according to leader choice
+    Vizier.create_viziers(player)
 
     bird_setup.step = BirdsSimpleSetup.Steps.PENDING_CONFIRMATION
     bird_setup.save()

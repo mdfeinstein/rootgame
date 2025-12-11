@@ -298,7 +298,8 @@ def cat_evening_draw(player: Player):
     if evening.step != CatEvening.CatEveningSteps.DRAWING:
         raise ValueError("Not Drawing step")
     # draw cards according to recruiters on board
-    cards_drawn_by_recruiters_on_board = [
+    cards_drawn_by_recruiters_on_board = [  # 0 on board, 1 on board... all 6 on board
+        1,
         1,
         1,
         2,
@@ -337,4 +338,20 @@ def cat_end_turn(player: Player):
     evening.step = CatEvening.CatEveningSteps.COMPLETED
     evening.save()
     create_cats_turn(player)
+    reset_cats_turn(player)
     next_players_turn(player.game)
+
+
+@transaction.atomic
+def reset_cats_turn(player: Player):
+    """resets cats turn to initial state
+    -- reset workshops crafted_with status
+    -- reset recruiter stations used status
+    -- reset sawmills used status
+    """
+    # reset workshops
+    Workshop.objects.filter(player=player).update(crafted_with=False)
+    # reset recruiter stations
+    Recruiter.objects.filter(player=player).update(used=False)
+    # reset sawmills
+    Sawmill.objects.filter(player=player).update(used=False)

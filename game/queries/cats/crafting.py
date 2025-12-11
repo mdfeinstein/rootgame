@@ -48,6 +48,8 @@ def validate_crafting_pieces_satisfy_requirements(
     suits_needed = card.value.cost
     satisfied = [False for _ in suits_needed]
     for workshop in workshops:
+        if workshop.crafted_with:
+            raise ValueError("A workshop is already used")
         workshop_suit = Suit(workshop.building_slot.clearing.suit)
         print(workshop_suit)
         first_wild_idx: int | None = None

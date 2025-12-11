@@ -112,6 +112,22 @@ def remove_warriors_from_clearing(
 
 
 @transaction.atomic
+def place_warriors_into_clearing(player: Player, clearing: Clearing, number: int):
+    """places warriors into the given clearing.
+    will raise if not enough warriors in the supply
+    """
+    count_in_supply = Warrior.objects.filter(clearing=None, player=player).count()
+    if count_in_supply < number:
+        raise ValueError(
+            f"Not enough warriors in supply to place {number} warriors. "
+            f"In supply: {count_in_supply}"
+        )
+    for w in Warrior.objects.filter(clearing=None, player=player)[:number]:
+        w.clearing = clearing
+        w.save()
+
+
+@transaction.atomic
 def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
     """crafts a card with the given pieces. If it is an item, scores the points and discards it
     If not, moves the card to the player's crafted card box.
