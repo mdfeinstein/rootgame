@@ -59,7 +59,7 @@ class Vizier(models.Model):
     fulfilled = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ["column", "card__suit"]
+        ordering = ["column"]
 
     @classmethod
     def create_viziers(cls, player: Player):

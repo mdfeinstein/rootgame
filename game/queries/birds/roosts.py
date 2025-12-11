@@ -9,7 +9,8 @@ def get_roosts_on_board(player: Player) -> QuerySet[BirdRoost]:
 
 
 def roost_at_clearing_number(player: Player, clearing_number: int) -> BirdRoost:
-    """returns the roost at the given clearing number"""
+    """returns the roost at the given clearing number,
+    raises value error if no roost at that clearing number"""
     try:
         roost = BirdRoost.objects.get(
             player=player, building_slot__clearing__clearing_number=clearing_number
