@@ -85,9 +85,9 @@ def add_card_to_decree(player: Player, card: CardsEP, column: DecreeEntry.Column
     # increment cards addedd and flag bird card added if needed
     birdsong.cards_added_to_decree += 1
     # move to next step if all cards have been added
-    if birdsong.cards_added_to_decree == 2:
-        birdsong.step = next_choice(BirdBirdsong.BirdBirdsongSteps, birdsong.step)
     birdsong.save()
+    if birdsong.cards_added_to_decree == 2:
+        end_add_to_decree_step(player)
 
 
 @transaction.atomic
@@ -169,6 +169,23 @@ def emergency_roost(player: Player, clearing: Clearing):
     birdsong.save()
 
 
+def next_daylight_step(player: Player):
+    """moves to the next daylight step"""
+    daylight = get_phase(player)
+    assert type(daylight) == BirdDaylight
+    daylight.step = next_choice(BirdDaylight.BirdDaylightSteps, daylight.step)
+    daylight.save()
+    match daylight.step:
+        case BirdDaylight.BirdDaylightSteps.RECRUITING:
+            recruit_turmoil_check(player)
+        case BirdDaylight.BirdDaylightSteps.MOVING:
+            move_turmoil_check(player)
+        case BirdDaylight.BirdDaylightSteps.BATTLING:
+            battle_turmoil_check(player)
+        case BirdDaylight.BirdDaylightSteps.BUILDING:
+            build_turmoil_check(player)
+
+
 @transaction.atomic
 def bird_craft_card(player: Player, card: CardsEP, crafting_pieces: list[BirdRoost]):
     """crafts a card with the given pieces. If it is an item, scores the points and discards it
@@ -182,10 +199,7 @@ def bird_craft_card(player: Player, card: CardsEP, crafting_pieces: list[BirdRoo
     craft_card(card_in_hand, cast(list[Piece], crafting_pieces))
     # if no more crafting pieces, move to next step
     if get_player_hand_size(player) == 0 or get_all_unused_roosts(player).count() == 0:
-        daylight = get_phase(player)
-        assert type(daylight) == BirdDaylight
-        daylight.step = next_choice(BirdDaylight.BirdDaylightSteps, daylight.step)
-        daylight.save()
+        next_daylight_step(player)
 
 
 @transaction.atomic
@@ -232,10 +246,7 @@ def bird_recruit_action(
     if not DecreeEntry.objects.filter(
         player=player, column=decree_entry.column, fulfilled=False
     ).exists():
-        daylight = get_phase(player)
-        assert type(daylight) == BirdDaylight
-        daylight.step = next_choice(BirdDaylight.BirdDaylightSteps, daylight.step)
-        daylight.save()
+        next_daylight_step(player)
 
 
 @transaction.atomic
@@ -273,10 +284,7 @@ def bird_move_action(
     if not DecreeEntry.objects.filter(
         player=player, column=decree_entry.column, fulfilled=False
     ).exists():
-        daylight = get_phase(player)
-        assert type(daylight) == BirdDaylight
-        daylight.step = next_choice(BirdDaylight.BirdDaylightSteps, daylight.step)
-        daylight.save()
+        next_daylight_step(player)
 
 
 @transaction.atomic
@@ -314,10 +322,7 @@ def bird_battle_action(
     if not DecreeEntry.objects.filter(
         player=player, column=decree_entry.column, fulfilled=False
     ).exists():
-        daylight = get_phase(player)
-        assert type(daylight) == BirdDaylight
-        daylight.step = next_choice(BirdDaylight.BirdDaylightSteps, daylight.step)
-        daylight.save()
+        next_daylight_step(player)
 
 
 @transaction.atomic
@@ -352,12 +357,7 @@ def bird_build_action(
     if not DecreeEntry.objects.filter(
         player=player, column=DecreeEntry.Column.BUILD, fulfilled=False
     ).exists():
-        daylight = get_phase(player)
-        assert type(daylight) == BirdDaylight
-        daylight.step = next_choice(BirdDaylight.BirdDaylightSteps, daylight.step)
-        daylight.save()
-        if daylight.step == BirdDaylight.BirdDaylightSteps.COMPLETED:
-            begin_evening(player)
+        next_daylight_step(player)
 
 
 @transaction.atomic

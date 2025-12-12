@@ -2,6 +2,8 @@ from django.urls import path
 
 from game.views.DevLoginView import DevLoginView
 from game.views.action_views.battle import BattleActionView
+from game.views.action_views.birds.birdsong import AddToDecreeView, EmergencyDrawingView
+from game.views.action_views.birds.daylight import BirdCraftingView, BirdRecruitView
 from game.views.action_views.cats.birdsong import CatPlaceWoodView
 from game.views.action_views.cats.daylight import CatActionsView, CatCraftStepView
 from game.views.action_views.cats.evening import CatsDrawCardsView
@@ -185,6 +187,36 @@ urlpatterns = [
     path(
         "api/cats/evening/discard-cards/<int:game_id>/<str:route>/",
         CatsDrawCardsView.as_view(),
+    ),
+    path(
+        "api/birds/birdsong/emergency-draw/",
+        EmergencyDrawingView.as_view(),
+        name="birds-emergency-draw",
+    ),
+    path(
+        "api/birds/birdsong/emergency-draw/<int:game_id>/<str:route>/",
+        EmergencyDrawingView.as_view(),
+    ),
+    path(
+        "api/birds/birdsong/add-to-decree/",
+        AddToDecreeView.as_view(),
+        name="birds-add-to-decree",
+    ),
+    path(
+        "api/birds/birdsong/add-to-decree/<int:game_id>/<str:route>/",
+        AddToDecreeView.as_view(),
+    ),
+    path("api/birds/daylight/craft/", BirdCraftingView.as_view(), name="birds-craft"),
+    path(
+        "api/birds/daylight/craft/<int:game_id>/<str:route>/",
+        BirdCraftingView.as_view(),
+    ),
+    path(
+        "api/birds/daylight/recruit/", BirdRecruitView.as_view(), name="birds-recruit"
+    ),
+    path(
+        "api/birds/daylight/recruit/<int:game_id>/<str:route>/",
+        BirdRecruitView.as_view(),
     ),
     path(
         "api/battle/",

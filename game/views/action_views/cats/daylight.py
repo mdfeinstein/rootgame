@@ -44,6 +44,7 @@ from game.transactions.cats import (
     cat_craft_card,
     cat_recruit_all,
     end_action_step,
+    end_crafting_step,
     overwork,
 )
 from game.transactions.general import craft_card, move_warriors
@@ -230,7 +231,7 @@ class CatCraftStepView(GameActionView):
 
     def end_step(self, request, game_id: int):
         player = self.player(request, game_id)
-        end_action_step(self, request, game_id)
+        end_crafting_step(player)
 
 
 class CatActionsView(GameActionView):
@@ -797,11 +798,7 @@ class CatActionsView(GameActionView):
 
     def end_step(self, request, game_id: int):
         player = self.player(request, game_id)
-        daylight = get_phase(player)
-        if type(daylight) != CatDaylight:
-            raise ValidationError("Not Daylight phase")
-        daylight.step = next_choice(CatDaylight.CatDaylightSteps, daylight.step)
-        daylight.save()
+        end_action_step(player)
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""

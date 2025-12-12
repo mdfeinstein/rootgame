@@ -85,6 +85,6 @@ def validate_step(
         BirdEvening.BirdEveningSteps.COMPLETED: "Not Evening completedstep",
     }
     player_phase = get_phase(player)
-    if step != type(player_phase.step):
+    if step != player_phase.step:
         raise ValueError(mapper[step])
     return player_phase.step

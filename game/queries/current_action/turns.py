@@ -74,12 +74,32 @@ def get_cats_evening_turn_action(phase: CatEvening):
 
 
 def get_birds_birdsong_turn_action(phase: BirdBirdsong):
-    raise ValueError("Not yet implemented")
+    match phase.step:
+        case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING:
+            return reverse("birds-emergency-draw")
+        case BirdBirdsong.BirdBirdsongSteps.ADD_TO_DECREE:
+            return reverse("birds-add-to-decree")
+        case _:
+            raise ValueError("Invalid birds birdsong step")
 
 
 def get_birds_daylight_turn_action(phase: BirdDaylight):
-    raise ValueError("Not yet implemented")
-    pass
+    match phase.step:
+        case BirdDaylight.BirdDaylightSteps.CRAFTING:
+            return reverse("birds-craft")
+        case BirdDaylight.BirdDaylightSteps.RECRUITING:
+            return reverse("birds-recruit")
+        case BirdDaylight.BirdDaylightSteps.MOVING:
+            # return reverse("birds-move")
+            raise ValueError("Not yet implemented")
+        case BirdDaylight.BirdDaylightSteps.BATTLING:
+            # return reverse("birds-battle")
+            raise ValueError("Not yet implemented")
+        case BirdDaylight.BirdDaylightSteps.BUILDING:
+            # return reverse("birds-build")
+            raise ValueError("Not yet implemented")
+        case _:
+            raise ValueError("Invalid birds daylight step")
 
 
 def get_birds_evening_turn_action(phase: BirdEvening):

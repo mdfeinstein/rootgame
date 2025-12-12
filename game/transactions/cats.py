@@ -264,20 +264,23 @@ def cat_recruit_all(player: Player):
 
 
 @transaction.atomic
-def end_action_step(self, request, game_id: int):
-    """ends the current action step, moving to the next step and possibly the next phase"""
-    player = self.player(request, game_id)
+def end_crafting_step(player: Player):
+    """ends the current crafting step, moving to the next step"""
     daylight = get_phase(player)
-    if type(daylight) != CatDaylight:
-        raise ValueError("Not Daylight phase")
-    if daylight.step != CatDaylight.CatDaylightSteps.ACTIONS:
-        raise ValueError("Not actions step")
+    assert type(daylight) == CatDaylight, "Not Daylight phase"
+    assert daylight.step == CatDaylight.CatDaylightSteps.CRAFTING, "Not crafting step"
     daylight.step = next_choice(CatDaylight.CatDaylightSteps, daylight.step)
     daylight.save()
-    # if daylight.step == CatDaylight.CatDaylightSteps.COMPLETED:
-    #     # move to evening
-    #     turn = get_turn(player)
-    #     turn.
+
+
+@transaction.atomic
+def end_action_step(player: Player):
+    """ends the current action step, moving to the next step"""
+    daylight = get_phase(player)
+    assert type(daylight) == CatDaylight, "Not Daylight phase"
+    assert daylight.step == CatDaylight.CatDaylightSteps.ACTIONS, "Not actions step"
+    daylight.step = next_choice(CatDaylight.CatDaylightSteps, daylight.step)
+    daylight.save()
 
 
 @transaction.atomic
