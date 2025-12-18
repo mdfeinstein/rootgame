@@ -10,6 +10,7 @@ from game.models.cats.tokens import CatKeep
 from game.models.events.setup import GameSimpleSetup
 from game.models.game_models import Faction
 from game.queries.setup.birds import validate_corner
+from game.transactions.setup_util import next_player_setup
 from game.utility.textchoice import next_choice
 
 
@@ -120,11 +121,7 @@ def confirm_completed_setup(player: Player):
     setup.step = BirdsSimpleSetup.Steps.COMPLETED
     setup.save()
     # move to next step in general setup (next player, perhaps)
-    simple_setup = GameSimpleSetup.objects.get(game=player.game)
-    simple_setup.status = next_choice(
-        GameSimpleSetup.GameSetupStatus, simple_setup.status
-    )
-    simple_setup.save()
+    next_player_setup(player.game)
     create_birds_turn(player)
 
 

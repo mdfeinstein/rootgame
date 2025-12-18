@@ -24,6 +24,7 @@ from game.queries.general import (
     player_has_warriors_in_clearing,
     warrior_count_in_clearing,
 )
+from game.transactions.cats import create_field_hospital_event
 from game.transactions.general import discard_card_from_hand
 
 
@@ -269,8 +270,29 @@ def battler_removes_all_pieces(game: Game, battle: Battle, defender: bool):
         player_removes_building(game, building, removing_player)
 
 
+def player_removes_warriors(
+    clearing: Clearing, removing_player: Player, removed_player: Player, count: int
+):
+    """removes warriors from the board by player, triggering any relevant events"""
+    warriors = Warrior.objects.filter(clearing=clearing, player=removed_player)[:count]
+    if len(warriors) != count:
+        raise ValueError("Not enough warriors to remove")
+    for warrior in warriors:
+        warrior.clearing = None
+        warrior.save()
+    # launch related event
+    if removed_player.faction == Faction.CATS:
+        create_field_hospital_event(clearing, removed_player, count)
+        pass
+
+    # remover scores a point
+    removing_player.score += count
+    # check faction relevant events
+
+
 def player_removes_token(game: Game, token: Token, removing_player: Player):
     """removes a token from the board by player, scoring points and triggering any relevant events"""
+    clearing = token.clearing
     token.clearing = None
     token.save()
     # remover scores a point
@@ -278,10 +300,11 @@ def player_removes_token(game: Game, token: Token, removing_player: Player):
     # check faction relevant events
 
     # check if token is a sympathy token
-    if token in [
-        WASympathy.objects.filter(player=token.player, clearing=token.clearing)
-    ]:
+    if token in Token.objects.filter(
+        game=game, player__faction=Faction.WOODLAND_ALLIANCE, clearing=clearing
+    ):
         # launch Outrage event
+        # create_outrage_event(token.clearing, removing_player)
         pass
 
 

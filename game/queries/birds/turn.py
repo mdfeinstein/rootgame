@@ -1,7 +1,10 @@
 from game.models.birds.turn import BirdBirdsong, BirdDaylight, BirdEvening, BirdTurn
+from game.models.events.birds import TurmoilEvent
+from game.models.events.event import Event, EventType
 from game.models.game_models import Faction, Player
+from game.queries.current_action.events import get_current_event
 from game.queries.general import get_current_player
-
+from 
 
 def validate_turn(player: Player) -> BirdTurn:
     """returns the turn if it is the player's turn, else raises ValueError"""
@@ -88,3 +91,13 @@ def validate_step(
     if step != player_phase.step:
         raise ValueError(mapper[step])
     return player_phase.step
+
+def get_turmoil_event(player: Player) -> TurmoilEvent:
+    """ get current turmoil event"""
+    assert player.faction == Faction.BIRDS, "Not a birds player"
+    event = get_current_event(player.game)
+    if event is None:
+        raise ValueError("No events")
+    if event.type != EventType.TURMOIL:
+        raise ValueError("Not a turmoil event")
+    return TurmoilEvent.objects.get(event=event)

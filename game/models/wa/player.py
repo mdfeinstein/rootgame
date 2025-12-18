@@ -21,4 +21,8 @@ class OfficerEntry(models.Model):
     player = models.ForeignKey(
         Player, on_delete=models.CASCADE, related_name="officer_entries"
     )
-    warrior = models.ForeignKey(Warrior, on_delete=models.CASCADE)
+    warrior = models.ForeignKey(
+        Warrior, on_delete=models.CASCADE, related_name="officer"
+    )
+    # tracks if officer used for military operations this turn
+    used = models.BooleanField(default=False)

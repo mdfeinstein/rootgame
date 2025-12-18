@@ -1,9 +1,11 @@
 from django.urls import reverse
 from game.models.game_models import Faction, Game, Player
+from game.models.wa.turn import WABirdsong, WADaylight, WAEvening
 from game.queries.current_action.events import get_current_event_action
 from game.queries.general import get_current_player
 from game.queries.cats.turn import get_phase as get_cat_phase
 from game.queries.birds.turn import get_phase as get_birds_phase
+from game.queries.wa.turn import get_phase as get_wa_phase
 from game.models.cats.turn import CatBirdsong, CatDaylight, CatEvening
 from game.models.birds.turn import BirdBirdsong, BirdDaylight, BirdEvening
 
@@ -79,6 +81,8 @@ def get_birds_birdsong_turn_action(phase: BirdBirdsong):
             return reverse("birds-emergency-draw")
         case BirdBirdsong.BirdBirdsongSteps.ADD_TO_DECREE:
             return reverse("birds-add-to-decree")
+        case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING:
+            return reverse("birds-emergency-roosting")
         case _:
             raise ValueError("Invalid birds birdsong step")
 
@@ -90,14 +94,11 @@ def get_birds_daylight_turn_action(phase: BirdDaylight):
         case BirdDaylight.BirdDaylightSteps.RECRUITING:
             return reverse("birds-recruit")
         case BirdDaylight.BirdDaylightSteps.MOVING:
-            # return reverse("birds-move")
-            raise ValueError("Not yet implemented")
+            return reverse("birds-move")
         case BirdDaylight.BirdDaylightSteps.BATTLING:
-            # return reverse("birds-battle")
-            raise ValueError("Not yet implemented")
+            return reverse("birds-battle")
         case BirdDaylight.BirdDaylightSteps.BUILDING:
-            # return reverse("birds-build")
-            raise ValueError("Not yet implemented")
+            return reverse("birds-build")
         case _:
             raise ValueError("Invalid birds daylight step")
 
@@ -122,4 +123,41 @@ def get_birds_turn_action(player: Player) -> str | None:
 
 def get_wa_turn_action(player: Player) -> str | None:
     """Return the current wa turn action route for the player or raises if unexpected step"""
-    raise ValueError("Not yet implemented")
+    phase = get_wa_phase(player)
+    match phase:
+        case WABirdsong():
+            return get_wa_birdsong_turn_action(phase)
+        case WADaylight():
+            return get_wa_daylight_turn_action(phase)
+        case WAEvening():
+            return get_wa_evening_turn_action(phase)
+        case _:
+            raise ValueError("Invalid wa phase")
+
+
+def get_wa_birdsong_turn_action(phase: WABirdsong):
+    match phase.step:
+        case WABirdsong.WABirdsongSteps.REVOLT:
+            return reverse("wa-revolt")
+        case WABirdsong.WABirdsongSteps.SPREAD_SYMPATHY:
+            return reverse("wa-spread-sympathy")
+        case _:
+            raise ValueError("Invalid Woodland Alliance birdsong step")
+
+
+def get_wa_daylight_turn_action(phase: WADaylight):
+    match phase.step:
+        case WADaylight.WADaylightSteps.ACTIONS:
+            return reverse("wa-daylight")
+        case _:
+            raise ValueError("Invalid Woodland Alliance daylight step")
+
+
+def get_wa_evening_turn_action(phase: WAEvening):
+    match phase.step:
+        case WAEvening.WAEveningSteps.MILITARY_OPERATIONS:
+            return reverse("wa-operations")
+        case WAEvening.WAEveningSteps.DISCARDING:
+            return reverse("wa-discard-cards")
+        case _:
+            raise ValueError("Invalid Woodland Alliance evening step")

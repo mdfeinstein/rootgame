@@ -25,6 +25,7 @@ from game.queries.setup.cats import (
     validate_timing,
 )
 from game.transactions.cats import create_cats_turn
+from game.transactions.setup_util import next_player_setup
 from game.utility.textchoice import next_choice
 
 
@@ -218,11 +219,6 @@ def confirm_completed_setup(player: Player):
         raise ValueError("Setup not complete")
     setup.step = next_choice(CatsSimpleSetup.Steps, setup.step)
     setup.save()
-    simple_setup = GameSimpleSetup.objects.get(game=player.game)
-    # go to next step in general setup (next player, perhaps)
-    simple_setup.status = next_choice(
-        GameSimpleSetup.GameSetupStatus, simple_setup.status
-    )
-    simple_setup.save()
+    next_player_setup(player.game)
     # create first turn
     create_cats_turn(player)

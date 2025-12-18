@@ -1129,7 +1129,7 @@
   "model": "game.building",
   "pk": 38,
   "fields": {
-    "building_slot": null
+    "building_slot": 17
   }
 },
 {
@@ -1473,7 +1473,7 @@
   "model": "game.warrior",
   "pk": 1,
   "fields": {
-    "clearing": 1
+    "clearing": 12
   }
 },
 {
@@ -1529,7 +1529,7 @@
   "model": "game.warrior",
   "pk": 9,
   "fields": {
-    "clearing": 10
+    "clearing": 12
   }
 },
 {
@@ -1550,7 +1550,7 @@
   "model": "game.warrior",
   "pk": 12,
   "fields": {
-    "clearing": null
+    "clearing": 10
   }
 },
 {
@@ -2338,15 +2338,6 @@
     "game": 1,
     "suit": "b",
     "card_type": "AMBUSH_WILD"
-  }
-},
-{
-  "model": "game.deckentry",
-  "pk": 13,
-  "fields": {
-    "game": 1,
-    "card": 17,
-    "spot": 12
   }
 },
 {
@@ -3335,6 +3326,14 @@
   }
 },
 {
+  "model": "game.handentry",
+  "pk": 10,
+  "fields": {
+    "player": 1,
+    "card": 17
+  }
+},
+{
   "model": "game.birdroost",
   "pk": 73,
   "fields": {
@@ -3678,21 +3677,48 @@
   }
 },
 {
+  "model": "game.catturn",
+  "pk": 2,
+  "fields": {
+    "player": 1,
+    "turn_number": 1
+  }
+},
+{
   "model": "game.catbirdsong",
   "pk": 1,
   "fields": {
-    "step": "1",
+    "step": "3",
     "turn": 1
+  }
+},
+{
+  "model": "game.catbirdsong",
+  "pk": 2,
+  "fields": {
+    "step": "1",
+    "turn": 2
   }
 },
 {
   "model": "game.catdaylight",
   "pk": 1,
   "fields": {
+    "step": "3",
+    "actions_left": 0,
+    "recruit_used": true,
+    "turn": 1,
+    "midmarch": false
+  }
+},
+{
+  "model": "game.catdaylight",
+  "pk": 2,
+  "fields": {
     "step": "1",
     "actions_left": 3,
     "recruit_used": false,
-    "turn": 1,
+    "turn": 2,
     "midmarch": false
   }
 },
@@ -3700,9 +3726,18 @@
   "model": "game.catevening",
   "pk": 1,
   "fields": {
-    "step": "1",
+    "step": "3",
     "cards_drawn": 0,
     "turn": 1
+  }
+},
+{
+  "model": "game.catevening",
+  "pk": 2,
+  "fields": {
+    "step": "1",
+    "cards_drawn": 0,
+    "turn": 2
   }
 },
 {
@@ -3925,7 +3960,7 @@
     ],
     "game": 1,
     "faction": "ca",
-    "score": 4,
+    "score": 6,
     "turn_order": 0
   }
 },
@@ -3964,7 +3999,7 @@
       "user1"
     ],
     "status": "2",
-    "current_turn": 0
+    "current_turn": 1
   }
 }
 ]

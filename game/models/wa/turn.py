@@ -43,16 +43,14 @@ class WABirdsong(models.Model):
 class WADaylight(models.Model):
     class WADaylightSteps(models.TextChoices):
         # NOT_STARTED = "0", "Not Started"
-        CRAFTING = "1", "Crafting"
-        MOBILIZING = "2", "Mobilizing"
-        TRAINING = "3", "Training"
-        COMPLETED = "4", "Completed"
+        ACTIONS = "1", "Actions"
+        COMPLETED = "2", "Completed"
 
     turn = models.ForeignKey(WATurn, on_delete=models.CASCADE)
     step = models.CharField(
         max_length=1,
         choices=WADaylightSteps.choices,
-        default=WADaylightSteps.CRAFTING,
+        default=WADaylightSteps.ACTIONS,
     )
 
 

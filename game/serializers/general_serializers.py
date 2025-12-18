@@ -225,7 +225,7 @@ class GameActionSerializer(serializers.Serializer):
 class GameStatusSerializer(serializers.Serializer):
     """
     Serializer for information on the current game status
-    This invludes the current turn information as well as any relevant events
+    This includes the current turn information as well as any relevant events
     """
 
     game_status = serializers.ChoiceField(choices=Game.GameStatus.choices)
@@ -256,8 +256,16 @@ class GameStatusSerializer(serializers.Serializer):
                 Faction.WOODLAND_ALLIANCE: WATurn,
             }
         if current_player is not None:
-            turn_object = turn_object_dict[current_player.faction].objects.get(
-                player=current_player
+            print(game.status)
+            print(current_player.faction)
+            print(turn_object_dict)
+            faction = Faction(current_player.faction)
+            print(faction)
+            turn_object = (
+                turn_object_dict[faction]
+                .objects.filter(player=current_player)
+                .order_by("-turn_number")
+                .first()
             )
             player_name = current_player.user.username
         else:

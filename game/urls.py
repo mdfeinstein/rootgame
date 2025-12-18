@@ -1,17 +1,29 @@
-from django.urls import path
+from django.urls import URLPattern, path
 
 from game.views.DevLoginView import DevLoginView
 from game.views.action_views.battle import BattleActionView
 from game.views.action_views.birds.birdsong import AddToDecreeView, EmergencyDrawingView
-from game.views.action_views.birds.daylight import BirdCraftingView, BirdRecruitView
+from game.views.action_views.birds.daylight import (
+    BirdBattleView,
+    BirdBuildingView,
+    BirdCraftingView,
+    BirdMoveView,
+    BirdRecruitView,
+)
+from game.views.action_views.birds.turmoil import TurmoilView
 from game.views.action_views.cats.birdsong import CatPlaceWoodView
 from game.views.action_views.cats.daylight import CatActionsView, CatCraftStepView
 from game.views.action_views.cats.evening import CatsDrawCardsView
+from game.views.action_views.cats.field_hospital import FieldHospitalView
 from game.views.action_views.setup.birds import (
     BirdsChooseLeaderInitialView,
     BirdsConfirmCompletedSetupView,
     BirdsPickCornerView,
 )
+from game.views.action_views.wa.birdsong import RevoltView, SpreadSympathyView
+from game.views.action_views.wa.daylight import WADaylightActionsView
+from game.views.action_views.wa.evening import WAOperationsView
+from game.views.action_views.wa.outrage import OutrageView
 from game.views.gamestate_views import (
     get_bird_player_public,
     get_cat_player_public,
@@ -41,6 +53,16 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from rest_framework.views import APIView
+
+
+def register_action(
+    name: str, view: type[APIView], url: str, urlpatterns: list[URLPattern]
+):
+    get_path = path(url, view.as_view(), name=name)
+    post_path = path(url + "<int:game_id>/<str:route>/", view.as_view(), name=name)
+    urlpatterns.append(get_path)
+    urlpatterns.append(post_path)
 
 
 urlpatterns = [
@@ -64,167 +86,153 @@ urlpatterns = [
         get_current_action,
         name="get-current-action",
     ),
-    path(  # get steps
-        "api/cats/setup/pick-corner/",
-        CatsPickCornerView.as_view(),
-        name="cats-setup-pick-corner",
-    ),
-    path(  # step validation and final confirmation
-        "api/cats/setup/pick-corner/<int:game_id>/<str:route>/",
-        CatsPickCornerView.as_view(),
-    ),
-    path(
-        "api/cats/setup/place-initial-building/",
-        CatsPlaceBuildingView.as_view(),
-        name="cats-setup-place-initial-building",
-    ),
-    path(
-        "api/cats/setup/place-initial-building/<int:game_id>/<str:route>/",
-        CatsPlaceBuildingView.as_view(),
-    ),
-    path(
-        "api/cats/setup/confirm-completed-setup/",
-        CatsConfirmCompletedSetupView.as_view(),
-        name="cats-setup-confirm-completed-setup",
-    ),
-    path(
-        "api/cats/setup/confirm-completed-setup/<int:game_id>/<str:route>/",
-        CatsConfirmCompletedSetupView.as_view(),
-    ),
-    # birds
-    path(  # get steps
-        "api/birds/setup/pick-corner/",
-        BirdsPickCornerView.as_view(),
-        name="birds-setup-pick-corner",
-    ),
-    path(  # step validation and final confirmation
-        "api/birds/setup/pick-corner/<int:game_id>/<str:route>/",
-        BirdsPickCornerView.as_view(),
-    ),
-    path(
-        "api/birds/setup/choose-leader/",
-        BirdsChooseLeaderInitialView.as_view(),
-        name="birds-setup-choose-leader",
-    ),
-    path(
-        "api/birds/setup/choose-leader/<int:game_id>/<str:route>/",
-        BirdsChooseLeaderInitialView.as_view(),
-    ),
-    path(
-        "api/birds/setup/confirm-completed-setup/",
-        BirdsConfirmCompletedSetupView.as_view(),
-        name="birds-setup-confirm-completed-setup",
-    ),
-    path(
-        "api/birds/setup/confirm-completed-setup/<int:game_id>/<str:route>/",
-        BirdsConfirmCompletedSetupView.as_view(),
-    ),
-    # path(
-    #     "api/cats/pick-corner/<int:game_id>/<int:clearing_number>/",
-    #     cats.pick_corner_view,
-    # ),
-    # path(
-    #     "api/cats/place-initial-building/<int:game_id>/<int:clearing_number>/<str:building_type>/",
-    #     cats.place_initial_building_view,
-    # ),
-    # path(
-    #     "api/cats/confirm-completed-setup/<int:game_id>/",
-    #     cats.confirm_completed_setup_view,
-    # ),
-    # path(
-    #     "api/birds/pick-corner/<int:game_id>/<int:clearing_number>/",
-    #     birds.pick_corner,
-    # ),
-    # path(
-    #     "api/birds/choose-leader-initial/<int:game_id>/<str:leader>/",
-    #     birds.choose_leader_initial,
-    # ),
-    # path(
-    #     "api/birds/confirm-completed-setup/<int:game_id>/",
-    #     birds.confirm_completed_setup,
-    # ),
-    path(
-        "api/cats/birdsong/place-wood/",
-        CatPlaceWoodView.as_view(),
-        name="cats-birdsong-place-wood",
-    ),
-    path(
-        "api/cats/birdsong/place-wood/<int:game_id>/<str:route>/",
-        CatPlaceWoodView.as_view(),
-    ),
-    path(
-        "api/cats/daylight/craft/",
-        CatCraftStepView.as_view(),
-        name="cats-daylight-craft",
-    ),
-    path(
-        "api/cats/daylight/craft/<int:game_id>/<str:route>/",
-        CatCraftStepView.as_view(),
-    ),
-    path(
-        "api/cats/daylight/actions/",
-        CatActionsView.as_view(),
-        name="cats-daylight-actions",
-    ),
-    path(
-        "api/cats/daylight/actions/<int:game_id>/<str:route>/",
-        CatActionsView.as_view(),
-    ),
-    path(
-        "api/cats/evening/draw-cards/",
-        CatsDrawCardsView.as_view(),
-        name="cats-evening-draw-cards",
-    ),
-    path(
-        "api/cats/evening/draw-cards/<int:game_id>/<str:route>/",
-        CatsDrawCardsView.as_view(),
-    ),
-    path(
-        "api/cats/evening/discard-cards/",
-        CatsDrawCardsView.as_view(),
-        name="cats-evening-discard-cards",
-    ),
-    path(
-        "api/cats/evening/discard-cards/<int:game_id>/<str:route>/",
-        CatsDrawCardsView.as_view(),
-    ),
-    path(
-        "api/birds/birdsong/emergency-draw/",
-        EmergencyDrawingView.as_view(),
-        name="birds-emergency-draw",
-    ),
-    path(
-        "api/birds/birdsong/emergency-draw/<int:game_id>/<str:route>/",
-        EmergencyDrawingView.as_view(),
-    ),
-    path(
-        "api/birds/birdsong/add-to-decree/",
-        AddToDecreeView.as_view(),
-        name="birds-add-to-decree",
-    ),
-    path(
-        "api/birds/birdsong/add-to-decree/<int:game_id>/<str:route>/",
-        AddToDecreeView.as_view(),
-    ),
-    path("api/birds/daylight/craft/", BirdCraftingView.as_view(), name="birds-craft"),
-    path(
-        "api/birds/daylight/craft/<int:game_id>/<str:route>/",
-        BirdCraftingView.as_view(),
-    ),
-    path(
-        "api/birds/daylight/recruit/", BirdRecruitView.as_view(), name="birds-recruit"
-    ),
-    path(
-        "api/birds/daylight/recruit/<int:game_id>/<str:route>/",
-        BirdRecruitView.as_view(),
-    ),
-    path(
-        "api/battle/",
-        BattleActionView.as_view(),
-        name="battle",
-    ),
-    path(
-        "api/battle/<int:game_id>/<str:route>/",
-        BattleActionView.as_view(),
-    ),
 ]
+register_action(
+    "cats-setup-pick-corner",
+    CatsPickCornerView,
+    "api/cats/setup/pick-corner/",
+    urlpatterns,
+)
+register_action(
+    "cats-setup-place-initial-building",
+    CatsPlaceBuildingView,
+    "api/cats/setup/place-initial-building/",
+    urlpatterns,
+)
+register_action(
+    "cats-setup-confirm-completed-setup",
+    CatsConfirmCompletedSetupView,
+    "api/cats/setup/confirm-completed-setup/",
+    urlpatterns,
+)
+# birds
+register_action(
+    "birds-setup-pick-corner",
+    BirdsPickCornerView,
+    "api/birds/setup/pick-corner/",
+    urlpatterns,
+)
+
+register_action(
+    "birds-setup-choose-leader",
+    BirdsChooseLeaderInitialView,
+    "api/birds/setup/choose-leader/",
+    urlpatterns,
+)
+register_action(
+    "birds-setup-confirm-completed-setup",
+    BirdsConfirmCompletedSetupView,
+    "api/birds/setup/confirm-completed-setup/",
+    urlpatterns,
+)
+register_action(
+    "cats-birdsong-place-wood",
+    CatPlaceWoodView,
+    "api/cats/birdsong/place-wood/",
+    urlpatterns,
+)
+register_action(
+    "cats-daylight-craft",
+    CatCraftStepView,
+    "api/cats/daylight/craft/",
+    urlpatterns,
+)
+
+register_action(
+    "cats-daylight-actions",
+    CatActionsView,
+    "api/cats/daylight/actions/",
+    urlpatterns,
+)
+register_action(
+    "cats-evening-draw-cards",
+    CatsDrawCardsView,
+    "api/cats/evening/draw-cards/",
+    urlpatterns,
+)
+register_action(
+    "cats-evening-discard-cards",
+    CatsDrawCardsView,
+    "api/cats/evening/discard-cards/",
+    urlpatterns,
+)
+
+register_action(
+    "birds-emergency-draw",
+    EmergencyDrawingView,
+    "api/birds/birdsong/emergency-draw/",
+    urlpatterns,
+)
+register_action(
+    "birds-add-to-decree",
+    AddToDecreeView,
+    "api/birds/birdsong/add-to-decree/",
+    urlpatterns,
+)
+register_action(
+    "birds-craft",
+    BirdCraftingView,
+    "api/birds/daylight/craft/",
+    urlpatterns,
+)
+register_action(
+    "birds-recruit",
+    BirdRecruitView,
+    "api/birds/daylight/recruit/",
+    urlpatterns,
+)
+register_action(
+    "birds-move",
+    BirdMoveView,
+    "api/birds/daylight/move/",
+    urlpatterns,
+)
+register_action(
+    "birds-battle",
+    BirdBattleView,
+    "api/birds/daylight/battle/",
+    urlpatterns,
+)
+register_action(
+    "birds-build",
+    BirdBuildingView,
+    "api/birds/daylight/building/",
+    urlpatterns,
+)
+register_action("wa-revolt", RevoltView, "api/wa/birdsong/revolt/", urlpatterns)
+register_action(
+    "wa-spread-sympathy",
+    SpreadSympathyView,
+    "api/wa/birdsong/spread-sympathy/",
+    urlpatterns,
+)
+register_action(
+    "wa-daylight", WADaylightActionsView, "api/wa/daylight/actions/", urlpatterns
+)
+register_action(
+    "wa-operations", WAOperationsView, "api/wa/evening/operations/", urlpatterns
+)
+register_action(
+    "battle",
+    BattleActionView,
+    "api/battle/",
+    urlpatterns,
+)
+register_action(
+    "outrage",
+    OutrageView,
+    "api/outrage/",
+    urlpatterns,
+)
+register_action(
+    "field-hospital",
+    FieldHospitalView,
+    "api/cats/field-hospital/",
+    urlpatterns,
+)
+register_action(
+    "turmoil",
+    TurmoilView,
+    "api/birds/turmoil/",
+    urlpatterns,
+)

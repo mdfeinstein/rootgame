@@ -1,5 +1,71 @@
 [
 {
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$bHbjU0NiICo9zL989mcqnV$N3YRrJ6bGxkYoYwy7c9sy94wqBg8A2mLVNjjhh3aLQI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "user1",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-12-17T18:32:01.477Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$keWaYLVkrQTeoo8vTqJjSX$C0bhZSEfzCRhhU3VSlL1EEGMDXxcQHXb0akLFecK5os=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "user2",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-12-17T18:32:01.759Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$4da6qi0wus7mK1Ezyccro1$ZODiV4GadkRSNu7x5uXe0n8SzHgft+qcmR8cjbdHgtY=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "user3",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-12-17T18:32:02.055Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "game.game",
+  "pk": 1,
+  "fields": {
+    "boardmap": "0",
+    "owner": [
+      "user1"
+    ],
+    "status": "2",
+    "current_turn": 0
+  }
+},
+{
   "model": "game.factionchoiceentry",
   "pk": 1,
   "fields": {
@@ -1129,7 +1195,7 @@
   "model": "game.building",
   "pk": 38,
   "fields": {
-    "building_slot": null
+    "building_slot": 17
   }
 },
 {
@@ -1241,7 +1307,7 @@
   "model": "game.building",
   "pk": 74,
   "fields": {
-    "building_slot": null
+    "building_slot": 10
   }
 },
 {
@@ -1347,7 +1413,7 @@
   "model": "game.token",
   "pk": 27,
   "fields": {
-    "clearing": null
+    "clearing": 1
   }
 },
 {
@@ -1403,14 +1469,14 @@
   "model": "game.token",
   "pk": 90,
   "fields": {
-    "clearing": null
+    "clearing": 11
   }
 },
 {
   "model": "game.token",
   "pk": 91,
   "fields": {
-    "clearing": null
+    "clearing": 3
   }
 },
 {
@@ -1473,7 +1539,7 @@
   "model": "game.warrior",
   "pk": 1,
   "fields": {
-    "clearing": 1
+    "clearing": 12
   }
 },
 {
@@ -1529,7 +1595,7 @@
   "model": "game.warrior",
   "pk": 9,
   "fields": {
-    "clearing": 10
+    "clearing": 12
   }
 },
 {
@@ -1550,7 +1616,7 @@
   "model": "game.warrior",
   "pk": 12,
   "fields": {
-    "clearing": null
+    "clearing": 10
   }
 },
 {
@@ -1648,28 +1714,28 @@
   "model": "game.warrior",
   "pk": 53,
   "fields": {
-    "clearing": 3
+    "clearing": 7
   }
 },
 {
   "model": "game.warrior",
   "pk": 54,
   "fields": {
-    "clearing": 3
+    "clearing": 7
   }
 },
 {
   "model": "game.warrior",
   "pk": 55,
   "fields": {
-    "clearing": 3
+    "clearing": 7
   }
 },
 {
   "model": "game.warrior",
   "pk": 56,
   "fields": {
-    "clearing": 3
+    "clearing": 7
   }
 },
 {
@@ -1690,7 +1756,7 @@
   "model": "game.warrior",
   "pk": 59,
   "fields": {
-    "clearing": null
+    "clearing": 3
   }
 },
 {
@@ -2342,33 +2408,6 @@
 },
 {
   "model": "game.deckentry",
-  "pk": 13,
-  "fields": {
-    "game": 1,
-    "card": 17,
-    "spot": 12
-  }
-},
-{
-  "model": "game.deckentry",
-  "pk": 14,
-  "fields": {
-    "game": 1,
-    "card": 30,
-    "spot": 13
-  }
-},
-{
-  "model": "game.deckentry",
-  "pk": 15,
-  "fields": {
-    "game": 1,
-    "card": 21,
-    "spot": 14
-  }
-},
-{
-  "model": "game.deckentry",
   "pk": 16,
   "fields": {
     "game": 1,
@@ -2716,6 +2755,72 @@
     "game": 1,
     "card": 33,
     "spot": 53
+  }
+},
+{
+  "model": "game.discardpileentry",
+  "pk": 1,
+  "fields": {
+    "game": 1,
+    "card": 4,
+    "spot": 0
+  }
+},
+{
+  "model": "game.discardpileentry",
+  "pk": 2,
+  "fields": {
+    "game": 1,
+    "card": 47,
+    "spot": 1
+  }
+},
+{
+  "model": "game.discardpileentry",
+  "pk": 3,
+  "fields": {
+    "game": 1,
+    "card": 28,
+    "spot": 2
+  }
+},
+{
+  "model": "game.player",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "user1"
+    ],
+    "game": 1,
+    "faction": "ca",
+    "score": 6,
+    "turn_order": 0
+  }
+},
+{
+  "model": "game.player",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "user2"
+    ],
+    "game": 1,
+    "faction": "bi",
+    "score": 1,
+    "turn_order": 1
+  }
+},
+{
+  "model": "game.player",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "user3"
+    ],
+    "game": 1,
+    "faction": "wa",
+    "score": 1,
+    "turn_order": 2
   }
 },
 {
@@ -3263,6 +3368,14 @@
   }
 },
 {
+  "model": "game.craftedcardentry",
+  "pk": 1,
+  "fields": {
+    "player": 1,
+    "card": 8
+  }
+},
+{
   "model": "game.handentry",
   "pk": 1,
   "fields": {
@@ -3276,22 +3389,6 @@
   "fields": {
     "player": 1,
     "card": 54
-  }
-},
-{
-  "model": "game.handentry",
-  "pk": 3,
-  "fields": {
-    "player": 1,
-    "card": 8
-  }
-},
-{
-  "model": "game.handentry",
-  "pk": 4,
-  "fields": {
-    "player": 2,
-    "card": 53
   }
 },
 {
@@ -3312,26 +3409,26 @@
 },
 {
   "model": "game.handentry",
-  "pk": 7,
+  "pk": 10,
   "fields": {
-    "player": 3,
-    "card": 3
+    "player": 1,
+    "card": 17
   }
 },
 {
   "model": "game.handentry",
-  "pk": 8,
+  "pk": 11,
   "fields": {
-    "player": 3,
-    "card": 9
+    "player": 2,
+    "card": 30
   }
 },
 {
   "model": "game.handentry",
-  "pk": 9,
+  "pk": 12,
   "fields": {
     "player": 3,
-    "card": 29
+    "card": 21
   }
 },
 {
@@ -3424,6 +3521,16 @@
   }
 },
 {
+  "model": "game.decreeentry",
+  "pk": 1,
+  "fields": {
+    "player": 2,
+    "column": "R",
+    "card": 53,
+    "fulfilled": false
+  }
+},
+{
   "model": "game.vizier",
   "pk": 1,
   "fields": {
@@ -3458,10 +3565,29 @@
   }
 },
 {
+  "model": "game.birdturn",
+  "pk": 2,
+  "fields": {
+    "player": 2,
+    "turn_number": 1
+  }
+},
+{
   "model": "game.birdbirdsong",
   "pk": 1,
   "fields": {
     "turn": 1,
+    "step": "4",
+    "cards_drawn": 0,
+    "cards_added_to_decree": 1,
+    "bird_card_added_to_decree": true
+  }
+},
+{
+  "model": "game.birdbirdsong",
+  "pk": 2,
+  "fields": {
+    "turn": 2,
     "step": "1",
     "cards_drawn": 0,
     "cards_added_to_decree": 0,
@@ -3473,6 +3599,14 @@
   "pk": 1,
   "fields": {
     "turn": 1,
+    "step": "6"
+  }
+},
+{
+  "model": "game.birddaylight",
+  "pk": 2,
+  "fields": {
+    "turn": 2,
     "step": "1"
   }
 },
@@ -3481,6 +3615,15 @@
   "pk": 1,
   "fields": {
     "turn": 1,
+    "step": "4",
+    "cards_drawn": 0
+  }
+},
+{
+  "model": "game.birdevening",
+  "pk": 2,
+  "fields": {
+    "turn": 2,
     "step": "1",
     "cards_drawn": 0
   }
@@ -3489,7 +3632,7 @@
   "model": "game.workshop",
   "pk": 35,
   "fields": {
-    "crafted_with": false
+    "crafted_with": true
   }
 },
 {
@@ -3531,7 +3674,7 @@
   "model": "game.sawmill",
   "pk": 37,
   "fields": {
-    "used": false
+    "used": true
   }
 },
 {
@@ -3678,21 +3821,48 @@
   }
 },
 {
+  "model": "game.catturn",
+  "pk": 2,
+  "fields": {
+    "player": 1,
+    "turn_number": 1
+  }
+},
+{
   "model": "game.catbirdsong",
   "pk": 1,
   "fields": {
-    "step": "1",
+    "step": "3",
     "turn": 1
+  }
+},
+{
+  "model": "game.catbirdsong",
+  "pk": 2,
+  "fields": {
+    "step": "3",
+    "turn": 2
   }
 },
 {
   "model": "game.catdaylight",
   "pk": 1,
   "fields": {
-    "step": "1",
+    "step": "3",
+    "actions_left": 0,
+    "recruit_used": true,
+    "turn": 1,
+    "midmarch": false
+  }
+},
+{
+  "model": "game.catdaylight",
+  "pk": 2,
+  "fields": {
+    "step": "2",
     "actions_left": 3,
     "recruit_used": false,
-    "turn": 1,
+    "turn": 2,
     "midmarch": false
   }
 },
@@ -3700,9 +3870,18 @@
   "model": "game.catevening",
   "pk": 1,
   "fields": {
-    "step": "1",
+    "step": "3",
     "cards_drawn": 0,
     "turn": 1
+  }
+},
+{
+  "model": "game.catevening",
+  "pk": 2,
+  "fields": {
+    "step": "1",
+    "cards_drawn": 0,
+    "turn": 2
   }
 },
 {
@@ -3728,26 +3907,26 @@
 },
 {
   "model": "game.supporterstackentry",
-  "pk": 1,
+  "pk": 4,
   "fields": {
     "player": 3,
-    "card": 47
+    "card": 3
   }
 },
 {
   "model": "game.supporterstackentry",
-  "pk": 2,
+  "pk": 5,
   "fields": {
     "player": 3,
-    "card": 28
+    "card": 9
   }
 },
 {
   "model": "game.supporterstackentry",
-  "pk": 3,
+  "pk": 6,
   "fields": {
     "player": 3,
-    "card": 4
+    "card": 29
   }
 },
 {
@@ -3829,10 +4008,26 @@
   }
 },
 {
+  "model": "game.waturn",
+  "pk": 2,
+  "fields": {
+    "player": 3,
+    "turn_number": 1
+  }
+},
+{
   "model": "game.wabirdsong",
   "pk": 1,
   "fields": {
     "turn": 1,
+    "step": "3"
+  }
+},
+{
+  "model": "game.wabirdsong",
+  "pk": 2,
+  "fields": {
+    "turn": 2,
     "step": "1"
   }
 },
@@ -3841,6 +4036,14 @@
   "pk": 1,
   "fields": {
     "turn": 1,
+    "step": "2"
+  }
+},
+{
+  "model": "game.wadaylight",
+  "pk": 2,
+  "fields": {
+    "turn": 2,
     "step": "1"
   }
 },
@@ -3849,6 +4052,16 @@
   "pk": 1,
   "fields": {
     "turn": 1,
+    "step": "4",
+    "operations_perfomed": 0,
+    "cards_drawn": 0
+  }
+},
+{
+  "model": "game.waevening",
+  "pk": 2,
+  "fields": {
+    "turn": 2,
     "step": "1",
     "operations_perfomed": 0,
     "cards_drawn": 0
@@ -3860,111 +4073,6 @@
   "fields": {
     "game": 1,
     "status": "2"
-  }
-},
-{
-  "model": "auth.user",
-  "pk": 1,
-  "fields": {
-    "password": "pbkdf2_sha256$720000$bHbjU0NiICo9zL989mcqnV$N3YRrJ6bGxkYoYwy7c9sy94wqBg8A2mLVNjjhh3aLQI=",
-    "last_login": null,
-    "is_superuser": false,
-    "username": "user1",
-    "first_name": "",
-    "last_name": "",
-    "email": "",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2025-12-17T18:32:01.477Z",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "auth.user",
-  "pk": 2,
-  "fields": {
-    "password": "pbkdf2_sha256$720000$keWaYLVkrQTeoo8vTqJjSX$C0bhZSEfzCRhhU3VSlL1EEGMDXxcQHXb0akLFecK5os=",
-    "last_login": null,
-    "is_superuser": false,
-    "username": "user2",
-    "first_name": "",
-    "last_name": "",
-    "email": "",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2025-12-17T18:32:01.759Z",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "auth.user",
-  "pk": 3,
-  "fields": {
-    "password": "pbkdf2_sha256$720000$4da6qi0wus7mK1Ezyccro1$ZODiV4GadkRSNu7x5uXe0n8SzHgft+qcmR8cjbdHgtY=",
-    "last_login": null,
-    "is_superuser": false,
-    "username": "user3",
-    "first_name": "",
-    "last_name": "",
-    "email": "",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2025-12-17T18:32:02.055Z",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "game.player",
-  "pk": 1,
-  "fields": {
-    "user": [
-      "user1"
-    ],
-    "game": 1,
-    "faction": "ca",
-    "score": 4,
-    "turn_order": 0
-  }
-},
-{
-  "model": "game.player",
-  "pk": 2,
-  "fields": {
-    "user": [
-      "user2"
-    ],
-    "game": 1,
-    "faction": "bi",
-    "score": 0,
-    "turn_order": 1
-  }
-},
-{
-  "model": "game.player",
-  "pk": 3,
-  "fields": {
-    "user": [
-      "user3"
-    ],
-    "game": 1,
-    "faction": "wa",
-    "score": 0,
-    "turn_order": 2
-  }
-},
-{
-  "model": "game.game",
-  "pk": 1,
-  "fields": {
-    "boardmap": "0",
-    "owner": [
-      "user1"
-    ],
-    "status": "2",
-    "current_turn": 0
   }
 }
 ]

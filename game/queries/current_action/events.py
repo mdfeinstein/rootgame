@@ -13,7 +13,11 @@ def get_current_event_action(game: Game) -> str | None:
         case EventType.BATTLE:
             return reverse("battle")
         case EventType.FIELD_HOSPITAL:
-            return get_field_hospital_action(game, event)
+            return reverse("field-hospital")
+        case EventType.TURMOIL:
+            return reverse("turmoil")
+        case EventType.OUTRAGE:
+            return reverse("outrage")
         case _:
             raise ValueError("Invalid event type")
 
@@ -27,30 +31,6 @@ def get_current_event(game: Game) -> Event | None:
         .first()
     )
     return event
-
-
-# def get_battle_action(game: Game, event: Event) -> str | None:
-#     """returns the current battle action for the game, or None if battle completed"""
-#     # get the battle
-#     battle = Battle.objects.get(event=event)
-#     match battle.step:
-#         case Battle.BattleSteps.DEFENDER_AMBUSH_CHECK:
-#             return reverse("battle-defender-ambush-check")
-#         case Battle.BattleSteps.ATTACKER_AMBUSH_CANCEL_CHECK:
-#             return reverse("battle-attacker-ambush-cancel-check")
-#         case Battle.BattleSteps.ATTACKER_CHOOSE_AMBUSH_HITS:
-#             return reverse("battle-attacker-choose-ambush-hits")
-#         # roll dice shouldn't be a step that player chooses
-#         # case Battle.BattleSteps.ROLL_DICE:
-#         #     return reverse("battle-roll-dice")
-#         case Battle.BattleSteps.DEFENDER_CHOOSE_HITS:
-#             return reverse("battle-defender-choose-hits")
-#         case Battle.BattleSteps.ATTACKER_CHOOSE_HITS:
-#             return reverse("battle-attacker-choose-hits")
-#         case Battle.BattleSteps.COMPLETED:
-#             return None
-#         case _:
-#             raise ValueError("Invalid battle step")
 
 
 def get_field_hospital_action(game: Game, event: Event) -> str | None:

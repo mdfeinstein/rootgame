@@ -2,8 +2,10 @@ from typing import Iterable, Sequence
 from django.db import transaction
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.cats.buildings import CatBuildingTypes, Recruiter, Sawmill, Workshop
-from game.models.cats.tokens import CatWood
+from game.models.cats.player import FieldHospitalEvent
+from game.models.cats.tokens import CatKeep, CatWood
 from game.models.cats.turn import CatBirdsong, CatDaylight, CatEvening, CatTurn
+from game.models.events.event import Event, EventType
 from game.models.game_models import (
     Clearing,
     Faction,
@@ -20,6 +22,7 @@ from game.queries.cats.building import (
     get_wood_cost,
 )
 from game.queries.cats.crafting import validate_crafting_pieces_satisfy_requirements
+from game.queries.cats.field_hospital import get_field_hospital_event
 from game.queries.cats.recruit import (
     is_enough_reserve,
     is_recruit_used,
@@ -316,6 +319,7 @@ def cat_evening_draw(player: Player):
         draw_card_from_deck(player)
     # move to next step (discard, presumably)
     evening.step = next_choice(CatEvening.CatEveningSteps, evening.step)
+    evening.save()
     if (
         evening.step == CatEvening.CatEveningSteps.DISCARDING
         and get_player_hand_size(player) <= 5
@@ -323,11 +327,11 @@ def cat_evening_draw(player: Player):
         # nothing to discard, move to end of turn
         evening.step = next_choice(CatEvening.CatEveningSteps, evening.step)
         evening.save()
-        if evening.step == CatEvening.CatEveningSteps.COMPLETED:
-            # move to next turn
-            next_players_turn(player.game)
-            # create next cats turn
-            create_cats_turn(player)
+    print(f"evening step: {evening.step}")
+    if evening.step == CatEvening.CatEveningSteps.COMPLETED:
+        print("evening step completed, calling cat_end_turn")
+        # move to next turn
+        cat_end_turn(player)
 
 
 @transaction.atomic
@@ -335,13 +339,17 @@ def cat_end_turn(player: Player):
     """ends the current turn, generating the next turn and moving to the next players phase
     careful where this is called. will move evening to completed if called.
     """
-    evening = get_phase(player)
-    if type(evening) != CatEvening:
-        raise ValueError("Not Evening phase")
-    evening.step = CatEvening.CatEveningSteps.COMPLETED
-    evening.save()
-    create_cats_turn(player)
+    try:
+        evening = get_phase(player)
+        if type(evening) != CatEvening:
+            raise ValueError("Not Evening phase")
+        evening.step = CatEvening.CatEveningSteps.COMPLETED
+        evening.save()
+    except ValueError:  # already done evening, do nothing
+        pass
+    print("cats turn ended")
     reset_cats_turn(player)
+    create_cats_turn(player)
     next_players_turn(player.game)
 
 
@@ -352,9 +360,60 @@ def reset_cats_turn(player: Player):
     -- reset recruiter stations used status
     -- reset sawmills used status
     """
+    print("resetting cats turn")
     # reset workshops
     Workshop.objects.filter(player=player).update(crafted_with=False)
     # reset recruiter stations
     Recruiter.objects.filter(player=player).update(used=False)
     # reset sawmills
     Sawmill.objects.filter(player=player).update(used=False)
+
+
+@transaction.atomic
+def create_field_hospital_event(clearing: Clearing, removed_player: Player, count: int):
+    """creates a field hospital event when a cat gets warriors removed
+    if keep is destroyed, skip creation
+    """
+    keep = CatKeep.objects.get(player=removed_player)
+    if keep.destroyed:
+        return
+    event = Event.objects.create(game=clearing.game, type=EventType.FIELD_HOSPITAL)
+    fh_event = FieldHospitalEvent(
+        event=event,
+        player=removed_player,
+        troops_To_save=count,
+        suit=clearing.suit,
+    )
+
+
+@transaction.atomic
+def cat_resolve_field_hospital(player: Player, card: CardsEP | None):
+    """resolves the field hospital event, saving the troops and placing them at the keep
+    If None is passed for card, resolves field hospital without saving troops
+    If card is passed, discard it
+    -- card must match the event suit
+    """
+    assert player.faction == Faction.CATS, "Not a cats player"
+    field_hospital_event = get_field_hospital_event(player)
+    if card is None:
+        field_hospital_event.event.is_resolved = True
+        field_hospital_event.save()
+        return
+    # check that player has card in hand
+    hand_entry = validate_player_has_card_in_hand(player, card)
+    if not (
+        card.value.suit == field_hospital_event.suit or card.value.suit == Suit.WILD
+    ):
+        raise ValueError("Card is not the right suit")
+    # save troops
+    to_save = field_hospital_event.troops_To_save
+    keep = CatKeep.objects.get(player=player)
+    warriors = Warrior.objects.filter(clearing=None, player=player)[:to_save]
+    for warrior in warriors:
+        warrior.clearing = keep.clearing
+        warrior.save()
+    # discard card
+    discard_card_from_hand(player, hand_entry)
+    # resolve event
+    field_hospital_event.event.is_resolved = True
+    field_hospital_event.save()

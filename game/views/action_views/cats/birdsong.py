@@ -47,9 +47,11 @@ class CatPlaceWoodView(GameActionView):
         sawmills = Sawmill.objects.filter(
             player=player, used=False, building_slot__isnull=False
         )
+        print(sawmills)
         woods_produced = 0
         for sawmill in sawmills:
             try:
+                print(f"sawmill: {sawmill}")
                 produce_wood(player, sawmill)
                 woods_produced += 1
             except ValueError as e:

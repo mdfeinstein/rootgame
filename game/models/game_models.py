@@ -150,7 +150,6 @@ class Card(models.Model):
     def save(self, *args, **kwargs):
         # auto-sync suit: card enums first value is letter, which is how it is saved
         self.suit = self.enum.value.suit.value[0]
-        print(self.suit)
         if not self.suit:
             raise ValueError("suit is blank")
         super().save(*args, **kwargs)
@@ -234,6 +233,13 @@ class DiscardPileEntry(models.Model):
         if self.card.game != self.game:
             raise ValueError("card.game and game do not match")
         super().save(*args, **kwargs)
+
+    @classmethod
+    def create_from_card(cls, card: Card):
+        spot = cls.objects.filter(game=card.game).count()
+        entry = cls(game=card.game, card=card, spot=spot)
+        entry.save()
+        return entry
 
 
 class Player(models.Model):

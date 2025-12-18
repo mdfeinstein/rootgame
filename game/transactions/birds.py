@@ -4,13 +4,28 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.birds.buildings import BirdRoost
 from game.models.birds.player import BirdLeader, DecreeEntry, Vizier
 from game.models.birds.turn import BirdBirdsong, BirdDaylight, BirdEvening
-from game.models.game_models import Clearing, Piece, Player, Suit, Warrior
+from game.models.events.birds import TurmoilEvent
+from game.models.events.event import Event, EventType
+from game.models.game_models import (
+    Clearing,
+    DiscardPileEntry,
+    Faction,
+    Piece,
+    Player,
+    Suit,
+    Warrior,
+)
 from game.queries.birds.crafting import (
     get_all_unused_roosts,
     validate_crafting_pieces_satisfy_requirements,
 )
 from game.queries.birds.roosts import get_roosts_on_board
-from game.queries.birds.turn import get_phase, validate_phase, validate_step
+from game.queries.birds.turn import (
+    get_phase,
+    get_turmoil_event,
+    validate_phase,
+    validate_step,
+)
 from game.queries.general import (
     available_building_slot,
     determine_clearing_rule,
@@ -104,6 +119,25 @@ def end_add_to_decree_step(player: Player):
     # move to next step
     birdsong.step = next_choice(BirdBirdsong.BirdBirdsongSteps, birdsong.step)
     birdsong.save()
+    # check if emergency roost necessary, if it is that step
+    if birdsong.step == BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING:
+        emergency_roost_check(player)
+
+
+@transaction.atomic
+def emergency_roost_check(player: Player):
+    """checks if emergency roost step should be skipped"""
+    birdsong = get_phase(player)
+    assert type(birdsong) == BirdBirdsong, "Not BirdBirdsong phase"
+    assert (
+        birdsong.step == BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING
+    ), "Not Emergency Roosting step"
+    # check that player has a roost on the board
+    if not get_roosts_on_board(player).exists():
+        # no roost on board, stay in emergency roosting step
+        return
+    birdsong.step = next_choice(BirdBirdsong.BirdBirdsongSteps, birdsong.step)
+    birdsong.save()
 
 
 @transaction.atomic
@@ -184,6 +218,8 @@ def next_daylight_step(player: Player):
             battle_turmoil_check(player)
         case BirdDaylight.BirdDaylightSteps.BUILDING:
             build_turmoil_check(player)
+        case BirdDaylight.BirdDaylightSteps.COMPLETED:
+            begin_evening(player)
 
 
 @transaction.atomic
@@ -314,7 +350,7 @@ def bird_battle_action(
     if decree_suit != clearing.suit and decree_suit != Suit.WILD:
         raise ValueError("Decree suit does not match clearing suit")
     # battle checks are in start_battle
-    start_battle(player.game, defender.faction, player.faction, clearing)
+    start_battle(player.game, player.faction, defender.faction, clearing)
     # use decree entry
     decree_entry.fulfilled = True
     decree_entry.save()
@@ -394,20 +430,25 @@ def begin_evening(player: Player):
             end_birds_turn(player)
 
 
+@transaction.atomic
 def end_birds_turn(player: Player):
     """ends the current turn, generating the next turn and moving to the next players phase
     careful where this is called. will move evening to completed if called.
     """
-    evening = get_phase(player)
-    if type(evening) != BirdEvening:
-        raise ValueError("Not Evening phase")
-    evening.step = BirdEvening.BirdEveningSteps.COMPLETED
-    evening.save()
+    try:
+        evening = get_phase(player)
+        if type(evening) != BirdEvening:
+            raise ValueError("Not Evening phase")
+        evening.step = BirdEvening.BirdEveningSteps.COMPLETED
+        evening.save()
+    except:
+        pass
     create_birds_turn(player)
     next_players_turn(player.game)
     reset_birds_turn(player)
 
 
+@transaction.atomic
 def reset_birds_turn(player: Player):
     """resets birds turn to initial state
     -- reset roosts crafted_with status
@@ -425,7 +466,8 @@ def reset_birds_turn(player: Player):
 def recruit_turmoil_check(player: Player):
     """
     initiates turmoil if the player can't recruit but needs to,
-    either because no warriors in supply or because no matching roosts remaining
+    either because no warriors in supply or because no matching roosts remaining.
+    Also, moves to next step if no recruit decrees present
     """
     recruit_cards = DecreeEntry.objects.filter(
         player=player, column=DecreeEntry.Column.RECRUIT, fulfilled=False
@@ -434,9 +476,12 @@ def recruit_turmoil_check(player: Player):
         player=player, column=Vizier.Column.RECRUIT, fulfilled=False
     )
     recruit_decrees_remaining = recruit_cards.count() + viziers.count()
-    assert (
-        recruit_decrees_remaining != 0
-    ), "recruit decrees remaining, but why are we on the recruit step?"
+    # if no recruit decrees remaining, move to next step
+    if recruit_decrees_remaining == 0:
+        # move to next step
+        next_daylight_step(player)
+        return
+    # otherwise, do turmoil checks
     if warrior_count_in_supply(player) == 0 and recruit_decrees_remaining != 0:
         turmoil(player)
         return
@@ -444,7 +489,7 @@ def recruit_turmoil_check(player: Player):
     # if wild in recruit (and sitll a roost), then more to do this phase, exit out
     if (
         recruit_cards.filter(card__suit=Suit.WILD).exists()
-        or viziers.filter(card__suit=Suit.WILD).exists()
+        or viziers.exists()
         and BirdRoost.objects.filter(player=player, building_slot__isnull=False).count()
         == 0
     ):
@@ -471,7 +516,7 @@ def move_turmoil_check(player: Player):
     possible reasons:
     -- no warriors present in remaining decree suits
     -- warriors in remaining decree suits can not legally move
-
+    Also, moves to next step if no move decrees present
     """
     move_cards = DecreeEntry.objects.filter(
         player=player, column=DecreeEntry.Column.MOVE, fulfilled=False
@@ -480,9 +525,11 @@ def move_turmoil_check(player: Player):
         player=player, column=Vizier.Column.MOVE, fulfilled=False
     )
     move_decrees_remaining = move_cards.count() + viziers.count()
-    assert (
-        move_decrees_remaining != 0
-    ), "move decrees remaining, but why are we on the move step?"
+    if move_decrees_remaining == 0:
+        # move to next step
+        next_daylight_step(player)
+        return
+    # otherwise, do turmoil checks
     clearings_with_warriors = {
         warrior.clearing
         for warrior in Warrior.objects.filter(clearing__isnull=False, player=player)
@@ -523,6 +570,7 @@ def battle_turmoil_check(player: Player):
     possible reasons:
     -- no warriors present in remaining decree suits
     -- warriors in remaining decree suits have no one to battle
+    Also, moves to next step if no battle decrees present
     """
     battle_cards = DecreeEntry.objects.filter(
         player=player, column=DecreeEntry.Column.BATTLE, fulfilled=False
@@ -531,9 +579,11 @@ def battle_turmoil_check(player: Player):
         player=player, column=Vizier.Column.BATTLE, fulfilled=False
     )
     battle_decrees_remaining = battle_cards.count() + viziers.count()
-    assert (
-        battle_decrees_remaining != 0
-    ), "battle decrees remaining, but why are we on the battle step?"
+    if battle_decrees_remaining == 0:
+        # move to next step
+        next_daylight_step(player)
+        return
+    # otherwise, do turmoil checks
     clearings_with_warriors = {
         warrior.clearing
         for warrior in Warrior.objects.filter(clearing__isnull=False, player=player)
@@ -579,6 +629,7 @@ def build_turmoil_check(player: Player):
     -- have a free building slot
     -- match a decree suit
     Also, turmoil if no roosts left in supply
+    Also, moves to next step if no build decrees present
     """
     build_cards = DecreeEntry.objects.filter(
         player=player, column=DecreeEntry.Column.BUILD, fulfilled=False
@@ -587,9 +638,11 @@ def build_turmoil_check(player: Player):
         player=player, column=Vizier.Column.BUILD, fulfilled=False
     )
     build_decrees_remaining = build_cards.count() + viziers.count()
-    assert (
-        build_decrees_remaining != 0
-    ), "build decrees remaining, but why are we on the build step?"
+    if build_decrees_remaining == 0:
+        # move to next step
+        next_daylight_step(player)
+        return
+    # otherwise, do turmoil checks
     # turmoil if no roosts left in supply
     if not BirdRoost.objects.filter(
         player=player, building_slot__isnull=False
@@ -648,4 +701,62 @@ def turmoil(player: Player):
     -- move the daylight step to "completed"
     -- create turmoil event (where player chooses new leader)
     """
-    pass
+    print("turmoil occured! not yet implemented")
+    assert player.faction == Faction.BIRDS
+    # lose points according to birds in decree (2 automatically from viziers)
+    points_to_lose = 2
+    points_to_lose += DecreeEntry.objects.filter(
+        player=player, card__suit=Suit.WILD
+    ).count()
+    # clear the decree: disard all cards and destory the viziers
+    for decree_entry in DecreeEntry.objects.filter(player=player):
+        discard_card_from_decree(player, decree_entry)
+    Vizier.objects.filter(player=player).delete()
+    # set leader to unavailable and inactive
+    current_leader = BirdLeader.objects.get(player=player, active=True)
+    current_leader.active = False
+    current_leader.available = False
+    current_leader.save()
+    # if all leaders unavailable, make them all available
+    if BirdLeader.objects.filter(player=player, available=False).count() == 4:
+        BirdLeader.objects.filter(player=player, available=False).update(available=True)
+    # move daylight to completed
+    daylight = get_phase(player)
+    assert type(daylight) == BirdDaylight
+    daylight.step = BirdDaylight.BirdDaylightSteps.COMPLETED
+    daylight.save()
+    # create turmoil event
+    event = Event.objects.create(game=player.game, type=EventType.TURMOIL)
+    TurmoilEvent.objects.create(event=event, player=player)
+
+
+@transaction.atomic
+def discard_card_from_decree(player: Player, decree_entry: DecreeEntry):
+    """discards the given card from the player's Decree into the gamediscard pile"""
+    # check that decree belongs to player
+    if decree_entry.player != player:
+        raise ValueError("Decree entry does not belong to player")
+    card = decree_entry.card
+    decree_entry.delete()
+    # add card to discard pile
+    discard_pile_entry = DiscardPileEntry.create_from_card(card)
+
+
+@transaction.atomic
+def turmoil_choose_new_leader(player: Player, leader: BirdLeader):
+    """chooses a new leader for the given player and resolves the turmoil event
+    -- leader msut be available
+    """
+    # check that leader is available
+    if not leader.available:
+        raise ValueError("Leader is not available")
+    # make leader active
+    leader.active = True
+    leader.save()
+    # resolve turmoil event
+    turmoil_event = get_turmoil_event(player)
+    turmoil_event.new_leader_chosen = True
+    turmoil_event.save()
+    event = turmoil_event.event
+    event.is_resolved = True
+    event.save()

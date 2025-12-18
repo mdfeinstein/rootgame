@@ -91,7 +91,7 @@ class GameActionView(APIView):
         faction: Faction | None = None,
     ):
         if faction is None:
-            faction = self.faction
+            faction = self.faction.label
         step = {
             "faction": self.faction.label if self.faction is not None else "",
             "name": name,

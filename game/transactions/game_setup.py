@@ -17,10 +17,13 @@ from game.models import (
 from game.game_data.cards.exiles_and_partisans import deck as exile_deck
 from game.models.events.setup import GameSimpleSetup
 from game.models.game_models import Faction
+
 from game.transactions.birds_setup import start_simple_birds_setup
 from game.transactions.cats_setup import start_simple_cats_setup
 from game.transactions.general import draw_card_from_deck
+from game.transactions.setup_util import next_player_setup
 from game.transactions.wa_setup import wa_setup
+from game.utility.textchoice import next_choice
 
 
 def create_new_game(
@@ -230,9 +233,10 @@ def start_game(game: Game):
     construct_deck(game)
     create_craftable_item_supply(game)
     deal_starting_cards(game)
-    simple_setup = GameSimpleSetup.objects.get(game=game)
-    simple_setup.status = GameSimpleSetup.GameSetupStatus.CATS_SETUP
-    simple_setup.save()
+    next_player_setup(game)
+    # simple_setup = GameSimpleSetup.objects.get(game=game)
+    # simple_setup.status = GameSimpleSetup.GameSetupStatus.CATS_SETUP
+    # simple_setup.save()
     begin_faction_setup(game)
     game.status = Game.GameStatus.STARTED
     game.save()

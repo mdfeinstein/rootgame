@@ -9,6 +9,7 @@ from django.core.management import call_command
 from game.models.game_models import Faction, Game, Player
 from game.serializers.bird_serializers import BirdSerializer
 from game.serializers.cat_serializers import CatSerializer
+from game.tests.client import RootGameClient
 
 
 def login_client(client: APIClient, user: str):
@@ -270,7 +271,9 @@ class CatsSetupTestCase(TestCase):
 
     def test_cats_full_setup(self):
         """test the "happy path" of a fully valid cats setup"""
-        login_client(self.client, self.user1.username)
+        cat_client = RootGameClient(self.user1.username, "password", self.game_id)
+        # login_client(self.client, self.user1.username)
+        cat_client.login()
         # call_command(
         #     "dumpdata",
         #     "game",
@@ -283,61 +286,27 @@ class CatsSetupTestCase(TestCase):
         #     "--exclude=sessions",
         #     output="game/fixtures/cats_begin_setup.json",
         # )
-        # client looks up current action
-        response = self.client.get(f"/api/game/current-action/{self.game_id}/")
+        # client looks up current action and step
+        response = cat_client.get_action()
         print(response.json())
-        route_base = f"{response.json()['route']}"
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # client gets first step of the current action (pick corner)
-        response = self.client.get(route_base)
-        data = response.json()
-        print(data)
-        # augment route_base with game id
-        route_base = f"{route_base}{self.game_id}/"
-        # request next endpoint with relevant data (in this case, corner clearing number)
-        endpoint = data["endpoint"]
-        payload_details = data["payload_details"]
-        to_send = {payload_details[0]["name"]: 1}
-        print(f"{route_base}{endpoint}/")
-        response = self.client.post(
-            f"{route_base}{endpoint}/",
-            data=to_send,
-        )
+
+        # submit clearing number for corner
+        response = cat_client.submit_action({"clearing_number": 1})
         print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        endpoint = data["endpoint"]
-        payload_details = data["payload_details"]  # expect this to be empty
-        to_send = data["accumulated_payload"]
-        to_send["confirm"] = True
-        response = self.client.post(f"{route_base}{endpoint}/", data=to_send)
+        # submit confirmation
+        response = cat_client.submit_action({"confirm": True})
         print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # pick_corner should be complete. client checks for that and then looks up next action
-        self.assertEqual(response.json()["name"], "completed")
-        self.place_initial_building(10, "Recruiter")
-        self.place_initial_building(5, "Workshop")
-        self.place_initial_building(1, "Sawmill")
-        # placements complete. client checks for that and then looks up next action
-        response = self.client.get(f"/api/game/current-action/{self.game_id}/")
+        # place initial buildings
+        self.place_initial_building(cat_client, 10, "Recruiter")
+        self.place_initial_building(cat_client, 5, "Workshop")
+        self.place_initial_building(cat_client, 1, "Sawmill")
+        # placements complete. confirm
+        response = cat_client.submit_action({"confirm": True})
         print(response.json())
-        route_base = f"{response.json()['route']}"
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # client gets first step of the current action (confirm setup)
-        response = self.client.get(route_base)
-        data = response.json()
-        print(data)
-        # augment route_base with game id
-        route_base = f"{route_base}{self.game_id}/"
-        # request next endpoint with relevant data (in this case, nothing)
-        endpoint = data["endpoint"]
-        payload_details = data["payload_details"]  # expect this to be empty
-        print(f"{route_base}{endpoint}/")
-        response = self.client.post(f"{route_base}{endpoint}/", data={})
-        try:
-            print(response.json())
-        except ValueError:
-            print(response)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         call_command(
             "dumpdata",
@@ -356,152 +325,59 @@ class CatsSetupTestCase(TestCase):
         # self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         # check some things
 
-    def place_initial_building(self, clearing_number: int, building_type: str):
-        response = self.client.get(f"/api/game/current-action/{self.game_id}/")
-        print(response.json())
-        route_base = f"{response.json()['route']}"
+    def place_initial_building(
+        self, cat_client, clearing_number: int, building_type: str
+    ):
+        # submit clearing number for building
+        response = cat_client.submit_action({"clearing_number": clearing_number})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # client gets first step of the current action (place building)
-        response = self.client.get(route_base)
         data = response.json()
         print(data)
-        # augment route_base with game id
-        route_base = f"{route_base}{self.game_id}/"
-        # request next endpoint with relevant data (in this case, building clearing number)
-        endpoint = data["endpoint"]
-        payload_details = data["payload_details"]
-        to_send = {payload_details[0]["name"]: clearing_number}
-        print(to_send)
-        print(f"{route_base}{endpoint}/")
-        response = self.client.post(
-            f"{route_base}{endpoint}/",
-            data=to_send,
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        data = response.json()
-        print(data)
-        endpoint = data["endpoint"]
-        payload_details = data["payload_details"]  # expect this to be empty
-        to_send = data["accumulated_payload"]
-        to_send[payload_details[0]["name"]] = building_type
-        print(f"{route_base}{endpoint}/")
-        print(to_send)
-        response = self.client.post(f"{route_base}{endpoint}/", data=to_send)
+        # submit building type
+        response = cat_client.submit_action({"building_type": building_type})
         print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        endpoint = data["endpoint"]
-        to_send = data["accumulated_payload"]
-        to_send["confirm"] = True
-        print(f"{route_base}{endpoint}/")
-        print(to_send)
-        response = self.client.post(f"{route_base}{endpoint}/", data=to_send)
+        # submit confirm
+        response = cat_client.submit_action({"confirm": True})
         print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-
-def cats_pick_corner(client: Client, game_id: int, clearing_number: int):
-    return client.patch(
-        f"/api/cats/pick-corner/{game_id}/{clearing_number}/",
-    )
-
-
-def cats_pick_corner_select(client: Client, game_id: int, clearing_number: int):
-    return client.post(
-        f"/api/cats/setup/pick-corner/{game_id}/corner/",
-        data={"clearing_number": clearing_number},
-    )
-
-
-def cats_pick_corner_confirm(client: Client, game_id: int, clearing_number: int):
-    return client.post(
-        f"/api/cats/setup/pick-corner/{game_id}/confirm/",
-        data={"clearing_number": clearing_number},
-    )
-
-
-def cats_place_building_clearing(client: Client, game_id: int, clearing_number: int):
-    return client.post(
-        f"/api/cats/setup/place-initial-building/{game_id}/clearing/",
-        data={"clearing_number": clearing_number},
-    )
-
-
-def cats_place_building_building_type(client: Client, game_id: int, building_type: str):
-    return client.post(
-        f"/api/cats/setup/place-initial-building/{game_id}/building_type/",
-        data={"building_type": building_type},
-    )
-
-
-def cats_place_building_confirm(
-    client: Client, game_id: int, clearing_number: int, building_type: str
-):
-    return client.post(
-        f"/api/cats/setup/place-initial-building/{game_id}/confirm/",
-        data={"clearing_number": clearing_number, "building_type": building_type},
-    )
-
-
-def cats_confirm_setup_confirm(client: Client, game_id: int):
-    return client.post(
-        f"/api/cats/setup/confirm-completed-setup/{game_id}/",
-    )
-
-
-def cats_place_initial_building(
-    client: Client, game_id: int, clearing_number: int, building_type: str
-):
-    return client.patch(
-        f"/api/cats/place-initial-building/{game_id}/{clearing_number}/{building_type}/",
-    )
-
-
-def cats_confirm_completed_setup(client: Client, game_id: int):
-    return client.patch(f"/api/cats/confirm-completed-setup/{game_id}/")
 
 
 class BirdsSetupTestCase(TestCase):
+    fixtures = ["cats_done_setup.json"]
+
     def setUp(self):
-        self.client = APIClient()
-        self.user1 = User.objects.create_user(username="user1", password="password")
-        self.user2 = User.objects.create_user(username="user2", password="password")
-        self.user3 = User.objects.create_user(username="user3", password="password")
-        self.client.force_login(user=self.user1)
-        response = create_game(self.client, data={"map_label": "Autumn"})
-        self.game_id = response.data["game_id"]
-        join_game(self.client, self.game_id)
-        pick_faction(self.client, self.game_id, "Cats")
-        self.client.force_login(user=self.user2)
-        join_game(self.client, self.game_id)
-        pick_faction(self.client, self.game_id, "Birds")
-        self.client.force_login(user=self.user3)
-        join_game(self.client, self.game_id)
-        pick_faction(self.client, self.game_id, "Woodland Alliance")
-        self.client.logout()
-        self.client.force_login(user=self.user1)
-        start_game(self.client, self.game_id)
+        self.game_id = 1
+        # self.client = RootGameClient("user2", "password", self.game_id)
 
     def test_birds_full_setup(self):
         """test the "happy path" of a fully valid birds setup"""
-        # set cats up first
-        self.client.force_login(user=self.user1)
-        response = cats_pick_corner(self.client, self.game_id, 1)
-        response = cats_place_initial_building(
-            self.client, self.game_id, 10, "Recruiter"
-        )
-        response = cats_place_initial_building(self.client, self.game_id, 5, "Workshop")
-        response = cats_place_initial_building(self.client, self.game_id, 1, "Sawmill")
-        response = cats_confirm_completed_setup(self.client, self.game_id)
         # birds setup
-        self.client.force_login(user=self.user2)
-        response = birds_pick_corner(self.client, self.game_id, 3)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        response = birds_choose_leader_initial(self.client, self.game_id, "Despot")
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        response = birds_confirm_completed_setup(self.client, self.game_id)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        client = RootGameClient("user2", "password", self.game_id)
+        response = client.get_action()
+        print(response.json())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # submit clearing number for corner
+        response = client.submit_action({"clearing_number": 3})
+        print(response.json())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        # submit confirmation
+        response = client.submit_action({"confirm": True})
+        print(response.json())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # select leader
+        response = client.submit_action({"leader": "Despot"})
+        print(response.json())
+        # confirm leader
+        response = client.submit_action({"confirm": True})
+        print(response.json())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # final setup confirmation
+        response = client.submit_action({"confirm": True})
+        print(response.json())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         # check stuff...
         response = get_bird_player_public(self.client, self.game_id)
         print(response.json())
@@ -518,22 +394,6 @@ class BirdsSetupTestCase(TestCase):
             "--exclude=sessions",
             output="game/fixtures/birds_finished_setup.json",
         )
-
-
-def birds_pick_corner(client: Client, game_id: int, clearing_number: int):
-    return client.patch(
-        f"/api/birds/pick-corner/{game_id}/{clearing_number}/",
-    )
-
-
-def birds_choose_leader_initial(client: Client, game_id: int, leader: str):
-    return client.patch(
-        f"/api/birds/choose-leader-initial/{game_id}/{leader}/",
-    )
-
-
-def birds_confirm_completed_setup(client: Client, game_id: int):
-    return client.patch(f"/api/birds/confirm-completed-setup/{game_id}/")
 
 
 def get_bird_player_public(client: Client, game_id: int):

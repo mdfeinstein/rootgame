@@ -40,7 +40,8 @@ class EmergencyDrawingView(GameActionView):
 
     def post_confirm(self, request, game_id: int, *args, **kwargs):
         """confirms the emergency drawing step"""
-        if request.data["confirm"] != True:
+        print(request.data["confirm"])
+        if not request.data["confirm"]:
             raise ValidationError("Invalid confirmation")
         try:
             emergency_draw(self.player(request, game_id))
@@ -75,8 +76,15 @@ class AddToDecreeView(GameActionView):
 
     def get(self, request):
         game_id = int(request.query_params.get("game_id"))
-        num_added = get_number_added_to_decree(self.player_by_faction(request, game_id))
-        bird_added = get_bird_added_to_decree(self.player_by_faction(request, game_id))
+        try:
+            num_added = get_number_added_to_decree(
+                self.player_by_faction(request, game_id)
+            )
+            bird_added = get_bird_added_to_decree(
+                self.player_by_faction(request, game_id)
+            )
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
         ordinal = "first" if num_added == 0 else "second"
         bird_added_str = " Bird card has been added already." if bird_added else ""
         return self.generate_step(

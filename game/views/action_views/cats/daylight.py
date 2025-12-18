@@ -311,7 +311,7 @@ class CatActionsView(GameActionView):
     def post_action(self, request, game_id: int):
         if request.data["action"] == "":
             self.end_step(request, game_id)
-            return Response({"name": "completed"})
+            return self.generate_completed_step()
 
         actions_remaining = get_actions_remaining(self.player(request, game_id))
         if actions_remaining == 0 and request.data["action"] != "birds-for-hire":

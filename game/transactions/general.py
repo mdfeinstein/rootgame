@@ -20,10 +20,14 @@ from game.models import (
     Token,
     Warrior,
 )
+from game.models.game_models import Faction
 from game.queries.general import determine_clearing_rule, warrior_count_in_clearing
 from game.game_data.cards.exiles_and_partisans import Card as CardDetails
 from game.game_data.general.crafting import crafting_piece_models
 from django.db import models
+
+from game.queries.wa.outrage import move_triggers_outrage
+from game.transactions.wa import create_outrage_event
 
 
 @transaction.atomic
@@ -67,6 +71,7 @@ def discard_card_from_hand(player: Player, card_in_hand: HandEntry):
     # add card to discard pile
     spot = DiscardPileEntry.objects.filter(game=player.game).count()
     DiscardPileEntry(game=player.game, card=card_in_hand.card, spot=spot).save()
+    # DiscardPileEntry.create_from_card(card_in_hand.card)
     # delete card from player's hand
     card_in_hand.delete()
 
@@ -94,6 +99,12 @@ def move_warriors(
     for warrior in warriors:
         warrior.clearing = clearing_end
     Warrior.objects.bulk_update(warriors, ["clearing"])
+    # faction specific interactions:
+    if move_triggers_outrage(player, clearing_end):
+        wa_player = Player.objects.get(
+            game=player.game, faction=Faction.WOODLAND_ALLIANCE
+        )
+        create_outrage_event(clearing_end, player, wa_player)
 
 
 @transaction.atomic
@@ -102,13 +113,24 @@ def remove_warriors_from_clearing(
 ):
     """
     removes warriors from the given clearing
-    if exact, will raise if not enough warriors to remove. otehrwise, will remove as many as possible
+    if exact, will raise if not enough warriors to remove. otherwise, will remove as many as possible
     """
     if exact and warrior_count_in_clearing(player, clearing) < number:
         raise ValueError("Not enough warriors in clearing to remove")
+    if player.faction == Faction.CATS:
+        # TODO: field hospital event
+        pass
     Warrior.objects.filter(clearing=clearing, player=player)[:number].update(
         clearing=None
     )
+
+
+def remove_all_warriors_from_clearing(player: Player, clearing: Clearing):
+    """removes all warriors from the given clearing"""
+    if player.faction == Faction.CATS:
+        # TODO: field hospital event
+        pass
+    Warrior.objects.filter(clearing=clearing, player=player).update(clearing=None)
 
 
 @transaction.atomic

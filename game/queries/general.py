@@ -138,8 +138,11 @@ def get_player_hand_size(player: Player) -> int:
 def validate_legal_move(
     player: Player, clearing_start: Clearing, clearing_end: Clearing
 ):
-    """checks if warriors in origin clearing have any legal moves.
-    also raises if no warriors in origin clearing
+    """checks if legal move from clearing_start to clearing_end
+    might fail because:
+    -- no warriors in origin clearing
+    -- clearing_start is not adjacent to clearing_end
+    -- player does not control either origin or target clearing
     """
     if not Warrior.objects.filter(clearing=clearing_start, player=player).exists():
         raise ValueError("No warriors in origin clearing")
@@ -160,3 +163,23 @@ def validate_has_legal_moves(player: Player, clearing: Clearing):
     adjacent_clearings = clearing.connected_clearings.all()
     for adjacent_clearing in adjacent_clearings:
         validate_legal_move(player, clearing, adjacent_clearing)
+
+
+def validate_enemy_pieces_in_clearing(
+    player: Player, clearing: Clearing
+) -> list[Player]:
+    """raises if no enemy pieces in the given clearing"""
+    # confirm clearing and player are in the same game
+    players_with_pieces = []
+    if player.game != clearing.game:
+        raise ValueError("Player and clearing are not in the same game")
+    # get opposing players
+    players_in_game = Player.objects.filter(game=player.game)
+    for player_ in players_in_game:
+        if player_ != player:
+            # check if there are any pieces in the clearing
+            if player_has_pieces_in_clearing(player_, clearing):
+                players_with_pieces.append(player_)
+    if len(players_with_pieces) == 0:
+        raise ValueError("No enemy pieces in clearing")
+    return players_with_pieces

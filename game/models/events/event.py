@@ -8,6 +8,8 @@ class EventType(models.TextChoices):
 
     BATTLE = "battle"
     FIELD_HOSPITAL = "field_hospital"
+    TURMOIL = "turmoil"
+    OUTRAGE = "outrage"
 
 
 class Event(models.Model):
