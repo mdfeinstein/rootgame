@@ -7,6 +7,7 @@ from game.models.game_models import Clearing, Faction, Game, Player
 from game.serializers.general_serializers import (
     GameActionSerializer,
     GameActionStepSerializer,
+    OptionSerializer,
 )
 
 
@@ -89,6 +90,7 @@ class GameActionView(APIView):
         payload_details,
         accumulated_payload: dict | None = None,
         faction: Faction | None = None,
+        options: list[OptionSerializer] | list[dict] | None = None,
     ):
         if faction is None:
             faction = self.faction.label
@@ -99,6 +101,7 @@ class GameActionView(APIView):
             "endpoint": endpoint,
             "payload_details": payload_details,
             "accumulated_payload": accumulated_payload,
+            "options": options,
         }
         serializer = GameActionStepSerializer(step)
         return Response(serializer.data)

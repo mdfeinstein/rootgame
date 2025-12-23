@@ -37,6 +37,7 @@ class RevoltView(GameActionView):
                 "payload_details": [
                     {"type": "clearing_number", "name": "clearing_number"}
                 ],
+                "options": [{"value": "", "label": "Done Revolting"}],
             }
         else:
             self.first_step = {
@@ -117,6 +118,7 @@ class SpreadSympathyView(GameActionView):
                 "payload_details": [
                     {"type": "clearing_number", "name": "clearing_number"}
                 ],
+                "options": [{"value": "", "label": "Done Spreading Sympathy"}],
             }
         else:
             self.first_step = {

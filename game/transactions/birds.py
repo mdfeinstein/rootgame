@@ -97,7 +97,7 @@ def add_card_to_decree(player: Player, card: CardsEP, column: DecreeEntry.Column
     )
     # remove card from player's hand
     card_in_hand.delete()
-    # increment cards addedd and flag bird card added if needed
+    # increment cards added and flag bird card added if needed
     birdsong.cards_added_to_decree += 1
     # move to next step if all cards have been added
     birdsong.save()
@@ -725,6 +725,8 @@ def turmoil(player: Player):
     assert type(daylight) == BirdDaylight
     daylight.step = BirdDaylight.BirdDaylightSteps.COMPLETED
     daylight.save()
+    # begin evening
+    begin_evening(player)
     # create turmoil event
     event = Event.objects.create(game=player.game, type=EventType.TURMOIL)
     TurmoilEvent.objects.create(event=event, player=player)

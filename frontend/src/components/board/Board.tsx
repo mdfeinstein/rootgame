@@ -33,6 +33,7 @@ import useBuildingTable, {
 import { Roost, Sawmill } from "./Buildings";
 import type { Faction } from "../../data/frontend_types";
 import { useTurnInfoQuery } from "../../hooks/useTurnInfoQuery";
+import { GameContext } from "../../contexts/GameProvider";
 
 // Board component: positions, nodes, links, simple viewbox scaling
 export default function SvgBoard({
@@ -46,7 +47,8 @@ export default function SvgBoard({
   height?: number;
   onNodeClick?: (id: string) => void;
 }) {
-  const turnInfo = useTurnInfoQuery(1);
+  const { gameId } = useContext(GameContext);
+  const turnInfo = useTurnInfoQuery(gameId);
   useEffect(() => {
     if (!turnInfo.data) return;
     console.log(turnInfo.data);
@@ -55,12 +57,12 @@ export default function SvgBoard({
   const factionList: Faction[] = ["Cats", "Birds", "WA"];
   // create list of clearingProps
   const { warriorTable, isSuccess: isSuccessWarrior } = useWarriorTable(
-    1,
+    gameId,
     factionList
   );
 
   const { tokenTable, isSuccess: isSuccessToken } = useTokenTable(
-    1,
+    gameId,
     factionList
   );
 
@@ -94,7 +96,7 @@ export default function SvgBoard({
   }, [tokenTable]);
 
   const { buildingTable, isSuccess: isSuccessBuilding } = useBuildingTable(
-    1,
+    gameId,
     factionList
   );
 
@@ -176,7 +178,9 @@ export default function SvgBoard({
           return <Path key={i} a={l.a} b={l.b} stroke={l.stroke} />;
         })}
         {waterPathList.map((l, i) => {
-          return <Path key={i} a={l.a} b={l.b} stroke={l.stroke} />;
+          return (
+            <Path key={i} a={l.a} b={l.b} stroke={l.stroke} strokeWidth={10} />
+          );
         })}
         {clearingProps.map((clearingProp, i) => (
           <Clearing key={i} {...clearingProp}>

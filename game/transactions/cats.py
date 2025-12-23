@@ -378,7 +378,7 @@ def create_field_hospital_event(clearing: Clearing, removed_player: Player, coun
     if keep.destroyed:
         return
     event = Event.objects.create(game=clearing.game, type=EventType.FIELD_HOSPITAL)
-    fh_event = FieldHospitalEvent(
+    fh_event = FieldHospitalEvent.objects.create(
         event=event,
         player=removed_player,
         troops_To_save=count,
@@ -397,7 +397,7 @@ def cat_resolve_field_hospital(player: Player, card: CardsEP | None):
     field_hospital_event = get_field_hospital_event(player)
     if card is None:
         field_hospital_event.event.is_resolved = True
-        field_hospital_event.save()
+        field_hospital_event.event.save()
         return
     # check that player has card in hand
     hand_entry = validate_player_has_card_in_hand(player, card)
@@ -416,4 +416,4 @@ def cat_resolve_field_hospital(player: Player, card: CardsEP | None):
     discard_card_from_hand(player, hand_entry)
     # resolve event
     field_hospital_event.event.is_resolved = True
-    field_hospital_event.save()
+    field_hospital_event.event.save()

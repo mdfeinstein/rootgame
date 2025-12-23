@@ -18,16 +18,25 @@ class TurmoilView(GameActionView):
         game_id = int(request.query_params.get("game_id"))
         player = self.player(request, game_id)
         available_leaders = get_available_leaders(player)
-        leader_labels = [leader.leader.label for leader in available_leaders]
+        leader_labels = [
+            BirdLeader.BirdLeaders(leader.leader).label for leader in available_leaders
+        ]
+        options = [
+            {
+                "value": BirdLeader.BirdLeaders(leader.leader).name,
+                "label": BirdLeader.BirdLeaders(leader.leader).label,
+            }
+            for leader in available_leaders
+        ]
         self.first_step = {
             "faction": self.faction.label,
             "name": "new_leader",
-            "prompt": "Choose a new leader to resolve the turmoil event. Available leaders: "
-            + ", ".join(leader_labels),
+            "prompt": "Choose a new leader to resolve the turmoil event.",
             "endpoint": "new_leader",
             "payload_details": [
                 {"type": "leader", "name": "new_leader"},
             ],
+            "options": options,
         }
         return super().get(request)
 

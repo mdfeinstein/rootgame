@@ -1,4 +1,5 @@
 from random import shuffle
+import warnings
 from django.db import transaction
 
 from game.models import (
@@ -27,7 +28,6 @@ from game.game_data.general.crafting import crafting_piece_models
 from django.db import models
 
 from game.queries.wa.outrage import move_triggers_outrage
-from game.transactions.wa import create_outrage_event
 
 
 @transaction.atomic
@@ -81,6 +81,8 @@ def move_warriors(
     player: Player, clearing_start: Clearing, clearing_end: Clearing, number: int
 ):
     """moves warriors from one clearing to another"""
+    from game.transactions.outrage import create_outrage_event
+
     warriors = list(
         Warrior.objects.filter(clearing=clearing_start, player=player)[:number]
     )
@@ -115,6 +117,9 @@ def remove_warriors_from_clearing(
     removes warriors from the given clearing
     if exact, will raise if not enough warriors to remove. otherwise, will remove as many as possible
     """
+    warnings.warn(
+        "removing warriors should possibly be handled by player_rmoves_warriors in transactions/battle"
+    )
     if exact and warrior_count_in_clearing(player, clearing) < number:
         raise ValueError("Not enough warriors in clearing to remove")
     if player.faction == Faction.CATS:
@@ -196,7 +201,8 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
             item__item_type=item.value
         ).first()
         assert item_from_pool is not None, "item not in pool"
-        CraftedItemEntry(player=card_in_hand.player, item=item_from_pool).save()
+        item = item_from_pool.item
+        CraftedItemEntry(player=card_in_hand.player, item=item).save()
         item_from_pool.delete()
         # update score
         card_in_hand.player.score += points

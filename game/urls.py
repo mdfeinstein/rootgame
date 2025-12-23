@@ -55,6 +55,8 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.views import APIView
 
+from game.views.user_info import get_player_info, get_user_info
+
 
 def register_action(
     name: str, view: type[APIView], url: str, urlpatterns: list[URLPattern]
@@ -69,6 +71,8 @@ urlpatterns = [
     path("api/dev/login/", DevLoginView.as_view()),
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/user/", get_user_info, name="user"),
+    path("api/player/<int:game_id>/", get_player_info, name="player"),
     path("api/cats/player-info/<int:game_id>/", get_cat_player_public),
     path("api/wa/player-info/<int:game_id>/", get_wa_player_public),
     path("api/birds/player-info/<int:game_id>/", get_bird_player_public),

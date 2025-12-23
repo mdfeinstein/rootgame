@@ -3,10 +3,12 @@ export function Path({
   a,
   b,
   stroke = "currentColor",
+  strokeWidth = 3,
 }: {
   a: { x: number; y: number };
   b: { x: number; y: number };
   stroke?: string;
+  strokeWidth?: number;
 }) {
   return (
     <line
@@ -14,7 +16,7 @@ export function Path({
       y1={a.y}
       x2={b.x}
       y2={b.y}
-      strokeWidth={3}
+      strokeWidth={strokeWidth}
       stroke={stroke}
       strokeLinecap="round"
     />

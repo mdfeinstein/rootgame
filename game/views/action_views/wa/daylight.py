@@ -2,7 +2,12 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.game_models import Faction
 from game.models.wa.turn import WADaylight
 from game.queries.wa.turn import validate_step
-from game.transactions.wa import add_officer, add_supporter, end_daylight_actions
+from game.transactions.wa import (
+    add_officer,
+    add_supporter,
+    end_daylight_actions,
+    training,
+)
 from game.views.action_views.general import GameActionView
 from rest_framework.views import Response
 from rest_framework import status
@@ -19,6 +24,12 @@ class WADaylightActionsView(GameActionView):
         "prompt": "Select action: craft, mobilize, or train. Or, choose nothing to end action step.",
         "endpoint": "action",
         "payload_details": [{"type": "action_type", "name": "action"}],
+        "options": [
+            {"value": "craft", "label": "Craft"},
+            {"value": "mobilize", "label": "Mobilize"},
+            {"value": "train", "label": "Train"},
+            {"value": "", "label": "Done"},
+        ],
     }
 
     def route_post(self, request, game_id: int, route: str):
@@ -111,7 +122,7 @@ class WADaylightActionsView(GameActionView):
         except KeyError:
             raise ValidationError("Invalid card")
         try:
-            add_officer(player)
+            training(player, card)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()

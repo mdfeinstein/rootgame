@@ -13,6 +13,11 @@ export type StepPayload = {
   value: number | string | boolean | null;
 };
 
+export type Option = {
+  label: string;
+  value: string;
+};
+
 export type GameActionStep = {
   faction: string;
   name: string;
@@ -20,6 +25,7 @@ export type GameActionStep = {
   endpoint: string;
   payload_details: StepPayload[];
   accumulated_payload: StepPayload[];
+  options?: Option[];
 };
 
 const useGameActionQuery = (gameId: number) => {

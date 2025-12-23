@@ -30,6 +30,13 @@ class WAOperationsView(GameActionView):
         "prompt": "Select operation: recruit, move, battle, or organize. Or, choose nothing to end operation step.",
         "endpoint": "operation",
         "payload_details": [{"type": "action_type", "name": "operation"}],
+        "options": [
+            {"value": "recruit", "label": "Recruit"},
+            {"value": "move", "label": "Move"},
+            {"value": "battle", "label": "Battle"},
+            {"value": "organize", "label": "Organize"},
+            {"value": "", "label": "Done"},
+        ],
     }
 
     def get(self, request):
@@ -54,6 +61,13 @@ class WAOperationsView(GameActionView):
             + f"Operations remaining: {operations_remaining}",
             "endpoint": "operation",
             "payload_details": [{"type": "action_type", "name": "operation"}],
+            "options": [
+                {"value": "recruit", "label": "Recruit"},
+                {"value": "move", "label": "Move"},
+                {"value": "battle", "label": "Battle"},
+                {"value": "organize", "label": "Organize"},
+                {"value": "", "label": "Done"},
+            ],
         }
 
         return super().get(request)
@@ -180,10 +194,10 @@ class WAOperationsView(GameActionView):
         destination_clearing_number = int(request.data["destination_clearing_number"])
         try:
             origin_clearing = Clearing.objects.get(
-                game=game, number=origin_clearing_number
+                game=game, clearing_number=origin_clearing_number
             )
             destination_clearing = Clearing.objects.get(
-                game=game, number=destination_clearing_number
+                game=game, clearing_number=destination_clearing_number
             )
         except Clearing.DoesNotExist:
             raise ValidationError("Clearing does not exist")
@@ -215,10 +229,10 @@ class WAOperationsView(GameActionView):
             raise ValidationError("Must select at least one warrior to move, or cancel")
         try:
             origin_clearing = Clearing.objects.get(
-                game=self.game(game_id), number=origin_clearing_number
+                game=self.game(game_id), clearing_number=origin_clearing_number
             )
             destination_clearing = Clearing.objects.get(
-                game=self.game(game_id), number=destination_clearing_number
+                game=self.game(game_id), clearing_number=destination_clearing_number
             )
         except Clearing.DoesNotExist:
             raise ValidationError("Clearing does not exist")
@@ -233,17 +247,21 @@ class WAOperationsView(GameActionView):
         game = self.game(game_id)
         clearing_number = int(request.data["clearing_number"])
         try:
-            clearing = Clearing.objects.get(game=game, number=clearing_number)
+            clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
         except Clearing.DoesNotExist:
             raise ValidationError("Clearing does not exist")
         # check if valid clearing for battle
         if not player_has_warriors_in_clearing(player, clearing):
             raise ValidationError("Player does not have warriors in this clearing")
         try:
-            validate_enemy_pieces_in_clearing(player, clearing)
+            opposing_players = validate_enemy_pieces_in_clearing(player, clearing)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         accumulated_payload = {"clearing_number": clearing_number}
+        factions = [Faction(player.faction) for player in opposing_players]
+        options = [
+            {"value": faction.name, "label": faction.label} for faction in factions
+        ]
         return self.generate_step(
             "defender",
             f"Select defender.",
@@ -252,6 +270,7 @@ class WAOperationsView(GameActionView):
                 {"type": "faction", "name": "defender_faction"},
             ],
             accumulated_payload,
+            options=options,
         )
 
     def post_battle_defender(self, request, game_id: int):
@@ -265,7 +284,7 @@ class WAOperationsView(GameActionView):
                 f"Invalid faction: {request.data['defender_faction'].upper()}"
             )
         try:
-            clearing = Clearing.objects.get(game=game, number=clearing_number)
+            clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
         except Clearing.DoesNotExist:
             raise ValidationError("Clearing does not exist")
         try:
@@ -283,7 +302,7 @@ class WAOperationsView(GameActionView):
         clearing_number = int(request.data["clearing_number"])
         try:
             clearing = Clearing.objects.get(
-                game=self.game(game_id), number=clearing_number
+                game=self.game(game_id), clearing_number=clearing_number
             )
         except Clearing.DoesNotExist:
             raise ValidationError("Clearing does not exist")

@@ -68,6 +68,9 @@ class CatCraftStepView(GameActionView):
         "prompt": "Select card to craft or choose nothing to end crafting step.",
         "endpoint": "card",
         "payload_details": [{"type": "card", "name": "card_to_craft"}],
+        "options": [
+            {"value": "", "label": "Done Crafting"},
+        ],
     }
 
     def route_post(self, request, game_id: int, route: str):
@@ -245,6 +248,15 @@ class CatActionsView(GameActionView):
         "prompt": "Select action: march, battle, build, overwork, or birds-for-hire. Or, choose nothing to end action step.",
         "endpoint": "action",
         "payload_details": [{"type": "action_type", "name": "action"}],
+        "options": [
+            {"value": "march", "label": "March"},
+            {"value": "battle", "label": "Battle"},
+            {"value": "build", "label": "Build"},
+            {"value": "recruit", "label": "Recruit"},
+            {"value": "overwork", "label": "Overwork"},
+            {"value": "birds-for-hire", "label": "Birds For Hire"},
+            {"value": "", "label": "Done"},
+        ],
     }
 
     def get(self, request):
@@ -271,6 +283,15 @@ class CatActionsView(GameActionView):
                 + f"Actions remaining: {daylight.actions_left}",
                 "endpoint": "action",
                 "payload_details": [{"type": "action_type", "name": "action"}],
+                "options": [
+                    {"value": "march", "label": "March"},
+                    {"value": "battle", "label": "Battle"},
+                    {"value": "build", "label": "Build"},
+                    {"value": "recruit", "label": "Recruit"},
+                    {"value": "overwork", "label": "Overwork"},
+                    {"value": "birds-for-hire", "label": "Birds For Hire"},
+                    {"value": "", "label": "Done"},
+                ],
             }
         self.first_step = step
         return super().get(request)
@@ -293,6 +314,8 @@ class CatActionsView(GameActionView):
                 return self.post_build_building(request, game_id)
             case "build-clearing":
                 return self.post_build_clearing(request, game_id)
+            case "build-wood":
+                return self.post_build_wood(request, game_id)
             case "overwork-card":
                 return self.post_overwork_card(request, game_id)
             case "overwork-clearing":
@@ -305,7 +328,7 @@ class CatActionsView(GameActionView):
                 return self.post_birdsforhire_card(request, game_id)
             case _:
                 return Response(
-                    {"error": "Invalid route"}, status=status.HTTP_400_BAD_REQUEST
+                    {"detail": "Invalid route"}, status=status.HTTP_404_NOT_FOUND
                 )
 
     def post_action(self, request, game_id: int):
@@ -346,6 +369,11 @@ class CatActionsView(GameActionView):
                     "endpoint": "build-building",
                     "payload_details": [
                         {"type": "building_type", "name": "building_type"}
+                    ],
+                    "options": [
+                        {"value": "sawmill", "label": "Sawmill"},
+                        {"value": "workshop", "label": "Workshop"},
+                        {"value": "recruiter", "label": "Recruiter"},
                     ],
                 }
             case "overwork":
@@ -539,9 +567,7 @@ class CatActionsView(GameActionView):
         game = self.game(game_id)
         player = self.player(request, game_id)
         clearing_number = int(request.data["battle_clearing_number"])
-        defender_faction = get_choice_value_by_label_or_value(
-            Faction, request.data["defender_faction"].capitalize()
-        )
+        defender_faction = Faction(request.data["defender_faction"])
         print(defender_faction)
         defender = Player.objects.get(game=game, faction=defender_faction)
         valid_defenders = self.validate_battle_clearing(game, player, clearing_number)
@@ -634,14 +660,14 @@ class CatActionsView(GameActionView):
                 "faction": self.faction_string,
                 "name": "select_build_wood",
                 "prompt": "Select wood to build with."
-                + f"Needed: {get_wood_cost(player, building_type)}. Selected: 0",
+                + f" Needed: {get_wood_cost(player, building_type)}. Selected: 0",
                 "endpoint": "build-wood",
                 "payload_details": [
                     {"type": "clearing_number", "name": "wood_clearing_number"},
                 ],
                 "accumulated_payload": {
                     "building_type": building_type_string,
-                    "Build_clearing_number": clearing_number,
+                    "build_clearing_number": clearing_number,
                     "wood_token_clearing_numbers": [],  # will track wood tokens to use
                 },
             }
@@ -653,7 +679,7 @@ class CatActionsView(GameActionView):
         player = self.player(request, game_id)
         building_type_string = request.data["building_type"]
         try:
-            building_type = CatBuildingTypes(building_type_string.upper())
+            building_type = CatBuildingTypes[building_type_string.upper()]
         except KeyError:
             raise ValidationError(
                 f"Invalid building type. passed: {building_type_string}"

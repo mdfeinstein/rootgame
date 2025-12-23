@@ -131,6 +131,10 @@ class AddToDecreeView(GameActionView):
             validate_card_to_decree(self.player(request, game_id), card)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
+        options = [
+            {"value": column.name, "label": column.label}
+            for column in DecreeEntry.Column
+        ]
         return self.generate_step(
             "select_decree_column",
             "Select a Decree column to add to",
@@ -139,6 +143,7 @@ class AddToDecreeView(GameActionView):
                 {"type": "decree_column", "name": "decree_column"},
             ],
             {"card_to_add": card_name},
+            options=options,
         )
 
     def post_column(self, request, game_id: int):

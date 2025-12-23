@@ -1,8 +1,13 @@
+import { useContext } from "react";
+import { UserContext } from "../../contexts/UserProvider";
 import useGetPlayerHandQuery from "../../hooks/useGetPlayerHandQuery";
 import Card from "./Card";
+import { GameContext } from "../../contexts/GameProvider";
 
 const Hand = () => {
-  const { playerHand } = useGetPlayerHandQuery();
+  const { username } = useContext(UserContext);
+  const { gameId } = useContext(GameContext);
+  const { playerHand } = useGetPlayerHandQuery(gameId, username);
   return (
     <div
       style={{

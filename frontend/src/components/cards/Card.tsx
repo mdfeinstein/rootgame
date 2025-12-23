@@ -28,8 +28,8 @@ const Card = ({ cardData }: { cardData: CardType }) => {
       <div style={{ color: colormap[cardData.suit] }}>{cardData.suit}</div>
       <div>{cardData.title}</div>
       <div>{cardData.text}</div>
-      {/* <div>{cardData.craftable}</div>
       <div>{cardData.cost}</div>
+      {/* <div>{cardData.craftable}</div>
       <div>{cardData.item}</div>
       <div>{cardData.craftedPoints}</div>
       <div>{cardData.ambush}</div>

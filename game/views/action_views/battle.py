@@ -39,6 +39,9 @@ class BattleActionView(GameActionView):
                     "payload_details": [
                         {"type": "card", "name": "ambush_card"},
                     ],
+                    "options": [
+                        {"value": "", "label": "Refuse to ambush"},
+                    ],
                 }
 
             case Battle.BattleSteps.ATTACKER_AMBUSH_CANCEL_CHECK:

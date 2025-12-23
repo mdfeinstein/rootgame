@@ -1,6 +1,7 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import type { GameActionStep, StepPayload } from "../hooks/useGameActionQuery";
 import useGameActionQuery from "../hooks/useGameActionQuery";
+import { GameContext } from "./GameProvider";
 
 // components when clicked may pass any or all of this information.
 // the callback will use the relevant data to submit to the server
@@ -13,13 +14,8 @@ export type SubmitPayload = {
 
 const GameActionContext = createContext<any>({});
 
-const GameActionProvider = ({
-  gameId,
-  children,
-}: {
-  gameId: number;
-  children: React.ReactNode;
-}) => {
+const GameActionProvider = ({ children }: { children: React.ReactNode }) => {
+  const { gameId } = useContext(GameContext);
   const {
     baseEndpoint,
     actionInfo,

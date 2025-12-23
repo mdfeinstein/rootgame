@@ -24,8 +24,12 @@ from game.queries.general import (
     player_has_warriors_in_clearing,
     warrior_count_in_clearing,
 )
-from game.transactions.cats import create_field_hospital_event
 from game.transactions.general import discard_card_from_hand
+from game.transactions.removal import (
+    player_removes_building,
+    player_removes_token,
+    player_removes_warriors,
+)
 
 
 @transaction.atomic
@@ -90,6 +94,8 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
     if battle.step != Battle.BattleSteps.ATTACKER_AMBUSH_CANCEL_CHECK:
         raise ValueError("Not attacker ambush cancel check step")
     # if no ambush card, attacker chooses not to cancel ambush
+    defending_player = Player.objects.get(game=game, faction=battle.defender)
+    attacking_player = Player.objects.get(game=game, faction=battle.attacker)
     if ambush_card is None:
         battle.attacker_cancel_ambush = False
         attacking_player = Player.objects.get(game=game, faction=battle.attacker)
@@ -98,25 +104,25 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
         )
         if attacking_warriors > 2:
             # resolve ambush by removing attacking warriors and proceeding to roll
-            Warrior.objects.filter(clearing=battle.clearing, player=attacking_player)[
-                :2
-            ].update(clearing=None)
+            player_removes_warriors(
+                battle.clearing, attacking_player, defending_player, 2
+            )
             battle.step = Battle.BattleSteps.ROLL_DICE
             battle.save()
             roll_dice(game, battle)
             return
         elif attacking_warriors == 2:
             # resolve ambush by removing attacking warriors and ending the battle
-            Warrior.objects.filter(clearing=battle.clearing, player=attacking_player)[
-                :2
-            ].update(clearing=None)
+            player_removes_warriors(
+                battle.clearing, attacking_player, defending_player, 2
+            )
             end_battle(game, battle)
             return
         else:
             # resolve ambush by removing remaining attacking warrior and moving to attacker choosing their hits
-            Warrior.objects.filter(
-                clearing=battle.clearing, player=attacking_player
-            ).update(clearing=None)
+            player_removes_warriors(
+                battle.clearing, attacking_player, defending_player, 1
+            )
             # do i need to convey that attacker must choose one hit, or is this kind of guaranteed to only be one?
             battle.step = Battle.BattleSteps.ATTACKER_CHOOSE_AMBUSH_HITS
             battle.save()
@@ -180,19 +186,22 @@ def roll_dice(game: Game, battle: Battle):
             battle.attacker_hits_taken += 1
     # assign hits automatically if possible. otherwise, go to choice steps
     if defending_warriors_count >= battle.defender_hits_taken:
-        warriors_to_remove = Warrior.objects.filter(
-            clearing=battle.clearing, player=defending_player
-        )[: battle.defender_hits_taken]
-        for warrior in warriors_to_remove:
-            warrior.clearing = None
-            warrior.save()
+        player_removes_warriors(
+            battle.clearing,
+            attacking_player,
+            defending_player,
+            battle.defender_hits_taken,
+        )
         battle.defender_hits_assigned = battle.defender_hits_taken
     else:
         # remove warriors and tally assigned hits, and then move on to choice stage if anything else left to hit and more hits to assign
         battle.defender_hits_assigned = defending_warriors_count
-        Warrior.objects.filter(
-            clearing=battle.clearing, player=defending_player
-        ).update(clearing=None)
+        player_removes_warriors(
+            battle.clearing,
+            attacking_player,
+            defending_player,
+            defending_warriors_count,
+        )
         pieces_left_to_hit = count_player_pieces_in_clearing(
             defending_player, battle.clearing
         )
@@ -201,28 +210,38 @@ def roll_dice(game: Game, battle: Battle):
         )
         if defender_hits_left_to_assign > 0 and pieces_left_to_hit > 0:
             if pieces_left_to_hit <= defender_hits_left_to_assign:
-                # remove all pieces, don't need to do choice step
-                # this function will remove the pieces and score the points, as well as trigger any relevant events
-                # battler_removes_all_pieces(game, battle, defender=True)
-                pass
+                tokens = Token.objects.filter(
+                    clearing=battle.clearing, player=defending_player
+                )
+                for token in tokens:
+                    player_removes_token(game, token, attacking_player)
+                buildings = Building.objects.filter(
+                    building_slot__clearing=battle.clearing, player=defending_player
+                )
+                for building in buildings:
+                    player_removes_building(game, building, attacking_player)
+
             else:  # more pieces than hits, go to choice step
                 battle.step = Battle.BattleSteps.DEFENDER_CHOOSE_HITS
                 battle.save()
 
     if attacking_warriors_count >= battle.attacker_hits_taken:
-        warriors_to_remove = Warrior.objects.filter(
-            clearing=battle.clearing, player=attacking_player
-        )[: battle.attacker_hits_taken]
-        for warrior in warriors_to_remove:
-            warrior.clearing = None
-            warrior.save()
+        player_removes_warriors(
+            battle.clearing,
+            defending_player,
+            attacking_player,
+            battle.attacker_hits_taken,
+        )
         battle.attacker_hits_assigned = battle.attacker_hits_taken
     else:
         # remove warriors and tally assigned hits, and then move on to choice stage if any more hits to assign, and pieces left to hit
         battle.attacker_hits_assigned = attacking_warriors_count
-        Warrior.objects.filter(
-            clearing=battle.clearing, player=attacking_player
-        ).update(clearing=None)
+        player_removes_warriors(
+            battle.clearing,
+            defending_player,
+            attacking_player,
+            attacking_warriors_count,
+        )
         attacking_pieces_count = count_player_pieces_in_clearing(
             attacking_player, battle.clearing
         )
@@ -232,9 +251,16 @@ def roll_dice(game: Game, battle: Battle):
         if attacking_hits_left_to_assign > 0 and attacking_pieces_count > 0:
             if attacking_pieces_count <= attacking_hits_left_to_assign:
                 # remove all pieces, don't need to do choice step
-                # this function will remove the pieces and score the points, as well as trigger any relevant events
-                # battler_removes_all_pieces(game, battle, defender = False)
-                pass
+                tokens = Token.objects.filter(
+                    clearing=battle.clearing, player=attacking_player
+                )
+                for token in tokens:
+                    player_removes_token(game, token, defending_player)
+                buildings = Building.objects.filter(
+                    building_slot__clearing=battle.clearing, player=attacking_player
+                )
+                for building in buildings:
+                    player_removes_building(game, building, defending_player)
             else:  # more pieces than hits, go to choice step if not already on defender choice step
                 if battle.step != Battle.BattleSteps.DEFENDER_CHOOSE_HITS:
                     battle.step = Battle.BattleSteps.ATTACKER_CHOOSE_HITS
@@ -247,74 +273,6 @@ def roll_dice(game: Game, battle: Battle):
 
 def defender_chooses_hit(game: Game, battle: Battle, piece: Piece):
     pass
-
-
-def battler_removes_all_pieces(game: Game, battle: Battle, defender: bool):
-    """removes all pieces of defender (if True) or attacker (if False) from the battle clearing"""
-    removing_player = Player.objects.get(
-        game=game, faction=battle.attacker if defender else battle.defender
-    )
-    removed_player = Player.objects.get(
-        game=game, faction=battle.defender if defender else battle.attacker
-    )
-    Warrior.objects.filter(clearing=battle.clearing, player=removed_player).update(
-        clearing=None
-    )
-    tokens = Token.objects.filter(clearing=battle.clearing, player=battle.defender)
-    for token in tokens:
-        player_removes_token(game, token, removing_player)
-    buildings = Building.objects.filter(
-        building_slot__clearing=battle.clearing, player=battle.defender
-    )
-    for building in buildings:
-        player_removes_building(game, building, removing_player)
-
-
-def player_removes_warriors(
-    clearing: Clearing, removing_player: Player, removed_player: Player, count: int
-):
-    """removes warriors from the board by player, triggering any relevant events"""
-    warriors = Warrior.objects.filter(clearing=clearing, player=removed_player)[:count]
-    if len(warriors) != count:
-        raise ValueError("Not enough warriors to remove")
-    for warrior in warriors:
-        warrior.clearing = None
-        warrior.save()
-    # launch related event
-    if removed_player.faction == Faction.CATS:
-        create_field_hospital_event(clearing, removed_player, count)
-        pass
-
-    # remover scores a point
-    removing_player.score += count
-    # check faction relevant events
-
-
-def player_removes_token(game: Game, token: Token, removing_player: Player):
-    """removes a token from the board by player, scoring points and triggering any relevant events"""
-    clearing = token.clearing
-    token.clearing = None
-    token.save()
-    # remover scores a point
-    removing_player.score += 1
-    # check faction relevant events
-
-    # check if token is a sympathy token
-    if token in Token.objects.filter(
-        game=game, player__faction=Faction.WOODLAND_ALLIANCE, clearing=clearing
-    ):
-        # launch Outrage event
-        # create_outrage_event(token.clearing, removing_player)
-        pass
-
-
-def player_removes_building(game: Game, building: Building, removing_player: Player):
-    """removes a building from the board by player, scoring points and triggering any relevant events"""
-    building.building_slot = None
-    building.save()
-    # remover scores a point
-    removing_player.score += 1
-    # check faction relevant events
 
 
 def end_battle(game: Game, battle: Battle):

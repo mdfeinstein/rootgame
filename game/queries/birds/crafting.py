@@ -5,7 +5,7 @@ from django.db.models import QuerySet
 
 
 def get_all_unused_roosts(player: Player) -> QuerySet[BirdRoost]:
-    """returns all unused sawmills on the board"""
+    """returns all unused roosts on the board"""
     return BirdRoost.objects.filter(
         player=player, crafted_with=False, building_slot__isnull=False
     )
@@ -35,6 +35,8 @@ def validate_crafting_pieces_satisfy_requirements(
     suits_needed = card.value.cost
     satisfied = [False for _ in suits_needed]
     for roost in roosts:
+        if roost.crafted_with:
+            raise ValueError("Roost already crafted with")
         roost_suit = Suit(roost.building_slot.clearing.suit)
         first_wild_idx: int | None = None
         for i, suit_needed in enumerate(suits_needed):

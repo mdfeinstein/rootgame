@@ -70,8 +70,7 @@ def validate_revolt(player: Player, clearing: Clearing) -> list[SupporterStackEn
     ).exists():
         raise ValueError("Matching base is on the board")
     # get suited supporters
-    suit = clearing.suit
-    return get_supporters(player, suit, 2)
+    return get_supporters(player, clearing, 2)
 
 
 sympathy_cost = [1, 1, 1, 2, 2, 2, 3, 3, 3, 3]  # idx: num on board before placed

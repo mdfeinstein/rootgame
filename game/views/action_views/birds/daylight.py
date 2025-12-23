@@ -1,8 +1,15 @@
+from game.game_data.cards.exiles_and_partisans import CardsEP
+from game.game_data.general.game_enums import Suit
 from game.models.birds.buildings import BirdRoost
 from game.models.birds.player import DecreeEntry
 from game.models.birds.turn import BirdDaylight
 from game.models.game_models import Clearing, Faction, Player
+from game.queries.birds.crafting import (
+    is_able_to_be_crafted,
+    validate_crafting_pieces_satisfy_requirements,
+)
 from game.queries.birds.decree import get_decree_entry_to_use
+from game.queries.birds.roosts import roost_at_clearing_number
 from game.queries.birds.turn import validate_step
 from game.queries.general import (
     validate_enemy_pieces_in_clearing,
@@ -13,6 +20,7 @@ from game.transactions.battle import start_battle
 from game.transactions.birds import (
     bird_battle_action,
     bird_build_action,
+    bird_craft_card,
     bird_move_action,
     bird_recruit_action,
     next_daylight_step,
@@ -34,6 +42,9 @@ class BirdCraftingView(GameActionView):
         "prompt": "Select card to craft or choose nothing to end crafting step.",
         "endpoint": "card",
         "payload_details": [{"type": "card", "name": "card_to_craft"}],
+        "options": [
+            {"value": "", "label": "Done Crafting"},
+        ],
     }
 
     def route_post(self, request, game_id: int, route: str):
@@ -52,10 +63,66 @@ class BirdCraftingView(GameActionView):
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
         # TODO: implement crafting
-        pass
+        card = CardsEP[request.data["card_to_craft"]]
+        if not is_able_to_be_crafted(self.player(request, game_id), card):
+            raise ValidationError("Not enough crafting pieces to craft this card")
+        suits_needed = [cost.label for cost in card.value.cost]
+        prompt = f"Select {(suits_needed)} crafting pieces to craft this card."
+        return self.generate_step(
+            "select_pieces",
+            prompt,
+            "piece",
+            [{"type": "clearing_number", "name": "roost_clearing_number"}],
+            {
+                "card_to_craft": request.data["card_to_craft"],
+                "roost_clearing_numbers": [],
+            },
+        )
 
     def post_piece(self, request, game_id: int):
-        pass
+        player = self.player(request, game_id)
+        game = self.game(game_id)
+        card = CardsEP[request.data["card_to_craft"]]
+        old_clearing_numbers = request.data["roost_clearing_numbers"]
+        new_clearing_number = int(request.data["roost_clearing_number"])
+        clearing_numbers = old_clearing_numbers + [new_clearing_number]
+        try:
+            roosts = [
+                roost_at_clearing_number(player, clearing_number)
+                for clearing_number in clearing_numbers
+            ]
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
+        try:
+            all_pieces_satisfied = validate_crafting_pieces_satisfy_requirements(
+                player, card, roosts
+            )
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
+
+        if all_pieces_satisfied:
+            # try to craft
+            try:
+                bird_craft_card(player, card, roosts)
+            except ValueError as e:
+                raise ValidationError({"detail": str(e)})
+            return self.generate_completed_step()
+        # otherwise, continue to select pieces
+        suits_needed = [cost.label for cost in card.value.cost]
+        suits_selected = [
+            Suit(roost.building_slot.clearing.suit).label for roost in roosts
+        ]
+        prompt = f"Select more crafting pieces to craft this card. Needed: {suits_needed}. Selected: {suits_selected}"
+        return self.generate_step(
+            "select_pieces",
+            prompt,
+            "piece",
+            [{"type": "clearing_number", "name": "roost_clearing_number"}],
+            {
+                "card_to_craft": request.data["card_to_craft"],
+                "roost_clearing_numbers": clearing_numbers,
+            },
+        )
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):
         player = self.player(request, game_id)

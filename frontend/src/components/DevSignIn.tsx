@@ -1,34 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import useGetPlayerHandQuery from "../hooks/useGetPlayerHandQuery";
+import { UserContext } from "../contexts/UserProvider";
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
 
 export default function DevSignIn() {
   const playerHand = useGetPlayerHandQuery();
-  const signIn = useMutation({
-    mutationFn: async (loginData: { username: string; password: string }) => {
-      const response = await fetch(`${djangoUrl}/api/token/`, {
-        method: "POST",
-        // credentials: "include",
-        body: JSON.stringify({
-          username: loginData.username,
-          password: loginData.password,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      return response.json();
-    },
-    onSuccess: async (data) => {
-      localStorage.setItem("accessToken", data.access);
-      localStorage.setItem("refreshToken", data.refresh);
-      console.log("success", data);
-    },
-    onError: (error) => {
-      console.log("error", error);
-    },
-  });
+  const { signInMutation: signIn } = useContext(UserContext);
+
   // by default, sign in cats
   const [signedIn, setSignedIn] = useState<string | null>(null);
   const signInCallback = (faction: string) => {

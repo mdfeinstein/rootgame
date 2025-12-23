@@ -67,6 +67,7 @@ class CatsDiscardCardsView(GameActionView):
         if discard_cards <= 0:
             # shouldnt be able to reach here but who knows
             return self.generate_completed_step()
+        assert type(self.faction) == Faction
         self.first_step = {
             "faction": self.faction.label,
             "name": "discard_card",

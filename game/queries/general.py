@@ -94,6 +94,16 @@ def player_has_pieces_in_clearing(player: Player, clearing: Clearing) -> bool:
     )
 
 
+def get_enemy_factions_in_clearing(player: Player, clearing: Clearing) -> list[Faction]:
+    """returns a list of opposing factions that have pieces in the clearing"""
+    factions = []
+    for player_ in Player.objects.filter(game=player.game):
+        if player_ != player:
+            if player_has_pieces_in_clearing(player_, clearing):
+                factions.append(player_.faction)
+    return factions
+
+
 def count_player_pieces_in_clearing(player: Player, clearing: Clearing) -> int:
     """returns the number of pieces in clearing belonging to player"""
     return sum(

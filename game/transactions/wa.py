@@ -36,9 +36,6 @@ from game.queries.wa.turn import get_phase, validate_step
 from game.queries.wa.warriors import get_warriors_in_supply
 from game.serializers.general_serializers import PlayerPrivateSerializer
 from game.transactions.battle import (
-    player_removes_building,
-    player_removes_token,
-    player_removes_warriors,
     start_battle,
 )
 from game.transactions.general import (
@@ -50,6 +47,11 @@ from game.transactions.general import (
     place_warriors_into_clearing,
     raise_score,
     remove_all_warriors_from_clearing,
+)
+from game.transactions.removal import (
+    player_removes_building,
+    player_removes_token,
+    player_removes_warriors,
 )
 from game.utility.textchoice import next_choice
 
@@ -137,12 +139,14 @@ def revolt(player: Player, clearing: Clearing):
         building_slot=building_slot
     )
     # gain troops
-    matching_sympathy_count = WABase.objects.filter(
+    matching_sympathy_count = WASympathy.objects.filter(
         player=player, clearing__suit=clearing.suit
     ).count()
+    print(f"matching sympathy count: {matching_sympathy_count}")
     troops_in_supply = Warrior.objects.filter(player=player, clearing=None).count()
+    print(f"troops in supply: {troops_in_supply}")
     place_warriors_into_clearing(
-        player, clearing, max(troops_in_supply, matching_sympathy_count)
+        player, clearing, min(matching_sympathy_count, troops_in_supply)
     )
     # gain officer
     add_officer(player)
@@ -190,7 +194,7 @@ def training(player: Player, card: CardsEP):
     matching_base = WABase.objects.filter(
         player=player, suit=card_suit, building_slot__isnull=False
     ).exists()
-    if not matching_base:
+    if not matching_base and card_suit != Suit.WILD:
         raise ValueError("Suit does not match a base on the board")
     add_officer(player)
     discard_card_from_hand(player, card_in_hand)
@@ -229,6 +233,7 @@ def operation_battle(player: Player, defender: Player, clearing: Clearing):
     -- mark officer as used
     -- battle
     """
+
     # check that there are unused officers
     officer = OfficerEntry.objects.filter(player=player, used=False).first()
     if officer is None:
@@ -399,37 +404,6 @@ def wa_craft_card(player: Player, card: CardsEP, crafting_pieces: list[WASympath
     if not validate_crafting_pieces_satisfy_requirements(player, card, crafting_pieces):
         raise ValueError("Not enough crafting pieces to craft card")
     craft_card(card_in_hand, cast(list[Piece], crafting_pieces))
-
-
-@transaction.atomic
-def create_outrage_event(
-    clearing: Clearing, removing_player: Player, removed_player: Player
-):
-    """creates an outrage event when a player removes a token"""
-    event = Event.objects.create(game=clearing.game, type=EventType.OUTRAGE)
-    outrage_event = OutrageEvent.objects.create(
-        event=event,
-        outraged_player=removed_player,
-        outrageous_player=removing_player,
-        suit=clearing.suit,
-    )
-    # if player does nto have correct suit or wild, resolve by drawing and showing hand
-    has_suit = HandEntry.objects.filter(
-        player=removing_player, card__suit=clearing.suit
-    ).exists()
-    has_wild = HandEntry.objects.filter(
-        player=removing_player, card__suit=Suit.WILD
-    ).exists()
-    if not has_suit and not has_wild:
-        # show hand, player draws from deck
-        serializer = PlayerPrivateSerializer(removing_player)
-        outrage_event.hand = serializer.data
-        draw_card_from_deck(removed_player)
-        outrage_event.card_given = True
-        outrage_event.hand_shown = True
-        outrage_event.save()
-        event.is_resolved = True
-        event.save()
 
 
 @transaction.atomic

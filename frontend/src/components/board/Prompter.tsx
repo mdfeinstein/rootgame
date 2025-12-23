@@ -1,5 +1,7 @@
 import { GameActionContext } from "../../contexts/GameActionContext";
 import { useContext } from "react";
+import OptionPrompt from "../prompts/OptionPrompt";
+import NumberPrompt from "../prompts/NumberPrompt";
 
 export default function Prompter() {
   const { faction, actionPrompt, error } = useContext(GameActionContext);
@@ -17,6 +19,8 @@ export default function Prompter() {
       <div>{faction}</div>
       <div>{actionPrompt}</div>
       <div style={{ color: "red" }}>{error}</div>
+      <OptionPrompt />
+      <NumberPrompt />
     </div>
   );
 }

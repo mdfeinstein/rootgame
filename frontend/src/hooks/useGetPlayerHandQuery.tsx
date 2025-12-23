@@ -17,14 +17,14 @@ export type CardType = {
 // use the token for authentication
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
 
-const useGetPlayerHandQuery = () => {
+const useGetPlayerHandQuery = (gameId: number, username: string) => {
   const {
     data: playerHand,
     isLoading,
     isError,
     isSuccess,
   } = useQuery({
-    queryKey: ["player-hand"],
+    queryKey: ["player-hand", gameId, username],
     queryFn: async (): Promise<CardType[]> => {
       const response = await fetch(djangoUrl + "/api/player-hand/", {
         headers: {
@@ -34,6 +34,7 @@ const useGetPlayerHandQuery = () => {
       });
       return response.json();
     },
+    enabled: !!gameId && !!username,
   });
   return { playerHand, isLoading, isError, isSuccess };
 };

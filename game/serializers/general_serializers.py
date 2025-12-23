@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from django.contrib.auth.models import User
 from game.models.birds.setup import BirdsSimpleSetup
 from game.models.birds.turn import BirdTurn
 from game.models.cats.setup import CatsSimpleSetup
@@ -206,6 +206,17 @@ class PayloadEntry(serializers.Serializer):
             return None
 
 
+class OptionSerializer(serializers.Serializer):
+    value = serializers.CharField()
+    label = serializers.CharField(required=False)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not data.get("label"):
+            data["label"] = data["value"]
+        return data
+
+
 class GameActionStepSerializer(serializers.Serializer):
     faction = serializers.CharField(required=False)
     name = serializers.CharField()
@@ -215,6 +226,7 @@ class GameActionStepSerializer(serializers.Serializer):
         child=PayloadEntry(), allow_empty=True, required=False
     )
     accumulated_payload = serializers.JSONField(required=False)
+    options = OptionSerializer(many=True, required=False)
 
 
 class GameActionSerializer(serializers.Serializer):
@@ -280,3 +292,18 @@ class GameStatusSerializer(serializers.Serializer):
                 "current_turn_object": turn_object,
             }
         )
+
+
+class UserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField()
+
+    class Meta:
+        model = User
+        fields = ["username"]
+
+
+class PlayerSerializer(serializers.Serializer):
+    faction_label = serializers.SerializerMethodField()
+
+    def get_faction_label(self, player: Player):
+        return Faction(player.faction).label
