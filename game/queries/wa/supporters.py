@@ -32,7 +32,7 @@ def get_supporters(
     if len(supporters) == count:
         return supporters
     # if we still don't have enough, raise error
-    raise ValueError("Not enough supporters to revolt")
+    raise ValueError("Not enough supporters")
 
 
 def has_enough_to_revolt(player: Player) -> bool:
@@ -136,7 +136,7 @@ def validate_sympathy_spread(
     and returns the supporter stack entries that would be used for the spread
     -- player doesn't have a sympathy in that clearing
     -- adjacent to other sympathies, if any on the board
-    -- player has at enough supporters to spread to the clearing
+    -- player has atleast enough supporters to spread to the clearing
     """
     assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
     # check clearing for sympathy

@@ -2,15 +2,19 @@
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
+type SuitLabel = "Mouse" | "Fox" | "Rabbit" | "Bird";
+
 export type CardType = {
   card_name: string;
   suit: "r" | "y" | "o" | "b";
+  suit_name: SuitLabel;
   title: string;
   text: string;
   craftable: boolean;
-  cost: string[];
-  item: string;
-  craftedPoints: number;
+  cost?: SuitLabel[];
+  item?: string;
+  item_name?: string;
+  crafted_points: number;
   ambush: boolean;
   dominance: boolean;
 };

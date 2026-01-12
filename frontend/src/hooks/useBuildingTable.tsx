@@ -1,10 +1,11 @@
 import { useQueries } from "@tanstack/react-query";
 import type { BuildingType } from "../components/board/BuildingSlot";
-import type { Faction } from "./useWarriorByClearing";
+import type { Faction } from "../data/frontend_types";
+ 
 
 export type BuildingTableType = {
   clearing_number: number | null;
-  building_slot: number;
+  building_slot: number | null;
   faction: Faction;
   buildingType: BuildingType;
 };
@@ -26,7 +27,7 @@ const tabulateBuildings = (faction: Faction, data: any) => {
     for (const building of buildingsOfType) {
       buildingTable.push({
         faction,
-        buildingType,
+        buildingType: buildingType as BuildingType,
         clearing_number: building.building.clearing_number ?? null,
         building_slot: building.building.building_slot_number ?? null,
       });
@@ -46,7 +47,7 @@ const useBuildingTable = (gameId: number, factions: string[]) => {
         );
         return response.json();
       },
-      select: (data) => tabulateBuildings(faction, data),
+      select: (data) => tabulateBuildings(faction as Faction, data),
     })),
   });
 

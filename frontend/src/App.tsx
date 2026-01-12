@@ -8,45 +8,52 @@ import Hand from "./components/cards/Hand";
 import { GameProvider } from "./contexts/GameProvider";
 import { UserProvider } from "./contexts/UserProvider";
 import "@mantine/core/styles.css";
-import { MantineProvider } from "@mantine/core";
+import { Group, MantineProvider } from "@mantine/core";
+import PlayerColumn from "./components/player/PlayerColumn";
+import { PlayerProvider } from "./contexts/PlayerProvider";
 
 function App() {
   return (
     <MantineProvider>
       <UserProvider>
         <GameProvider>
-          <GameActionProvider>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
+          <PlayerProvider>
+            <GameActionProvider>
+              <Group>
+                <PlayerColumn />
+                <div
+                  style={{
+                    width: "800px",
+                    height: "800px",
+                  }}
+                >
+                  <SvgBoard width={800} height={800} />
+                </div>
+              </Group>
               <div
                 style={{
                   display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "100%",
-                  height: "100%",
+                  flexDirection: "column",
                 }}
               >
-                <Prompter />
-                <Input />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                >
+                  <Prompter />
+                  {/* <Input /> */}
+                </div>
+                <DevSignIn />
               </div>
-              <DevSignIn />
-            </div>
-            <div
-              style={{
-                width: "800px",
-                height: "800px",
-              }}
-            >
-              <SvgBoard width={800} height={800} />
-            </div>
-            <Hand />
-          </GameActionProvider>
+              <Hand />
+            </GameActionProvider>
+          </PlayerProvider>
         </GameProvider>
       </UserProvider>
     </MantineProvider>

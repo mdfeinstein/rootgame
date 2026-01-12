@@ -25,6 +25,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.setItem("refreshToken", data.refresh);
       console.log("success", data);
       queryClient.setQueryData(["user"], { username: variables.username });
+      queryClient.invalidateQueries(["playerInfo"]);
     },
     onError: (error) => {
       console.log("error", error);

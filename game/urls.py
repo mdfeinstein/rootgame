@@ -1,3 +1,4 @@
+from game.views.gamestate_views.wa import get_wa_player_private
 from django.urls import URLPattern, path
 
 from game.views.DevLoginView import DevLoginView
@@ -33,7 +34,11 @@ from game.views.gamestate_views import (
     get_wa_player_public,
 )
 
-from game.views.gamestate_views.general import get_current_action, get_turn_info
+from game.views.gamestate_views.general import (
+    get_current_action,
+    get_players,
+    get_turn_info,
+)
 from game.views.setup_views import (
     create_game,
     join_game,
@@ -73,8 +78,10 @@ urlpatterns = [
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/user/", get_user_info, name="user"),
     path("api/player/<int:game_id>/", get_player_info, name="player"),
+    path("api/players/<int:game_id>/", get_players, name="players"),
     path("api/cats/player-info/<int:game_id>/", get_cat_player_public),
     path("api/wa/player-info/<int:game_id>/", get_wa_player_public),
+    path("api/wa/player-private-info/<int:game_id>/", get_wa_player_private),
     path("api/birds/player-info/<int:game_id>/", get_bird_player_public),
     path("api/clearings/<int:game_id>/", get_clearings),
     path("api/discard-pile/<int:game_id>/", get_discard_pile),

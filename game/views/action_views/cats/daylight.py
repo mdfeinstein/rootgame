@@ -279,8 +279,8 @@ class CatActionsView(GameActionView):
             step = {
                 "faction": self.faction_string,
                 "name": "select_action",
-                "prompt": "Select action: march, battle, build, overwork, recruit, or birds-for-hire. Or, choose nothing to end action step. "
-                + f"Actions remaining: {daylight.actions_left}",
+                "prompt": "Select action."
+                + f" Actions remaining: {daylight.actions_left}",
                 "endpoint": "action",
                 "payload_details": [{"type": "action_type", "name": "action"}],
                 "options": [
@@ -399,6 +399,7 @@ class CatActionsView(GameActionView):
                         "prompt": f"Confirm to recruit {to_recruit} warriors",
                         "endpoint": "recruit-all",
                         "payload_details": [{"type": "confirm", "name": "confirm"}],
+                        "options": [{"value": "confirm", "label": "Confirm"}],
                     }
                 else:
                     troops = troops_in_reserve(self.player(request, game_id))
@@ -739,7 +740,7 @@ class CatActionsView(GameActionView):
             ],
             "accumulated_payload": {
                 "building_type": building_type_string,
-                "Build_clearing_number": build_clearing_number,
+                "build_clearing_number": build_clearing_number,
                 "wood_token_clearing_numbers": selected_wood_clearings,
             },
         }

@@ -148,8 +148,14 @@ def revolt(player: Player, clearing: Clearing):
     place_warriors_into_clearing(
         player, clearing, min(matching_sympathy_count, troops_in_supply)
     )
-    # gain officer
-    add_officer(player)
+    # gain officer, if able
+    try:
+        add_officer(player)
+    except ValueError as e:
+        if "No warriors in reserve" in str(e):
+            pass
+        else:
+            raise e
 
 
 @transaction.atomic

@@ -20,10 +20,7 @@ class FieldHospitalView(GameActionView):
             field_hospital_event.troops_To_save,
             Suit(field_hospital_event.suit).label,
         )
-        prompt = (
-            f"Play a card of suit {suit} to save {count} troops and place them at your keep."
-            + " Or, skip by playing no card."
-        )
+        prompt = f"Play a card of suit {suit} to save {count} troops and place them at your keep."
 
         self.first_step = {
             "faction": self.faction.label,
@@ -32,6 +29,9 @@ class FieldHospitalView(GameActionView):
             "endpoint": "card",
             "payload_details": [
                 {"type": "card", "name": "card"},
+            ],
+            "options": [
+                {"value": "", "label": "Decline"},
             ],
         }
         return super().get(request)

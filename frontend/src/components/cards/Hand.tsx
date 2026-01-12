@@ -1,35 +1,46 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../../contexts/UserProvider";
 import useGetPlayerHandQuery from "../../hooks/useGetPlayerHandQuery";
-import Card from "./Card";
+import { GameCard } from "./Card";
 import { GameContext } from "../../contexts/GameProvider";
+import { Box, Group } from "@mantine/core";
 
 const Hand = () => {
   const { username } = useContext(UserContext);
   const { gameId } = useContext(GameContext);
   const { playerHand } = useGetPlayerHandQuery(gameId, username);
+  const [isHovered, setIsHovered] = useState(false);
   return (
-    <div
+    <Group
+      mt={"50px"}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      wrap="nowrap"
+      pos="relative"
+      gap={"xs"}
+      justify="center"
+      align="center"
       style={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "50%",
-        height: "100%",
+        width: "100%", // Use 100% to give them room to spread
+        height: "60px", // Fixed height for the "tray"
+        // overflow: "visible" is default, but ensures cards can float out
       }}
     >
       {playerHand?.map((card, i) => (
-        <div
+        <Box
           key={i}
-          style={{
-            margin: "10px",
-          }}
+          w={150}
+          pos="relative"
+          style={
+            {
+              // margin: "10px",
+            }
+          }
         >
-          <Card cardData={card} />
-        </div>
+          <GameCard cardData={card} isCollapsed={!isHovered} index={i} />
+        </Box>
       ))}
-    </div>
+    </Group>
   );
 };
 

@@ -755,6 +755,8 @@ def turmoil_choose_new_leader(player: Player, leader: BirdLeader):
     # make leader active
     leader.active = True
     leader.save()
+    # create viziers
+    Vizier.create(player=player)
     # resolve turmoil event
     turmoil_event = get_turmoil_event(player)
     turmoil_event.new_leader_chosen = True

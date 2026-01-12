@@ -1,3 +1,4 @@
+from game.queries.general import get_enemy_factions_in_clearing
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.game_data.general.game_enums import Suit
 from game.models.birds.buildings import BirdRoost
@@ -157,9 +158,12 @@ class BirdRecruitView(GameActionView):
         except BirdRoost.DoesNotExist as e:
             raise ValidationError({"detail": str(e)})
         # figure out which decree entry to use
-        decree_to_use = get_decree_entry_to_use(
-            player, DecreeEntry.Column.RECRUIT, roost.building_slot.clearing.suit
-        )
+        try:
+            decree_to_use = get_decree_entry_to_use(
+                player, DecreeEntry.Column.RECRUIT, roost.building_slot.clearing.suit
+            )
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
         try:
             bird_recruit_action(player, roost, decree_to_use)
         except ValueError as e:
@@ -319,6 +323,8 @@ class BirdBattleView(GameActionView):
             validate_enemy_pieces_in_clearing(player, clearing)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
+        enemy_factions = get_enemy_factions_in_clearing(player, clearing)
+        options = [{"value": faction.name, "label": faction.label} for faction in enemy_factions]
         return self.generate_step(
             "faction",
             f"Select faction to battle.",
@@ -327,6 +333,7 @@ class BirdBattleView(GameActionView):
                 {"type": "faction", "name": "faction"},
             ],
             {"clearing": clearing_number},
+            options=options,
         )
 
     def post_faction(self, request, game_id: int):

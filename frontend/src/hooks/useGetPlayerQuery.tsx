@@ -9,7 +9,7 @@ const useGetPlayerQuery = (gameId: number, username: string) => {
     isSuccess,
   } = useQuery({
     queryKey: ["player", gameId, username],
-    queryFn: async (): Promise<{ faction: string }> => {
+    queryFn: async (): Promise<{ faction_label: string }> => {
       const response = await fetch(
         `${import.meta.env.VITE_DJANGO_URL}/api/player/${gameId}/`,
         {

@@ -34,6 +34,7 @@ import { Roost, Sawmill } from "./Buildings";
 import type { Faction } from "../../data/frontend_types";
 import { useTurnInfoQuery } from "../../hooks/useTurnInfoQuery";
 import { GameContext } from "../../contexts/GameProvider";
+import { AspectRatio, Paper } from "@mantine/core";
 
 // Board component: positions, nodes, links, simple viewbox scaling
 export default function SvgBoard({
@@ -162,68 +163,77 @@ export default function SvgBoard({
   const sq_size = 0.3;
 
   return (
-    <svg
-      viewBox={`0 0 ${width} ${height}`}
-      // width="100%"
-      // height="100%"
-      // style={{ maxWidth: width }}
-    >
-      <defs>
-        <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.2" />
-        </filter>
-      </defs>
-      <g stroke="black" fill="white" filter="url(#shadow)">
-        {pathList.map((l, i) => {
-          return <Path key={i} a={l.a} b={l.b} stroke={l.stroke} />;
-        })}
-        {waterPathList.map((l, i) => {
-          return (
-            <Path key={i} a={l.a} b={l.b} stroke={l.stroke} strokeWidth={10} />
-          );
-        })}
-        {clearingProps.map((clearingProp, i) => (
-          <Clearing key={i} {...clearingProp}>
-            {buildingSlotMap[clearingProp.clearingNumber]?.map((s, i) => (
-              <BuildingSlot
-                key={`b-${i}`}
-                {...s}
-                slot_number={i}
-                buildingInfo={buildingInfoByClearingAndSlot(
-                  clearingProp.clearingNumber,
-                  i
-                )}
-              ></BuildingSlot>
+    <AspectRatio ratio={1 / 1}>
+      <Paper shadow="xl" p="md" radius="md" withBorder>
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <defs>
+            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.2" />
+            </filter>
+          </defs>
+          <g stroke="black" fill="white" filter="url(#shadow)">
+            {pathList.map((l, i) => {
+              return <Path key={i} a={l.a} b={l.b} stroke={l.stroke} />;
+            })}
+            {waterPathList.map((l, i) => {
+              return (
+                <Path
+                  key={i}
+                  a={l.a}
+                  b={l.b}
+                  stroke={l.stroke}
+                  strokeWidth={10}
+                />
+              );
+            })}
+            {clearingProps.map((clearingProp, i) => (
+              <Clearing key={i} {...clearingProp}>
+                {buildingSlotMap[clearingProp.clearingNumber]?.map((s, i) => (
+                  <BuildingSlot
+                    key={`b-${i}`}
+                    {...s}
+                    slot_number={i}
+                    buildingInfo={buildingInfoByClearingAndSlot(
+                      clearingProp.clearingNumber,
+                      i
+                    )}
+                  ></BuildingSlot>
+                ))}
+                {factionList?.map((f, i) => (
+                  <WarriorSlot
+                    key={`w-${i}`}
+                    {...warriorSlotMap[clearingProp.clearingNumber][i]}
+                    warriorInfo={{
+                      faction: factionList[i],
+                      count:
+                        warriorTable?.filter(
+                          (entry) =>
+                            entry.faction === factionList[i] &&
+                            entry.clearing_number ===
+                              clearingProp.clearingNumber
+                        ).length ?? 0,
+                    }}
+                  />
+                ))}
+                {accumulatedTokens[clearingProp.clearingNumber]?.map((t, i) => (
+                  <TokenSlot
+                    key={`t-${i}`}
+                    {...tokenSlotMap[clearingProp.clearingNumber][i]}
+                    tokenInfo={{
+                      faction: t.faction,
+                      tokenType: t.tokenType,
+                      count: t.count,
+                    }}
+                  />
+                ))}
+              </Clearing>
             ))}
-            {factionList?.map((f, i) => (
-              <WarriorSlot
-                key={`w-${i}`}
-                {...warriorSlotMap[clearingProp.clearingNumber][i]}
-                warriorInfo={{
-                  faction: factionList[i],
-                  count:
-                    warriorTable?.filter(
-                      (entry) =>
-                        entry.faction === factionList[i] &&
-                        entry.clearing_number === clearingProp.clearingNumber
-                    ).length ?? 0,
-                }}
-              />
-            ))}
-            {accumulatedTokens[clearingProp.clearingNumber]?.map((t, i) => (
-              <TokenSlot
-                key={`t-${i}`}
-                {...tokenSlotMap[clearingProp.clearingNumber][i]}
-                tokenInfo={{
-                  faction: t.faction,
-                  tokenType: t.tokenType,
-                  count: t.count,
-                }}
-              />
-            ))}
-          </Clearing>
-        ))}
-      </g>
-    </svg>
+          </g>
+        </svg>
+      </Paper>
+      </AspectRatio>
   );
 }

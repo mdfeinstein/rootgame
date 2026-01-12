@@ -1,3 +1,4 @@
+from game.serializers.general_serializers import CardSerializer
 from rest_framework import serializers
 
 from game.models.game_models import Player, Warrior
@@ -71,3 +72,8 @@ class WASerializer(serializers.Serializer):
                 "officer_count": officer_count,
             }
         )
+
+
+class WAPrivateSerializer(serializers.Serializer):
+    supporter_cards = CardSerializer(many=True)
+

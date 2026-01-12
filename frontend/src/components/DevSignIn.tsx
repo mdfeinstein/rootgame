@@ -1,11 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { useContext, useEffect, useState } from "react";
-import useGetPlayerHandQuery from "../hooks/useGetPlayerHandQuery";
 import { UserContext } from "../contexts/UserProvider";
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
 
 export default function DevSignIn() {
-  const playerHand = useGetPlayerHandQuery();
   const { signInMutation: signIn } = useContext(UserContext);
 
   // by default, sign in cats

@@ -1,3 +1,4 @@
+from game.models.birds.player import Vizier
 from rest_framework import serializers
 
 from game.models.birds.buildings import BirdRoost
@@ -31,8 +32,12 @@ class BirdDecreeEntrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DecreeEntry
-        fields = ["column", "card"]
+        fields = ["column", "fulfilled", "card"]
 
+class VizierSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vizier
+        fields = ["column", "fulfilled"]
 
 class BirdLeaderSerializer(serializers.ModelSerializer):
     leader_display = serializers.CharField(source="get_leader_display")
@@ -50,6 +55,7 @@ class BirdSerializer(serializers.Serializer):
     warriors = WarriorSerializer(many=True)
     leaders = BirdLeaderSerializer(many=True)
     decree = BirdDecreeEntrySerializer(many=True)
+    viziers = VizierSerializer(many=True)
 
     @classmethod
     def from_player(cls, player: Player):
@@ -58,6 +64,8 @@ class BirdSerializer(serializers.Serializer):
         warriors = Warrior.objects.filter(player=player)
         leaders = BirdLeader.objects.filter(player=player)
         decree = DecreeEntry.objects.filter(player=player)
+        viziers = Vizier.objects.filter(player=player)
+        print(f"viziers: {viziers}")
         return cls(
             instance={
                 "player": player,
@@ -65,5 +73,6 @@ class BirdSerializer(serializers.Serializer):
                 "warriors": warriors,
                 "leaders": leaders,
                 "decree": decree,
+                "viziers": viziers,
             }
         )

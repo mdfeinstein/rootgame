@@ -4,7 +4,8 @@ import OptionPrompt from "../prompts/OptionPrompt";
 import NumberPrompt from "../prompts/NumberPrompt";
 
 export default function Prompter() {
-  const { faction, actionPrompt, error } = useContext(GameActionContext);
+  const { faction, actionPrompt, error, cancelProcess } =
+    useContext(GameActionContext);
   return (
     <div
       style={{
@@ -21,6 +22,7 @@ export default function Prompter() {
       <div style={{ color: "red" }}>{error}</div>
       <OptionPrompt />
       <NumberPrompt />
+      <button onClick={() => cancelProcess()}>Cancel</button>
     </div>
   );
 }

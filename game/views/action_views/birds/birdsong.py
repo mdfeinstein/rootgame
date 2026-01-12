@@ -30,6 +30,9 @@ class EmergencyDrawingView(GameActionView):
         "prompt": "Please confirm to finish the emergency draw step.",
         "endpoint": "confirm",
         "payload_details": [{"type": "confirm", "name": "confirm"}],
+        "options": [
+            {"value": "confirm", "label": "Confirm"},
+        ],
     }
 
     def route_post(self, request, game_id: int, route: int, *args, **kwargs):
@@ -94,6 +97,9 @@ class AddToDecreeView(GameActionView):
             "card",
             [
                 {"type": "card", "name": "card_to_add"},
+            ],
+            options=[
+                {"value": "", "label": "Done"},
             ],
         )
 

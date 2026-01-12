@@ -182,6 +182,13 @@ class Card(models.Model):
         return self.enum.value.item
 
     @property
+    def item_name(self) -> str:
+        if self.item is None:
+            return ""
+        item_value = self.item
+        return ItemTypes(item_value).label
+
+    @property
     def crafted_points(self) -> int:
         return self.enum.value.crafted_points
 
@@ -253,6 +260,10 @@ class Player(models.Model):
         default=None,
         null=True,
     )
+
+    @property
+    def faction_label(self) -> str:
+        return Faction(self.faction).label
 
 
 class WarriorSupplyEntry(models.Model):

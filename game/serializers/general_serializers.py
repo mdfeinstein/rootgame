@@ -28,6 +28,7 @@ class CardSerializer(serializers.ModelSerializer):
     craftable = serializers.BooleanField()
     cost = serializers.ListField()
     item = serializers.CharField()
+    item_name = serializers.CharField()
     crafted_points = serializers.IntegerField()
     ambush = serializers.BooleanField()
     dominance = serializers.BooleanField()
@@ -43,6 +44,7 @@ class CardSerializer(serializers.ModelSerializer):
             "craftable",
             "cost",
             "item",
+            "item_name",
             "crafted_points",
             "ambush",
             "dominance",
@@ -141,13 +143,21 @@ class ClearingSerializer(serializers.ModelSerializer):
 class PlayerPublicSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username")
     faction = serializers.CharField()  # this will be two char stub...
+    faction_label = serializers.CharField()
     score = serializers.IntegerField()
     turn_order = serializers.IntegerField()
     card_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Player
-        fields = ["username", "faction", "score", "turn_order", "card_count"]
+        fields = [
+            "username",
+            "faction",
+            "faction_label",
+            "score",
+            "turn_order",
+            "card_count",
+        ]
 
     def get_card_count(self, player: Player) -> int:
         return HandEntry.objects.filter(player=player).count()
@@ -303,6 +313,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PlayerSerializer(serializers.Serializer):
+    faction = serializers.CharField()
     faction_label = serializers.SerializerMethodField()
 
     def get_faction_label(self, player: Player):

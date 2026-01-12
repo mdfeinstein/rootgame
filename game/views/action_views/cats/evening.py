@@ -26,6 +26,9 @@ class CatsDrawCardsView(GameActionView):
         "prompt": "Confirm to draw cards",
         "endpoint": "evening-draw-cards",
         "payload_details": [{"type": "confirm", "name": "confirm"}],
+        "options": [
+            {"value": "confirm", "label": "Confirm"},
+        ],
     }
 
     def route_post(self, request, game_id: int, route: str):

@@ -3,7 +3,7 @@ import { GameActionContext } from "../../contexts/GameActionContext";
 import type { SubmitPayload } from "../../contexts/GameActionContext";
 
 export default function Input() {
-  const { submitPayloadCallback, cancelProcess } =
+  const { submitPayloadCallback } =
     useContext(GameActionContext);
   const [input_type, setInputType] = useState<string>("");
   const [input_value, setInputValue] = useState<string>("");
@@ -20,9 +20,7 @@ export default function Input() {
     payload["confirm"] = true;
     submitPayloadCallback(payload);
   };
-  const onCancel = () => {
-    cancelProcess();
-  };
+
   return (
     <>
       <div
@@ -51,7 +49,7 @@ export default function Input() {
       </div>
       <div>
         <button onClick={submitPayloadOnConfirm}> Confirm </button>
-        <button onClick={onCancel}> Cancel </button>
+
       </div>
     </>
   );

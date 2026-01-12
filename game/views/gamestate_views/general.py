@@ -24,6 +24,7 @@ from game.serializers.general_serializers import (
     CardSerializer,
     ClearingSerializer,
     GameStatusSerializer,
+    PlayerPublicSerializer,
 )
 
 
@@ -96,3 +97,15 @@ def get_current_action(request, game_id: int):
         return Response({"route": turn_action})
     # else, move on to...
     raise ValidationError("Not yet implemented")
+
+
+@api_view(["GET"])
+def get_players(request, game_id: int):
+    """provides information about all players in the game"""
+    try:
+        game = Game.objects.get(pk=game_id)
+    except Game.DoesNotExist:
+        raise ValidationError("Game does not exist")
+    players = Player.objects.filter(game=game)
+    serializer = PlayerPublicSerializer(players, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

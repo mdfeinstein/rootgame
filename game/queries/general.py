@@ -100,7 +100,7 @@ def get_enemy_factions_in_clearing(player: Player, clearing: Clearing) -> list[F
     for player_ in Player.objects.filter(game=player.game):
         if player_ != player:
             if player_has_pieces_in_clearing(player_, clearing):
-                factions.append(player_.faction)
+                factions.append(Faction(player_.faction))
     return factions
 
 
