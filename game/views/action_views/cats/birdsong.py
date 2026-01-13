@@ -5,7 +5,8 @@ from game.models.game_models import Faction, Player
 from game.queries.cats.turn import get_phase
 from game.queries.cats.wood import get_unused_sawmill_by_clearing_number
 from game.serializers.general_serializers import GameActionStepSerializer
-from game.transactions.cats import produce_wood
+from game.transactions.cats import cat_produce_all_wood, produce_wood
+from game.decorators.transaction_decorator import atomic_game_action
 from game.views.action_views.general import GameActionView
 from django.db import transaction
 from rest_framework.views import Response
@@ -41,23 +42,12 @@ class CatPlaceWoodView(GameActionView):
             return self.post_confirm_all(request, game_id)
         return Response({"error": "Invalid route"}, status=status.HTTP_400_BAD_REQUEST)
 
-    @transaction.atomic
     def post_confirm_all(self, request, game_id: int):
         player = self.player(request, game_id)
-        sawmills = Sawmill.objects.filter(
-            player=player, used=False, building_slot__isnull=False
-        )
-        print(sawmills)
-        woods_produced = 0
-        for sawmill in sawmills:
-            try:
-                print(f"sawmill: {sawmill}")
-                produce_wood(player, sawmill)
-                woods_produced += 1
-            except ValueError as e:
-                raise ValidationError({"detail": str(e)})
-        # self.next_phase(player)
-        print(f"produced {woods_produced} woods")
+        try:
+            atomic_game_action(cat_produce_all_wood)(player)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
         return Response({"name": "completed"})
 
     def post_clearing(self, request, game_id: int):
@@ -70,7 +60,10 @@ class CatPlaceWoodView(GameActionView):
         sawmill = get_unused_sawmill_by_clearing_number(player, clearing_number)
         if sawmill is None:
             raise ValidationError({"detail": "No unused sawmill at that clearing"})
-        produce_wood(player, sawmill)
+        try:
+            atomic_game_action(produce_wood)(player, sawmill)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
         step = self.determine_next_step(request, game_id)
         serializer = GameActionStepSerializer(step)
         return Response(serializer.data)

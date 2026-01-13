@@ -14,6 +14,7 @@ from game.transactions.birds import (
     emergency_draw,
     end_add_to_decree_step,
 )
+from game.decorators.transaction_decorator import atomic_game_action
 from game.views.action_views.general import GameActionView
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -47,7 +48,7 @@ class EmergencyDrawingView(GameActionView):
         if not request.data["confirm"]:
             raise ValidationError("Invalid confirmation")
         try:
-            emergency_draw(self.player(request, game_id))
+            atomic_game_action(emergency_draw)(self.player(request, game_id))
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return Response({"name": "completed"})
@@ -126,7 +127,7 @@ class AddToDecreeView(GameActionView):
     def post_card(self, request, game_id: int):
         if request.data["card_to_add"] == "":
             try:
-                end_add_to_decree_step(self.player(request, game_id))
+                atomic_game_action(end_add_to_decree_step)(self.player(request, game_id))
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
@@ -159,7 +160,7 @@ class AddToDecreeView(GameActionView):
         card = CardsEP[request.data["card_to_add"]]
         # add to decree
         try:
-            add_card_to_decree(player, card, column)
+            atomic_game_action(add_card_to_decree)(player, card, column)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         # complete process. if there is another card to add, we will be redirected to that step

@@ -9,6 +9,8 @@ from game.transactions.wa import pay_outrage
 from game.views.action_views.general import GameActionView
 
 
+from game.decorators.transaction_decorator import atomic_game_action
+
 class OutrageView(GameActionView):
     name = "outrage"
 
@@ -62,7 +64,7 @@ class OutrageView(GameActionView):
         except KeyError:
             raise ValidationError("Invalid card")
         try:
-            pay_outrage(outrage, card)
+            atomic_game_action(pay_outrage)(outrage, card)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()

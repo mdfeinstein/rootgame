@@ -5,6 +5,7 @@ from game.models.game_models import Player, Warrior
 from game.models.wa.buildings import WABase
 from game.models.wa.player import OfficerEntry, SupporterStackEntry
 from game.models.wa.tokens import WASympathy
+from game.models.wa.turn import WATurn, WABirdsong, WADaylight, WAEvening
 from game.serializers.general_serializers import (
     BuildingSerializer,
     PlayerPublicSerializer,
@@ -36,7 +37,37 @@ class WATokenSerializer(serializers.Serializer):
 
 
 class WABuildingSerializer(serializers.Serializer):
+
     base = WABaseSerializer(many=True)
+
+
+class WABirdsongSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WABirdsong
+        fields = ["step"]
+
+
+class WADaylightSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WADaylight
+        fields = ["step"]
+
+
+class WAEveningSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WAEvening
+        fields = ["step", "operations_perfomed", "cards_drawn"]
+
+
+class WATurnSerializer(serializers.ModelSerializer):
+    birdsong = WABirdsongSerializer(read_only=True)
+    daylight = WADaylightSerializer(read_only=True)
+    evening = WAEveningSerializer(read_only=True)
+
+    class Meta:
+        model = WATurn
+        fields = ["turn_number", "birdsong", "daylight", "evening"]
+
 
 
 class WASerializer(serializers.Serializer):

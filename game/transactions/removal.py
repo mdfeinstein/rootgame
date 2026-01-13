@@ -70,7 +70,7 @@ def player_removes_token(game: Game, token: Token, removing_player: Player):
     token.save()
     # remover scores a point
     removing_player.score += 1
-
+    removing_player.save()
 
 def player_removes_building(game: Game, building: Building, removing_player: Player):
     """removes a building from the board by player, scoring points and triggering any relevant events"""
@@ -78,4 +78,5 @@ def player_removes_building(game: Game, building: Building, removing_player: Pla
     building.save()
     # remover scores a point
     removing_player.score += 1
+    removing_player.save()
     # check faction relevant events

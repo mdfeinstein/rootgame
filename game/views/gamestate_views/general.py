@@ -26,6 +26,8 @@ from game.serializers.general_serializers import (
     GameStatusSerializer,
     PlayerPublicSerializer,
 )
+from game.logic.playback import undo_last_action
+from game.logic.playback import undo_last_action
 
 
 @api_view(["GET"])
@@ -109,3 +111,14 @@ def get_players(request, game_id: int):
     players = Player.objects.filter(game=game)
     serializer = PlayerPublicSerializer(players, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def undo_last_action_view(request, game_id: int):
+    try:
+        game = Game.objects.get(pk=game_id)
+    except Game.DoesNotExist:
+        return Response({"detail": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    undo_last_action(game)
+    return Response({"status": "success"}, status=status.HTTP_200_OK)

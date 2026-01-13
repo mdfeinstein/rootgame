@@ -8,9 +8,10 @@ import Hand from "./components/cards/Hand";
 import { GameProvider } from "./contexts/GameProvider";
 import { UserProvider } from "./contexts/UserProvider";
 import "@mantine/core/styles.css";
-import { Group, MantineProvider } from "@mantine/core";
+import { Group, MantineProvider, Stack } from "@mantine/core";
 import PlayerColumn from "./components/player/PlayerColumn";
 import { PlayerProvider } from "./contexts/PlayerProvider";
+import UndoButton from "./components/prompts/UndoButton";
 
 function App() {
   return (
@@ -20,7 +21,10 @@ function App() {
           <PlayerProvider>
             <GameActionProvider>
               <Group>
-                <PlayerColumn />
+                <Stack>
+                  <PlayerColumn />
+                  <UndoButton />
+                </Stack>
                 <div
                   style={{
                     width: "800px",

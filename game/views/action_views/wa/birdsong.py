@@ -17,6 +17,7 @@ from rest_framework.views import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework import status
 
+from game.decorators.transaction_decorator import atomic_game_action
 
 class RevoltView(GameActionView):
     action_name = "WA_REVOLT"
@@ -63,7 +64,7 @@ class RevoltView(GameActionView):
         # if no clearing selected, end revolt step
         if clearing_number == "":
             try:
-                end_revolt_step(player)
+                atomic_game_action(end_revolt_step)(player)
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
@@ -76,7 +77,7 @@ class RevoltView(GameActionView):
         except Clearing.DoesNotExist as e:
             raise ValidationError({"detail": str(e)})
         try:
-            revolt(player, clearing)
+            atomic_game_action(revolt)(player, clearing)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         # serialize the next step
@@ -86,7 +87,7 @@ class RevoltView(GameActionView):
         confirmation = bool(request.data["confirm"])
         if confirmation:
             try:
-                end_revolt_step(self.player(request, game_id))
+                atomic_game_action(end_revolt_step)(self.player(request, game_id))
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
@@ -144,7 +145,7 @@ class SpreadSympathyView(GameActionView):
         # if no clearing selected, end spread sympathy step
         if clearing_number == "":
             try:
-                end_spread_sympathy_step(player)
+                atomic_game_action(end_spread_sympathy_step)(player)
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
@@ -157,7 +158,7 @@ class SpreadSympathyView(GameActionView):
         except Clearing.DoesNotExist as e:
             raise ValidationError({"detail": str(e)})
         try:
-            spread_sympathy(player, clearing)
+            atomic_game_action(spread_sympathy)(player, clearing)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         # serialize the next step
@@ -167,7 +168,7 @@ class SpreadSympathyView(GameActionView):
         confirmation = bool(request.data["confirm"])
         if confirmation:
             try:
-                end_spread_sympathy_step(self.player(request, game_id))
+                atomic_game_action(end_spread_sympathy_step)(self.player(request, game_id))
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()

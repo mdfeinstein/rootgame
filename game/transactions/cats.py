@@ -1,8 +1,9 @@
+from game.models.events.cats import FieldHospitalEvent
 from typing import Iterable, Sequence
 from django.db import transaction
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.cats.buildings import CatBuildingTypes, Recruiter, Sawmill, Workshop
-from game.models.cats.player import FieldHospitalEvent
+
 from game.models.cats.tokens import CatKeep, CatWood
 from game.models.cats.turn import CatBirdsong, CatDaylight, CatEvening, CatTurn
 from game.models.events.event import Event, EventType
@@ -417,3 +418,62 @@ def cat_resolve_field_hospital(player: Player, card: CardsEP | None):
     # resolve event
     field_hospital_event.event.is_resolved = True
     field_hospital_event.event.save()
+
+
+@transaction.atomic
+def cat_produce_all_wood(player: Player):
+    """produces wood at all available sawmills"""
+    sawmills = Sawmill.objects.filter(
+        player=player, used=False, building_slot__isnull=False
+    )
+    for sawmill in sawmills:
+        produce_wood(player, sawmill)
+
+
+@transaction.atomic
+def cat_march(player: Player, origin: Clearing, destination: Clearing, count: int):
+    """performs a march action"""
+    # check that it is the cats players turn
+    if get_current_player(player.game) != player:
+        raise ValueError("Not this player's turn")
+    daylight = get_phase(player)
+    if type(daylight) != CatDaylight:
+        raise ValueError("Not Daylight phase")
+
+    move_warriors(player, origin, destination, count)
+    
+    if not daylight.midmarch:
+        daylight.midmarch = True
+        daylight.save()
+    else:
+        daylight.actions_left -= 1
+        daylight.midmarch = False
+        daylight.save()
+
+
+@transaction.atomic
+def cat_battle(player: Player, defender: Player, clearing: Clearing):
+    start_battle(player.game, player.faction, defender.faction, clearing)
+    daylight = get_phase(player)
+    assert type(daylight) == CatDaylight
+    daylight.actions_left -= 1
+    daylight.save()
+
+
+@transaction.atomic
+def cat_build(
+    player: Player,
+    building_type: CatBuildingTypes,
+    clearing: Clearing,
+    wood_tokens: list[CatWood],
+):
+    build_building(player, building_type, clearing, wood_tokens)
+    action_used(player)
+
+
+@transaction.atomic
+def cat_discard_card(player: Player, card: CardsEP):
+    hand_entry = validate_player_has_card_in_hand(player, card)
+    discard_card_from_hand(player, hand_entry)
+    if get_player_hand_size(player) <= 5:
+        cat_end_turn(player)

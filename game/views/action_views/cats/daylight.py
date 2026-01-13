@@ -41,12 +41,17 @@ from game.transactions.cats import (
     action_used,
     birds_for_hire,
     build_building,
+    cat_battle,
+    cat_build,
     cat_craft_card,
+    cat_march,
+    cat_recruit,
     cat_recruit_all,
     end_action_step,
     end_crafting_step,
     overwork,
 )
+from game.decorators.transaction_decorator import atomic_game_action
 from game.transactions.general import craft_card, move_warriors
 from game.utility.textchoice import get_choice_value_by_label_or_value, next_choice
 from game.views.action_views.general import GameActionView
@@ -85,7 +90,10 @@ class CatCraftStepView(GameActionView):
 
     def post_card(self, request, game_id: int):
         if request.data["card_to_craft"] == "":
-            self.end_step(request, game_id)
+            try:
+                atomic_game_action(end_crafting_step)(self.player(request, game_id))
+            except ValueError as e:
+                raise ValidationError({"detail": str(e)})
             return Response({"name": "completed"})
         self.validate(request, game_id)
         card_type = CardsEP[request.data["card_to_craft"]]
@@ -161,7 +169,7 @@ class CatCraftStepView(GameActionView):
         if not satisfied:
             raise ValidationError("Not enough crafting pieces to craft card")
         try:
-            cat_craft_card(self.player(request, game_id), card_type, crafting_pieces)
+            atomic_game_action(cat_craft_card)(self.player(request, game_id), card_type, crafting_pieces)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return Response({"name": "completed"})
@@ -333,7 +341,10 @@ class CatActionsView(GameActionView):
 
     def post_action(self, request, game_id: int):
         if request.data["action"] == "":
-            self.end_step(request, game_id)
+            try:
+                atomic_game_action(end_action_step)(self.player(request, game_id))
+            except ValueError as e:
+                raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
 
         actions_remaining = get_actions_remaining(self.player(request, game_id))
@@ -494,8 +505,8 @@ class CatActionsView(GameActionView):
         serializer = GameActionStepSerializer(step)
         return Response(serializer.data)
 
-    @transaction.atomic
     def post_march_count(self, request, game_id: int):
+        #TODO: this whole view is too complex. should just call a transaction fucntion
         count = int(request.data["warriors_to_move"])
         origin_clearing = Clearing.objects.get(
             game=self.game(game_id),
@@ -514,7 +525,7 @@ class CatActionsView(GameActionView):
         if count > warriors_in_origin.count():
             raise ValidationError("Not enough warriors in origin clearing to move")
         try:
-            move_warriors(
+            atomic_game_action(cat_march)(
                 self.player(request, game_id),
                 origin_clearing,
                 destination_clearing,
@@ -523,21 +534,12 @@ class CatActionsView(GameActionView):
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         # if first march, set midmarch to true and return the step for the beginning of a move
+
         daylight = get_phase(self.player(request, game_id))
-        if type(daylight) != CatDaylight:
-            raise ValidationError("Not Daylight phase")
+        
         if not daylight.midmarch:
-            daylight.midmarch = True
-            daylight.save()
-            step = {
-                "faction": self.faction_string,
-                "name": "completed",
-            }
+            step = {"faction": self.faction_string, "name": "completed"}
         else:  # march is done
-            # reduce actions remaining and reflip the march switch
-            daylight.actions_left -= 1
-            daylight.midmarch = False
-            daylight.save()
             # go back to action selection
             step = {"faction": self.faction_string, "name": "completed"}
         serializer = GameActionStepSerializer(step)
@@ -563,7 +565,6 @@ class CatActionsView(GameActionView):
         serializer = GameActionStepSerializer(step)
         return Response(serializer.data)
 
-    @transaction.atomic
     def post_battle_defender(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
@@ -575,11 +576,11 @@ class CatActionsView(GameActionView):
         if defender not in valid_defenders:
             raise ValidationError("Not a valid defender - does not have pieces here")
         clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
-        start_battle(game, player.faction, defender.faction, clearing)
-        daylight = get_phase(player)
-        assert type(daylight) == CatDaylight
-        daylight.actions_left -= 1
-        daylight.save()
+        
+        try:
+            atomic_game_action(cat_battle)(player, defender, clearing)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
 
         return Response({"name": "completed"})
 
@@ -644,7 +645,7 @@ class CatActionsView(GameActionView):
         # if usable wood is precisely enough, build the building
         if len(usable_wood) == get_wood_cost(player, building_type):
             try:
-                build_building(
+                atomic_game_action(cat_build)(
                     player,
                     building_type,
                     clearing,
@@ -652,8 +653,6 @@ class CatActionsView(GameActionView):
                 )
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
-            # update daylight step
-            action_used(player)
             return Response({"name": "completed"})
         else:
             # if not, go to wood selection step
@@ -716,14 +715,15 @@ class CatActionsView(GameActionView):
         # if provided wood is precisely enough, build the building
         if len(total_wood) == get_wood_cost(player, building_type):
 
-            build_building(
-                player,
-                building_type,
-                clearing,
-                total_wood,
-            )
-            # update daylight step
-            action_used(player)
+            try:
+                atomic_game_action(cat_build)(
+                    player,
+                    building_type,
+                    clearing,
+                    total_wood,
+                )
+            except ValueError as e:
+                raise ValidationError({"detail": str(e)})
             return Response({"name": "completed"})
         # if not, continue wood selection step
         selected_wood_clearings = [int(c) for c in old_clearing_numbers] + [
@@ -784,7 +784,7 @@ class CatActionsView(GameActionView):
         card_name = request.data["overwork_card"].upper()
         card_data = CardsEP[card_name]
         try:
-            overwork(self.player(request, game_id), clearing, card_data)
+            atomic_game_action(overwork)(self.player(request, game_id), clearing, card_data)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         step = {
@@ -795,7 +795,7 @@ class CatActionsView(GameActionView):
 
     def post_recruit_all(self, request, game_id: int):
         try:
-            cat_recruit_all(self.player(request, game_id))
+            atomic_game_action(cat_recruit_all)(self.player(request, game_id))
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         step = {
@@ -814,7 +814,7 @@ class CatActionsView(GameActionView):
     def post_birdsforhire_card(self, request, game_id: int):
         card_name = request.data["birdsforhire_card"].upper().replace(" ", "_")
         try:
-            birds_for_hire(self.player(request, game_id), CardsEP[card_name])
+            atomic_game_action(birds_for_hire)(self.player(request, game_id), CardsEP[card_name])
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         step = {

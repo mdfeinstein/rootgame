@@ -8,6 +8,7 @@ from game.queries.birds.leaders import get_available_leaders
 from game.queries.birds.turn import get_turmoil_event
 from game.transactions.birds import turmoil_choose_new_leader
 from game.views.action_views.general import GameActionView
+from game.decorators.transaction_decorator import atomic_game_action
 
 
 class TurmoilView(GameActionView):
@@ -59,7 +60,7 @@ class TurmoilView(GameActionView):
         player = self.player(request, game_id)
         leader = BirdLeader.objects.get(player=player, leader=leader)
         try:
-            turmoil_choose_new_leader(player, leader)
+            atomic_game_action(turmoil_choose_new_leader)(player, leader)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()

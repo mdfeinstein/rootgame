@@ -57,7 +57,7 @@ class FieldHospitalView(GameActionView):
             except KeyError:
                 raise ValidationError("Invalid card")
         try:
-            cat_resolve_field_hospital(player, card)
+            atomic_game_action(cat_resolve_field_hospital)(player, card)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()

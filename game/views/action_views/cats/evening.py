@@ -7,7 +7,8 @@ from game.queries.general import (
     get_player_hand_size,
     validate_player_has_card_in_hand,
 )
-from game.transactions.cats import cat_end_turn, cat_evening_draw
+from game.transactions.cats import cat_end_turn, cat_evening_draw, cat_discard_card
+from game.decorators.transaction_decorator import atomic_game_action
 from game.transactions.general import discard_card_from_hand
 from game.views.action_views.general import GameActionView
 from rest_framework.exceptions import ValidationError
@@ -41,7 +42,7 @@ class CatsDrawCardsView(GameActionView):
         if not confirmation:
             raise ValidationError("Confirmation not provided")
         try:
-            cat_evening_draw(self.player(request, game_id))
+            atomic_game_action(cat_evening_draw)(self.player(request, game_id))
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()
@@ -85,22 +86,17 @@ class CatsDiscardCardsView(GameActionView):
             return self.post_discard_cards(request, game_id)
         return Response({"error": "Invalid route"}, status=status.HTTP_404_NOT_FOUND)
 
-    @transaction.atomic
     def post_discard_cards(self, request, game_id: int):
         card_to_discard = CardsEP[request.data["card_to_discard"]]
         if card_to_discard == "":
             raise ValidationError("No card selected")
-        card_in_hand = validate_player_has_card_in_hand(
-            self.player(request, game_id), card_to_discard
-        )
+
         try:
-            discard_card_from_hand(self.player(request, game_id), card_in_hand)
+            atomic_game_action(cat_discard_card)(self.player(request, game_id), card_to_discard)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         cards_left_to_discard = get_player_hand_size(self.player(request, game_id)) - 5
-        if cards_left_to_discard == 0:
-            # move to end of turn
-            cat_end_turn(self.player(request, game_id))
+        if cards_left_to_discard <= 0:
             return self.generate_completed_step()
         return self.generate_step(
             "discard_card",

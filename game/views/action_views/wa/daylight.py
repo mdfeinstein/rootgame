@@ -14,6 +14,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
 
+from game.decorators.transaction_decorator import atomic_game_action
 class WADaylightActionsView(GameActionView):
     action_name = "WA_DAYLIGHT_ACTIONS"
     faction = Faction.WOODLAND_ALLIANCE
@@ -56,7 +57,7 @@ class WADaylightActionsView(GameActionView):
         # if no action selected, end action step
         if action == "":
             try:
-                end_daylight_actions(player)
+                atomic_game_action(end_daylight_actions)(player)
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
@@ -108,7 +109,8 @@ class WADaylightActionsView(GameActionView):
         except KeyError:
             raise ValidationError("Invalid card")
         try:
-            add_supporter(player, card)
+            atomic_game_action(add_supporter)(player, card)
+            
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()
@@ -122,7 +124,7 @@ class WADaylightActionsView(GameActionView):
         except KeyError:
             raise ValidationError("Invalid card")
         try:
-            training(player, card)
+            atomic_game_action(training)(player, card)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()

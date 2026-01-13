@@ -38,6 +38,7 @@ from game.views.gamestate_views.general import (
     get_current_action,
     get_players,
     get_turn_info,
+    undo_last_action_view,
 )
 from game.views.setup_views import (
     create_game,
@@ -97,6 +98,7 @@ urlpatterns = [
         get_current_action,
         name="get-current-action",
     ),
+    path("api/game/undo/<int:game_id>/", undo_last_action_view, name="undo-action"),
 ]
 register_action(
     "cats-setup-pick-corner",

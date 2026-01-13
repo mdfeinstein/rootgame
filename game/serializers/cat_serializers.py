@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from game.models.cats.buildings import CatBuildingTypes, Recruiter, Sawmill, Workshop
 from game.models.cats.tokens import CatKeep, CatWood
+from game.models.cats.turn import CatTurn, CatBirdsong, CatDaylight, CatEvening
 from game.models.game_models import Player, Warrior
 from game.serializers.general_serializers import (
     BuildingSerializer,
@@ -53,7 +54,37 @@ class CatTokenSerializer(serializers.Serializer):
 
     # while keep usually cant be many, useful to keep the token structure uniform
     keep = NestedTokenSerializer(many=True)
+
     wood = NestedTokenSerializer(many=True)
+
+
+class CatBirdsongSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CatBirdsong
+        fields = ["step"]
+
+
+class CatDaylightSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CatDaylight
+        fields = ["step", "actions_left", "recruit_used", "midmarch"]
+
+
+class CatEveningSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CatEvening
+        fields = ["step", "cards_drawn"]
+
+
+class CatTurnSerializer(serializers.ModelSerializer):
+    birdsong = CatBirdsongSerializer(read_only=True)
+    daylight = CatDaylightSerializer(read_only=True)
+    evening = CatEveningSerializer(read_only=True)
+
+    class Meta:
+        model = CatTurn
+        fields = ["turn_number", "birdsong", "daylight", "evening"]
+
 
 
 class CatSerializer(serializers.Serializer):

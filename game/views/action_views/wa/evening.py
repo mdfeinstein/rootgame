@@ -21,6 +21,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
 
+from game.decorators.transaction_decorator import atomic_game_action
 class WAOperationsView(GameActionView):
     action_name = "WA_EVENING"
     faction = Faction.WOODLAND_ALLIANCE
@@ -103,7 +104,7 @@ class WAOperationsView(GameActionView):
         match operation:
             case "":
                 try:
-                    end_evening_operations(self.player(request, game_id))
+                    atomic_game_action(end_evening_operations)(self.player(request, game_id))
                 except ValueError as e:
                     raise ValidationError({"detail": str(e)})
                 return self.generate_completed_step()
@@ -158,7 +159,7 @@ class WAOperationsView(GameActionView):
         except Clearing.DoesNotExist as e:
             raise ValidationError({"detail": str(e)})
         try:
-            operation_recruit(player, clearing)
+            atomic_game_action(operation_recruit)(player, clearing)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()
@@ -237,7 +238,7 @@ class WAOperationsView(GameActionView):
         except Clearing.DoesNotExist:
             raise ValidationError("Clearing does not exist")
         try:
-            operation_move(player, origin_clearing, destination_clearing, count)
+            atomic_game_action(operation_move)(player, origin_clearing, destination_clearing, count)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()
@@ -292,7 +293,7 @@ class WAOperationsView(GameActionView):
         except Player.DoesNotExist:
             raise ValidationError("Defending faction does not exist")
         try:
-            operation_battle(player, defender, clearing)
+            atomic_game_action(operation_battle)(player, defender, clearing)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()
@@ -307,7 +308,7 @@ class WAOperationsView(GameActionView):
         except Clearing.DoesNotExist:
             raise ValidationError("Clearing does not exist")
         try:
-            operation_organize(player, clearing)
+            atomic_game_action(operation_organize)(player, clearing)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()
@@ -316,7 +317,7 @@ class WAOperationsView(GameActionView):
         confirmation = bool(request.data["confirm"])
         if confirmation:
             try:
-                end_evening_operations(self.player(request, game_id))
+                atomic_game_action(end_evening_operations)(self.player(request, game_id))
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()

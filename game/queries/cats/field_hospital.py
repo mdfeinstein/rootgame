@@ -1,4 +1,4 @@
-from game.models.cats.player import FieldHospitalEvent
+from game.models.events.cats import FieldHospitalEvent
 from game.models.game_models import Faction, Player
 from game.models.events.event import Event, EventType
 from game.queries.current_action.events import get_current_event

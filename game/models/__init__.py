@@ -3,6 +3,7 @@ from .birds import *
 from .cats import *
 from .wa import *
 from .events import *
+from .checkpoint_models import Checkpoint, Action
 
 __all__ = [
     "Faction",
@@ -28,4 +29,6 @@ __all__ = [
     "CraftedItemEntry",
     "CraftedCardEntry",
     "HandEntry",
+    "Checkpoint",
+    "Action",
 ]

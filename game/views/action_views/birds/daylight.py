@@ -26,6 +26,7 @@ from game.transactions.birds import (
     bird_recruit_action,
     next_daylight_step,
 )
+from game.decorators.transaction_decorator import atomic_game_action
 from game.views.action_views.general import GameActionView
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -59,7 +60,7 @@ class BirdCraftingView(GameActionView):
     def post_card(self, request, game_id: int):
         if request.data["card_to_craft"] == "":
             try:
-                next_daylight_step(self.player(request, game_id))
+                atomic_game_action(next_daylight_step)(self.player(request, game_id))
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
@@ -104,7 +105,7 @@ class BirdCraftingView(GameActionView):
         if all_pieces_satisfied:
             # try to craft
             try:
-                bird_craft_card(player, card, roosts)
+                atomic_game_action(bird_craft_card)(player, card, roosts)
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
@@ -165,7 +166,7 @@ class BirdRecruitView(GameActionView):
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         try:
-            bird_recruit_action(player, roost, decree_to_use)
+            atomic_game_action(bird_recruit_action)(player, roost, decree_to_use)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()
@@ -271,7 +272,7 @@ class BirdMoveView(GameActionView):
         )
         # call move transaction
         try:
-            bird_move_action(
+            atomic_game_action(bird_move_action)(
                 player, origin_clearing, destination_clearing, count, decree
             )
         except ValueError as e:
@@ -360,7 +361,7 @@ class BirdBattleView(GameActionView):
             raise ValidationError({"detail": str(e)})
         # call bird battle transaction
         try:
-            bird_battle_action(player, defender, clearing, decree_to_use)
+            atomic_game_action(bird_battle_action)(player, defender, clearing, decree_to_use)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()
@@ -405,7 +406,7 @@ class BirdBuildingView(GameActionView):
             raise ValidationError({"detail": str(e)})
         # call bulding transaction
         try:
-            bird_build_action(player, clearing, decree_to_use)
+            atomic_game_action(bird_build_action)(player, clearing, decree_to_use)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()

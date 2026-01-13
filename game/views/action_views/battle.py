@@ -11,6 +11,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.views import Response
 
 
+from game.decorators.transaction_decorator import atomic_game_action
+
 class BattleActionView(GameActionView):
     action_name = "BATTLE"
     faction = None
@@ -96,7 +98,7 @@ class BattleActionView(GameActionView):
         event = get_current_event(game)
         battle = Battle.objects.get(event=event)
         try:
-            defender_ambush_choice(game, battle, card)
+            atomic_game_action(defender_ambush_choice)(game, battle, card)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         serializer = GameActionStepSerializer({"name": "completed"})
@@ -115,8 +117,12 @@ class BattleActionView(GameActionView):
         game = self.game(game_id)
         event = get_current_event(game)
         battle = Battle.objects.get(event=event)
-        attacker_ambush_choice(game, battle, card)
+        try:
+            atomic_game_action(attacker_ambush_choice)(game, battle, card)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
         serializer = GameActionStepSerializer({"name": "completed"})
+
         return Response(serializer.data)
 
     def validate_player(self, request, game_id, route, *args, **kwargs):
