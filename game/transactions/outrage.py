@@ -1,3 +1,4 @@
+from game.transactions.wa import draw_card_from_deck_to_supporter_pile
 from game.models.events.event import Event, EventType
 from game.models.events.wa import OutrageEvent
 from game.models.game_models import Clearing, HandEntry, Player, Suit
@@ -27,10 +28,10 @@ def create_outrage_event(
         player=removing_player, card__suit=Suit.WILD
     ).exists()
     if not has_suit and not has_wild:
-        # show hand, player draws from deck
+        # show hand, player draws from deck into supporter pile
         serializer = PlayerPrivateSerializer(removing_player)
         outrage_event.hand = serializer.data
-        draw_card_from_deck(removed_player)
+        draw_card_from_deck_to_supporter_pile(removed_player)
         outrage_event.card_given = True
         outrage_event.hand_shown = True
         outrage_event.save()

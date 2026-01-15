@@ -16,9 +16,13 @@ class ActionSerializer:
             return {
                 "_type": "enum",
                 "module": arg.__class__.__module__,
-                "class": arg.__class__.__name__,
+                "class": arg.__class__.__qualname__,
                 "name": arg.name
             }
+        elif isinstance(arg, (list, tuple)):
+           return [ActionSerializer.serialize_arg(item) for item in arg]
+        elif isinstance(arg, dict):
+           return {k: ActionSerializer.serialize_arg(v) for k, v in arg.items()}
         return arg
 
     @staticmethod
@@ -39,10 +43,20 @@ class ActionSerializer:
                 member_name = arg.get("name")
                 try:
                     module = importlib.import_module(module_name)
-                    enum_class = getattr(module, class_name)
+                    # Handle nested classes (e.g. DecreeEntry.Column)
+                    parts = class_name.split('.')
+                    obj = module
+                    for part in parts:
+                        obj = getattr(obj, part)
+                    enum_class = obj
                     return enum_class[member_name]
-                except (ImportError, AttributeError, KeyError):
+                except (ImportError, AttributeError, KeyError, TypeError):
+                    # Try finding the class in top level if split failed or something weird happened
+                    # But for now, just return None if it fails
+                    print(f"Failed to deserialize enum: {module_name}.{class_name}.{member_name}")
                     return None
+        elif isinstance(arg, list):
+            return [ActionSerializer.deserialize_arg(item) for item in arg]
         return arg
 
     @classmethod

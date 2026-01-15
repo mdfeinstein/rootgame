@@ -123,7 +123,10 @@ class CatCraftStepView(GameActionView):
         return Response(serializer.data)
 
     def post_piece(self, request, game_id: int):
-        satisfied, crafting_pieces = self.validate(request, game_id)
+        try:
+            satisfied, crafting_pieces = self.validate(request, game_id)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
         # check if we have enough pieces. if so, go to confirm. if not, go to piece
         accumulated_payload = {"card_to_craft": request.data["card_to_craft"]}
         cn_count = 0
@@ -549,21 +552,19 @@ class CatActionsView(GameActionView):
         game = self.game(game_id)
         player = self.player(request, game_id)
         clearing_number = int(request.data["battle_clearing_number"])
-        self.validate_battle_clearing(game, player, clearing_number)
-        step = {
-            "faction": self.faction_string,
-            "name": "select_defender",
-            "prompt": "Select a defender",
-            "endpoint": "battle-defender",
-            "payload_details": [
-                {"type": "faction", "name": "defender_faction"},
-            ],
-            "accumulated_payload": {
-                "battle_clearing_number": clearing_number,
-            },
+        defenders = self.validate_battle_clearing(game, player, clearing_number)
+        accumulated_payload = {
+            "battle_clearing_number": clearing_number,
         }
-        serializer = GameActionStepSerializer(step)
-        return Response(serializer.data)
+        options = [{"value" : d.faction, "label" : d.faction} for d in defenders]
+        return self.generate_step(
+            "select_defender",
+            "Select a defender",
+            "battle-defender",
+            [{"type" : "faction", "name" : "defender_faction"}],
+            accumulated_payload=accumulated_payload,
+            options=options,
+        )
 
     def post_battle_defender(self, request, game_id: int):
         game = self.game(game_id)
@@ -843,6 +844,7 @@ class CatActionsView(GameActionView):
     def validate_battle_clearing(
         self, game: Game, player: Player, clearing_number: int
     ) -> list[Player]:
+        """returns a list of opposing players who have pieces in the clearing"""
         try:
             clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
         except Clearing.DoesNotExist as e:

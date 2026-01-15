@@ -43,6 +43,9 @@ def player_removes_warriors(
     if count == 0:
         return
     warriors = Warrior.objects.filter(clearing=clearing, player=removed_player)[:count]
+    print(f'warriors: {warriors}')
+    print(f'clearing: {clearing.clearing_number}')
+    print(f"count: {count}")
     if len(warriors) != count:
         raise ValueError("Not enough warriors to remove")
     for warrior in warriors:

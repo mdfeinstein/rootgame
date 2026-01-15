@@ -1,3 +1,4 @@
+from game.transactions.general import move_warriors
 from game.models.events.cats import FieldHospitalEvent
 from typing import Iterable, Sequence
 from django.db import transaction
@@ -382,7 +383,7 @@ def create_field_hospital_event(clearing: Clearing, removed_player: Player, coun
     fh_event = FieldHospitalEvent.objects.create(
         event=event,
         player=removed_player,
-        troops_To_save=count,
+        troops_to_save=count,
         suit=clearing.suit,
     )
 
@@ -443,19 +444,27 @@ def cat_march(player: Player, origin: Clearing, destination: Clearing, count: in
     move_warriors(player, origin, destination, count)
     
     if not daylight.midmarch:
+        if daylight.actions_left < 1:
+            raise ValueError("No actions remaining")
+        daylight.actions_left -= 1
         daylight.midmarch = True
         daylight.save()
     else:
-        daylight.actions_left -= 1
         daylight.midmarch = False
         daylight.save()
 
 
 @transaction.atomic
 def cat_battle(player: Player, defender: Player, clearing: Clearing):
-    start_battle(player.game, player.faction, defender.faction, clearing)
+    from game.transactions.battle import start_battle
+    
     daylight = get_phase(player)
-    assert type(daylight) == CatDaylight
+    if type(daylight) != CatDaylight:
+        raise ValueError("Not Daylight phase")
+    if daylight.actions_left < 1:
+        raise ValueError("No actions remaining")
+    
+    start_battle(player.game, player.faction, defender.faction, clearing)
     daylight.actions_left -= 1
     daylight.save()
 
@@ -473,6 +482,12 @@ def cat_build(
 
 @transaction.atomic
 def cat_discard_card(player: Player, card: CardsEP):
+    evening = get_phase(player)
+    if type(evening) != CatEvening:
+        raise ValueError("Not Evening phase")
+    if evening.step != CatEvening.CatEveningSteps.DISCARDING:
+        raise ValueError("Not discarding step")
+        
     hand_entry = validate_player_has_card_in_hand(player, card)
     discard_card_from_hand(player, hand_entry)
     if get_player_hand_size(player) <= 5:

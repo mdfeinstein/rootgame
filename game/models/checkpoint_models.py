@@ -3,15 +3,11 @@ from game.models.game_models import Game
 
 class Checkpoint(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='checkpoints')
-    turn_number = models.PositiveSmallIntegerField()
     gamestate = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['turn_number']
-        constraints = [
-            models.UniqueConstraint(fields=['game', 'turn_number'], name='unique_checkpoint_per_turn')
-        ]
+        ordering = ['created_at']
 
 class Action(models.Model):
     checkpoint = models.ForeignKey(Checkpoint, on_delete=models.CASCADE, related_name='actions')

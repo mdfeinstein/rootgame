@@ -3,8 +3,8 @@ import threading
 from django.db import transaction
 from game.models.game_models import Game
 from game.models.checkpoint_models import Checkpoint, Action
-from game.serializers.game_state_serializer import GameStateSerializer
 from game.serializers.action_serializer import ActionSerializer
+from game.utils.snapshot import capture_gamestate
 
 # Context for playback to avoid infinite recursion
 _playback_context = threading.local()
@@ -61,20 +61,36 @@ def atomic_game_action(func):
             return func(*args, **kwargs)
 
         with transaction.atomic():
-            # Get or create the checkpoint for the current turn
-            checkpoint, created = Checkpoint.objects.get_or_create(
-                game=game,
-                turn_number=game.current_turn,
-                defaults={
-                    'gamestate': {} 
-                }
-            )
+            # Get the last checkpoint for the game
+            last_checkpoint = Checkpoint.objects.filter(game=game).order_by('id').last()
             
-            if created:
-                # Serialize state at the start of the checkpoint
-                serializer = GameStateSerializer(game)
-                checkpoint.gamestate = serializer.data
-                checkpoint.save()
+            checkpoint = None
+            if last_checkpoint:
+                # Check if the serialized state matches the current turn
+                # Find Game object in snapshot list
+                snapshot_turn = None
+                for obj in last_checkpoint.gamestate:
+                    if obj['model'] == 'game.game':
+                        snapshot_turn = obj['fields'].get('current_turn')
+                        break
+                
+                if snapshot_turn == game.current_turn:
+                    checkpoint = last_checkpoint
+
+            if not checkpoint:
+                # Create a new checkpoint
+                gamestate_data = capture_gamestate(game)
+                
+                # Debug: Check DecreeEntry integrity
+                for obj in gamestate_data:
+                    if obj['model'] == 'game.decreeentry':
+                        if 'column' not in obj['fields'] or obj['fields']['column'] is None:
+                            print(f"CRITICAL: Caught bad DecreeEntry in snapshot: {obj}")
+
+                checkpoint = Checkpoint.objects.create(
+                    game=game,
+                    gamestate=gamestate_data
+                )
 
             # Serialize arguments for the action
             s_args, s_kwargs = ActionSerializer.serialize_args(args, kwargs)

@@ -1,3 +1,5 @@
+from game.transactions.general import reshuffle_discard_into_deck
+from game.models import DeckEntry
 from typing import cast
 from django.db import transaction
 
@@ -35,9 +37,6 @@ from game.queries.wa.supporters import (
 from game.queries.wa.turn import get_phase, validate_step
 from game.queries.wa.warriors import get_warriors_in_supply
 from game.serializers.general_serializers import PlayerPrivateSerializer
-from game.transactions.battle import (
-    start_battle,
-)
 from game.transactions.general import (
     craft_card,
     discard_card_from_hand,
@@ -47,11 +46,6 @@ from game.transactions.general import (
     place_warriors_into_clearing,
     raise_score,
     remove_all_warriors_from_clearing,
-)
-from game.transactions.removal import (
-    player_removes_building,
-    player_removes_token,
-    player_removes_warriors,
 )
 from game.utility.textchoice import next_choice
 
@@ -115,6 +109,11 @@ def revolt(player: Player, clearing: Clearing):
     -- gains troops equal to matching sympathetic clearings
     -- gains an officer
     """
+    from game.transactions.removal import (
+        player_removes_building,
+        player_removes_token,
+        player_removes_warriors,
+    )
     # check that player can revolt
     supporters = validate_revolt(player, clearing)
     # discard supporters
@@ -248,6 +247,7 @@ def operation_battle(player: Player, defender: Player, clearing: Clearing):
     officer.used = True
     officer.save()
     # execute battle
+    from game.transactions.battle import start_battle
     start_battle(player.game, player.faction, defender.faction, clearing)
 
 
@@ -431,3 +431,16 @@ def pay_outrage(outrage_event: OutrageEvent, card: CardsEP):
     event.save()
     outrage_event.card_given = True
     outrage_event.save()
+
+@transaction.atomic
+def draw_card_from_deck_to_supporter_pile(player: Player):
+    # select top card from deck
+    card_in_deck = DeckEntry.objects.filter(game=player.game).first()
+    if card_in_deck is None:
+        reshuffle_discard_into_deck(player.game)
+        card_in_deck = DeckEntry.objects.filter(game=player.game).first()
+    # add card to player's supporter pile
+    SupporterStackEntry.objects.create(player=player, card=card_in_deck.card)
+    # remove card from deck
+    card_in_deck.delete()
+    

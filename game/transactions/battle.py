@@ -1,3 +1,5 @@
+from game.game_data.general.game_enums import Suit
+from game.queries.general import validate_player_has_card_in_hand
 from random import randint
 from django.db import transaction
 
@@ -71,17 +73,21 @@ def defender_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
         roll_dice(game, battle)
         return
     else:
+        defender_player = Player.objects.get(game=game, faction=battle.defender)
+        #check that card is in hand
+        card_in_hand = validate_player_has_card_in_hand(defender_player, ambush_card)
         # check that card is actually an ambush
         if ambush_card.value.ambush is False:
             raise ValueError("Card is not an ambush")
+        # check that suit matches clearing
+        if card_in_hand.card.suit != battle.clearing.suit and card_in_hand.card.suit != Suit.WILD:
+            raise ValueError("Card suit does not match clearing suit") 
         # flag the battle as ambushed
         battle.defender_ambush = True
         battle.step = Battle.BattleSteps.ATTACKER_AMBUSH_CANCEL_CHECK
         battle.save()
         # spend card
-        card = Card.objects.get(game=game, card_type=ambush_card.name)
-        hand_entry = HandEntry.objects.get(player=battle.defender, card=card)
-        discard_card_from_hand(battle.defender, hand_entry)
+        discard_card_from_hand(defender_player, card_in_hand)
 
 
 @transaction.atomic
@@ -114,7 +120,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
         elif attacking_warriors == 2:
             # resolve ambush by removing attacking warriors and ending the battle
             player_removes_warriors(
-                battle.clearing, attacking_player, defending_player, 2
+                battle.clearing, defending_player, attacking_player, 2
             )
             end_battle(game, battle)
             return
@@ -130,8 +136,12 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
     # if ambush, check that card is actually an ambush and get the hand entry
     if ambush_card.value.ambush is False:
         raise ValueError("Card is not an ambush")
-    card = Card.objects.get(game=game, card_type=ambush_card.name)
-    hand_entry = HandEntry.objects.get(player=battle.attacker, card=card)
+    if ambush_card.value.suit != battle.clearing.suit and ambush_card.value.suit != Suit.WILD:
+        raise ValueError("Card suit does not match clearing suit")
+    attacker_player = Player.objects.get(game=game, faction=battle.attacker)    
+    card_in_hand = validate_player_has_card_in_hand(attacker_player, ambush_card)
+    # spend card
+    discard_card_from_hand(attacker_player, card_in_hand)
     # flag the battle as ambushed
     battle.attacker_cancel_ambush = True
     battle.step = Battle.BattleSteps.ROLL_DICE
@@ -179,6 +189,7 @@ def roll_dice(game: Game, battle: Battle):
     # birds commander extra hit
     if battle.attacker == Faction.BIRDS:
         birds_player = Player.objects.get(game=game, faction=Faction.BIRDS)
+        print(f'bird leaders: {[(leader.leader, leader.active) for leader in BirdLeader.objects.filter(player=birds_player)]}')
         if (
             BirdLeader.objects.get(player=birds_player, active=True).leader
             == BirdLeader.BirdLeaders.COMMANDER
@@ -281,6 +292,6 @@ def end_battle(game: Game, battle: Battle):
     battle.step = Battle.BattleSteps.COMPLETED
     battle.save()
     # update event
-    event = Event.objects.get(game=game, type=EventType.BATTLE, is_resolved=False)
+    event = battle.event
     event.is_resolved = True
     event.save()
