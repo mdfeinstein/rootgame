@@ -13,6 +13,14 @@ from rest_framework.views import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
+from game.game_data.general.game_enums import Suit
+from game.queries.wa.crafting import (
+    is_able_to_be_crafted,
+    validate_crafting_pieces_satisfy_requirements,
+)
+from game.queries.wa.tokens import sympathy_at_clearing_number
+from game.transactions.wa import wa_craft_card
+
 
 from game.decorators.transaction_decorator import atomic_game_action
 class WADaylightActionsView(GameActionView):
@@ -66,7 +74,7 @@ class WADaylightActionsView(GameActionView):
             case "craft":
                 return self.generate_step(
                     "craft",
-                    "Select card to craft or cancel to select another action.",
+                    "Select card to craft.",
                     "craft-card",
                     [
                         {"type": "card", "name": "card_to_craft"},
@@ -95,10 +103,74 @@ class WADaylightActionsView(GameActionView):
                 raise ValidationError("Invalid action")
 
     def post_craft_card(self, request, game_id: int):
-        pass
+        if request.data["card_to_craft"] == "":
+            return Response(self.first_step, status=status.HTTP_200_OK)
+
+        player = self.player(request, game_id)
+        card = CardsEP[request.data["card_to_craft"]]
+
+        if not is_able_to_be_crafted(player, card):
+            raise ValidationError("Not enough crafting pieces to craft this card")
+
+        suits_needed = [cost.label for cost in card.value.cost]
+        prompt = f"Select {(suits_needed)} crafting pieces to craft this card."
+        return self.generate_step(
+            "select_pieces",
+            prompt,
+            "craft-piece",
+            [{"type": "clearing_number", "name": "clearing_number"}],
+            {
+                "card_to_craft": request.data["card_to_craft"],
+                "clearing_numbers": [],
+            },
+        )
 
     def post_craft_piece(self, request, game_id: int):
-        pass
+        player = self.player(request, game_id)
+        card = CardsEP[request.data["card_to_craft"]]
+        old_clearing_numbers = request.data["clearing_numbers"]
+        new_clearing_number = int(request.data["clearing_number"])
+        clearing_numbers = old_clearing_numbers + [new_clearing_number]
+
+        try:
+            sympathies = [
+                sympathy_at_clearing_number(player, clearing_number)
+                for clearing_number in clearing_numbers
+            ]
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
+
+        try:
+            all_pieces_satisfied = validate_crafting_pieces_satisfy_requirements(
+                player, card, sympathies
+            )
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
+
+        if all_pieces_satisfied:
+            # try to craft
+            try:
+                atomic_game_action(wa_craft_card)(player, card, sympathies)
+            except ValueError as e:
+                raise ValidationError({"detail": str(e)})
+            return Response(self.first_step, status=status.HTTP_200_OK)
+
+        # otherwise, continue to select pieces
+        suits_needed = [cost.label for cost in card.value.cost]
+        suits_selected = [
+            Suit(sympathy.clearing.suit).label for sympathy in sympathies
+        ]
+        prompt = f"Select more crafting pieces. Needed: {suits_needed}. Selected: {suits_selected}"
+        return self.generate_step(
+            "select_pieces",
+            prompt,
+            "craft-piece",
+            [{"type": "clearing_number", "name": "clearing_number"}],
+            {
+                "card_to_craft": request.data["card_to_craft"],
+                "clearing_numbers": clearing_numbers,
+            },
+        )
 
     def post_mobilize(self, request, game_id: int):
         """places card in supporter stack"""

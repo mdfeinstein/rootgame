@@ -27,26 +27,33 @@ def validate_crafting_pieces_satisfy_requirements(
     """
     if not is_able_to_be_crafted(player, card):
         raise ValueError("Not enough crafting pieces available to craft this card")
+    
+    if len(sympathies) != len(set(sympathy.id for sympathy in sympathies)):
+        raise ValueError("Cannot use the same crafting piece twice")
+
     suits_needed = card.value.cost
     satisfied = [False for _ in suits_needed]
     for sympathy in sympathies:
         sympathy_suit = Suit(sympathy.clearing.suit)
-        first_wild_idx: int | None = None
+
+        # first try to find a matching suit
+        match_found = False
         for i, suit_needed in enumerate(suits_needed):
             if not satisfied[i] and suit_needed.value == sympathy_suit.value:
                 satisfied[i] = True
+                match_found = True
                 break
-            elif (
-                not satisfied[i]
-                and suit_needed.value == Suit.WILD.value
-                and first_wild_idx is None
-            ):
-                first_wild_idx = i
-            # if we looped thru and didnt find matching or wild, raise
-            if first_wild_idx is None:
-                raise ValueError("No matching or wild suit found")
-            else:
-                # use the first wild
-                satisfied[first_wild_idx] = True
+        
+        # if not found, try to find a wild suit
+        if not match_found:
+            for i, suit_needed in enumerate(suits_needed):
+                if not satisfied[i] and suit_needed.value == Suit.WILD.value:
+                    satisfied[i] = True
+                    match_found = True
+                    break
+
+        # if we looped thru and didnt find matching or wild, raise
+        if not match_found:
+            raise ValueError("No matching or wild suit found")
 
     return all(satisfied)
