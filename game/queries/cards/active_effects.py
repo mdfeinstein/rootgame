@@ -64,3 +64,15 @@ def can_use_card(player: Player, card_entry: CraftedCardEntry) -> bool:
 
     # If no match or conditions not met
     return False
+
+def has_active_effect(card_entry: CraftedCardEntry) -> bool:
+    """
+    Returns True if the card has an active effect.
+    """
+    return not card_entry.used == CraftedCardEntry.UsedChoice.NOT_APPLICABLE 
+
+def is_used(card_entry: CraftedCardEntry) -> bool:
+    """
+    Returns True if the card has been used.
+    """
+    return card_entry.used == CraftedCardEntry.UsedChoice.USED

@@ -18,6 +18,11 @@ from game.models.game_models import (
     Token,
 )
 from game.models.wa.turn import WATurn
+from game.models.game_models import CraftedCardEntry
+from game.queries.cards.active_effects import can_use_card, has_active_effect, is_used
+
+
+
 
 
 class CardSerializer(serializers.ModelSerializer):
@@ -53,6 +58,35 @@ class CardSerializer(serializers.ModelSerializer):
 
     def get_card_name(self, card: Card):
         return card.enum.name
+
+
+
+class CraftedCardSerializer(serializers.ModelSerializer):
+    card = CardSerializer()
+    has_active = serializers.SerializerMethodField()
+    used = serializers.SerializerMethodField()
+    action_endpoint = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CraftedCardEntry
+        fields = [
+            "card",
+            "has_active",
+            "used",
+            "action_endpoint",
+        ]
+
+    def get_has_active(self, crafted_card: CraftedCardEntry) -> bool:
+        return has_active_effect(crafted_card)
+
+    def get_used(self, crafted_card: CraftedCardEntry) -> bool:
+        return is_used(crafted_card)
+
+    def get_action_endpoint(self, crafted_card: CraftedCardEntry) -> str | None:
+        if can_use_card(crafted_card.player, crafted_card):
+            slug = crafted_card.card.enum.name.lower().replace("_", "-")
+            return f"api/action/card/{slug}/"
+        return None
 
 
 class WarriorSerializer(serializers.ModelSerializer):

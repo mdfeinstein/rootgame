@@ -40,6 +40,7 @@ from game.views.gamestate_views.general import (
     get_turn_info,
     undo_last_action_view,
 )
+from game.views.gamestate_views.cards import GetCraftedCardsView
 from game.views.setup_views import (
     create_game,
     join_game,
@@ -99,6 +100,7 @@ urlpatterns = [
         name="get-current-action",
     ),
     path("api/game/undo/<int:game_id>/", undo_last_action_view, name="undo-action"),
+    path("api/crafted-cards/<int:game_id>/<str:faction>/", GetCraftedCardsView.as_view(), name="get-crafted-cards"),
 ]
 register_action(
     "cats-setup-pick-corner",
@@ -247,5 +249,13 @@ register_action(
     "turmoil",
     TurmoilView,
     "api/birds/turmoil/",
+    urlpatterns,
+)
+
+from game.views.action_views.crafted_cards.propaganda_bureau import PropagandaBureauView
+register_action(
+    "propaganda-bureau",
+    PropagandaBureauView,
+    "api/action/card/propaganda-bureau/",
     urlpatterns,
 )

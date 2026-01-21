@@ -1,3 +1,4 @@
+from game.models.game_models import Suit
 from game.models import BirdEvening
 from game.models.wa.turn import WAEvening
 from game.models import CatEvening
@@ -199,6 +200,18 @@ def validate_player_has_card_in_hand(player: Player, card: CardsEP) -> HandEntry
         raise ValueError(f"Player does not have card in hand. card name: {card.name}")
     return card_in_hand
 
+def validate_player_has_crafted_card(player: Player, card: CardsEP) -> CraftedCardEntry:
+    """returns CraftedCardEntry instance if player has card in hand, else raises ValueError
+    should only be possible to have one at a time of a specific card
+    """
+    crafted_card = CraftedCardEntry.objects.filter(player=player, card__card_type=card.name).first()
+    if crafted_card is None:
+        raise ValueError(f"Player does not have card in hand. card name: {card.name}")
+    return crafted_card
+
+def card_matches_clearing(card : CardsEP, clearing : Clearing) -> bool:
+    """returns True if card suit matches clearing suit"""
+    return card.value.suit == Suit(clearing.suit) or card.value.suit == Suit.WILD
 
 def get_player_hand_size(player: Player) -> int:
     """returns the number of cards in the player's hand"""
