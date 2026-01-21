@@ -310,7 +310,11 @@ class CraftedCardEntry(models.Model):
     card = models.ForeignKey(
         Card, on_delete=models.CASCADE, related_name="crafted_cards"
     )
-
+    class UsedChoice(models.TextChoices):
+        UNUSED = "0", "Unused"
+        USED = "1", "Used"
+        NOT_APPLICABLE = "2", "Not Applicable"
+    used = models.CharField(max_length=1, choices=UsedChoice.choices, default=UsedChoice.NOT_APPLICABLE)
 
 class HandEntry(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)

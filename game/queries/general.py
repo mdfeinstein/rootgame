@@ -1,3 +1,12 @@
+from game.models import BirdEvening
+from game.models.wa.turn import WAEvening
+from game.models import CatEvening
+from game.models import BirdDaylight
+from game.models.wa.turn import WADaylight
+from game.models import CatDaylight
+from game.models import BirdBirdsong
+from game.models.wa.turn import WABirdsong
+from game.models.cats.turn import CatBirdsong
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models import (
     Building,
@@ -120,6 +129,57 @@ def count_player_pieces_in_clearing(player: Player, clearing: Clearing) -> int:
 def get_current_player(game: Game) -> Player:
     """returns the player whose turn it is"""
     return Player.objects.get(game=game, turn_order=game.current_turn)
+
+
+def get_current_phase(player: Player):
+    """
+    Returns the current active phase model instance for the player.
+    Supports Birds, WA, Cats.
+    Returns None if no phase is active or faction not supported.
+    """
+    if player.faction == Faction.BIRDS:
+        from game.queries.birds.turn import get_phase as get_bird_phase
+        return get_bird_phase(player)
+    elif player.faction == Faction.WOODLAND_ALLIANCE:
+        from game.queries.wa.turn import get_phase as get_wa_phase
+        return get_wa_phase(player)
+    elif player.faction == Faction.CATS:
+        from game.queries.cats.turn import get_phase as get_cat_phase
+        return get_cat_phase(player)
+            
+    return None
+            
+    return None
+
+def is_phase(player : Player, phase : str) -> bool:
+    """
+    Returns True if the player is in the specified phase.
+    """
+    phase_obj = get_current_phase(player)
+    match phase:
+        case "Birdsong":
+            return isinstance(phase_obj, (CatBirdsong, WABirdsong, BirdBirdsong))
+        case "Daylight":
+            return isinstance(phase_obj, (CatDaylight, WADaylight, BirdDaylight))
+        case "Evening":
+            return isinstance(phase_obj, (CatEvening, WAEvening, BirdEvening))
+        case _:
+            raise ValueError("Invalid phase argument provided. Must be 'Birdsong', 'Daylight', or 'Evening'")
+
+
+def is_start_of_phase(player: Player, phase_model_class) -> bool:
+    """
+    Returns True if the player is in the specified phase AND at the first step.
+    phase_model_class: The class of the phase to check (e.g. BirdBirdsong)
+    """
+    phase = get_current_phase(player)
+    if not isinstance(phase, phase_model_class):
+        return False
+    current_step = phase.step
+    if current_step == "1":
+        return True
+    return False
+
 
 
 def get_crafting_pieces(player: Player, card: CardsEP) -> list[Piece]:
