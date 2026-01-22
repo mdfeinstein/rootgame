@@ -18,11 +18,12 @@ class TestPropagandaBureauTransaction(TestCase):
         # Phase setup - Daylight for PB usage
         # BirdTurnFactory creates phases by default (via create_turn)
         self.bird_turn = BirdTurnFactory(player=self.player, turn_number=1)
-        # birdsong is a related manager (ForeignKey), so use first()
-        birdsong = self.bird_turn.birdsong.first()
+        
+        from game.models.birds.turn import BirdBirdsong, BirdDaylight
+        birdsong = BirdBirdsong.objects.filter(turn=self.bird_turn).first()
         birdsong.step = BirdBirdsong.BirdBirdsongSteps.COMPLETED
         birdsong.save()
-        self.daylight = self.bird_turn.daylight.first()
+        self.daylight = BirdDaylight.objects.filter(turn=self.bird_turn).first()
         self.daylight.step = "1" # Daylight active
         self.daylight.save()
 

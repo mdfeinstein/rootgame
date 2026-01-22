@@ -10,6 +10,7 @@ class EventType(models.TextChoices):
     FIELD_HOSPITAL = "field_hospital"
     TURMOIL = "turmoil"
     OUTRAGE = "outrage"
+    INFORMANTS = "informants"
 
 
 class Event(models.Model):

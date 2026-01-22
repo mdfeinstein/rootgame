@@ -253,9 +253,38 @@ register_action(
 )
 
 from game.views.action_views.crafted_cards.propaganda_bureau import PropagandaBureauView
+from game.views.action_views.crafted_cards.saboteurs import SaboteursView
+from game.views.action_views.crafted_cards.charm_offensive import CharmOffensiveView
+from game.views.action_views.crafted_cards.league_of_adventurers import LeagueOfAdventurersView
+from game.views.action_views.crafted_cards.informants import InformantsView
+
 register_action(
     "propaganda-bureau",
     PropagandaBureauView,
     "api/action/card/propaganda-bureau/",
+    urlpatterns,
+)
+register_action(
+    "saboteurs",
+    SaboteursView,
+    "api/action/card/saboteurs/",
+    urlpatterns,
+)
+register_action(
+    "charm-offensive",
+    CharmOffensiveView,
+    "api/action/card/charm-offensive/",
+    urlpatterns,
+)
+register_action(
+    "league-of-adventurers",
+    LeagueOfAdventurersView,
+    "api/action/card/league-of-adventurers/",
+    urlpatterns,
+)
+register_action(
+    "informants",
+    InformantsView,
+    "api/action/card/informants/",
     urlpatterns,
 )

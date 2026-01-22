@@ -302,6 +302,7 @@ class CraftedItemEntry(models.Model):
     # items crafted by players
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    exhausted = models.BooleanField(default=False)
 
 
 class CraftedCardEntry(models.Model):

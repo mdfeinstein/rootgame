@@ -2,8 +2,10 @@ import factory
 from django.contrib.auth.models import User
 from game.models.game_models import (
     Game, Player, Faction, Card, HandEntry, CraftedCardEntry, 
-    Warrior, Clearing, Suit, FactionChoiceEntry
+    Warrior, Clearing, Suit, FactionChoiceEntry, Item, CraftedItemEntry,
+    DiscardPileEntry
 )
+from game.game_data.general.game_enums import ItemTypes
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.birds.turn import BirdTurn
 from game.models.cats.turn import CatTurn
@@ -51,6 +53,14 @@ class CardFactory(factory.django.DjangoModelFactory):
     card_type = CardsEP.FOXFOLK_STEEL.name
 
 
+class DiscardPileEntryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = DiscardPileEntry
+
+    game = factory.SubFactory(GameFactory)
+    card = factory.SubFactory(CardFactory, game=factory.SelfAttribute('..game'))
+    spot = factory.Sequence(lambda n: n)
+
 class HandEntryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = HandEntry
@@ -83,6 +93,24 @@ class WarriorFactory(factory.django.DjangoModelFactory):
 
     player = factory.SubFactory(PlayerFactory)
     clearing = None
+
+
+class ItemFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Item
+
+    game = factory.SubFactory(GameFactory)
+    item_type = ItemTypes.BOOTS.value
+    exhausted = False
+
+
+class CraftedItemEntryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = CraftedItemEntry
+
+    player = factory.SubFactory(PlayerFactory)
+    item = factory.SubFactory(ItemFactory, game=factory.SelfAttribute('..player.game'))
+    exhausted = False
 
 
 class BirdTurnFactory(factory.django.DjangoModelFactory):

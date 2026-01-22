@@ -21,6 +21,8 @@ def get_current_event_action(game: Game) -> str | None:
             return reverse("turmoil")
         case EventType.OUTRAGE:
             return reverse("outrage")
+        case EventType.INFORMANTS:
+            return reverse("informants")
         case _:
             raise ValueError("Invalid event type")
 
