@@ -11,6 +11,9 @@ class EventType(models.TextChoices):
     TURMOIL = "turmoil"
     OUTRAGE = "outrage"
     INFORMANTS = "informants"
+    SABOTEURS = "saboteurs"
+    EYRIE_EMIGRE = "eyrie_emigre"
+    CHARM_OFFENSIVE = "charm_offensive"
 
 
 class Event(models.Model):

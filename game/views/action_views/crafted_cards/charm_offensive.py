@@ -22,11 +22,15 @@ class CharmOffensiveView(GameActionView):
                 "value": faction.label,
                 "label": faction.label
             })
+        opponents.append({
+            "value": "skip",
+            "label": "Skip"
+        })
             
         self.first_step = {
             "faction": self.faction.label,
             "name": "pick-opponent",
-            "prompt": "Pick an opponent to score one point",
+            "prompt": "Pick an opponent to score one point, or skip.",
             "endpoint": "faction",
             "payload_details": [{"type": "faction", "name": "faction"}],
             "options": opponents
@@ -36,6 +40,11 @@ class CharmOffensiveView(GameActionView):
     def route_post(self, request, game_id: int, route: str):
         match route:
             case "faction":
+                if request.data["faction"] == "skip":
+                    from game.transactions.crafted_cards.charm_offensive import skip_charm_offensive
+                    player = self.player_by_request(request, game_id)
+                    skip_charm_offensive(player)
+                    return self.generate_completed_step()
                 return self.post_pick_opponent(request, game_id)
             case _:
                 return Response(status=status.HTTP_404_NOT_FOUND)

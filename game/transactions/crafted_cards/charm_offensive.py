@@ -1,3 +1,4 @@
+from game.transactions.general import step_effect
 from game.models.events.crafted_cards import CharmOffensiveEvent
 from django.db import transaction
 from game.models.game_models import Player, CraftedCardEntry
@@ -35,6 +36,13 @@ def use_charm_offensive(player: Player, opponent: Player):
     # 6. Mark card as used
     crafted_card.used = CraftedCardEntry.UsedChoice.USED
     crafted_card.save()
+    #resolve event
+    event = CharmOffensiveEvent.objects.filter(crafted_card_entry=crafted_card).first()
+    if event:
+        event.event.is_resolved = True
+        event.event.save()
+    # resolve step_effect for beginning of evening
+    step_effect(player)
 
 @transaction.atomic
 def check_charm_offensive(player: Player)->bool:
@@ -48,3 +56,16 @@ def check_charm_offensive(player: Player)->bool:
         return False
     CharmOffensiveEvent.create(crafted_card)
     return True
+
+@transaction.atomic
+def skip_charm_offensive(player: Player):
+    """ resolve the event and mark card as used """
+    crafted_card = validate_player_has_crafted_card(player, CardsEP.CHARM_OFFENSIVE)
+    crafted_card.used = CraftedCardEntry.UsedChoice.USED
+    crafted_card.save()
+    event = CharmOffensiveEvent.objects.filter(crafted_card_entry=crafted_card).first()
+    if event:
+        event.event.is_resolved = True
+        event.event.save()
+    # resolve step_effect for beginning of evening
+    step_effect(player)

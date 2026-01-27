@@ -846,11 +846,12 @@ def next_step(player: Player):
         case _:
             raise ValueError("Invalid phase")
     phase.save()
-    step_effect(player)
+    step_effect(player, phase)
 
 @transaction.atomic
-def step_effect(player: Player):
-    phase = get_phase(player)
+def step_effect(player: Player, phase: BirdBirdsong | BirdDaylight | BirdEvening | None = None):
+    if phase is None:
+        phase = get_phase(player)
     match phase:
         case BirdBirdsong():
             match phase.step:
@@ -878,7 +879,9 @@ def step_effect(player: Player):
                 case BirdDaylight.BirdDaylightSteps.BUILDING:
                     build_turmoil_check(player)
                 case BirdDaylight.BirdDaylightSteps.COMPLETED:
-                    check_charm_offensive(player)
+                    if not check_charm_offensive(player):
+                        #call step_effect for current phase (evening) by passing None
+                        step_effect(player, None)
         case BirdEvening():
             match phase.step:
                 case BirdEvening.BirdEveningSteps.SCORING:

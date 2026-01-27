@@ -253,4 +253,17 @@ def next_step(player: Player):
             from game.transactions.birds import next_step
             next_step(player)
 
+@transaction.atomic
+def step_effect(player: Player):
+    match player.faction:
+        case Faction.CATS:
+            from game.transactions.cats import step_effect
+            step_effect(player)
+        case Faction.WOODLAND_ALLIANCE:
+            from game.transactions.wa import step_effect
+            step_effect(player)
+        case Faction.BIRDS:
+            from game.transactions.birds import step_effect
+            step_effect(player)
+
 

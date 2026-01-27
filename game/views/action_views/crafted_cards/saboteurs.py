@@ -26,14 +26,15 @@ class SaboteursView(GameActionView):
                 "value": faction.name, # "Birds", "Cats", "Woodland Alliance"
                 "label": faction.label
             })
+        faction_options.append({
+            "value": "skip",
+            "label": "Skip"
+        })
             
-        if not faction_options:
-            raise ValidationError({"detail": "No enemy crafted cards to target"})
-
         self.first_step = {
             "faction": self.faction.label,
             "name": "pick-faction",
-            "prompt": "Pick an enemy faction to sabotage",
+            "prompt": "Pick an enemy faction to sabotage, or skip.",
             "endpoint": "pick-faction",
             "payload_details": [{"type": "faction", "name": "faction"}],
             "options": faction_options
@@ -43,6 +44,11 @@ class SaboteursView(GameActionView):
     def route_post(self, request, game_id: int, route: str):
         match route:
             case "pick-faction":
+                if request.data["faction"] == "skip":
+                    from game.transactions.crafted_cards.saboteurs import saboteurs_skip
+                    player = self.player_by_request(request, game_id)
+                    saboteurs_skip(player)
+                    return self.generate_completed_step()
                 return self.post_pick_faction(request, game_id)
             case "card":
                 return self.post_pick_card(request, game_id)
