@@ -22,6 +22,7 @@ class CatTurn(models.Model):
         birdsong = CatBirdsong.objects.create(turn=turn)
         daylight = CatDaylight.objects.create(turn=turn)
         evening = CatEvening.objects.create(turn=turn)
+        print(f"created cat turn {turn.turn_number}")
         return turn
 
 

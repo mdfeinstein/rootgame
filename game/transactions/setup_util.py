@@ -20,4 +20,5 @@ def next_player_setup(game: Game):
         game.save()
         # ad hoc, but need the next_step called initially
         first_player = get_current_player(game)
+        print(f"calling initial next step for {first_player.faction_label}")
         next_step(first_player)

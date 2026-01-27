@@ -240,14 +240,7 @@ class GameSetupWithFactionsFactory(GameSetupFactory):
             # But let's check if there's any manual step.
             pass
             
-        # Advance to first turn (Cats) if setup is complete
-        # game_setup.start_game sets game to STARTED. 
-        # Faction setups happen after. 
-        # Usually 'start_turn' would be called for the first player.
-        # If the game loop is correct, calling get_current_action or similar might trigger turn start if needed?
-        # Or we manually start the turn for the first player (Cats).
-        
-        # Ensure first turn is created for Cats
-        first_player = Player.objects.filter(game=self, turn_order=0).first()
-        if first_player and first_player.faction == Faction.CATS:
-             CatTurnFactory(player=first_player)
+        # No need to manually create the first turn here anymore.
+        # The faction setup transactions (confirm_completed_setup) or start_game 
+        # now handle this as part of the formal game initialization flow.
+

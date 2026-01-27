@@ -48,7 +48,7 @@ def get_cats_turn_action(player: Player) -> str | None:
         case CatEvening():
             return get_cats_evening_turn_action(phase)
         case _:
-            raise ValueError("Invalid cats phase")
+            raise ValueError(f"Invalid cats phase: {phase}")
 
 
 def get_cats_birdsong_turn_action(phase: CatBirdsong):
@@ -57,7 +57,7 @@ def get_cats_birdsong_turn_action(phase: CatBirdsong):
             print(f"cats birdsong place wood!")
             return reverse("cats-birdsong-place-wood")
         case _:
-            raise ValueError("Invalid cats birdsong step")
+            raise ValueError(f"Invalid cats birdsong step: {phase.step}")
 
 
 def get_cats_daylight_turn_action(phase: CatDaylight):

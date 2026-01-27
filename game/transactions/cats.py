@@ -1,6 +1,8 @@
 
+from game.transactions.crafted_cards.saboteurs import saboteurs_check
 from game.models.events.cats import FieldHospitalEvent
-from typing import Iterable, Sequence
+from typing import Iterable, Sequence, Union
+
 from django.db import transaction
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.cats.buildings import CatBuildingTypes, Recruiter, Sawmill, Workshop
@@ -76,6 +78,7 @@ def produce_wood(player: Player, sawmill: Sawmill):
     wood_token.save()
     sawmill.used = True
     sawmill.save()
+    print(f"produced wood at {sawmill.building_slot.clearing}")
     # check if all sawmills have been used
     print(
         Sawmill.objects.filter(player=player, used=False, building_slot__isnull=False)
@@ -419,6 +422,7 @@ def check_auto_place_wood(player : Player):
     sawmills = get_unused_sawmills(player)
     wood_tokens = count_wood_tokens_in_supply(player)
     if wood_tokens >= sawmills.count():
+        print(f"calling produce all wood")
         cat_produce_all_wood(player)
 
 
@@ -477,6 +481,7 @@ def check_auto_discard(player: Player):
 @transaction.atomic
 def next_step(player: Player):
     phase = get_phase(player)
+    print(f"before calling next step: {phase.step}")
     match phase:
         case CatBirdsong():
             phase.step = next_choice(CatBirdsong.CatBirdsongSteps, phase.step)
@@ -485,22 +490,30 @@ def next_step(player: Player):
         case CatEvening():
             phase.step = next_choice(CatEvening.CatEveningSteps, phase.step)
     phase.save()
-    step_effect(player)
+    print(f"after calling next step, before step effect: {phase.step}")
+    step_effect(player, phase)
+    print(f"after calling step effect: {phase.step}")
+
 
 @transaction.atomic
-def step_effect(player : Player):
-    phase = get_phase(player)
+def step_effect(player : Player, phase: Union[CatBirdsong, CatDaylight, CatEvening, None]=None):
+    if phase is None:
+        phase = get_phase(player)
     match phase:
         case CatBirdsong():
             match phase.step:
                 case CatBirdsong.CatBirdsongSteps.NOT_STARTED:
                     pass
                 case CatBirdsong.CatBirdsongSteps.PLACING_WOOD:
-                    # if more wood tokens in supply than tokens to produce, automate placement
-                    check_auto_place_wood(player)
+                    if not saboteurs_check(player):
+                        # if more wood tokens in supply than tokens to produce, automate placement
+                        print(f"calling auto place wood")
+                        check_auto_place_wood(player)
                 case CatBirdsong.CatBirdsongSteps.COMPLETED:
                     from game.transactions.crafted_cards.eyrie_emigre import is_emigre
-                    is_emigre(player)
+                    if not is_emigre(player):
+                        step_effect(player, None)
+
                 case _:
                     raise ValueError(f"Invalid step in step_effect for Cats Birdsong: {phase.step}")
         case CatDaylight():
@@ -511,7 +524,8 @@ def step_effect(player : Player):
                     pass
                 case CatDaylight.CatDaylightSteps.COMPLETED:
                     from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
-                    check_charm_offensive(player)
+                    if not check_charm_offensive(player):
+                        step_effect(player, None)
                 case _:
                     raise ValueError(f"Invalid step in step_effect for Cats Daylight: {phase.step}")
         case CatEvening():

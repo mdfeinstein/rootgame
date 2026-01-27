@@ -1,3 +1,4 @@
+from game.transactions.general import step_effect
 from game.models.events.crafted_cards import SaboteursEvent
 from django.db import transaction
 from game.models.game_models import Player, CraftedCardEntry, DiscardPileEntry, Faction
@@ -79,8 +80,6 @@ def saboteurs_skip(player: Player):
         event.event.is_resolved = True
         event.event.save()
     
-    # continue Birds turn
-    if player.faction == Faction.BIRDS:
-        from game.transactions.birds import emergency_draw
-        emergency_draw(player)
+    # continue phase step
+    step_effect(player)
 

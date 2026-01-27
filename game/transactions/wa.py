@@ -1,3 +1,4 @@
+from typing import Union
 from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
 from game.transactions.crafted_cards.saboteurs import saboteurs_check
 from game.transactions.crafted_cards.eyrie_emigre import is_emigre
@@ -448,17 +449,17 @@ def next_step(player: Player):
             raise ValueError("Invalid phase")
     # execute any passive effects that should occur at the step that was just moved into
     phase.save()
-    step_effect(player)
+    step_effect(player, phase)
 
 
 @transaction.atomic
-def step_effect(player: Player):
+def step_effect(player: Player, phase: Union[WABirdsong, WADaylight, WAEvening, None] = None):
     """ executes any 'passive' effects that should occur at a specific step
     ex: drawing or launching events
     typically called from next_step
     """
-
-    phase = get_phase(player)
+    if phase is None:
+        phase = get_phase(player)
     match phase:
         case WABirdsong():
             match phase.step:
@@ -477,7 +478,10 @@ def step_effect(player: Player):
                 case WADaylight.WADaylightSteps.ACTIONS:
                     pass
                 case WADaylight.WADaylightSteps.COMPLETED:
-                    check_charm_offensive(player)
+                    if not check_charm_offensive(player):
+                        # ensures effect at beginning of evening is called
+                        #not relevant here, but good to have the structure anyway
+                        step_effect(player, None)
                 case _:
                     raise ValueError(f"Invalid step in step_effect for WA Daylight: {phase.step.name}")
         case WAEvening():
