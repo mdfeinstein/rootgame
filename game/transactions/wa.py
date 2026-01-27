@@ -1,3 +1,7 @@
+from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
+from game.transactions.crafted_cards.saboteurs import saboteurs_check
+from game.transactions.crafted_cards.eyrie_emigre import is_emigre
+from game.transactions.crafted_cards.informants import informants_check
 from typing import cast
 from django.db import transaction
 
@@ -311,8 +315,7 @@ def end_revolt_step(player: Player):
     birdsong = get_phase(player)
     assert type(birdsong) == WABirdsong, "Not Birdsong phase"
     assert birdsong.step == WABirdsong.WABirdsongSteps.REVOLT, "Not Revolt step"
-    birdsong.step = next_choice(WABirdsong.WABirdsongSteps, birdsong.step)
-    birdsong.save()
+    next_step(player)
 
 
 @transaction.atomic
@@ -323,8 +326,7 @@ def end_spread_sympathy_step(player: Player):
     assert (
         birdsong.step == WABirdsong.WABirdsongSteps.SPREAD_SYMPATHY
     ), "Not Spread Sympathy step"
-    birdsong.step = next_choice(WABirdsong.WABirdsongSteps, birdsong.step)
-    birdsong.save()
+    next_step(player)
 
 
 @transaction.atomic
@@ -332,8 +334,7 @@ def end_daylight_actions(player: Player):
     assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
     daylight = get_phase(player)
     assert type(daylight) == WADaylight
-    daylight.step = WADaylight.WADaylightSteps.COMPLETED
-    daylight.save()
+    next_step(player)
 
 
 @transaction.atomic
@@ -342,11 +343,12 @@ def end_evening_operations(player: Player):
     evening = get_phase(player)
     assert type(evening) == WAEvening
     # move to next step
-    evening.step = next_choice(WAEvening.WAEveningSteps, evening.step)
-    evening.save()
-    # if not drawing step, exit out
-    if evening.step != WAEvening.WAEveningSteps.DRAWING:
-        return
+    next_step(player)
+@transaction.atomic
+def draw_cards(player: Player):
+    evening = get_phase(player)
+    assert type(evening) == WAEvening
+    assert evening.step == WAEvening.WAEveningSteps.DRAWING, "Not Drawing step"
     # draw cards equal to bases on board + 1
     cards_to_draw = (
         WABase.objects.filter(player=player, building_slot__isnull=False).count() + 1
@@ -354,22 +356,18 @@ def end_evening_operations(player: Player):
     for _ in range(cards_to_draw):
         draw_card_from_deck(player)
     # move to next step
-    evening.step = next_choice(WAEvening.WAEveningSteps, evening.step)
-    evening.save()
-    # if not discarding step, exit out
-    if evening.step != WAEvening.WAEveningSteps.DISCARDING:
-        return
+    next_step(player)
+
+@transaction.atomic
+def check_discard_step(player : Player):
+    evening = get_phase(player)
+    assert type(evening) == WAEvening
+    assert evening.step == WAEvening.WAEveningSteps.DISCARDING, "Not Discarding step"
     # if over hand limit, exit out so player can handle discarding step
     if get_player_hand_size(player) > 5:
         return
     # otherwise, move to next step
-    evening.step = next_choice(WAEvening.WAEveningSteps, evening.step)
-    evening.save()
-    # if not completed step, exit out
-    if evening.step != WAEvening.WAEveningSteps.COMPLETED:
-        return
-    # if here, turn completed.
-    end_turn(player)
+    next_step(player)
 
 
 @transaction.atomic
@@ -431,3 +429,70 @@ def pay_outrage(outrage_event: OutrageEvent, card: CardsEP):
     event.save()
     outrage_event.card_given = True
     outrage_event.save()
+
+@transaction.atomic
+def next_step(player: Player):
+    """
+    moves to next step in the current phase or next phase, launching events if necessary
+    e.g.: for card effects that need to be triggered at a specific step
+    """
+    phase = get_phase(player)
+    match phase:
+        case WABirdsong():
+            phase.step = next_choice(WABirdsong.WABirdsongSteps, phase.step)
+        case WADaylight():
+            phase.step = next_choice(WADaylight.WADaylightSteps, phase.step)
+        case WAEvening():
+            phase.step = next_choice(WAEvening.WAEveningSteps, phase.step)
+        case _:
+            raise ValueError("Invalid phase")
+    # execute any passive effects that should occur at the step that was just moved into
+    phase.save()
+    step_effect(player)
+
+
+@transaction.atomic
+def step_effect(player: Player):
+    """ executes any 'passive' effects that should occur at a specific step
+    ex: drawing or launching events
+    typically called from next_step
+    """
+
+    phase = get_phase(player)
+    match phase:
+        case WABirdsong():
+            match phase.step:
+                case WABirdsong.WABirdsongSteps.NOT_STARTED:
+                    pass
+                case WABirdsong.WABirdsongSteps.REVOLT:
+                    saboteurs_check(player)
+                case WABirdsong.WABirdsongSteps.SPREAD_SYMPATHY:
+                    pass
+                case WABirdsong.WABirdsongSteps.COMPLETED:
+                    is_emigre(player)
+                case _:
+                    raise ValueError(f"Invalid step in step_effect for WA Birdsong: {phase.step.name}")
+        case WADaylight():
+            match phase.step:
+                case WADaylight.WADaylightSteps.ACTIONS:
+                    pass
+                case WADaylight.WADaylightSteps.COMPLETED:
+                    check_charm_offensive(player)
+                case _:
+                    raise ValueError(f"Invalid step in step_effect for WA Daylight: {phase.step.name}")
+        case WAEvening():
+            match phase.step:
+                case WAEvening.WAEveningSteps.MILITARY_OPERATIONS:
+                    pass
+                case WAEvening.WAEveningSteps.DRAWING:
+                    is_informants = informants_check(player)
+                    if not is_informants:
+                        draw_cards(player)
+                case WAEvening.WAEveningSteps.DISCARDING:
+                    check_discard_step(player)
+                case WAEvening.WAEveningSteps.COMPLETED:
+                    end_turn(player)
+                case _:
+                    raise ValueError(f"Invalid step in step_effect: {phase.step.name}")
+        case _:
+            raise ValueError("Invalid phase")            

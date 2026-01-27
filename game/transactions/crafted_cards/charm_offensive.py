@@ -1,3 +1,4 @@
+from game.models.events.crafted_cards import CharmOffensiveEvent
 from django.db import transaction
 from game.models.game_models import Player, CraftedCardEntry
 from game.game_data.cards.exiles_and_partisans import CardsEP
@@ -34,3 +35,16 @@ def use_charm_offensive(player: Player, opponent: Player):
     # 6. Mark card as used
     crafted_card.used = CraftedCardEntry.UsedChoice.USED
     crafted_card.save()
+
+@transaction.atomic
+def check_charm_offensive(player: Player)->bool:
+    """
+    Checks if the Charm Offensive crafted card can be used.
+    Launches event if it can, and returns True
+    """
+    try:
+        crafted_card = validate_player_has_crafted_card(player, CardsEP.CHARM_OFFENSIVE)
+    except ValueError:
+        return False
+    CharmOffensiveEvent.create(crafted_card)
+    return True

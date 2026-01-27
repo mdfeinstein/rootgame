@@ -33,10 +33,8 @@ def get_phase(player: Player) -> WABirdsong | WADaylight | WAEvening:
         return birdsong
     elif daylight.step != WADaylight.WADaylightSteps.COMPLETED:
         return daylight
-    elif evening.step != WAEvening.WAEveningSteps.COMPLETED:
-        return evening
     else:
-        raise ValueError("All phases of this turn completed")
+        return evening
 
 
 def validate_phase(

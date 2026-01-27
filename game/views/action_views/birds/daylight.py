@@ -1,3 +1,4 @@
+from game.transactions.birds import next_step
 from game.queries.general import get_enemy_factions_in_clearing
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.game_data.general.game_enums import Suit
@@ -24,7 +25,6 @@ from game.transactions.birds import (
     bird_craft_card,
     bird_move_action,
     bird_recruit_action,
-    next_daylight_step,
 )
 from game.decorators.transaction_decorator import atomic_game_action
 from game.views.action_views.general import GameActionView
@@ -60,7 +60,7 @@ class BirdCraftingView(GameActionView):
     def post_card(self, request, game_id: int):
         if request.data["card_to_craft"] == "":
             try:
-                atomic_game_action(next_daylight_step)(self.player(request, game_id))
+                atomic_game_action(next_step)(self.player(request, game_id))
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()

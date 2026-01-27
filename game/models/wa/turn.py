@@ -27,7 +27,7 @@ class WATurn(models.Model):
 
 class WABirdsong(models.Model):
     class WABirdsongSteps(models.TextChoices):
-        # NOT_STARTED = "0", "Not Started"
+        NOT_STARTED = "0", "Not Started"
         REVOLT = "1", "Revolt"
         SPREAD_SYMPATHY = "2", "Spread Sympathy"
         COMPLETED = "3", "Completed"
@@ -36,13 +36,12 @@ class WABirdsong(models.Model):
     step = models.CharField(
         max_length=1,
         choices=WABirdsongSteps.choices,
-        default=WABirdsongSteps.REVOLT,
+        default=WABirdsongSteps.NOT_STARTED,
     )
 
 
 class WADaylight(models.Model):
     class WADaylightSteps(models.TextChoices):
-        # NOT_STARTED = "0", "Not Started"
         ACTIONS = "1", "Actions"
         COMPLETED = "2", "Completed"
 
@@ -56,7 +55,6 @@ class WADaylight(models.Model):
 
 class WAEvening(models.Model):
     class WAEveningSteps(models.TextChoices):
-        # NOT_STARTED = "0", "Not Started"
         MILITARY_OPERATIONS = "1", "Military Operations"
         DRAWING = "2", "Drawing Cards"
         DISCARDING = "3", "Discarding Cards"

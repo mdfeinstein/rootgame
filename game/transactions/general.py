@@ -222,6 +222,10 @@ def next_players_turn(game: Game):
     player_count = Player.objects.filter(game=game).count()
     game.current_turn = (game.current_turn + 1) % player_count
     game.save()
+    # call next_step on the new player's turn to activate any beginning of turn effects
+    new_player = Player.objects.get(game=game, turn_order=game.current_turn)
+    next_step(new_player)
+    
 
 
 @transaction.atomic
@@ -234,3 +238,19 @@ def raise_score(player: Player, amount: int):
     # TODO: check if player has won
     if player.score >= 30:
         raise ValueError("Player has won. TODO: implement winning logic")
+
+@transaction.atomic
+def next_step(player: Player):
+    """moves to the next step in the current player's turn"""
+    match player.faction:
+        case Faction.CATS:
+            from game.transactions.cats import next_step
+            next_step(player)
+        case Faction.WOODLAND_ALLIANCE:
+            from game.transactions.wa import next_step
+            next_step(player)
+        case Faction.BIRDS:
+            from game.transactions.birds import next_step
+            next_step(player)
+
+

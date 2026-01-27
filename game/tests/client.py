@@ -38,7 +38,11 @@ class RootGameClient(APIClient):
         Client looks up current action and gets the first step of the current action
         """
         response = self.get(f"/api/game/current-action/{self.game_id}/")
-        self.base_route = response.json()["route"]
+        try:
+            self.base_route = response.json()["route"]
+        except (KeyError, TypeError) as e:
+            print(f"Error getting current action: {response.status_code} {response.json()}")
+            raise e
         response = self.get(f"{self.base_route}?game_id={self.game_id}")
         self.step = response.json()
         self.last_get_response = response

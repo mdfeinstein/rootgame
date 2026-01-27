@@ -29,10 +29,10 @@ def get_current_event_action(game: Game) -> str | None:
 
 def get_current_event(game: Game) -> Event | None:
     """returns the current event for the game"""
-    # get oldest event
+    # get newest event (resolving like a stack)
     event = (
         Event.objects.filter(game=game, is_resolved=False)
-        .order_by("created_at")
+        .order_by("-created_at")
         .first()
     )
     return event

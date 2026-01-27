@@ -20,10 +20,8 @@ def get_phase(player: Player) -> CatBirdsong | CatDaylight | CatEvening:
         return cat_turn.birdsong
     elif cat_turn.daylight.step != CatDaylight.CatDaylightSteps.COMPLETED:
         return cat_turn.daylight
-    elif cat_turn.evening.step != CatEvening.CatEveningSteps.COMPLETED:
-        return cat_turn.evening
     else:
-        raise ValueError("All phases of this turn completed")
+        return cat_turn.evening
 
 
 def get_actions_remaining(player: Player) -> int:

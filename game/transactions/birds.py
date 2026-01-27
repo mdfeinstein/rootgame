@@ -1,3 +1,8 @@
+from game.transactions.general import discard_card_from_hand
+from game.transactions.crafted_cards.informants import informants_check
+from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
+from game.transactions.crafted_cards.eyrie_emigre import is_emigre
+from game.transactions.crafted_cards.saboteurs import saboteurs_check
 from typing import cast
 from django.db import transaction
 from game.game_data.cards.exiles_and_partisans import CardsEP
@@ -62,8 +67,7 @@ def emergency_draw(player: Player):
     if get_player_hand_size(player) == 0:
         draw_card_from_deck(player)
     # move to next step
-    birdsong.step = next_choice(BirdBirdsong.BirdBirdsongSteps, birdsong.step)
-    birdsong.save()
+    next_step(player)
 
 
 @transaction.atomic
@@ -117,27 +121,7 @@ def end_add_to_decree_step(player: Player):
     if birdsong.cards_added_to_decree == 0:
         raise ValueError("Must add at least one card to decree")
     # move to next step
-    birdsong.step = next_choice(BirdBirdsong.BirdBirdsongSteps, birdsong.step)
-    birdsong.save()
-    # check if emergency roost necessary, if it is that step
-    if birdsong.step == BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING:
-        emergency_roost_check(player)
-
-
-@transaction.atomic
-def emergency_roost_check(player: Player):
-    """checks if emergency roost step should be skipped"""
-    birdsong = get_phase(player)
-    assert type(birdsong) == BirdBirdsong, "Not BirdBirdsong phase"
-    assert (
-        birdsong.step == BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING
-    ), "Not Emergency Roosting step"
-    # check that player has a roost on the board
-    if not get_roosts_on_board(player).exists():
-        # no roost on board, stay in emergency roosting step
-        return
-    birdsong.step = next_choice(BirdBirdsong.BirdBirdsongSteps, birdsong.step)
-    birdsong.save()
+    next_step(player)
 
 
 @transaction.atomic
@@ -160,6 +144,48 @@ def place_roost(player: Player, clearing: Clearing):
     roost.building_slot = building_slot
     roost.save()
 
+@transaction.atomic
+def try_auto_emergency_roost(player : Player):
+    """ 
+    Tries to automate the emergency roost step.
+    If player does not need to emergency roost (has at least one roost on board),
+    then moves to next step.
+    If player does need to emergency roost and there is only one option,
+    then automatically places the roost on the board.
+    Otherwise, does nothing.
+    """
+    birdsong = get_phase(player)
+    assert type(birdsong) == BirdBirdsong, "Not BirdBirdsong phase"
+    assert (
+        birdsong.step == BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING
+    ), "Not Emergency Roosting step"
+    # if player has a roost on the board, move to next step
+    if get_roosts_on_board(player).exists():
+        next_step(player)
+    # see if there is one clearing with least warriors
+    clearings_in_game = list(Clearing.objects.filter(game=player.game))
+    #first pass: get the lowest warrior count
+    lowest_warrior_count = None
+    for clearing_ in clearings_in_game:
+        if lowest_warrior_count is None:
+            lowest_warrior_count = Warrior.objects.filter(clearing=clearing_).count()
+        else:
+            lowest_warrior_count = min(
+                lowest_warrior_count, Warrior.objects.filter(clearing=clearing_).count()
+            )
+    # second pass: find the clearing with the least warriros
+    clearing_with_lowest_warriors = None
+    for clearing_ in clearings_in_game:
+        warrior_count = Warrior.objects.filter(clearing=clearing_).count()
+        if warrior_count == lowest_warrior_count:
+            if clearing_with_lowest_warriors is None:
+                clearing_with_lowest_warriors = clearing_
+            else: #at least two clearings have the same lowest warrior count
+                return # do nothing, player needs to choose
+    assert clearing_with_lowest_warriors is not None, "No clearing with lowest warrior count found, this should never happen"
+    # if we are here, then we have a unique clearing with the lowest warrior count
+    emergency_roost(player, clearing_with_lowest_warriors)
+ 
 
 @transaction.atomic
 def emergency_roost(player: Player, clearing: Clearing):
@@ -199,27 +225,7 @@ def emergency_roost(player: Player, clearing: Clearing):
     # move to next step
     birdsong = get_phase(player)
     assert type(birdsong) == BirdBirdsong
-    birdsong.step = next_choice(BirdBirdsong.BirdBirdsongSteps, birdsong.step)
-    birdsong.save()
-
-
-def next_daylight_step(player: Player):
-    """moves to the next daylight step"""
-    daylight = get_phase(player)
-    assert type(daylight) == BirdDaylight
-    daylight.step = next_choice(BirdDaylight.BirdDaylightSteps, daylight.step)
-    daylight.save()
-    match daylight.step:
-        case BirdDaylight.BirdDaylightSteps.RECRUITING:
-            recruit_turmoil_check(player)
-        case BirdDaylight.BirdDaylightSteps.MOVING:
-            move_turmoil_check(player)
-        case BirdDaylight.BirdDaylightSteps.BATTLING:
-            battle_turmoil_check(player)
-        case BirdDaylight.BirdDaylightSteps.BUILDING:
-            build_turmoil_check(player)
-        case BirdDaylight.BirdDaylightSteps.COMPLETED:
-            begin_evening(player)
+    next_step(player)
 
 
 @transaction.atomic
@@ -235,8 +241,7 @@ def bird_craft_card(player: Player, card: CardsEP, crafting_pieces: list[BirdRoo
     craft_card(card_in_hand, cast(list[Piece], crafting_pieces))
     # if no more crafting pieces, move to next step
     if get_player_hand_size(player) == 0 or get_all_unused_roosts(player).count() == 0:
-        next_daylight_step(player)
-
+        next_step(player)
 
 @transaction.atomic
 def bird_recruit_action(
@@ -282,7 +287,9 @@ def bird_recruit_action(
     if not DecreeEntry.objects.filter(
         player=player, column=decree_entry.column, fulfilled=False
     ).exists():
-        next_daylight_step(player)
+        next_step(player)
+    else: #must recruit more: can we recruit more?
+        recruit_turmoil_check(player)
 
 
 @transaction.atomic
@@ -320,8 +327,9 @@ def bird_move_action(
     if not DecreeEntry.objects.filter(
         player=player, column=decree_entry.column, fulfilled=False
     ).exists():
-        next_daylight_step(player)
-
+        next_step(player)
+    else: # must move more: can we move more?
+        move_turmoil_check(player)
 
 @transaction.atomic
 def bird_battle_action(
@@ -358,7 +366,9 @@ def bird_battle_action(
     if not DecreeEntry.objects.filter(
         player=player, column=decree_entry.column, fulfilled=False
     ).exists():
-        next_daylight_step(player)
+        next_step(player)
+    else: # must battle more: can we battle more?
+        battle_turmoil_check(player)
 
 
 @transaction.atomic
@@ -393,9 +403,68 @@ def bird_build_action(
     if not DecreeEntry.objects.filter(
         player=player, column=DecreeEntry.Column.BUILD, fulfilled=False
     ).exists():
-        next_daylight_step(player)
+        next_step(player)
+    else: # must build more: can we build more?
+        build_turmoil_check(player)
 
+@transaction.atomic
+def roost_scoring(player: Player):
+    """scoring for roosts"""
+    validate_step(player, BirdEvening.BirdEveningSteps.SCORING)
+    evening = get_phase(player)
+    assert type(evening) == BirdEvening
+    scoring_per_roost_on_board = [
+        0,
+        0,
+        1,
+        2,
+        3,
+        4,
+        4,
+        5,
+    ]  # 0 on board, 1 on board... all 7 on board
+    roosts_on_board = len(get_roosts_on_board(player))
+    raise_score(player, scoring_per_roost_on_board[roosts_on_board])
+    next_step(player)
 
+@transaction.atomic
+def draw_cards(player: Player):
+    """draws cards for the player during scoring step"""
+    validate_step(player, BirdEvening.BirdEveningSteps.DRAWING)
+    evening = get_phase(player)
+    assert type(evening) == BirdEvening
+    drawing_per_roost_on_board = [1, 1, 1, 2, 2, 2, 3, 3]
+    roosts_on_board = len(get_roosts_on_board(player))
+    for _ in range(drawing_per_roost_on_board[roosts_on_board]):
+        draw_card_from_deck(player)
+    next_step(player)
+
+@transaction.atomic
+def check_discard_step(player: Player):
+    """moves to next step if player has 5 or fewer cards"""
+    validate_step(player, BirdEvening.BirdEveningSteps.DISCARDING)
+    evening = get_phase(player)
+    assert type(evening) == BirdEvening
+    if get_player_hand_size(player) <= 5:
+        next_step(player)
+    
+@transaction.atomic
+def discard_card(player: Player, card: CardsEP):
+    """discard a card from the player's hand, moving to next step if they are down to 5 cards"""
+    validate_step(player, BirdEvening.BirdEveningSteps.DISCARDING)
+    evening = get_phase(player)
+    assert type(evening) == BirdEvening
+    if get_player_hand_size(player) <= 5:
+        raise ValueError("Player must have more than 5 cards to discard")
+    card_in_hand = validate_player_has_card_in_hand(player, card)
+    if player.faction != Faction.BIRDS.value:
+        raise ValueError("Player is not birds")
+    #discard card
+    discard_card_from_hand(player, card_in_hand)
+    #move to next step if player has 5 or fewer cards
+    if get_player_hand_size(player) <= 5:
+        next_step(player)
+    
 @transaction.atomic
 def begin_evening(player: Player):
     """automates scoring and drawing in evening, and discarding too if possible"""
@@ -435,14 +504,10 @@ def end_birds_turn(player: Player):
     """ends the current turn, generating the next turn and moving to the next players phase
     careful where this is called. will move evening to completed if called.
     """
-    try:
-        evening = get_phase(player)
-        if type(evening) != BirdEvening:
-            raise ValueError("Not Evening phase")
-        evening.step = BirdEvening.BirdEveningSteps.COMPLETED
-        evening.save()
-    except:
-        pass
+    assert player.faction == Faction.BIRDS.value
+    phase = get_phase(player)
+    assert type(phase) == BirdEvening
+    assert phase.step == BirdEvening.BirdEveningSteps.COMPLETED
     create_birds_turn(player)
     next_players_turn(player.game)
     reset_birds_turn(player)
@@ -479,7 +544,7 @@ def recruit_turmoil_check(player: Player):
     # if no recruit decrees remaining, move to next step
     if recruit_decrees_remaining == 0:
         # move to next step
-        next_daylight_step(player)
+        next_step(player)
         return
     # otherwise, do turmoil checks
     if warrior_count_in_supply(player) == 0 and recruit_decrees_remaining != 0:
@@ -527,7 +592,7 @@ def move_turmoil_check(player: Player):
     move_decrees_remaining = move_cards.count() + viziers.count()
     if move_decrees_remaining == 0:
         # move to next step
-        next_daylight_step(player)
+        next_step(player)
         return
     # otherwise, do turmoil checks
     clearings_with_warriors = {
@@ -581,7 +646,7 @@ def battle_turmoil_check(player: Player):
     battle_decrees_remaining = battle_cards.count() + viziers.count()
     if battle_decrees_remaining == 0:
         # move to next step
-        next_daylight_step(player)
+        next_step(player)
         return
     # otherwise, do turmoil checks
     clearings_with_warriors = {
@@ -640,7 +705,7 @@ def build_turmoil_check(player: Player):
     build_decrees_remaining = build_cards.count() + viziers.count()
     if build_decrees_remaining == 0:
         # move to next step
-        next_daylight_step(player)
+        next_step(player)
         return
     # otherwise, do turmoil checks
     # turmoil if no roosts left in supply
@@ -725,11 +790,12 @@ def turmoil(player: Player):
     assert type(daylight) == BirdDaylight
     daylight.step = BirdDaylight.BirdDaylightSteps.COMPLETED
     daylight.save()
-    # begin evening
-    begin_evening(player)
+    # activate step effects for end of daylight (eg charm offensive)
+    step_effect(player)
     # create turmoil event
     event = Event.objects.create(game=player.game, type=EventType.TURMOIL)
     TurmoilEvent.objects.create(event=event, player=player)
+
 
 
 @transaction.atomic
@@ -764,3 +830,69 @@ def turmoil_choose_new_leader(player: Player, leader: BirdLeader):
     event = turmoil_event.event
     event.is_resolved = True
     event.save()
+    # go to next step
+    next_step(player)
+
+@transaction.atomic
+def next_step(player: Player):
+    phase = get_phase(player)
+    match phase:
+        case BirdBirdsong():
+            phase.step = next_choice(BirdBirdsong.BirdBirdsongSteps, phase.step)
+        case BirdDaylight():
+            phase.step = next_choice(BirdDaylight.BirdDaylightSteps, phase.step)
+        case BirdEvening():
+            phase.step = next_choice(BirdEvening.BirdEveningSteps, phase.step)
+        case _:
+            raise ValueError("Invalid phase")
+    phase.save()
+    step_effect(player)
+
+@transaction.atomic
+def step_effect(player: Player):
+    phase = get_phase(player)
+    match phase:
+        case BirdBirdsong():
+            match phase.step:
+                case BirdBirdsong.BirdBirdsongSteps.NOT_STARTED:
+                    pass
+                case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING:
+                    saboteurs_check(player)
+                    emergency_draw(player)
+                case BirdBirdsong.BirdBirdsongSteps.ADD_TO_DECREE:
+                    pass
+                case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING:
+                    try_auto_emergency_roost(player)
+                case BirdBirdsong.BirdBirdsongSteps.COMPLETED:
+                    is_emigre(player)
+        case BirdDaylight():
+            match phase.step:
+                case BirdDaylight.BirdDaylightSteps.CRAFTING:
+                    pass
+                case BirdDaylight.BirdDaylightSteps.RECRUITING:
+                    recruit_turmoil_check(player)
+                case BirdDaylight.BirdDaylightSteps.MOVING:
+                    move_turmoil_check(player)
+                case BirdDaylight.BirdDaylightSteps.BATTLING:
+                    battle_turmoil_check(player)
+                case BirdDaylight.BirdDaylightSteps.BUILDING:
+                    build_turmoil_check(player)
+                case BirdDaylight.BirdDaylightSteps.COMPLETED:
+                    check_charm_offensive(player)
+        case BirdEvening():
+            match phase.step:
+                case BirdEvening.BirdEveningSteps.SCORING:
+                    roost_scoring(player)
+                case BirdEvening.BirdEveningSteps.DRAWING:
+                    is_informants = informants_check(player)
+                    if not is_informants:
+                        draw_cards(player)
+                case BirdEvening.BirdEveningSteps.DISCARDING:
+                    check_discard_step(player)
+                case BirdEvening.BirdEveningSteps.COMPLETED:
+                    end_birds_turn(player)
+        case _:
+            raise ValueError("Invalid phase")
+    
+
+

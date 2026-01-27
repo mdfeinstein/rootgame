@@ -245,7 +245,13 @@ def validate_has_legal_moves(player: Player, clearing: Clearing):
     # get adjacent clearings
     adjacent_clearings = clearing.connected_clearings.all()
     for adjacent_clearing in adjacent_clearings:
-        validate_legal_move(player, clearing, adjacent_clearing)
+        try:
+            validate_legal_move(player, clearing, adjacent_clearing)
+            return True
+        except ValueError:
+            continue
+    raise ValueError("No legal moves from the given clearing")
+
 
 
 def validate_enemy_pieces_in_clearing(

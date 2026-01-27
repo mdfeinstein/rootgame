@@ -1,3 +1,4 @@
+from game.models.events.crafted_cards import SaboteursEvent
 from django.db import transaction
 from game.models.game_models import Player, CraftedCardEntry, DiscardPileEntry
 from game.game_data.cards.exiles_and_partisans import CardsEP
@@ -34,3 +35,40 @@ def use_saboteurs(player: Player, target_crafted_card: CraftedCardEntry):
     saboteurs_card = saboteurs_entry.card
     saboteurs_entry.delete()
     DiscardPileEntry.create_from_card(saboteurs_card)
+    
+    # resolve event
+    event = SaboteursEvent.objects.filter(crafted_card_entry=saboteurs_entry).first()
+    event.event.is_resolved = True
+    event.event.save()
+
+    
+
+@transaction.atomic
+def saboteurs_check(player: Player)->bool:
+    """
+    Checks if the player has Saboteurs and launches the event if so.
+    Returns True if event launched, False otherwise
+    """
+    # 1. Check if player has Saboteurs
+    saboteurs_entry = CraftedCardEntry.objects.filter(player=player, card__card_type=CardsEP.SABOTEURS.name).first()
+    has_saboteurs = saboteurs_entry is not None
+    if has_saboteurs:
+        # 2. Launch the event
+        from game.models.events.crafted_cards import SaboteursEvent
+        SaboteursEvent.create(saboteurs_entry)
+    return has_saboteurs
+
+@transaction.atomic
+def saboteurs_skip(player: Player):
+    """
+    Player chooses to not use Saboteurs.
+    Resolve event
+    """
+    saboteurs_entry = CraftedCardEntry.objects.filter(player=player, card__card_type=CardsEP.SABOTEURS.name).first()
+    if saboteurs_entry is None:
+         raise ValueError("Player does not have Saboteurs")
+         
+    event = SaboteursEvent.objects.filter(crafted_card_entry=saboteurs_entry).first()
+    if event:
+        event.event.is_resolved = True
+        event.event.save()

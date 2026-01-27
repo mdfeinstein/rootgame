@@ -1,3 +1,4 @@
+
 from game.models.events.cats import FieldHospitalEvent
 from typing import Iterable, Sequence
 from django.db import transaction
@@ -30,7 +31,11 @@ from game.queries.cats.recruit import (
     unused_recruiters,
 )
 from game.queries.cats.turn import get_actions_remaining, get_phase, get_turn
-from game.queries.cats.wood import get_sawmills_by_suit
+from game.queries.cats.wood import (
+    count_wood_tokens_in_supply,
+    get_sawmills_by_suit,
+    get_unused_sawmills,
+)
 from game.queries.general import (
     available_building_slot,
     get_current_player,
@@ -41,6 +46,7 @@ from game.transactions.general import (
     craft_card,
     discard_card_from_hand,
     draw_card_from_deck,
+    move_warriors,
     next_players_turn,
     raise_score,
 )
@@ -79,16 +85,7 @@ def produce_wood(player: Player, sawmill: Sawmill):
     ).exists():
         print("all sawmills used")
         # move to next part of phase
-        phase = get_phase(player)
-        if type(phase) == CatBirdsong:
-            phase.step = next_choice(CatBirdsong.CatBirdsongSteps, phase.step)
-            print(phase.step)
-            phase.save()
-
-        else:
-            raise ValueError(
-                f"Wrong phase type, should be CatBirdsong, got {type(phase)}"
-            )
+        next_step(player) 
 
 
 @transaction.atomic
@@ -273,8 +270,7 @@ def end_crafting_step(player: Player):
     daylight = get_phase(player)
     assert type(daylight) == CatDaylight, "Not Daylight phase"
     assert daylight.step == CatDaylight.CatDaylightSteps.CRAFTING, "Not crafting step"
-    daylight.step = next_choice(CatDaylight.CatDaylightSteps, daylight.step)
-    daylight.save()
+    next_step(player)
 
 
 @transaction.atomic
@@ -283,8 +279,7 @@ def end_action_step(player: Player):
     daylight = get_phase(player)
     assert type(daylight) == CatDaylight, "Not Daylight phase"
     assert daylight.step == CatDaylight.CatDaylightSteps.ACTIONS, "Not actions step"
-    daylight.step = next_choice(CatDaylight.CatDaylightSteps, daylight.step)
-    daylight.save()
+    next_step(player)
 
 
 @transaction.atomic
@@ -319,20 +314,7 @@ def cat_evening_draw(player: Player):
     for _ in range(cards_to_draw):
         draw_card_from_deck(player)
     # move to next step (discard, presumably)
-    evening.step = next_choice(CatEvening.CatEveningSteps, evening.step)
-    evening.save()
-    if (
-        evening.step == CatEvening.CatEveningSteps.DISCARDING
-        and get_player_hand_size(player) <= 5
-    ):
-        # nothing to discard, move to end of turn
-        evening.step = next_choice(CatEvening.CatEveningSteps, evening.step)
-        evening.save()
-    print(f"evening step: {evening.step}")
-    if evening.step == CatEvening.CatEveningSteps.COMPLETED:
-        print("evening step completed, calling cat_end_turn")
-        # move to next turn
-        cat_end_turn(player)
+    next_step(player)
 
 
 @transaction.atomic
@@ -429,6 +411,16 @@ def cat_produce_all_wood(player: Player):
     for sawmill in sawmills:
         produce_wood(player, sawmill)
 
+@transaction.atomic
+def check_auto_place_wood(player : Player):
+    """checks if player has enough wood tokens to place at sawmills.
+    If so, produces wood and moves to next step
+    """
+    sawmills = get_unused_sawmills(player)
+    wood_tokens = count_wood_tokens_in_supply(player)
+    if wood_tokens >= sawmills.count():
+        cat_produce_all_wood(player)
+
 
 @transaction.atomic
 def cat_march(player: Player, origin: Clearing, destination: Clearing, count: int):
@@ -475,5 +467,66 @@ def cat_build(
 def cat_discard_card(player: Player, card: CardsEP):
     hand_entry = validate_player_has_card_in_hand(player, card)
     discard_card_from_hand(player, hand_entry)
+    check_auto_discard(player)
+
+@transaction.atomic
+def check_auto_discard(player: Player):
     if get_player_hand_size(player) <= 5:
-        cat_end_turn(player)
+        next_step(player)
+
+@transaction.atomic
+def next_step(player: Player):
+    phase = get_phase(player)
+    match phase:
+        case CatBirdsong():
+            phase.step = next_choice(CatBirdsong.CatBirdsongSteps, phase.step)
+        case CatDaylight():
+            phase.step = next_choice(CatDaylight.CatDaylightSteps, phase.step)
+        case CatEvening():
+            phase.step = next_choice(CatEvening.CatEveningSteps, phase.step)
+    phase.save()
+    step_effect(player)
+
+@transaction.atomic
+def step_effect(player : Player):
+    phase = get_phase(player)
+    match phase:
+        case CatBirdsong():
+            match phase.step:
+                case CatBirdsong.CatBirdsongSteps.NOT_STARTED:
+                    pass
+                case CatBirdsong.CatBirdsongSteps.PLACING_WOOD:
+                    # if more wood tokens in supply than tokens to produce, automate placement
+                    check_auto_place_wood(player)
+                case CatBirdsong.CatBirdsongSteps.COMPLETED:
+                    from game.transactions.crafted_cards.eyrie_emigre import is_emigre
+                    is_emigre(player)
+                case _:
+                    raise ValueError(f"Invalid step in step_effect for Cats Birdsong: {phase.step}")
+        case CatDaylight():
+            match phase.step:
+                case CatDaylight.CatDaylightSteps.CRAFTING:
+                    pass
+                case CatDaylight.CatDaylightSteps.ACTIONS:
+                    pass
+                case CatDaylight.CatDaylightSteps.COMPLETED:
+                    from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
+                    check_charm_offensive(player)
+                case _:
+                    raise ValueError(f"Invalid step in step_effect for Cats Daylight: {phase.step}")
+        case CatEvening():
+            match phase.step:
+                case CatEvening.CatEveningSteps.DRAWING:
+                    from game.transactions.crafted_cards.informants import informants_check
+                    is_informants = informants_check(player)
+                    if not is_informants:
+                        cat_evening_draw(player)
+                case CatEvening.CatEveningSteps.DISCARDING:
+                    check_auto_discard(player)
+                case CatEvening.CatEveningSteps.COMPLETED:
+                    cat_end_turn(player)
+                case _:
+                    raise ValueError(f"Invalid step in step_effect for Cats Evening: {phase.step}")
+
+                        
+                    

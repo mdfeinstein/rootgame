@@ -26,7 +26,7 @@ class BirdTurn(models.Model):
 
 class BirdBirdsong(models.Model):
     class BirdBirdsongSteps(models.TextChoices):
-        # NOT_STARTED = "0", "Not Started"
+        NOT_STARTED = "0", "Not Started"
         EMERGENCY_DRAWING = "1", "Emergency drawing"
         ADD_TO_DECREE = "2", "Add to Decree"
         EMERGENCY_ROOSTING = "3", "Emergency roosting"
@@ -38,7 +38,7 @@ class BirdBirdsong(models.Model):
     step = models.CharField(
         max_length=1,
         choices=BirdBirdsongSteps.choices,
-        default=BirdBirdsongSteps.EMERGENCY_DRAWING,
+        default=BirdBirdsongSteps.NOT_STARTED,
     )
     cards_drawn = models.IntegerField(default=0)
     cards_added_to_decree = models.IntegerField(default=0)

@@ -27,6 +27,7 @@ class CatTurn(models.Model):
 
 class CatBirdsong(models.Model):
     class CatBirdsongSteps(models.TextChoices):
+        NOT_STARTED = "0", "Not Started"
         PLACING_WOOD = "1", "Place wood"
         # ASYNC_FIELD_HOSPITALS = "2", "Async field hospitals"
         COMPLETED = "3", "Completed"
@@ -34,7 +35,7 @@ class CatBirdsong(models.Model):
     step = models.CharField(
         max_length=1,
         choices=CatBirdsongSteps.choices,
-        default=CatBirdsongSteps.PLACING_WOOD,
+        default=CatBirdsongSteps.NOT_STARTED,
     )
     turn = models.OneToOneField(
         CatTurn, on_delete=models.CASCADE, related_name="birdsong"

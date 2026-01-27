@@ -89,7 +89,7 @@ def get_birds_birdsong_turn_action(phase: BirdBirdsong):
         case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING:
             return reverse("birds-emergency-roosting")
         case _:
-            raise ValueError("Invalid birds birdsong step")
+            raise ValueError(f"Invalid birds birdsong step: {phase.step}")
 
 
 def get_birds_daylight_turn_action(phase: BirdDaylight):
@@ -105,11 +105,15 @@ def get_birds_daylight_turn_action(phase: BirdDaylight):
         case BirdDaylight.BirdDaylightSteps.BUILDING:
             return reverse("birds-build")
         case _:
-            raise ValueError("Invalid birds daylight step")
+            raise ValueError(f"Invalid birds daylight step: {phase.step}")
 
 
 def get_birds_evening_turn_action(phase: BirdEvening):
-    raise ValueError("Not yet implemented")
+    match phase.step:
+        case BirdEvening.BirdEveningSteps.DISCARDING:
+            return reverse("birds-discard-cards")
+        case _:
+            raise ValueError(f"Invalid birds evening step: {phase.step}")
 
 
 def get_birds_turn_action(player: Player) -> str | None:
