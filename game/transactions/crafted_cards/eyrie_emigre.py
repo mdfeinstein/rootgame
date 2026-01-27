@@ -1,3 +1,4 @@
+from game.transactions.general import step_effect
 from game.models import DiscardPileEntry
 from game.queries.general import get_enemy_factions_in_clearing
 from game.transactions.battle import start_battle
@@ -35,7 +36,8 @@ def emigre_move(event: EyrieEmigreEvent, origin: Clearing, destination: Clearing
     event.move_destination = destination
     event.save()
     # if no enemy in destination, trigger emigre_failure
-    enemy_factions = get_enemy_factions_in_clearing(destination)
+    enemy_factions = get_enemy_factions_in_clearing(player, destination)
+
     if len(enemy_factions) == 0:
         emigre_failure(event)
 
@@ -55,7 +57,8 @@ def emigre_battle(event: EyrieEmigreEvent, target_faction : Faction):
     assert clearing is not None, "Destination Clearing of Emigre Event is None!"
     attacking_faction = event.crafted_card_entry.player.faction
     defending_faction = target_faction
-    start_battle(game, clearing, attacking_faction, defending_faction)
+    start_battle(game, attacking_faction, defending_faction, clearing)
+
     #mark battle initiated
     event.battle_initiated = True
     event.save()
@@ -63,8 +66,38 @@ def emigre_battle(event: EyrieEmigreEvent, target_faction : Faction):
     event.crafted_card_entry.used = CraftedCardEntry.UsedChoice.USED
     event.crafted_card_entry.save()
     #mark event as resolved
-    event.event.resolved = True
+    event.event.is_resolved = True
     event.event.save()
+    
+    # continue turn
+    step_effect(event.crafted_card_entry.player)
+
+
+@transaction.atomic
+def emigre_skip(event: EyrieEmigreEvent):
+    """
+    Skip the Eyrie Emigre event entirely.
+    """
+    event.event.is_resolved = True
+    event.event.save()
+    
+    # mark as used
+    event.crafted_card_entry.used = CraftedCardEntry.UsedChoice.USED
+    event.crafted_card_entry.save()
+
+    # continue turn
+    step_effect(event.crafted_card_entry.player)
+
+
+
+
+@transaction.atomic
+def emigre_skip_battle(event: EyrieEmigreEvent):
+    """
+    Skip the battle after moving. This results in failure (discarding the card).
+    """
+    emigre_failure(event)
+
 
 
 @transaction.atomic
@@ -74,11 +107,17 @@ def emigre_failure(event: EyrieEmigreEvent):
     resolve the event, and discard the crafted card
     """
     #mark event as resolved
-    event.event.resolved = True
+    event.event.is_resolved = True
     event.event.save()
+
+    player = event.crafted_card_entry.player
     #discard the crafted card
     card = event.crafted_card_entry.card
     event.crafted_card_entry.delete()
     #event is now deleted due to cascade
     DiscardPileEntry.create_from_card(card)
+
+    # continue turn
+    step_effect(player)
+
 

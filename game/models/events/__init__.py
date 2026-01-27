@@ -9,4 +9,8 @@ __all__ = [
     "EventType",
     "GameSimpleSetup",
     "InformantsEvent",
+    "EyrieEmigreEvent",
+    "SaboteursEvent",
+    "CharmOffensiveEvent",
 ]
+

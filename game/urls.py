@@ -257,6 +257,7 @@ from game.views.action_views.crafted_cards.saboteurs import SaboteursView
 from game.views.action_views.crafted_cards.charm_offensive import CharmOffensiveView
 from game.views.action_views.crafted_cards.league_of_adventurers import LeagueOfAdventurersView
 from game.views.action_views.crafted_cards.informants import InformantsView
+from game.views.action_views.crafted_cards.eyrie_emigre import EyrieEmigreView
 
 register_action(
     "propaganda-bureau",
@@ -288,3 +289,10 @@ register_action(
     "api/action/card/informants/",
     urlpatterns,
 )
+register_action(
+    "eyrie-emigre",
+    EyrieEmigreView,
+    "api/action/card/eyrie-emigre/",
+    urlpatterns,
+)
+

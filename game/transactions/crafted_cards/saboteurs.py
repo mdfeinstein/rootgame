@@ -1,6 +1,7 @@
 from game.models.events.crafted_cards import SaboteursEvent
 from django.db import transaction
-from game.models.game_models import Player, CraftedCardEntry, DiscardPileEntry
+from game.models.game_models import Player, CraftedCardEntry, DiscardPileEntry, Faction
+
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.queries.general import validate_player_has_crafted_card
 from game.queries.cards.active_effects import can_use_card
@@ -50,8 +51,9 @@ def saboteurs_check(player: Player)->bool:
     Returns True if event launched, False otherwise
     """
     # 1. Check if player has Saboteurs
-    saboteurs_entry = CraftedCardEntry.objects.filter(player=player, card__card_type=CardsEP.SABOTEURS.name).first()
+    saboteurs_entry = CraftedCardEntry.objects.filter(player=player, card__card_type=CardsEP.SABOTEURS.name, used=CraftedCardEntry.UsedChoice.UNUSED).first()
     has_saboteurs = saboteurs_entry is not None
+
     if has_saboteurs:
         # 2. Launch the event
         from game.models.events.crafted_cards import SaboteursEvent
@@ -68,7 +70,17 @@ def saboteurs_skip(player: Player):
     if saboteurs_entry is None:
          raise ValueError("Player does not have Saboteurs")
          
+    # mark as used
+    saboteurs_entry.used = CraftedCardEntry.UsedChoice.USED
+    saboteurs_entry.save()
+    
     event = SaboteursEvent.objects.filter(crafted_card_entry=saboteurs_entry).first()
     if event:
         event.event.is_resolved = True
         event.event.save()
+    
+    # continue Birds turn
+    if player.faction == Faction.BIRDS:
+        from game.transactions.birds import emergency_draw
+        emergency_draw(player)
+

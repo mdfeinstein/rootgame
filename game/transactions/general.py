@@ -224,7 +224,10 @@ def next_players_turn(game: Game):
     game.save()
     # call next_step on the new player's turn to activate any beginning of turn effects
     new_player = Player.objects.get(game=game, turn_order=game.current_turn)
+    # reset used crafted cards
+    CraftedCardEntry.objects.filter(player=new_player).update(used=CraftedCardEntry.UsedChoice.UNUSED)
     next_step(new_player)
+
     
 
 

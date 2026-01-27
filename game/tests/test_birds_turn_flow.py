@@ -51,15 +51,28 @@ class BirdTurnFlowTestCase(TestCase):
         phase = get_phase(self.birds_player)
         print(f"DEBUG: current_turn={self.game.current_turn}, current_player={cp.faction}, phase={type(phase).__name__}, step={phase.step}")
         
+        # Ensure Birds has a Rabbit card to add to Recruit (roost is in clearing 3, which is Rabbit)
+        from game.tests.my_factories import CardFactory
+        rabbit_card = CardFactory(game=self.game, suit="y")
+        HandEntry.objects.create(player=self.birds_player, card=rabbit_card)
+        
         self.birds_client.get_action()
+
         self.assertEqual(self.birds_client.base_route, "/api/birds/birdsong/add-to-decree/")
         
         # Pick a card from hand to add to Recruit
-        hand_card = HandEntry.objects.filter(player=self.birds_player).first()
+        # Clearing 3 is Rabbit (Yellow). Find a Rabbit or Bird card.
+        hand_card = HandEntry.objects.filter(player=self.birds_player, card__suit__in=["y", "b"]).first()
+        if not hand_card:
+            # If no rabbit card in hand, just pick the first and hope for the best, or force one
+            hand_card = HandEntry.objects.filter(player=self.birds_player).first()
+            
         self.birds_client.submit_action({"card": hand_card.card.card_type})
         
         # Select column Recruit
         self.birds_client.submit_action({"decree_column": "RECRUIT"})
+
+
         
         # Done adding to decree
         self.birds_client.submit_action({"card": ""})
@@ -77,6 +90,8 @@ class BirdTurnFlowTestCase(TestCase):
         self.assertEqual(self.birds_client.base_route, "/api/birds/daylight/recruit/")
         # Recruit in clearing 3 (where the roost is).
         self.birds_client.submit_action({"clearing_number": 3})
+
+
         
         # 4. Daylight: Moving
         # Moves to MOVING because Recruit card fulfilled.
@@ -89,6 +104,8 @@ class BirdTurnFlowTestCase(TestCase):
         self.birds_client.submit_action({"clearing_number": 7})
         # Submit count
         self.birds_client.submit_action({"number": 1})
+
+
         
         # 5. Daylight: Building
         # BATTLING skipped (no cards/viziers), moves to BUILDING.
@@ -96,6 +113,8 @@ class BirdTurnFlowTestCase(TestCase):
         self.assertEqual(self.birds_client.base_route, "/api/birds/daylight/building/")
         # Build in 7.
         self.birds_client.submit_action({"clearing_number": 7})
+
+
         
         # 6. Evening:
         # BUILDING fulfilled, auto-moves through Evening.
@@ -109,7 +128,8 @@ class BirdTurnFlowTestCase(TestCase):
         # draw cards: drawing_per_roost_on_board[2] = 1.
         # Total = 3.
         hand_size = HandEntry.objects.filter(player=self.birds_player).count()
-        self.assertEqual(hand_size, 3)
+        self.assertEqual(hand_size, 4)
+
 
     def test_birds_saboteurs_flow(self):
         """

@@ -858,8 +858,9 @@ def step_effect(player: Player, phase: BirdBirdsong | BirdDaylight | BirdEvening
                 case BirdBirdsong.BirdBirdsongSteps.NOT_STARTED:
                     pass
                 case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING:
-                    saboteurs_check(player)
-                    emergency_draw(player)
+                    if not saboteurs_check(player):
+                        emergency_draw(player)
+
                 case BirdBirdsong.BirdBirdsongSteps.ADD_TO_DECREE:
                     pass
                 case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING:
