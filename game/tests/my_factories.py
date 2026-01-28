@@ -240,7 +240,3 @@ class GameSetupWithFactionsFactory(GameSetupFactory):
             # But let's check if there's any manual step.
             pass
             
-        # No need to manually create the first turn here anymore.
-        # The faction setup transactions (confirm_completed_setup) or start_game 
-        # now handle this as part of the formal game initialization flow.
-

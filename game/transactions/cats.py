@@ -367,7 +367,7 @@ def create_field_hospital_event(clearing: Clearing, removed_player: Player, coun
     fh_event = FieldHospitalEvent.objects.create(
         event=event,
         player=removed_player,
-        troops_To_save=count,
+        troops_to_save=count,
         suit=clearing.suit,
     )
 

@@ -2,7 +2,7 @@ from game.models.game_models import Clearing, Faction, Player, Suit
 from game.models.wa.buildings import WABase
 from game.models.wa.player import SupporterStackEntry
 from game.models.wa.tokens import WASympathy
-from game.queries.general import warrior_count_in_clearing
+from game.queries.general import warrior_count_in_clearing, get_adjacent_clearings
 
 
 def get_supporters(
@@ -144,14 +144,21 @@ def validate_sympathy_spread(
     if sympathy is not None:
         raise ValueError("Player already has a sympathy token in this clearing")
     # check adjacent sympathies
-    has_adjacent_sympathies = WASympathy.objects.filter(
-        player=player, clearing__isnull=False, clearing__connected_clearings=clearing
-    ).exists()
     has_any_sympathies = WASympathy.objects.filter(
         player=player, clearing__isnull=False
     ).exists()
-    if has_any_sympathies and not has_adjacent_sympathies:
-        raise ValueError("No adjacent sympathies, but sympathy on the board")
+    
+    if has_any_sympathies:
+        # Check if ANY on-board sympathy is adjacent to the target clearing
+        on_board_sympathies = WASympathy.objects.filter(player=player, clearing__isnull=False)
+        has_adjacent = False
+        for sympathy_token in on_board_sympathies:
+            if clearing in get_adjacent_clearings(player, sympathy_token.clearing):
+                has_adjacent = True
+                break
+        
+        if not has_adjacent:
+            raise ValueError("No adjacent sympathies, but sympathy on the board")
     # get cost of placing sympathy
     cost = get_sympathy_cost(player, clearing)
     # get suited supporters

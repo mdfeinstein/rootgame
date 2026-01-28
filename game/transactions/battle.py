@@ -5,6 +5,7 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.birds.player import BirdLeader
 from game.models.events.battle import Battle
 from game.models.events.event import Event, EventType
+from game.models.events.crafted_cards import PartisansEvent
 from game.models.game_models import (
     Building,
     Card,
@@ -23,6 +24,7 @@ from game.queries.general import (
     player_has_pieces_in_clearing,
     player_has_warriors_in_clearing,
     warrior_count_in_clearing,
+    validate_player_has_crafted_card
 )
 from game.transactions.general import discard_card_from_hand
 from game.transactions.removal import (
@@ -140,8 +142,64 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
     roll_dice(game, battle)
 
 
+def get_partisan_card_type(suit_str: str) -> CardsEP | None:
+    suit_map = {
+        "r": CardsEP.FOX_PARTISANS,
+        "y": CardsEP.RABBIT_PARTISANS,
+        "o": CardsEP.MOUSE_PARTISANS,
+    }
+    return suit_map.get(suit_str)
+
+
+def can_use_partisans(player: Player, clearing: Clearing) -> bool:
+    card_type = get_partisan_card_type(clearing.suit)
+    if not card_type:
+        return False
+    try:
+        validate_player_has_crafted_card(player, card_type)
+        return True
+    except ValueError:
+        return False
+
+
+def check_for_partisans_and_launch(game: Game, battle: Battle) -> bool:
+    """checks for partisans and launches event if needed.
+    Returns True if an event was launched, False otherwise.
+    """
+    # Defender first
+    defender_player = Player.objects.get(game=game, faction=battle.defender)
+    if can_use_partisans(defender_player, battle.clearing):
+        if not PartisansEvent.objects.filter(
+            battle=battle, crafted_card_entry__player=defender_player
+        ).exists():
+            PartisansEvent.create(
+                battle,
+                validate_player_has_crafted_card(
+                    defender_player, get_partisan_card_type(battle.clearing.suit)
+                ),
+            )
+            return True
+
+    # Attacker second
+    attacker_player = Player.objects.get(game=game, faction=battle.attacker)
+    if can_use_partisans(attacker_player, battle.clearing):
+        if not PartisansEvent.objects.filter(
+            battle=battle, crafted_card_entry__player=attacker_player
+        ).exists():
+            PartisansEvent.create(
+                battle,
+                validate_player_has_crafted_card(
+                    attacker_player, get_partisan_card_type(battle.clearing.suit)
+                ),
+            )
+            return True
+
+    return False
+
+
+@transaction.atomic
 def roll_dice(game: Game, battle: Battle):
-    """rolls the dice for the battle"""
+    """rolls the dice for the battle and determines base hits"""
     # check the timing
     if battle.step != Battle.BattleSteps.ROLL_DICE:
         raise ValueError("Not roll dice step")
@@ -184,6 +242,76 @@ def roll_dice(game: Game, battle: Battle):
             == BirdLeader.BirdLeaders.COMMANDER
         ):
             battle.attacker_hits_taken += 1
+
+    battle.save()
+
+    # Check for partisans
+    if check_for_partisans_and_launch(game, battle):
+        return
+    apply_dice_hits(game, battle)
+
+
+@transaction.atomic
+def use_partisans(game: Game, battle: Battle, partisans_event: PartisansEvent):
+    """resolves a partisans event by dealing an extra hit and discarding"""
+    if partisans_event.battle != battle:
+        raise ValueError("Partisans event does not belong to this battle")
+    if partisans_event.event.is_resolved:
+        raise ValueError("Partisans event already resolved")
+
+    player = partisans_event.crafted_card_entry.player
+    # extra hit: dealing it to the OTHER player
+    if player.faction == battle.attacker:
+        battle.defender_hits_taken += 1
+    else:
+        battle.attacker_hits_taken += 1
+    battle.save()
+
+    # discard logic: discard all that DON'T match clearing suit (including birds!)
+    clearing_suit = battle.clearing.suit
+    hand = HandEntry.objects.filter(player=player)
+    for entry in hand:
+        if entry.card.suit != clearing_suit:
+            discard_card_from_hand(player, entry)
+
+    # resolve event
+    partisans_event.event.is_resolved = True
+    partisans_event.event.save()
+
+    # check for next partisan event or apply hits
+    if not check_for_partisans_and_launch(game, battle):
+        apply_dice_hits(game, battle)
+
+
+@transaction.atomic
+def skip_partisans(game: Game, battle: Battle, partisans_event: PartisansEvent):
+    """resolves a partisans event by skipping it"""
+    if partisans_event.battle != battle:
+        raise ValueError("Partisans event does not belong to this battle")
+    if partisans_event.event.is_resolved:
+        raise ValueError("Partisans event already resolved")
+
+    # resolve event
+    partisans_event.event.is_resolved = True
+    partisans_event.event.save()
+
+    # check for next partisan event or apply hits
+    if not check_for_partisans_and_launch(game, battle):
+        apply_dice_hits(game, battle)
+
+
+@transaction.atomic
+def apply_dice_hits(game: Game, battle: Battle):
+    """applies the hits calculated during roll_dice and partisan events"""
+    attacking_player = Player.objects.get(game=game, faction=battle.attacker)
+    defending_player = Player.objects.get(game=game, faction=battle.defender)
+    attacking_warriors_count = warrior_count_in_clearing(
+        attacking_player, battle.clearing
+    )
+    defending_warriors_count = warrior_count_in_clearing(
+        defending_player, battle.clearing
+    )
+
     # assign hits automatically if possible. otherwise, go to choice steps
     if defending_warriors_count >= battle.defender_hits_taken:
         player_removes_warriors(

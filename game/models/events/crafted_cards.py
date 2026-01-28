@@ -56,3 +56,19 @@ class CharmOffensiveEvent(models.Model):
     def create(cls, crafted_card_entry: CraftedCardEntry):
         event = Event.objects.create(type=EventType.CHARM_OFFENSIVE, game=crafted_card_entry.player.game)
         return cls.objects.create(event=event, crafted_card_entry=crafted_card_entry)
+
+class PartisansEvent(models.Model):
+    event = models.OneToOneField(
+        Event, on_delete=models.CASCADE, related_name="partisans"
+    )
+    battle = models.ForeignKey(
+        "game.Battle", on_delete=models.CASCADE, related_name="partisan_events"
+    )
+    crafted_card_entry = models.ForeignKey(
+        CraftedCardEntry, on_delete=models.CASCADE, related_name="partisan_events"
+    )
+
+    @classmethod
+    def create(cls, battle, crafted_card_entry: CraftedCardEntry):
+        event = Event.objects.create(type=EventType.PARTISANS, game=battle.clearing.game)
+        return cls.objects.create(event=event, battle=battle, crafted_card_entry=crafted_card_entry)

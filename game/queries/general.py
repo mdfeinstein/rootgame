@@ -18,7 +18,10 @@ from game.models import (
     Player,
     Token,
     Warrior,
+    WASympathy,
 )
+from game.models.cats.buildings import Workshop
+from game.models.birds.buildings import BirdRoost
 from game.models.game_models import Card, Game, HandEntry, Piece
 
 
@@ -218,6 +221,50 @@ def get_player_hand_size(player: Player) -> int:
     return HandEntry.objects.filter(player=player).count()
 
 
+def get_adjacent_clearings(player: Player, clearing: Clearing) -> set[Clearing]:
+    """
+    Returns a set of clearings adjacent to the given clearing for the player,
+    accounting for passive effects like Boat Builders and Tunnels.
+    """
+    adjacent = set(clearing.connected_clearings.all())
+
+    # Boat Builders: treat rivers as paths
+    if CraftedCardEntry.objects.filter(
+        player=player, card__card_type=CardsEP.BOAT_BUILDERS.name
+    ).exists():
+        adjacent.update(clearing.water_connected_clearings.all())
+
+    # Tunnels: treat clearings with any of your crafting pieces as adjacent
+    if CraftedCardEntry.objects.filter(
+        player=player, card__card_type=CardsEP.TUNNELS.name
+    ).exists():
+        # Check if current clearing has any of our crafting pieces
+        has_crafting_piece_here = (
+            Workshop.objects.filter(player=player, building_slot__clearing=clearing).exists()
+            or BirdRoost.objects.filter(player=player, building_slot__clearing=clearing).exists()
+            or WASympathy.objects.filter(player=player, clearing=clearing).exists()
+        )
+        if has_crafting_piece_here:
+            # All other clearings with our crafting pieces are adjacent
+            crafting_clearing_ids = set()
+            crafting_clearing_ids.update(
+                Workshop.objects.filter(player=player, building_slot__isnull=False).values_list("building_slot__clearing_id", flat=True)
+            )
+            crafting_clearing_ids.update(
+                BirdRoost.objects.filter(player=player, building_slot__isnull=False).values_list("building_slot__clearing_id", flat=True)
+            )
+            crafting_clearing_ids.update(
+                WASympathy.objects.filter(player=player, clearing__isnull=False).values_list("clearing_id", flat=True)
+            )
+            
+            adjacent.update(Clearing.objects.filter(id__in=crafting_clearing_ids))
+            
+            # Remove self if it was added
+            adjacent.discard(clearing)
+
+    return adjacent
+
+
 def validate_legal_move(
     player: Player, clearing_start: Clearing, clearing_end: Clearing
 ):
@@ -229,21 +276,31 @@ def validate_legal_move(
     """
     if not Warrior.objects.filter(clearing=clearing_start, player=player).exists():
         raise ValueError("No warriors in origin clearing")
-    # check clearing adjacency
-    if not clearing_start.connected_clearings.filter(pk=clearing_end.pk).exists():
+    
+    # check clearing adjacency (Boat Builders, Tunnels handled here)
+    adjacent_clearings = get_adjacent_clearings(player, clearing_start)
+    if clearing_end not in adjacent_clearings:
         raise ValueError("clearing_start is not adjacent to clearing_end")
+
     # check rule of clearings
-    rule_target_or_origin = determine_clearing_rule(
-        clearing_end
-    ) or determine_clearing_rule(clearing_start)
-    if not rule_target_or_origin:
+    # Corvid Planners: ignore rule while moving
+    try:
+        validate_player_has_crafted_card(player, CardsEP.CORVID_PLANNERS)
+        has_corvid_planners = True
+    except ValueError:
+        has_corvid_planners = False
+    if has_corvid_planners:
+        return #skip rulership check
+    rule_target = determine_clearing_rule(clearing_end)
+    rule_origin = determine_clearing_rule(clearing_start)
+    if rule_target != player and rule_origin != player:
         raise ValueError("player does not control either origin or target clearing")
 
 
 def validate_has_legal_moves(player: Player, clearing: Clearing):
     """raises if no legal moves from the given clearing"""
     # get adjacent clearings
-    adjacent_clearings = clearing.connected_clearings.all()
+    adjacent_clearings = get_adjacent_clearings(player, clearing)
     for adjacent_clearing in adjacent_clearings:
         try:
             validate_legal_move(player, clearing, adjacent_clearing)

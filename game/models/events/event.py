@@ -14,6 +14,7 @@ class EventType(models.TextChoices):
     SABOTEURS = "saboteurs"
     EYRIE_EMIGRE = "eyrie_emigre"
     CHARM_OFFENSIVE = "charm_offensive"
+    PARTISANS = "partisans"
 
 
 class Event(models.Model):

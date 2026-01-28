@@ -1,3 +1,5 @@
+from game.queries.general import validate_player_has_crafted_card
+from game.queries.general import validate_legal_move
 from random import shuffle
 import warnings
 from django.db import transaction
@@ -22,7 +24,12 @@ from game.models import (
     Warrior,
 )
 from game.models.game_models import Faction
-from game.queries.general import determine_clearing_rule, warrior_count_in_clearing
+from game.queries.general import (
+    determine_clearing_rule,
+    warrior_count_in_clearing,
+    get_adjacent_clearings,
+)
+from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.game_data.cards.exiles_and_partisans import Card as CardDetails
 from game.game_data.general.crafting import crafting_piece_models
 from django.db import models
@@ -88,15 +95,8 @@ def move_warriors(
     )
     if len(warriors) != number:
         raise ValueError("not enough warriors in clearing to move")
-    # check clearing adjacency
-    if not clearing_start.connected_clearings.filter(pk=clearing_end.pk).exists():
-        raise ValueError("clearing_start is not adjacent to clearing_end")
-    # check rule of clearings
-    rule_target_or_origin = determine_clearing_rule(
-        clearing_end
-    ) or determine_clearing_rule(clearing_start)
-    if not rule_target_or_origin:
-        raise ValueError("player does not control either origin or target clearing")
+    #check adjacency and rulership
+    validate_legal_move(player, clearing_start, clearing_end)
     # update clearing of warriors
     for warrior in warriors:
         warrior.clearing = clearing_end
@@ -204,8 +204,16 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
         item = item_from_pool.item
         CraftedItemEntry(player=card_in_hand.player, item=item).save()
         item_from_pool.delete()
+        try:
+            validate_player_has_crafted_card(card_in_hand.player, CardsEP.MASTER_ENGRAVERS)
+            has_master_engravers=True
+        except ValueError:
+            has_master_engravers=False
+
         # update score
         card_in_hand.player.score += points
+        if has_master_engravers:
+            card_in_hand.player.score += 1
         card_in_hand.player.save()
         # discard card from player's hand
         discard_card_from_hand(card_in_hand.player, card_in_hand)
@@ -214,6 +222,16 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
         CraftedCardEntry(player=card_in_hand.player, card=card_in_hand.card).save()
         # delete card from player's hand
         card_in_hand.delete()
+
+    # Murine Brokers check: Whenever ANY OTHER player crafts an item card
+    if item is not None:
+        other_players = Player.objects.filter(game=card_in_hand.player.game).exclude(pk=card_in_hand.player.pk)
+        for other_player in other_players:
+            try:
+                validate_player_has_crafted_card(other_player, CardsEP.MURINE_BROKERS)
+                draw_card_from_deck(other_player)
+            except ValueError:
+                pass
 
 
 @transaction.atomic
