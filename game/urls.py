@@ -259,6 +259,7 @@ from game.views.action_views.crafted_cards.league_of_adventurers import LeagueOf
 from game.views.action_views.crafted_cards.informants import InformantsView
 from game.views.action_views.crafted_cards.eyrie_emigre import EyrieEmigreView
 from game.views.action_views.crafted_cards.partisans import PartisansView
+from game.views.action_views.crafted_cards.false_orders import FalseOrdersView
 
 register_action(
     "propaganda-bureau",
@@ -300,6 +301,12 @@ register_action(
     "partisans",
     PartisansView,
     "api/action/card/partisans/",
+    urlpatterns,
+)
+register_action(
+    "false-orders",
+    FalseOrdersView,
+    "api/action/card/false-orders/",
     urlpatterns,
 )
 

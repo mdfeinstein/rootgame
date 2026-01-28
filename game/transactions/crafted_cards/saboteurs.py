@@ -30,18 +30,23 @@ def use_saboteurs(player: Player, target_crafted_card: CraftedCardEntry):
 
     # 5. Discard target card
     target_card = target_crafted_card.card
+    if target_card.card_type == CardsEP.COFFIN_MAKERS.name:
+        from game.transactions.crafted_cards.coffin_makers import release_warriors
+        release_warriors(player.game)
+
     target_crafted_card.delete()
     DiscardPileEntry.create_from_card(target_card)
     
+    # resolve event
+    event = SaboteursEvent.objects.filter(crafted_card_entry=saboteurs_entry).first()
+    if event:
+        event.event.is_resolved = True
+        event.event.save()
+
     # 6. Discard Saboteurs
     saboteurs_card = saboteurs_entry.card
     saboteurs_entry.delete()
     DiscardPileEntry.create_from_card(saboteurs_card)
-    
-    # resolve event
-    event = SaboteursEvent.objects.filter(crafted_card_entry=saboteurs_entry).first()
-    event.event.is_resolved = True
-    event.event.save()
 
     
 

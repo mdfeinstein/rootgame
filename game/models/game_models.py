@@ -133,6 +133,24 @@ class Warrior(Piece):
     )
 
 
+class CoffinWarrior(Piece):
+    """Represents a warrior held on the Coffin Makers card."""
+
+    @classmethod
+    def warrior_to_coffin(cls, warrior: Warrior):
+        """Moves a warrior to the coffin makers card."""
+        player = warrior.player
+        warrior.delete()
+        return cls.objects.create(player=player)
+
+    def coffin_to_warrior(self):
+        """Returns a coffin warrior back to their owner's supply."""
+        player = self.player
+        self.delete()
+        # Return to supply (Warrior with clearing=None)
+        return Warrior.objects.create(player=player, clearing=None)
+
+
 class Card(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     suit = models.CharField(

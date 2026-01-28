@@ -858,6 +858,13 @@ def step_effect(player: Player, phase: BirdBirdsong | BirdDaylight | BirdEvening
                 case BirdBirdsong.BirdBirdsongSteps.NOT_STARTED:
                     pass
                 case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING:
+                    from game.queries.crafted_cards import get_coffin_makers_player
+                    from game.transactions.crafted_cards.coffin_makers import score_coffins, release_warriors
+                    coffin_player = get_coffin_makers_player(player.game)
+                    if coffin_player == player:
+                        score_coffins(player)
+                        release_warriors(player.game)
+
                     if not saboteurs_check(player):
                         emergency_draw(player)
 

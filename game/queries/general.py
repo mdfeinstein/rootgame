@@ -266,7 +266,10 @@ def get_adjacent_clearings(player: Player, clearing: Clearing) -> set[Clearing]:
 
 
 def validate_legal_move(
-    player: Player, clearing_start: Clearing, clearing_end: Clearing
+    player: Player,
+    clearing_start: Clearing,
+    clearing_end: Clearing,
+    ignore_rule: bool = False,
 ):
     """checks if legal move from clearing_start to clearing_end
     might fail because:
@@ -282,14 +285,13 @@ def validate_legal_move(
     if clearing_end not in adjacent_clearings:
         raise ValueError("clearing_start is not adjacent to clearing_end")
 
-    # check rule of clearings
     # Corvid Planners: ignore rule while moving
     try:
         validate_player_has_crafted_card(player, CardsEP.CORVID_PLANNERS)
         has_corvid_planners = True
     except ValueError:
         has_corvid_planners = False
-    if has_corvid_planners:
+    if has_corvid_planners or ignore_rule:
         return #skip rulership check
     rule_target = determine_clearing_rule(clearing_end)
     rule_origin = determine_clearing_rule(clearing_start)

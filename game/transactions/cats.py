@@ -381,25 +381,32 @@ def cat_resolve_field_hospital(player: Player, card: CardsEP | None):
     """
     assert player.faction == Faction.CATS, "Not a cats player"
     field_hospital_event = get_field_hospital_event(player)
-    if card is None:
-        field_hospital_event.event.is_resolved = True
-        field_hospital_event.event.save()
-        return
-    # check that player has card in hand
-    hand_entry = validate_player_has_card_in_hand(player, card)
-    if not (
-        card.value.suit == field_hospital_event.suit or card.value.suit == Suit.WILD
-    ):
-        raise ValueError("Card is not the right suit")
+    from game.transactions.removal import return_warrior_to_supply
+    
     # save troops
-    to_save = field_hospital_event.troops_To_save
+    to_save = field_hospital_event.troops_to_save
     keep = CatKeep.objects.get(player=player)
-    warriors = Warrior.objects.filter(clearing=None, player=player)[:to_save]
-    for warrior in warriors:
-        warrior.clearing = keep.clearing
-        warrior.save()
-    # discard card
-    discard_card_from_hand(player, hand_entry)
+    warriors = list(Warrior.objects.filter(clearing=None, player=player)[:to_save])
+    
+    if card is None:
+        # Not saved, return to supply/coffin
+        for warrior in warriors:
+            return_warrior_to_supply(warrior)
+    else:
+        # check that player has card in hand
+        hand_entry = validate_player_has_card_in_hand(player, card)
+        if not (
+            card.value.suit == field_hospital_event.suit or card.value.suit == Suit.WILD
+        ):
+            raise ValueError("Card is not the right suit")
+
+        # Saved to keep
+        for warrior in warriors:
+            warrior.clearing = keep.clearing
+            warrior.save()
+        # discard card
+        discard_card_from_hand(player, hand_entry)
+        
     # resolve event
     field_hospital_event.event.is_resolved = True
     field_hospital_event.event.save()
@@ -505,6 +512,13 @@ def step_effect(player : Player, phase: Union[CatBirdsong, CatDaylight, CatEveni
                 case CatBirdsong.CatBirdsongSteps.NOT_STARTED:
                     pass
                 case CatBirdsong.CatBirdsongSteps.PLACING_WOOD:
+                    from game.queries.crafted_cards import get_coffin_makers_player
+                    from game.transactions.crafted_cards.coffin_makers import score_coffins, release_warriors
+                    coffin_player = get_coffin_makers_player(player.game)
+                    if coffin_player == player:
+                        score_coffins(player)
+                        release_warriors(player.game)
+
                     if not saboteurs_check(player):
                         # if more wood tokens in supply than tokens to produce, automate placement
                         print(f"calling auto place wood")

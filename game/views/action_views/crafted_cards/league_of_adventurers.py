@@ -49,6 +49,8 @@ class LeagueOfAdventurersView(GameActionView):
                 return self.post_pick_count(request, game_id)
             case "pick-clearing":
                 return self.post_pick_clearing(request, game_id)
+            case "pick_clearing": # Allow both hyphens and underscores just in case
+                return self.post_pick_clearing(request, game_id)
             case "pick-opponent":
                 return self.post_pick_opponent(request, game_id)
             case _:
@@ -88,7 +90,7 @@ class LeagueOfAdventurersView(GameActionView):
             for c in clearings:
                 if player_has_warriors_in_clearing(player, c):
                     origin_options.append({
-                        "value": str(c.id),
+                        "value": str(c.clearing_number),
                         "label": f"Clearing {c.clearing_number} ({c.get_suit_display()})"
                     })
             
@@ -96,7 +98,7 @@ class LeagueOfAdventurersView(GameActionView):
                 name="pick-origin",
                 prompt="Select origin clearing",
                 endpoint="pick-origin",
-                payload_details=[{"type": "clearing", "name": "origin_id"}],
+                payload_details=[{"type": "clearing", "name": "origin_number"}],
                 accumulated_payload={"item_id": item_id, "action_type": action_type},
                 options=origin_options,
                 faction=Faction(player.faction)
@@ -112,7 +114,7 @@ class LeagueOfAdventurersView(GameActionView):
                     enemies = get_enemy_factions_in_clearing(player, c)
                     if enemies:
                         battle_options.append({
-                            "value": str(c.id),
+                            "value": str(c.clearing_number),
                             "label": f"Clearing {c.clearing_number} ({c.get_suit_display()})"
                         })
             
@@ -120,7 +122,7 @@ class LeagueOfAdventurersView(GameActionView):
                 name="pick-clearing",
                 prompt="Select clearing for battle",
                 endpoint="pick-clearing",
-                payload_details=[{"type": "clearing", "name": "clearing_id"}],
+                payload_details=[{"type": "clearing", "name": "clearing_number"}],
                 accumulated_payload={"item_id": item_id, "action_type": action_type},
                 options=battle_options,
                 faction=Faction(player.faction)
@@ -129,21 +131,24 @@ class LeagueOfAdventurersView(GameActionView):
     # MOVE FLOW
     def post_pick_origin(self, request, game_id):
         player = self.player_by_request(request, game_id)
-        origin_id = request.data["origin_id"]
-        origin = get_object_or_404(Clearing, pk=origin_id)
+        origin_number = request.data["origin_number"]
+        origin = get_object_or_404(Clearing, game=self.game(game_id), clearing_number=origin_number)
         
         # Get adjacent clearings where player controls either origin or destination
         from game.queries.general import determine_clearing_rule
         adjacents = origin.connected_clearings.all()
         dest_options = []
-        origin_rule = determine_clearing_rule(origin) # Wait, rule helper needs player? 
-        # Actually determine_clearing_rule(clearing) returns Faction of ruler.
+        origin_rule = determine_clearing_rule(origin)
         
         for dest in adjacents:
             dest_rule = determine_clearing_rule(dest)
-            if origin_rule == Faction(player.faction) or dest_rule == Faction(player.faction):
+            # determine_clearing_rule returns Player or None
+            origin_ruler_faction = Faction(origin_rule.faction) if origin_rule else None
+            dest_ruler_faction = Faction(dest_rule.faction) if dest_rule else None
+            
+            if origin_ruler_faction == Faction(player.faction) or dest_ruler_faction == Faction(player.faction):
                 dest_options.append({
-                    "value": str(dest.id),
+                    "value": str(dest.clearing_number),
                     "label": f"Clearing {dest.clearing_number} ({dest.get_suit_display()})"
                 })
         
@@ -151,7 +156,7 @@ class LeagueOfAdventurersView(GameActionView):
             name="pick-destination",
             prompt="Select destination clearing",
             endpoint="pick-destination",
-            payload_details=[{"type": "clearing", "name": "destination_id"}],
+            payload_details=[{"type": "clearing", "name": "destination_number"}],
             accumulated_payload={**request.data},
             options=dest_options,
             faction=Faction(player.faction)
@@ -159,8 +164,8 @@ class LeagueOfAdventurersView(GameActionView):
 
     def post_pick_destination(self, request, game_id):
         player = self.player_by_request(request, game_id)
-        origin_id = request.data["origin_id"]
-        origin = get_object_or_404(Clearing, pk=origin_id)
+        origin_number = request.data["origin_number"]
+        origin = get_object_or_404(Clearing, game=self.game(game_id), clearing_number=origin_number)
         count = warrior_count_in_clearing(player, origin)
         
         options = [{"value": str(i), "label": str(i)} for i in range(1, count + 1)]
@@ -178,8 +183,8 @@ class LeagueOfAdventurersView(GameActionView):
     def post_pick_count(self, request, game_id):
         player = self.player_by_request(request, game_id)
         item_id = request.data["item_id"]
-        origin_id = request.data["origin_id"]
-        destination_id = request.data["destination_id"]
+        origin_number = request.data["origin_number"]
+        destination_number = request.data["destination_number"]
         count = int(request.data["count"])
         
         from game.models.game_models import CraftedCardEntry
@@ -187,8 +192,8 @@ class LeagueOfAdventurersView(GameActionView):
         
         card_entry = get_object_or_404(CraftedCardEntry, player=player, card__card_type=CardsEP.LEAGUE_OF_ADVENTURERS.name)
         item_entry = get_object_or_404(CraftedItemEntry, pk=item_id)
-        origin = get_object_or_404(Clearing, pk=origin_id)
-        destination = get_object_or_404(Clearing, pk=destination_id)
+        origin = get_object_or_404(Clearing, game=self.game(game_id), clearing_number=origin_number)
+        destination = get_object_or_404(Clearing, game=self.game(game_id), clearing_number=destination_number)
         
         move_data = {
             "origin_clearing": origin,
@@ -206,8 +211,8 @@ class LeagueOfAdventurersView(GameActionView):
     # BATTLE FLOW
     def post_pick_clearing(self, request, game_id):
         player = self.player_by_request(request, game_id)
-        clearing_id = request.data["clearing_id"]
-        clearing = get_object_or_404(Clearing, pk=clearing_id)
+        clearing_number = request.data["clearing_number"]
+        clearing = get_object_or_404(Clearing, game=self.game(game_id), clearing_number=clearing_number)
         
         from game.queries.general import get_enemy_factions_in_clearing
         enemies = get_enemy_factions_in_clearing(player, clearing)
@@ -231,7 +236,7 @@ class LeagueOfAdventurersView(GameActionView):
     def post_pick_opponent(self, request, game_id):
         player = self.player_by_request(request, game_id)
         item_id = request.data["item_id"]
-        clearing_id = request.data["clearing_id"]
+        clearing_number = request.data["clearing_number"]
         opponent_faction_code = request.data["opponent_faction"]
         
         from game.models.game_models import CraftedCardEntry
@@ -239,7 +244,7 @@ class LeagueOfAdventurersView(GameActionView):
         
         card_entry = get_object_or_404(CraftedCardEntry, player=player, card__card_type=CardsEP.LEAGUE_OF_ADVENTURERS.name)
         item_entry = get_object_or_404(CraftedItemEntry, pk=item_id)
-        clearing = get_object_or_404(Clearing, pk=clearing_id)
+        clearing = get_object_or_404(Clearing, game=self.game(game_id), clearing_number=clearing_number)
         
         battle_data = {
             "clearing": clearing,

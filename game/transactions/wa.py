@@ -51,7 +51,6 @@ from game.transactions.general import (
     next_players_turn,
     place_warriors_into_clearing,
     raise_score,
-    remove_all_warriors_from_clearing,
 )
 from game.transactions.removal import (
     player_removes_building,
@@ -466,6 +465,13 @@ def step_effect(player: Player, phase: Union[WABirdsong, WADaylight, WAEvening, 
                 case WABirdsong.WABirdsongSteps.NOT_STARTED:
                     pass
                 case WABirdsong.WABirdsongSteps.REVOLT:
+                    from game.queries.crafted_cards import get_coffin_makers_player
+                    from game.transactions.crafted_cards.coffin_makers import score_coffins, release_warriors
+                    coffin_player = get_coffin_makers_player(player.game)
+                    if coffin_player == player:
+                        score_coffins(player)
+                        release_warriors(player.game)
+
                     saboteurs_check(player)
                 case WABirdsong.WABirdsongSteps.SPREAD_SYMPATHY:
                     pass

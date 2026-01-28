@@ -73,7 +73,7 @@ class PropagandaBureauView(GameActionView):
                 enemies = get_enemy_factions_in_clearing(player, clearing)
                 if enemies:
                     valid_clearings.append({
-                        "value": str(clearing.id),
+                        "value": str(clearing.clearing_number),
                         "label": f"Clearing {clearing.clearing_number} ({clearing.get_suit_display()})"
                     })
         
@@ -84,7 +84,7 @@ class PropagandaBureauView(GameActionView):
             name="pick_clearing",
             prompt="Pick a clearing to target",
             endpoint="pick_clearing",
-            payload_details=[{"type": "clearing", "name": "clearing_id"}],
+            payload_details=[{"type": "clearing", "name": "clearing_number"}],
             accumulated_payload={"card_name": card_name},
             options=valid_clearings,
             faction=self.faction
@@ -95,8 +95,8 @@ class PropagandaBureauView(GameActionView):
         self.faction = Faction(player.faction)
         
         card_name = request.data["card_name"]
-        clearing_id = request.data["clearing_id"]
-        clearing = get_object_or_404(Clearing, pk=clearing_id)
+        clearing_number = request.data["clearing_number"]
+        clearing = get_object_or_404(Clearing, game=self.game(game_id), clearing_number=clearing_number)
         
         from game.queries.general import get_enemy_factions_in_clearing
         enemies = get_enemy_factions_in_clearing(player, clearing)
@@ -114,7 +114,7 @@ class PropagandaBureauView(GameActionView):
             payload_details=[{"type": "faction", "name": "target_faction"}],
             accumulated_payload={
                 "card_name": card_name, 
-                "clearing_id": clearing_id
+                "clearing_number": clearing_number
             },
             options=options,
             faction=self.faction
@@ -124,16 +124,17 @@ class PropagandaBureauView(GameActionView):
         player = self.player_by_request(request, game_id)
         
         card_name = request.data["card_name"]
-        clearing_id = request.data["clearing_id"]
+        clearing_number = request.data["clearing_number"]
         target_faction_code = request.data["target_faction"]
         
         card_ep = CardsEP[card_name]
-        clearing = get_object_or_404(Clearing, pk=clearing_id)
+        clearing = get_object_or_404(Clearing, game=self.game(game_id), clearing_number=clearing_number)
         target_faction = Faction(target_faction_code)
         
         try:
              use_propaganda_bureau(player, card_ep, clearing, target_faction)
         except ValueError as e:
+             print(f"DEBUG Propaganda Bureau ERROR: {str(e)}")
              return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
         return self.generate_completed_step()

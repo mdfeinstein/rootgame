@@ -85,7 +85,11 @@ def discard_card_from_hand(player: Player, card_in_hand: HandEntry):
 
 @transaction.atomic
 def move_warriors(
-    player: Player, clearing_start: Clearing, clearing_end: Clearing, number: int
+    player: Player,
+    clearing_start: Clearing,
+    clearing_end: Clearing,
+    number: int,
+    ignore_rule: bool = False,
 ):
     """moves warriors from one clearing to another"""
     from game.transactions.outrage import create_outrage_event
@@ -95,8 +99,8 @@ def move_warriors(
     )
     if len(warriors) != number:
         raise ValueError("not enough warriors in clearing to move")
-    #check adjacency and rulership
-    validate_legal_move(player, clearing_start, clearing_end)
+    # check adjacency and rulership
+    validate_legal_move(player, clearing_start, clearing_end, ignore_rule=ignore_rule)
     # update clearing of warriors
     for warrior in warriors:
         warrior.clearing = clearing_end
@@ -107,35 +111,6 @@ def move_warriors(
             game=player.game, faction=Faction.WOODLAND_ALLIANCE
         )
         create_outrage_event(clearing_end, player, wa_player)
-
-
-@transaction.atomic
-def remove_warriors_from_clearing(
-    player: Player, clearing: Clearing, number: int, exact: bool = True
-):
-    """
-    removes warriors from the given clearing
-    if exact, will raise if not enough warriors to remove. otherwise, will remove as many as possible
-    """
-    warnings.warn(
-        "removing warriors should possibly be handled by player_rmoves_warriors in transactions/battle"
-    )
-    if exact and warrior_count_in_clearing(player, clearing) < number:
-        raise ValueError("Not enough warriors in clearing to remove")
-    if player.faction == Faction.CATS:
-        # TODO: field hospital event
-        pass
-    Warrior.objects.filter(clearing=clearing, player=player)[:number].update(
-        clearing=None
-    )
-
-
-def remove_all_warriors_from_clearing(player: Player, clearing: Clearing):
-    """removes all warriors from the given clearing"""
-    if player.faction == Faction.CATS:
-        # TODO: field hospital event
-        pass
-    Warrior.objects.filter(clearing=clearing, player=player).update(clearing=None)
 
 
 @transaction.atomic
