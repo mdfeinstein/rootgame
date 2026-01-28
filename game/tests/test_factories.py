@@ -29,7 +29,7 @@ class TestFactories(TestCase):
     def test_game_setup_with_factions_factory(self):
         # game = GameSetupFactory(factions=[Faction.CATS, Faction.BIRDS])
         from game.tests.my_factories import GameSetupWithFactionsFactory
-        game = GameSetupWithFactionsFactory(factions=[Faction.CATS, Faction.BIRDS])
+        game = GameSetupWithFactionsFactory(factions=[Faction.CATS, Faction.BIRDS, Faction.WOODLAND_ALLIANCE], generate_fixture=True)
         
         # Verify Cats Setup
         cats = game.players.get(faction=Faction.CATS)

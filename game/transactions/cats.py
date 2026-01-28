@@ -167,7 +167,7 @@ def overwork(player: Player, clearing: Clearing, card: CardsEP):
     hand_entry = validate_player_has_card_in_hand(player, card)
     # check that player has a sawmill in given clearing, and that the suit matches the card
     sawmills = get_sawmills_by_suit(player, card.value.suit)
-    if not sawmills.filter(clearing=clearing).exists():
+    if not sawmills.filter(building_slot__clearing=clearing).exists():
         raise ValueError("No sawmill in that clearing")
     # check that there is wood left to produce
     wood_token = CatWood.objects.filter(clearing=None, player=player).first()
@@ -456,6 +456,7 @@ def cat_march(player: Player, origin: Clearing, destination: Clearing, count: in
 
 @transaction.atomic
 def cat_battle(player: Player, defender: Player, clearing: Clearing):
+    from game.transactions.battle import start_battle
     start_battle(player.game, player.faction, defender.faction, clearing)
     daylight = get_phase(player)
     assert type(daylight) == CatDaylight

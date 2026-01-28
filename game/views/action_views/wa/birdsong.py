@@ -47,6 +47,7 @@ class RevoltView(GameActionView):
                 "prompt": "No clearings to revolt in. confirm to end revolt step.",
                 "endpoint": "end",
                 "payload_details": [{"type": "confirm", "name": "confirm"}],
+                "options": [{"value": True, "label": "Confirm"}],
             }
         return super().get(request)
 

@@ -1,7 +1,7 @@
 from typing import Union
 from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
 from game.transactions.crafted_cards.saboteurs import saboteurs_check
-from game.transactions.crafted_cards.eyrie_emigre import is_emigre
+
 from game.transactions.crafted_cards.informants import informants_check
 from typing import cast
 from django.db import transaction
@@ -81,6 +81,12 @@ def add_supporter(player: Player, card: CardsEP):
     # delete card from player's hand
     card_in_hand.delete()
 
+@transaction.atomic
+def draw_card_to_supporters(player: Player):
+    """draws a card from the deck to the player's supporters"""
+    assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
+    card = draw_card_from_deck(player)
+    add_supporter(player, card)
 
 @transaction.atomic
 def add_officer(player: Player):
@@ -476,6 +482,7 @@ def step_effect(player: Player, phase: Union[WABirdsong, WADaylight, WAEvening, 
                 case WABirdsong.WABirdsongSteps.SPREAD_SYMPATHY:
                     pass
                 case WABirdsong.WABirdsongSteps.COMPLETED:
+                    from game.transactions.crafted_cards.eyrie_emigre import is_emigre
                     is_emigre(player)
                 case _:
                     raise ValueError(f"Invalid step in step_effect for WA Birdsong: {phase.step.name}")

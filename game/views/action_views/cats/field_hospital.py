@@ -1,3 +1,4 @@
+from game.decorators.transaction_decorator import atomic_game_action
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.game_models import Faction, Suit
 from game.queries.cats.field_hospital import get_field_hospital_event
@@ -17,7 +18,7 @@ class FieldHospitalView(GameActionView):
         player = self.player(request, game_id)
         field_hospital_event = get_field_hospital_event(player)
         count, suit = (
-            field_hospital_event.troops_To_save,
+            field_hospital_event.troops_to_save,
             Suit(field_hospital_event.suit).label,
         )
         prompt = f"Play a card of suit {suit} to save {count} troops and place them at your keep."

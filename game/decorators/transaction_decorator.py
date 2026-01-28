@@ -18,6 +18,7 @@ def is_playback_mode():
 def atomic_game_action(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
         if is_playback_mode():
             return func(*args, **kwargs)
 

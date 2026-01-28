@@ -2345,7 +2345,7 @@
   "pk": 13,
   "fields": {
     "game": 1,
-    "card": 17,
+    "card": 16,
     "spot": 12
   }
 },
@@ -2354,7 +2354,7 @@
   "pk": 14,
   "fields": {
     "game": 1,
-    "card": 30,
+    "card": 47,
     "spot": 13
   }
 },
@@ -2363,7 +2363,7 @@
   "pk": 15,
   "fields": {
     "game": 1,
-    "card": 21,
+    "card": 37,
     "spot": 14
   }
 },
@@ -2372,7 +2372,7 @@
   "pk": 16,
   "fields": {
     "game": 1,
-    "card": 43,
+    "card": 9,
     "spot": 15
   }
 },
@@ -2381,7 +2381,7 @@
   "pk": 17,
   "fields": {
     "game": 1,
-    "card": 36,
+    "card": 44,
     "spot": 16
   }
 },
@@ -2390,7 +2390,7 @@
   "pk": 18,
   "fields": {
     "game": 1,
-    "card": 15,
+    "card": 23,
     "spot": 17
   }
 },
@@ -2399,7 +2399,7 @@
   "pk": 19,
   "fields": {
     "game": 1,
-    "card": 35,
+    "card": 28,
     "spot": 18
   }
 },
@@ -2408,7 +2408,7 @@
   "pk": 20,
   "fields": {
     "game": 1,
-    "card": 52,
+    "card": 19,
     "spot": 19
   }
 },
@@ -2417,7 +2417,7 @@
   "pk": 21,
   "fields": {
     "game": 1,
-    "card": 27,
+    "card": 53,
     "spot": 20
   }
 },
@@ -2426,7 +2426,7 @@
   "pk": 22,
   "fields": {
     "game": 1,
-    "card": 22,
+    "card": 35,
     "spot": 21
   }
 },
@@ -2435,7 +2435,7 @@
   "pk": 23,
   "fields": {
     "game": 1,
-    "card": 45,
+    "card": 46,
     "spot": 22
   }
 },
@@ -2444,7 +2444,7 @@
   "pk": 24,
   "fields": {
     "game": 1,
-    "card": 41,
+    "card": 8,
     "spot": 23
   }
 },
@@ -2453,7 +2453,7 @@
   "pk": 25,
   "fields": {
     "game": 1,
-    "card": 20,
+    "card": 21,
     "spot": 24
   }
 },
@@ -2462,7 +2462,7 @@
   "pk": 26,
   "fields": {
     "game": 1,
-    "card": 44,
+    "card": 50,
     "spot": 25
   }
 },
@@ -2471,7 +2471,7 @@
   "pk": 27,
   "fields": {
     "game": 1,
-    "card": 16,
+    "card": 52,
     "spot": 26
   }
 },
@@ -2480,7 +2480,7 @@
   "pk": 28,
   "fields": {
     "game": 1,
-    "card": 13,
+    "card": 14,
     "spot": 27
   }
 },
@@ -2489,7 +2489,7 @@
   "pk": 29,
   "fields": {
     "game": 1,
-    "card": 11,
+    "card": 39,
     "spot": 28
   }
 },
@@ -2498,7 +2498,7 @@
   "pk": 30,
   "fields": {
     "game": 1,
-    "card": 37,
+    "card": 26,
     "spot": 29
   }
 },
@@ -2507,7 +2507,7 @@
   "pk": 31,
   "fields": {
     "game": 1,
-    "card": 1,
+    "card": 30,
     "spot": 30
   }
 },
@@ -2516,7 +2516,7 @@
   "pk": 32,
   "fields": {
     "game": 1,
-    "card": 39,
+    "card": 24,
     "spot": 31
   }
 },
@@ -2525,7 +2525,7 @@
   "pk": 33,
   "fields": {
     "game": 1,
-    "card": 51,
+    "card": 17,
     "spot": 32
   }
 },
@@ -2534,7 +2534,7 @@
   "pk": 34,
   "fields": {
     "game": 1,
-    "card": 48,
+    "card": 45,
     "spot": 33
   }
 },
@@ -2543,7 +2543,7 @@
   "pk": 35,
   "fields": {
     "game": 1,
-    "card": 49,
+    "card": 33,
     "spot": 34
   }
 },
@@ -2552,7 +2552,7 @@
   "pk": 36,
   "fields": {
     "game": 1,
-    "card": 46,
+    "card": 49,
     "spot": 35
   }
 },
@@ -2561,7 +2561,7 @@
   "pk": 37,
   "fields": {
     "game": 1,
-    "card": 2,
+    "card": 38,
     "spot": 36
   }
 },
@@ -2570,7 +2570,7 @@
   "pk": 38,
   "fields": {
     "game": 1,
-    "card": 18,
+    "card": 36,
     "spot": 37
   }
 },
@@ -2579,7 +2579,7 @@
   "pk": 39,
   "fields": {
     "game": 1,
-    "card": 23,
+    "card": 6,
     "spot": 38
   }
 },
@@ -2588,7 +2588,7 @@
   "pk": 40,
   "fields": {
     "game": 1,
-    "card": 7,
+    "card": 2,
     "spot": 39
   }
 },
@@ -2597,7 +2597,7 @@
   "pk": 41,
   "fields": {
     "game": 1,
-    "card": 24,
+    "card": 54,
     "spot": 40
   }
 },
@@ -2606,7 +2606,7 @@
   "pk": 42,
   "fields": {
     "game": 1,
-    "card": 50,
+    "card": 32,
     "spot": 41
   }
 },
@@ -2615,7 +2615,7 @@
   "pk": 43,
   "fields": {
     "game": 1,
-    "card": 31,
+    "card": 4,
     "spot": 42
   }
 },
@@ -2624,7 +2624,7 @@
   "pk": 44,
   "fields": {
     "game": 1,
-    "card": 25,
+    "card": 29,
     "spot": 43
   }
 },
@@ -2633,7 +2633,7 @@
   "pk": 45,
   "fields": {
     "game": 1,
-    "card": 42,
+    "card": 31,
     "spot": 44
   }
 },
@@ -2642,7 +2642,7 @@
   "pk": 46,
   "fields": {
     "game": 1,
-    "card": 14,
+    "card": 5,
     "spot": 45
   }
 },
@@ -2651,7 +2651,7 @@
   "pk": 47,
   "fields": {
     "game": 1,
-    "card": 10,
+    "card": 18,
     "spot": 46
   }
 },
@@ -2660,7 +2660,7 @@
   "pk": 48,
   "fields": {
     "game": 1,
-    "card": 5,
+    "card": 13,
     "spot": 47
   }
 },
@@ -2669,7 +2669,7 @@
   "pk": 49,
   "fields": {
     "game": 1,
-    "card": 19,
+    "card": 43,
     "spot": 48
   }
 },
@@ -2678,7 +2678,7 @@
   "pk": 50,
   "fields": {
     "game": 1,
-    "card": 34,
+    "card": 7,
     "spot": 49
   }
 },
@@ -2687,7 +2687,7 @@
   "pk": 51,
   "fields": {
     "game": 1,
-    "card": 40,
+    "card": 42,
     "spot": 50
   }
 },
@@ -2696,7 +2696,7 @@
   "pk": 52,
   "fields": {
     "game": 1,
-    "card": 26,
+    "card": 48,
     "spot": 51
   }
 },
@@ -2705,7 +2705,7 @@
   "pk": 53,
   "fields": {
     "game": 1,
-    "card": 32,
+    "card": 3,
     "spot": 52
   }
 },
@@ -2714,7 +2714,7 @@
   "pk": 54,
   "fields": {
     "game": 1,
-    "card": 33,
+    "card": 12,
     "spot": 53
   }
 },
@@ -3075,7 +3075,7 @@
   "pk": 1,
   "fields": {
     "game": 1,
-    "item_type": "4",
+    "item_type": "0",
     "exhausted": false
   }
 },
@@ -3084,7 +3084,7 @@
   "pk": 2,
   "fields": {
     "game": 1,
-    "item_type": "4",
+    "item_type": "0",
     "exhausted": false
   }
 },
@@ -3093,7 +3093,7 @@
   "pk": 3,
   "fields": {
     "game": 1,
-    "item_type": "4",
+    "item_type": "0",
     "exhausted": false
   }
 },
@@ -3102,7 +3102,7 @@
   "pk": 4,
   "fields": {
     "game": 1,
-    "item_type": "4",
+    "item_type": "0",
     "exhausted": false
   }
 },
@@ -3315,7 +3315,7 @@
   "pk": 1,
   "fields": {
     "player": 1,
-    "card": 6
+    "card": 34
   }
 },
 {
@@ -3323,7 +3323,7 @@
   "pk": 2,
   "fields": {
     "player": 1,
-    "card": 54
+    "card": 51
   }
 },
 {
@@ -3331,7 +3331,7 @@
   "pk": 3,
   "fields": {
     "player": 1,
-    "card": 8
+    "card": 40
   }
 },
 {
@@ -3339,7 +3339,7 @@
   "pk": 4,
   "fields": {
     "player": 2,
-    "card": 53
+    "card": 11
   }
 },
 {
@@ -3347,7 +3347,7 @@
   "pk": 5,
   "fields": {
     "player": 2,
-    "card": 12
+    "card": 25
   }
 },
 {
@@ -3355,7 +3355,7 @@
   "pk": 6,
   "fields": {
     "player": 2,
-    "card": 38
+    "card": 27
   }
 },
 {
@@ -3363,7 +3363,7 @@
   "pk": 7,
   "fields": {
     "player": 3,
-    "card": 3
+    "card": 1
   }
 },
 {
@@ -3371,7 +3371,7 @@
   "pk": 8,
   "fields": {
     "player": 3,
-    "card": 9
+    "card": 10
   }
 },
 {
@@ -3379,7 +3379,7 @@
   "pk": 9,
   "fields": {
     "player": 3,
-    "card": 29
+    "card": 41
   }
 },
 {
@@ -3675,7 +3675,7 @@
   "model": "game.catbirdsong",
   "pk": 1,
   "fields": {
-    "step": "1",
+    "step": "0",
     "turn": 1
   }
 },
@@ -3725,7 +3725,7 @@
   "pk": 1,
   "fields": {
     "player": 3,
-    "card": 47
+    "card": 22
   }
 },
 {
@@ -3733,7 +3733,7 @@
   "pk": 2,
   "fields": {
     "player": 3,
-    "card": 28
+    "card": 20
   }
 },
 {
@@ -3741,7 +3741,7 @@
   "pk": 3,
   "fields": {
     "player": 3,
-    "card": 4
+    "card": 15
   }
 },
 {
@@ -3827,7 +3827,7 @@
   "pk": 1,
   "fields": {
     "turn": 1,
-    "step": "1"
+    "step": "0"
   }
 },
 {
@@ -3860,7 +3860,7 @@
   "model": "auth.user",
   "pk": 1,
   "fields": {
-    "password": "pbkdf2_sha256$720000$bHbjU0NiICo9zL989mcqnV$N3YRrJ6bGxkYoYwy7c9sy94wqBg8A2mLVNjjhh3aLQI=",
+    "password": "pbkdf2_sha256$720000$lTBLyYuWH9Npc63XH5SdrV$xO4uFnsrJjRX7gK9itkGF+sJ3NShEB7lcjsGmt/l+1k=",
     "last_login": null,
     "is_superuser": false,
     "username": "user1",
@@ -3869,7 +3869,7 @@
     "email": "",
     "is_staff": false,
     "is_active": true,
-    "date_joined": "2025-12-17T18:32:01.477Z",
+    "date_joined": "2026-01-28T19:54:05.965Z",
     "groups": [],
     "user_permissions": []
   }
@@ -3878,7 +3878,7 @@
   "model": "auth.user",
   "pk": 2,
   "fields": {
-    "password": "pbkdf2_sha256$720000$keWaYLVkrQTeoo8vTqJjSX$C0bhZSEfzCRhhU3VSlL1EEGMDXxcQHXb0akLFecK5os=",
+    "password": "pbkdf2_sha256$720000$TQ2QiAxtto3JyENEvdNTac$k9xm1dc9g6ezOk68Gi5xMn235lLJf9Xlj8aoImlvJac=",
     "last_login": null,
     "is_superuser": false,
     "username": "user2",
@@ -3887,7 +3887,7 @@
     "email": "",
     "is_staff": false,
     "is_active": true,
-    "date_joined": "2025-12-17T18:32:01.759Z",
+    "date_joined": "2026-01-28T19:54:06.248Z",
     "groups": [],
     "user_permissions": []
   }
@@ -3896,7 +3896,7 @@
   "model": "auth.user",
   "pk": 3,
   "fields": {
-    "password": "pbkdf2_sha256$720000$4da6qi0wus7mK1Ezyccro1$ZODiV4GadkRSNu7x5uXe0n8SzHgft+qcmR8cjbdHgtY=",
+    "password": "pbkdf2_sha256$720000$6Z86EIVQqxRuxNK5RhAtc4$jna5Wk8GsBowXABxf17Z4UqGDGva6XZ/a9bWPmh3OKY=",
     "last_login": null,
     "is_superuser": false,
     "username": "user3",
@@ -3905,7 +3905,7 @@
     "email": "",
     "is_staff": false,
     "is_active": true,
-    "date_joined": "2025-12-17T18:32:02.055Z",
+    "date_joined": "2026-01-28T19:54:06.539Z",
     "groups": [],
     "user_permissions": []
   }

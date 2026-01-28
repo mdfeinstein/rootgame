@@ -549,7 +549,8 @@ class CatActionsView(GameActionView):
         game = self.game(game_id)
         player = self.player(request, game_id)
         clearing_number = int(request.data["battle_clearing_number"])
-        self.validate_battle_clearing(game, player, clearing_number)
+        defenders = self.validate_battle_clearing(game, player, clearing_number)
+        options = [{"value": Faction(d.faction).value, "label": Faction(d.faction).label} for d in defenders]
         step = {
             "faction": self.faction_string,
             "name": "select_defender",
@@ -561,6 +562,7 @@ class CatActionsView(GameActionView):
             "accumulated_payload": {
                 "battle_clearing_number": clearing_number,
             },
+            "options": options,
         }
         serializer = GameActionStepSerializer(step)
         return Response(serializer.data)
@@ -843,6 +845,10 @@ class CatActionsView(GameActionView):
     def validate_battle_clearing(
         self, game: Game, player: Player, clearing_number: int
     ) -> list[Player]:
+        """
+        Validates that the clearing is valid to initiate a battle.
+        Returns list of valid defenders.
+        """
         try:
             clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
         except Clearing.DoesNotExist as e:
