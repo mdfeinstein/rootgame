@@ -240,21 +240,4 @@ class GameSetupWithFactionsFactory(GameSetupFactory):
             # WA setup is mostly automatic (drawing cards), usually handled by initial setup.
             # But let's check if there's any manual step.
             pass
-
-        generate_fixture = kwargs.get('generate_fixture', False)
-        #generate fixture
-        if False:
-            print("Generating fixture for game: ", self)
-            call_command(
-                "dumpdata",
-                "game",
-                "auth.user",
-                "--natural-foreign",
-                "--indent=2",
-                "--exclude=contenttypes",
-                "--exclude=auth.permission",
-                "--exclude=admin",
-                "--exclude=sessions",
-                output="game/fixtures/birds_finished_setup.json",
-            )
         
