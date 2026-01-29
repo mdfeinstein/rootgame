@@ -1,9 +1,11 @@
 Table of Contents
+
 - [Introduction](#introduction)
   - [Tech Stack and design philosophy](#tech-stack-and-design-philosophy)
     - [Project Structure](#project-structure)
     - [Action Flow](#action-flow)
   - [State of the Project](#state-of-the-project)
+
 # Introduction
 
 This is a web-based adaptation of the board game Root by Cole Wehrle. Root is a complex board game with many different factions, each with their own unique rules and mechanics.
@@ -11,6 +13,7 @@ This is a web-based adaptation of the board game Root by Cole Wehrle. Root is a 
 The eventual aim is to implement all current factions and one day, maybe fan-made factions as well.
 
 ## Tech Stack and design philosophy
+
 This project is built using Python 3.10 and Django 4.0. The frontend is built using React 18 using Tanstack Query for interaction with the API.
 <br>
 Eventually, django-channels backed by Redis will be used to allow for real-time updates.
@@ -18,6 +21,7 @@ Eventually, django-channels backed by Redis will be used to allow for real-time 
 The project is designed such that the server handles all game logic and the frontend handles all user interaction. The frontend will not be responsible for any game logic, as that would mean duplicating the logic in the frontend and backend in different languages, which is hard to maintain and likely to lead to bugs and inconsistencies.
 
 ### Project Structure
+
 <ul>
 <li>The database will hold all state for the game, which is defined in the models module.</li>
 <li>The queries module holds logic that queries the database, but does not modify it.</li>
@@ -26,6 +30,7 @@ The project is designed such that the server handles all game logic and the fron
 </ul>
 
 ### Action Flow
+
 <ul>
 <li>The client requests the endpoint corresponding to the current action step, which may be a step of a player's turn, or resolving their part of an event like battle.</li>
 
@@ -41,18 +46,47 @@ Validation of timing and player making requests is handled by the custom GameAct
 </li>
 </ul>
 
-
-
-
-
 ## State of the Project
-Currently, Cats, Birds, and Woodland Alliance are partially implemented.
-All three can execute setup.
-Cats can execute all phases of their turn.
-Birds are in progress.
 
-The frontend is very minimal, but will be augmented over time. Currently it is doing just enough to
-allow players to receive prompts and to take actions. The frontend cannot create games just yet, though the API can.
+Currently, 3 factions have been fully implemented: Cats, Birds, and Woodland Alliance.
+Cards can be crafted. Those with passive effects are checked for and handled in the appropriate business logic. Those with active effects also work, launching events if the action has a narrow timing window or are simply made available when usable if they have a broader timing window.
 
-![Screenshot of the frontend](images/frontend_12-11-25.png)
+Not yet implemented:
 
+- endgame scoring and win checks
+- game browser in the front end to create, join, and switch between games
+- login screen
+- undo functionality (partially done)
+
+### Frontend
+
+The frontend is minimal, but will be augmented over time. Components such as cards and clearings are clickable and can be used to submit actions to the server.
+
+#### MAP
+
+Clearings are clickable for actions that require a clearing to be selected.
+
+![Screenshot of the frontend](images/map_1-29-2026.png)
+
+#### Action Prompter
+
+Displays the current action step and the faction that needs to take an action. If options have been provided, they will be displayed as buttons that submit to the server.
+
+![Screenshot of the frontend](images/prompter.png)
+
+#### Cards In Hand
+
+Mousing over the hand of cards will expand them, and the hovered card will be brought to the front. Clicking a card will submit it to the server if relevant.
+
+![Screenshot of the frontend](images/cards.png)
+
+#### Player Badges
+
+Player badges with facton, name, crafted cards, and score. Clicking a badge will show that player's board. Clicking crafted cards will display the crafted cards.
+![Screenshot of the frontend](images/player_icons.png)
+
+#### Player Boards
+
+![Screenshot of the frontend](images/cat_board.png)
+![Screenshot of the frontend](images/bird_board.png)
+![Screenshot of the frontend](images/wa_board.png)
