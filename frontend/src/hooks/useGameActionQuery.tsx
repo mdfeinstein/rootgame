@@ -30,41 +30,12 @@ export type GameActionStep = {
 
 const useGameActionQuery = (gameId: number) => {
   const queryClient = useQueryClient();
-  const signIn = useMutation({
-    mutationFn: async (loginData: { username: string; password: string }) => {
-      const response = await fetch(`${djangoUrl}/api/token/`, {
-        method: "POST",
-        // credentials: "include",
-        body: JSON.stringify({
-          username: loginData.username,
-          password: loginData.password,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      return response.json();
-    },
-    onSuccess: async (data) => {
-      localStorage.setItem("accessToken", data.access);
-      localStorage.setItem("refreshToken", data.refresh);
-      console.log("success", data);
-    },
-    onError: (error) => {
-      console.log("error", error);
-    },
-  });
-  // temporary user sign in here for dev testing
-  // useEffect(() => {
-  //   signIn.mutate({ username: "user2", password: "password" });
-  // }, []);
 
   const {
     data: actionRoute,
     isLoading: actionRouteIsLoading,
     isError: actionRouteIsError,
     isSuccess: actionRouteIsSuccess,
-    dataUpdatedAt: actionRouteDataUpdatedAt,
   } = useQuery({
     queryKey: ["current-action", gameId],
     queryFn: async (): Promise<RouteData> => {
@@ -75,7 +46,7 @@ const useGameActionQuery = (gameId: number) => {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       return response.json();
     },
@@ -87,12 +58,7 @@ const useGameActionQuery = (gameId: number) => {
     isError: actionInfoIsError,
     isSuccess: actionInfoIsSuccess,
   } = useQuery({
-    queryKey: [
-      "current-action-info",
-      gameId,
-      actionRoute?.route ?? null,
-      actionRouteDataUpdatedAt,
-    ],
+    queryKey: ["current-action-info", gameId, actionRoute?.route ?? null],
     queryFn: async (): Promise<GameActionStep> => {
       const response = await fetch(
         `${djangoUrl}/${actionRoute?.route}?game_id=${gameId}`,
@@ -100,7 +66,7 @@ const useGameActionQuery = (gameId: number) => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
-        }
+        },
       ).then((r) => r.json());
       console.log("action info", response);
       return response;
@@ -115,7 +81,7 @@ const useGameActionQuery = (gameId: number) => {
       payload = { ...actionInfo?.accumulated_payload, ...payload };
 
       const response = await fetch(
-        `${djangoUrl}${actionRoute?.route}${gameId}/${actionInfo?.endpoint}/`,
+        `${djangoUrl}/${actionRoute?.route}${gameId}/${actionInfo?.endpoint}/`,
         {
           method: "POST",
           body: JSON.stringify(payload),
@@ -123,7 +89,7 @@ const useGameActionQuery = (gameId: number) => {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       if (!response.ok) {
         const error = await response.json();
@@ -139,25 +105,15 @@ const useGameActionQuery = (gameId: number) => {
     onSuccess: async (data) => {
       setError(null);
       if (data.name === "completed") {
-        // get the next action and its first step
-        // await queryClient.invalidateQueries({
-        //   queryKey: ["current-action", gameId],
-        // });
-        // await queryClient.invalidateQueries({
-        //   queryKey: ["current-action-info", gameId],
-        // });
+        // game state has changed. invalidate all queries
+        // will also cause a refetch of the current action
         await queryClient.invalidateQueries();
         return;
       }
       //update actionInfo
       queryClient.setQueryData(
-        [
-          "current-action-info",
-          gameId,
-          actionRoute?.route ?? null,
-          actionRouteDataUpdatedAt,
-        ],
-        data
+        ["current-action-info", gameId, actionRoute?.route ?? null],
+        data,
       );
       console.log("success", data);
     },
@@ -176,6 +132,10 @@ const useGameActionQuery = (gameId: number) => {
     });
   };
 
+  const startActionOverride = (route: string) => {
+    queryClient.setQueryData(["current-action", gameId], { route });
+  };
+
   return {
     baseEndpoint: actionRoute?.route,
     actionInfo,
@@ -185,6 +145,7 @@ const useGameActionQuery = (gameId: number) => {
     isSuccess: actionInfoIsSuccess,
     submitPayloadMutation,
     cancelProcess,
+    startActionOverride,
   };
 };
 

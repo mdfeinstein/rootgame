@@ -25,6 +25,7 @@ const GameActionProvider = ({ children }: { children: React.ReactNode }) => {
     isSuccess,
     submitPayloadMutation,
     cancelProcess,
+    startActionOverride,
   } = useGameActionQuery(gameId);
 
   const callBack = (submitPayload: SubmitPayload) => {
@@ -58,6 +59,7 @@ const GameActionProvider = ({ children }: { children: React.ReactNode }) => {
         error,
         submitPayloadCallback: callBack,
         cancelProcess,
+        startActionOverride,
       }}
     >
       {children}

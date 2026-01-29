@@ -85,7 +85,9 @@ def add_supporter(player: Player, card: CardsEP):
 def draw_card_to_supporters(player: Player):
     """draws a card from the deck to the player's supporters"""
     assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
-    card = draw_card_from_deck(player)
+    card_in_hand = draw_card_from_deck(player)
+    print(f"card_in_hand: {card_in_hand}")
+    card = CardsEP[card_in_hand.card.card_type]
     add_supporter(player, card)
 
 @transaction.atomic

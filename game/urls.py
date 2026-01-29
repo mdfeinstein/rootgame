@@ -315,7 +315,7 @@ from game.views.action_views.crafted_cards.swap_meet import SwapMeetPickOpponent
 register_action(
     "swap-meet-take",
     SwapMeetPickOpponentView,
-    "api/action/card/swap-meet-take/",
+    "api/action/card/swap-meet/",
     urlpatterns,
 )
 register_action(

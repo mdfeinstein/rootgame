@@ -14,6 +14,7 @@ Structure:
 - Post requests are routed to the appropriate method (route_post) and provide the next step or a "completed" message.
 - validation methods to validate player and timing can be overridden and shoudl be used.
 - generate_step and generate_completed_step methods provide interface for generating correct step structure.
+- transaction functions that effect the game state change should use atomic_game_action (game/decorators/transaction_decorator)
 
 Errors:
 transactions should be called in try except blocks that raise the error as ValidationError (rest_framework)

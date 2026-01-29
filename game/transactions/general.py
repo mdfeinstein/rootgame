@@ -55,7 +55,7 @@ def reshuffle_discard_into_deck(game: Game):
 
 
 @transaction.atomic
-def draw_card_from_deck(player: Player):
+def draw_card_from_deck(player: Player) -> HandEntry:
     """draws a card from the deck and adds it to the player's hand"""
     # select top card from deck
     card_in_deck = DeckEntry.objects.filter(game=player.game).first()
@@ -64,10 +64,11 @@ def draw_card_from_deck(player: Player):
         card_in_deck = DeckEntry.objects.filter(game=player.game).first()
     # add card to player's hand
     assert card_in_deck is not None, "card_in_deck is none"
-    HandEntry(player=player, card=card_in_deck.card).save()
+    card_in_hand = HandEntry.objects.create(player=player, card=card_in_deck.card)
     # delete card from deck
     assert card_in_deck is not None, "card_in_deck is none"
     card_in_deck.delete()
+    return card_in_hand
 
 
 @transaction.atomic
