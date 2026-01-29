@@ -129,6 +129,7 @@ class SpreadSympathyView(GameActionView):
                 "prompt": "No clearings to spread sympathy in. confirm to end spread sympathy step.",
                 "endpoint": "end",
                 "payload_details": [{"type": "confirm", "name": "confirm"}],
+                "options": [{"value": True, "label": "Confirm"}],
             }
         return super().get(request)
 

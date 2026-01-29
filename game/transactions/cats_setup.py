@@ -109,19 +109,12 @@ def place_building(
     player: Player, building_type: CatBuildingTypes, building_slot: BuildingSlot
 ):
     """places a building of the given type from the supply in the given clearing
-    also applies scoring for the player
+    Used or initial setup.
     """
     # check that the building_slot is empty
     if Building.objects.filter(building_slot=building_slot).exists():
         raise ValueError("Building slot is not empty")
 
-    scoring_after_placement = (
-        {  # idx: [0 on board (before placement), 1 on board,... 6 on board] val: score
-            CatBuildingTypes.SAWMILL: [0, 1, 2, 3, 4, 5],
-            CatBuildingTypes.WORKSHOP: [0, 2, 2, 3, 4, 5],
-            CatBuildingTypes.RECRUITER: [0, 1, 2, 3, 3, 4],
-        }
-    )
     # place building from supply and score
     if building_type == CatBuildingTypes.WORKSHOP:
         buildings = Workshop.objects.filter(player=player, building_slot=None)
@@ -142,12 +135,6 @@ def place_building(
     # assign building_slot
     building.building_slot = building_slot
     building.save()
-
-    # find and adjust score
-    score = scoring_after_placement[building_type][count_on_board]
-    player.score += score
-    player.save()
-    return score
 
 
 @transaction.atomic

@@ -1,3 +1,5 @@
+from game.models.game_models import Card
+from game.models import Player
 from game.models import Clearing
 from game.models.events.event import Event, EventType
 from django.db import models
@@ -72,3 +74,27 @@ class PartisansEvent(models.Model):
     def create(cls, battle, crafted_card_entry: CraftedCardEntry):
         event = Event.objects.create(type=EventType.PARTISANS, game=battle.clearing.game)
         return cls.objects.create(event=event, battle=battle, crafted_card_entry=crafted_card_entry)
+
+class SwapMeetEvent(models.Model):
+    event = models.OneToOneField(
+        Event, on_delete=models.CASCADE, related_name="swap_meet"
+    )
+    taking_player = models.ForeignKey(
+        Player, on_delete=models.CASCADE, related_name="swap_meet_take_events"
+    )
+    taken_from_player = models.ForeignKey(
+        Player, on_delete=models.CASCADE, related_name="swap_meet_given_events"
+    )
+    taken_card = models.ForeignKey(
+        Card, on_delete=models.CASCADE, related_name="swap_meet_taken_cards",
+        null=True, blank=True
+    )
+
+    @classmethod
+    def create(cls, taking_player, taken_from_player):
+        event = Event.objects.create(type=EventType.SWAP_MEET, game=taking_player.game)
+        return cls.objects.create(
+            event=event,
+            taking_player=taking_player,
+            taken_from_player=taken_from_player
+        )

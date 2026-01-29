@@ -320,7 +320,9 @@ class CatsSetupTestCase(TestCase):
             "--exclude=sessions",
             output="game/fixtures/cats_done_setup.json",
         )
-
+        #check that score is 0
+        score = Player.objects.get(game=self.game_id, faction=Faction.CATS).score
+        self.assertEqual(score, 0)
         # response = cats_confirm_completed_setup(self.client, self.game_id)
         # self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         # check some things
