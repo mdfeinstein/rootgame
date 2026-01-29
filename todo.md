@@ -1,3 +1,6 @@
+# Todo List
+
+- [ ] Fix and verify Undo/ checkpoints
 - [ ] Endgame
   - [ ] Dominance
   - [ ] Win checks, game over state

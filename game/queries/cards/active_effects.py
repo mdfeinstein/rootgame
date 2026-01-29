@@ -17,7 +17,10 @@ def can_use_card(player: Player, card_entry: CraftedCardEntry) -> bool:
     card = card_entry.card.enum  # CardsEP enum
     
     # helper for phase checking
-    phase = get_current_phase(player)
+    try:
+        phase = get_current_phase(player)
+    except ValueError:
+        return False
     
     if phase is None:
         return False

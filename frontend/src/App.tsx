@@ -2,6 +2,7 @@ import "./App.css";
 import SvgBoard from "./components/board/Board";
 import { GameActionProvider } from "./contexts/GameActionContext";
 import Prompter from "./components/board/Prompter";
+import CraftedCardPrompter from "./components/board/CraftedCardPrompter";
 import Input from "./components/board/Input";
 import DevSignIn from "./components/DevSignIn";
 import Hand from "./components/cards/Hand";
@@ -50,7 +51,10 @@ function App() {
                     height: "100%",
                   }}
                 >
-                  <Prompter />
+                  <Stack>
+                    <CraftedCardPrompter />
+                    <Prompter />
+                  </Stack>
                   {/* <Input /> */}
                 </div>
                 <DevSignIn />

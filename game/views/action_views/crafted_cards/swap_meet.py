@@ -18,26 +18,20 @@ class SwapMeetPickOpponentView(GameActionView):
         options = []
         for opponent in opponents:
             hand_count = HandEntry.objects.filter(player=opponent).count()
+            faction = Faction(opponent.faction)
             if hand_count > 0:
                 options.append({
-                    "value": opponent.faction,
-                    "label": f"{opponent.faction_label} ({hand_count} cards)"
+                    "value": faction.value,
+                    "label": f"{faction.label} ({hand_count} cards)"
                 })
-        
-        step = {
-            "faction": player.faction,
-            "name": "pick-opponent",
-            "prompt": "Pick a player to take a random card from.",
-            "endpoint": "pick-opponent",
-            "payload_details": [
-                {
-                    "type": "select",
-                    "name": "opponent_faction",
-                    "options": options
-                }
-            ]
-        }
-        return Response(GameActionStepSerializer(step).data)
+        return self.generate_step(
+            "pick-opponent",
+            "Pick a player to take a random card from.",
+            "pick-opponent",
+            [{"type": "select", "name": "opponent_faction"}],
+            options=options,
+            faction=Faction(player.faction).label,
+        )
 
     def post(self, request, game_id: int, route: str, *args, **kwargs):
         player = self.player(request, game_id)

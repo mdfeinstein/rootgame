@@ -63,7 +63,7 @@ class CardSerializer(serializers.ModelSerializer):
 
 class CraftedCardSerializer(serializers.ModelSerializer):
     card = CardSerializer()
-    has_active = serializers.SerializerMethodField()
+    can_be_used = serializers.SerializerMethodField()
     used = serializers.SerializerMethodField()
     action_endpoint = serializers.SerializerMethodField()
 
@@ -71,13 +71,16 @@ class CraftedCardSerializer(serializers.ModelSerializer):
         model = CraftedCardEntry
         fields = [
             "card",
-            "has_active",
+            "can_be_used",
             "used",
             "action_endpoint",
         ]
 
-    def get_has_active(self, crafted_card: CraftedCardEntry) -> bool:
-        return has_active_effect(crafted_card)
+    def get_can_be_used(self, crafted_card: CraftedCardEntry) -> bool:
+        try:
+            return can_use_card(crafted_card.player, crafted_card)
+        except ValueError:
+            return False
 
     def get_used(self, crafted_card: CraftedCardEntry) -> bool:
         return is_used(crafted_card)

@@ -62,6 +62,7 @@ def saboteurs_check(player: Player)->bool:
 
     if has_saboteurs:
         # 2. Launch the event
+        print("launching saboteurs event")
         from game.models.events.crafted_cards import SaboteursEvent
         SaboteursEvent.create(saboteurs_entry)
     return has_saboteurs
@@ -80,7 +81,7 @@ def saboteurs_skip(player: Player):
     saboteurs_entry.used = CraftedCardEntry.UsedChoice.USED
     saboteurs_entry.save()
     
-    event = SaboteursEvent.objects.filter(crafted_card_entry=saboteurs_entry).first()
+    event = SaboteursEvent.objects.filter(crafted_card_entry=saboteurs_entry, event__is_resolved=False).first()
     if event:
         event.event.is_resolved = True
         event.event.save()
