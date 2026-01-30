@@ -87,6 +87,9 @@ Player badges with facton, name, crafted cards, and score. Clicking a badge will
 
 #### Player Boards
 
+When a piece on a track covers information, that info is displayed in a tooltip.
 ![Screenshot of the frontend](images/cat_board.png)
 ![Screenshot of the frontend](images/bird_board.png)
+Decree actions have a checkbox to indicate if the decree is used.
 ![Screenshot of the frontend](images/wa_board.png)
+Only the woodland alliance player can see the details of their supporter stack.
