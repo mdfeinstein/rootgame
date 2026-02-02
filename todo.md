@@ -1,7 +1,6 @@
 # Todo List
 
 - [ ] Fix and verify Undo/ checkpoints
-- [ ] Employ custom errors
 - [ ] Endgame
   - [ ] Dominance
   - [ ] Win checks, game over state
@@ -18,3 +17,5 @@
   - [ ] Click to go to game screen
 - [ ] Login Screen
 - [ ] Manual refresh button within game.
+- [ ] Employ custom errors
+- [ ] Game Log

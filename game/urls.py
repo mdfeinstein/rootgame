@@ -311,18 +311,12 @@ register_action(
     urlpatterns,
 )
 
-from game.views.action_views.crafted_cards.swap_meet import SwapMeetPickOpponentView, SwapMeetGiveCardView
+from game.views.action_views.crafted_cards.swap_meet import SwapMeetView
 
 register_action(
-    "swap-meet-take",
-    SwapMeetPickOpponentView,
+    "swap-meet",
+    SwapMeetView,
     "api/action/card/swap-meet/",
-    urlpatterns,
-)
-register_action(
-    "swap-meet-give",
-    SwapMeetGiveCardView,
-    "api/action/card/swap-meet-give/",
     urlpatterns,
 )
 
