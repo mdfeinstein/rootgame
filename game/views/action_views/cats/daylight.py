@@ -827,7 +827,7 @@ class CatActionsView(GameActionView):
 
     def end_step(self, request, game_id: int):
         player = self.player(request, game_id)
-        end_action_step(player)
+        atomic_game_action(end_action_step)(player)
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""

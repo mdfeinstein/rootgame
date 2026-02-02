@@ -105,18 +105,9 @@ const useGameActionQuery = (gameId: number) => {
     onSuccess: async (data) => {
       setError(null);
       if (data.name === "completed") {
-        // get the next action and its first step
-        // await queryClient.invalidateQueries({
-        //   queryKey: ["current-action", gameId],
-        // });
-        // await queryClient.invalidateQueries({
-        //   queryKey: ["current-action-info", gameId],
-        await queryClient.invalidateQueries({
-          queryKey: ["current-action", gameId],
-        });
-        await queryClient.invalidateQueries({
-          queryKey: ["current-action-info", gameId],
-        });
+        // game state has changed. invalidate all queries
+        // will also cause a refetch of the current action
+        await queryClient.invalidateQueries();
         return;
       }
       //update actionInfo

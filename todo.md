@@ -1,6 +1,7 @@
 # Todo List
 
 - [ ] Fix and verify Undo/ checkpoints
+- [ ] Employ custom errors
 - [ ] Endgame
   - [ ] Dominance
   - [ ] Win checks, game over state

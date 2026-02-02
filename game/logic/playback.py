@@ -44,11 +44,12 @@ def playback_to_action(game: Game, turn_number: int, action_number: int):
     try:
         for action in actions:
             func = get_function_by_name(action.transaction_name)
-            
+            print(f"func: {func}")
             # Deserialize args
             raw_args = action.args.get('args', [])
             raw_kwargs = action.args.get('kwargs', {})
-            
+            print(f"raw_args: {raw_args}")
+            print(f"raw_kwargs: {raw_kwargs}")
             d_args, d_kwargs = ActionSerializer.deserialize_args(raw_args, raw_kwargs)
             
             # Execute
@@ -60,7 +61,7 @@ def playback_to_action(game: Game, turn_number: int, action_number: int):
 @transaction.atomic
 def undo_last_action(game: Game):
     current_turn = game.current_turn
-    checkpoint = Checkpoint.objects.filter(game=game, turn_number=current_turn).first()
+    checkpoint = Checkpoint.objects.filter(game=game).order_by('-created_at').first()
     
     # helper to process undo on a specific checkpoint
     def undo_on_checkpoint(cp, turn):
