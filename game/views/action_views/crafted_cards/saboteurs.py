@@ -1,3 +1,4 @@
+from game.queries.general import get_current_player
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
@@ -10,7 +11,8 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 class SaboteursView(GameActionView):
     def get(self, request, *args, **kwargs):
         game_id = request.query_params.get("game_id")
-        player = self.player_by_request(request, game_id)
+        game = self.game(game_id)
+        player = get_current_player(game)
         self.faction = Faction(player.faction)
         
         # Step 1: Pick an enemy faction

@@ -459,6 +459,9 @@ def cat_march(player: Player, origin: Clearing, destination: Clearing, count: in
 @transaction.atomic
 def cat_battle(player: Player, defender: Player, clearing: Clearing):
     from game.transactions.battle import start_battle
+    daylight = get_phase(player)
+    if type(daylight) != CatDaylight:
+        raise ValueError("Not Daylight phase")
     start_battle(player.game, player.faction, defender.faction, clearing)
     daylight.actions_left -= 1
     daylight.save()

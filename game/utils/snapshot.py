@@ -139,9 +139,14 @@ def get_all_game_objects(game: Game):
 
     return objects
 
+import json
+
 def capture_gamestate(game: Game) -> list:
     """
     Captures the full state of the game as a list of dicts (fixture format).
+    Ensures datetimes are serialized to strings for JSONField compatibility.
     """
     objects = get_all_game_objects(game)
-    return serializers.serialize('python', objects)
+    # Use 'json' serializer to handle datetimes, then load back to a list of dicts
+    json_data = serializers.serialize('json', objects)
+    return json.loads(json_data)

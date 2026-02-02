@@ -283,13 +283,8 @@ def bird_recruit_action(
     # mark decree entry as used
     decree_entry.fulfilled = True
     decree_entry.save()
-    # if all decree entries in column are used, move to next step
-    if not DecreeEntry.objects.filter(
-        player=player, column=decree_entry.column, fulfilled=False
-    ).exists():
-        next_step(player)
-    else: #must recruit more: can we recruit more?
-        recruit_turmoil_check(player)
+    # check if turmoil or next_step
+    recruit_turmoil_check(player)
 
 
 @transaction.atomic
@@ -323,13 +318,8 @@ def bird_move_action(
     # mark decree entry as used
     decree_entry.fulfilled = True
     decree_entry.save()
-    # if all decree entries in column are used, move to next step
-    if not DecreeEntry.objects.filter(
-        player=player, column=decree_entry.column, fulfilled=False
-    ).exists():
-        next_step(player)
-    else: # must move more: can we move more?
-        move_turmoil_check(player)
+    # check if turmoil or next_step
+    move_turmoil_check(player)
 
 @transaction.atomic
 def bird_battle_action(
@@ -362,13 +352,8 @@ def bird_battle_action(
     # use decree entry
     decree_entry.fulfilled = True
     decree_entry.save()
-    # if all decree entries in column are used, move to next step
-    if not DecreeEntry.objects.filter(
-        player=player, column=decree_entry.column, fulfilled=False
-    ).exists():
-        next_step(player)
-    else: # must battle more: can we battle more?
-        battle_turmoil_check(player)
+    # check if turmoil or next_step
+    battle_turmoil_check(player)
 
 
 @transaction.atomic
@@ -399,13 +384,8 @@ def bird_build_action(
     # use decree entry
     decree_entry.fulfilled = True
     decree_entry.save()
-    # if all decree entries in column are used, move to next step
-    if not DecreeEntry.objects.filter(
-        player=player, column=DecreeEntry.Column.BUILD, fulfilled=False
-    ).exists():
-        next_step(player)
-    else: # must build more: can we build more?
-        build_turmoil_check(player)
+    # check if turmoil or next_step
+    build_turmoil_check(player)
 
 @transaction.atomic
 def roost_scoring(player: Player):
@@ -590,6 +570,7 @@ def move_turmoil_check(player: Player):
         player=player, column=Vizier.Column.MOVE, fulfilled=False
     )
     move_decrees_remaining = move_cards.count() + viziers.count()
+    print(f"move decrees remaining: {move_decrees_remaining}")
     if move_decrees_remaining == 0:
         # move to next step
         next_step(player)

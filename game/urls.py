@@ -1,3 +1,4 @@
+from game.views.action_views.cats.evening import CatsDiscardCardsView
 from game.views.gamestate_views.wa import get_wa_player_private
 from django.urls import URLPattern, path
 
@@ -167,7 +168,7 @@ register_action(
 )
 register_action(
     "cats-evening-discard-cards",
-    CatsDrawCardsView,
+    CatsDiscardCardsView,
     "api/cats/evening/discard-cards/",
     urlpatterns,
 )

@@ -2,6 +2,7 @@ from django.db import models
 from django.apps import apps
 from enum import Enum
 import importlib
+from datetime import datetime
 
 class ActionSerializer:
     @staticmethod
@@ -18,6 +19,11 @@ class ActionSerializer:
                 "module": arg.__class__.__module__,
                 "class": arg.__class__.__qualname__,
                 "name": arg.name
+            }
+        elif isinstance(arg, datetime):
+            return {
+                "_type": "datetime",
+                "value": arg.isoformat()
             }
         elif isinstance(arg, (list, tuple)):
            return [ActionSerializer.serialize_arg(item) for item in arg]
@@ -55,6 +61,8 @@ class ActionSerializer:
                     # But for now, just return None if it fails
                     print(f"Failed to deserialize enum: {module_name}.{class_name}.{member_name}")
                     return None
+            elif arg.get("_type") == "datetime":
+                return datetime.fromisoformat(arg.get("value"))
         elif isinstance(arg, list):
             return [ActionSerializer.deserialize_arg(item) for item in arg]
         return arg

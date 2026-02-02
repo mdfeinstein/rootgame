@@ -14,6 +14,7 @@ def load_gamestate(game_id: int, gamestate_data: list):
     # 1. Deserialize
     # deserialized_objects is a generator of DeserializedObject wrappers
     # We use 'python' format because gamestate_data is already a python list (from JSONField)
+    print(gamestate_data)
     deserialized_objects = list(serializers.deserialize('python', gamestate_data))
     
     # Map of (Model, PK) -> DeserializedObject

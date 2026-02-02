@@ -76,9 +76,11 @@ class RootGameClient(APIClient):
         payload_details: list[dict] = self.step["payload_details"]
         # prepare data to post
         to_send = {}
-        # add accumulated data
-        if self.step.get("accumulated_payload") is not None:
+        # Merge accumulated payload if exists
+        if "accumulated_payload" in self.step:
             to_send.update(self.step["accumulated_payload"])
+
+        payload_details = self.step["payload_details"]
         # process data by picking out matching payload details
         # and naming them according to provided details
         for payload_detail in payload_details:
