@@ -12,6 +12,9 @@ class InformantsEvent(models.Model):
     crafted_card_entry = models.ForeignKey(
         CraftedCardEntry, on_delete=models.CASCADE, related_name="informants_events"
     )
+    @property
+    def game(self):
+        return self.event.game
     @classmethod
     def create(cls, crafted_card_entry: CraftedCardEntry):
         event = Event.objects.create(type=EventType.INFORMANTS, game=crafted_card_entry.player.game)
@@ -30,6 +33,9 @@ class EyrieEmigreEvent(models.Model):
         default=None, null=True
     )
     battle_initiated = models.BooleanField(default=False)
+    @property
+    def game(self):
+        return self.event.game
     @classmethod
     def create(cls, crafted_card_entry: CraftedCardEntry):
         event = Event.objects.create(type=EventType.EYRIE_EMIGRE, game=crafted_card_entry.player.game)
@@ -42,6 +48,9 @@ class SaboteursEvent(models.Model):
     crafted_card_entry = models.ForeignKey(
         CraftedCardEntry, on_delete=models.CASCADE, related_name="saboteurs_events"
     )
+    @property
+    def game(self):
+        return self.event.game
     @classmethod
     def create(cls, crafted_card_entry: CraftedCardEntry):
         event = Event.objects.create(type=EventType.SABOTEURS, game=crafted_card_entry.player.game)
@@ -54,6 +63,9 @@ class CharmOffensiveEvent(models.Model):
     crafted_card_entry = models.ForeignKey(
         CraftedCardEntry, on_delete=models.CASCADE, related_name="charm_offensive_events"
     )
+    @property
+    def game(self):
+        return self.event.game
     @classmethod
     def create(cls, crafted_card_entry: CraftedCardEntry):
         event = Event.objects.create(type=EventType.CHARM_OFFENSIVE, game=crafted_card_entry.player.game)
@@ -89,6 +101,9 @@ class SwapMeetEvent(models.Model):
         Card, on_delete=models.CASCADE, related_name="swap_meet_taken_cards",
         null=True, blank=True
     )
+    @property
+    def game(self):
+        return self.event.game
 
     @classmethod
     def create(cls, taking_player, taken_from_player):

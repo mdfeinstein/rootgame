@@ -12,12 +12,12 @@ from game.transactions.crafted_cards.eyrie_emigre import (
     emigre_skip_battle
 )
 from game.queries.general import validate_has_legal_moves, validate_legal_move, get_enemy_factions_in_clearing
+from game.decorators.transaction_decorator import atomic_game_action
 
 class EyrieEmigreView(GameActionView):
     def get(self, request, *args, **kwargs):
-        game_id = request.query_params.get("game_id")
-        player = self.player_by_request(request, game_id)
-        self.faction = Faction(player.faction)
+        game_id = kwargs.get("game_id") or request.query_params.get("game_id")
+        player = self.player(request, game_id)
 
         event = EyrieEmigreEvent.objects.filter(
             event__game_id=game_id, 
@@ -34,23 +34,19 @@ class EyrieEmigreView(GameActionView):
                 {"value": "use", "label": "Use Eyrie Emigre"},
                 {"value": "skip", "label": "Skip"}
             ]
-            self.first_step = {
-                "faction": self.faction.label,
-                "name": "use-or-skip",
-                "prompt": "Do you want to use Eyrie Emigre to move and battle?",
-                "endpoint": "use-or-skip",
-                "payload_details": [{"type": "choice", "name": "choice"}],
-                "options": options,
-                "accumulated_payload": {"event_id": event.id}
-            }
+            return self.generate_step(
+                name="use-or-skip",
+                prompt="Do you want to use Eyrie Emigre to move and battle?",
+                endpoint="use-or-skip",
+                payload_details=[{"type": "choice", "name": "choice"}],
+                options=options,
+                faction=Faction(player.faction)
+            )
         else:
             # Step 3: Battle or Skip Battle
-            # This case handles if the player refreshing the page after moving but before battling
             return self.get_battle_step(event, player)
 
-        return super().get(request)
-
-    def route_post(self, request, game_id: int, route: str):
+    def route_post(self, request, game_id: int, route: str, *args, **kwargs):
         match route:
             case "use-or-skip":
                 return self.post_use_or_skip(request, game_id)
@@ -65,16 +61,26 @@ class EyrieEmigreView(GameActionView):
             case "battle":
                 return self.post_battle(request, game_id)
             case _:
-                return Response(status=status.HTTP_404_NOT_FOUND)
+                raise ValidationError("Invalid route")
 
     def post_use_or_skip(self, request, game_id):
-        player = self.player_by_request(request, game_id)
+        player = self.player(request, game_id)
         choice = request.data["choice"]
-        event_id = request.data["event_id"]
-        event = get_object_or_404(EyrieEmigreEvent, id=event_id, crafted_card_entry__player=player)
+        
+        event = EyrieEmigreEvent.objects.filter(
+            event__game_id=game_id, 
+            event__is_resolved=False, 
+            crafted_card_entry__player=player
+        ).first()
+        
+        if not event:
+            raise ValidationError("No active event")
 
         if choice == "skip":
-            emigre_skip(event)
+            try:
+                atomic_game_action(emigre_skip)(event)
+            except ValueError as e:
+                raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
         
         # Choice is "use" -> Start move flow
@@ -83,13 +89,11 @@ class EyrieEmigreView(GameActionView):
             prompt="Select origin clearing for Eyrie Emigre move",
             endpoint="origin",
             payload_details=[{"type": "clearing_number", "name": "origin_clearing"}],
-            accumulated_payload={"event_id": event.id},
             faction=Faction(player.faction)
         )
 
     def post_origin(self, request, game_id):
-        player = self.player_by_request(request, game_id)
-        event_id = request.data["event_id"]
+        player = self.player(request, game_id)
         clearing_number = int(request.data["origin_clearing"])
         
         try:
@@ -103,13 +107,12 @@ class EyrieEmigreView(GameActionView):
             prompt="Select destination clearing",
             endpoint="destination",
             payload_details=[{"type": "clearing_number", "name": "destination_clearing"}],
-            accumulated_payload={"event_id": event_id, "origin_clearing": clearing_number},
+            accumulated_payload={"origin_clearing": clearing_number},
             faction=Faction(player.faction)
         )
 
     def post_destination(self, request, game_id):
-        player = self.player_by_request(request, game_id)
-        event_id = request.data["event_id"]
+        player = self.player(request, game_id)
         origin_clearing_number = int(request.data["origin_clearing"])
         destination_clearing_number = int(request.data["destination_clearing"])
 
@@ -126,7 +129,6 @@ class EyrieEmigreView(GameActionView):
             endpoint="count",
             payload_details=[{"type": "number", "name": "count"}],
             accumulated_payload={
-                "event_id": event_id, 
                 "origin_clearing": origin_clearing_number,
                 "destination_clearing": destination_clearing_number
             },
@@ -134,27 +136,34 @@ class EyrieEmigreView(GameActionView):
         )
 
     def post_count(self, request, game_id):
-        player = self.player_by_request(request, game_id)
-        event_id = request.data["event_id"]
+        player = self.player(request, game_id)
         origin_clearing_number = int(request.data["origin_clearing"])
         destination_clearing_number = int(request.data["destination_clearing"])
         count = int(request.data["count"])
 
-        event = get_object_or_404(EyrieEmigreEvent, id=event_id, crafted_card_entry__player=player)
+        event = EyrieEmigreEvent.objects.filter(
+            event__game_id=game_id, 
+            event__is_resolved=False, 
+            crafted_card_entry__player=player
+        ).first()
+        
         origin_clearing = get_object_or_404(Clearing, game_id=game_id, clearing_number=origin_clearing_number)
         destination_clearing = get_object_or_404(Clearing, game_id=game_id, clearing_number=destination_clearing_number)
 
         try:
-            emigre_move(event, origin_clearing, destination_clearing, count)
+            atomic_game_action(emigre_move)(event, origin_clearing, destination_clearing, count)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
 
-        # Re-fetch event to see if it was resolved (due to failure/no enemies)
-        event.refresh_from_db()
+        try:
+            event.refresh_from_db()
+        except EyrieEmigreEvent.DoesNotExist:
+            # Event was deleted due to failure (no enemies in destination)
+            return self.generate_completed_step()
+
         if event.event.is_resolved:
             return self.generate_completed_step()
 
-        # If move successful and enemies present, offer battle
         return self.get_battle_step(event, player)
 
     def get_battle_step(self, event, player):
@@ -167,45 +176,54 @@ class EyrieEmigreView(GameActionView):
             prompt=f"Do you want to battle in clearing {event.move_destination.clearing_number}?",
             endpoint="battle-choice",
             payload_details=[{"type": "choice", "name": "choice"}],
-            accumulated_payload={"event_id": event.id},
             options=options,
             faction=Faction(player.faction)
         )
 
     def post_battle_choice(self, request, game_id):
-        player = self.player_by_request(request, game_id)
+        player = self.player(request, game_id)
         choice = request.data["choice"]
-        event_id = request.data["event_id"]
-        event = get_object_or_404(EyrieEmigreEvent, id=event_id, crafted_card_entry__player=player)
+        
+        event = EyrieEmigreEvent.objects.filter(
+            event__game_id=game_id, 
+            event__is_resolved=False, 
+            crafted_card_entry__player=player
+        ).first()
 
         if choice == "skip":
-            emigre_skip_battle(event)
+            try:
+                atomic_game_action(emigre_skip_battle)(event)
+            except ValueError as e:
+                raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
 
         # Choice is "battle" -> Show enemy factions
         enemy_factions = get_enemy_factions_in_clearing(player, event.move_destination)
-        options = [{"value": f.name, "label": f.label} for f in enemy_factions]
+        options = [{"value": f.value, "label": f.label} for f in enemy_factions]
 
         return self.generate_step(
             name="battle",
             prompt="Select faction to battle",
             endpoint="battle",
-            payload_details=[{"type": "faction", "name": "faction"}],
-            accumulated_payload={"event_id": event_id},
+            payload_details=[{"type": "faction", "name": "faction_name"}],
             options=options,
             faction=Faction(player.faction)
         )
 
     def post_battle(self, request, game_id):
-        player = self.player_by_request(request, game_id)
-        event_id = request.data["event_id"]
-        target_faction_name = request.data["faction"]
+        player = self.player(request, game_id)
+        faction_name = request.data["faction_name"]
         
-        event = get_object_or_404(EyrieEmigreEvent, id=event_id, crafted_card_entry__player=player)
-        target_faction = Faction[target_faction_name]
+        event = EyrieEmigreEvent.objects.filter(
+            event__game_id=game_id, 
+            event__is_resolved=False, 
+            crafted_card_entry__player=player
+        ).first()
+        
+        target_faction = Faction(faction_name)
 
         try:
-            emigre_battle(event, target_faction)
+            atomic_game_action(emigre_battle)(event, target_faction)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
 

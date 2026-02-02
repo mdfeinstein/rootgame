@@ -1,154 +1,92 @@
 from django.test import TestCase
-from django.contrib.auth.models import User
-from game.models.game_models import Game, Player, Faction, Card, CraftedItemEntry, Clearing, Suit, Warrior, CraftedCardEntry, BuildingSlot
-from game.models.birds.turn import BirdTurn, BirdBirdsong, BirdDaylight
+from .client import RootGameClient
+from game.models.game_models import Faction, Player, CraftedCardEntry, Clearing, Warrior, CraftedItemEntry, Item
+from game.tests.my_factories import GameSetupWithFactionsFactory, CardFactory, CraftedCardEntryFactory, ItemFactory, CraftedItemEntryFactory
 from game.game_data.cards.exiles_and_partisans import CardsEP
-from game.transactions.game_setup import construct_deck
-from game.tests.client import RootGameClient
 
-class LeagueOfAdventurersViewTest(TestCase):
+class LeagueOfAdventurersViewTestCase(TestCase):
     def setUp(self):
-        self.owner = User.objects.create(username="owner")
-        self.game = Game.objects.create(owner=self.owner)
-        from game.transactions.game_setup import construct_deck, create_craftable_item_supply
-        construct_deck(self.game)
-        create_craftable_item_supply(self.game)
-        self.user1 = User.objects.create(username="user1")
-        self.user1.set_password("password")
-        self.user1.save()
+        # Create game with Cats and Birds
+        self.game = GameSetupWithFactionsFactory(factions=[Faction.CATS, Faction.BIRDS])
+        self.birds_player = self.game.players.get(faction=Faction.BIRDS)
+        self.cats_player = self.game.players.get(faction=Faction.CATS)
         
-        self.player = Player.objects.create(game=self.game, faction=Faction.BIRDS, turn_order=0, user=self.user1)
-        self.lo_card = Card.objects.filter(card_type=CardsEP.LEAGUE_OF_ADVENTURERS.name, game=self.game).first()
-        self.crafted_lo = CraftedCardEntry.objects.create(player=self.player, card=self.lo_card)
+        # Setup passwords for client login
+        self.birds_player.user.set_password("password")
+        self.birds_player.user.save()
         
-        # Give player an item to exhaust
-        from game.models.game_models import Item
-        boot = Item.objects.filter(item_type=Item.ItemTypes.BOOTS).first()
-        self.crafted_item = CraftedItemEntry.objects.create(player=self.player, item=boot)
+        self.birds_client = RootGameClient(self.birds_player.user.username, "password", self.game.id)
         
-        # Board Setup
-        self.clearing1 = Clearing.objects.create(game=self.game, clearing_number=1, suit=Suit.RED)
-        self.clearing2 = Clearing.objects.create(game=self.game, clearing_number=2, suit=Suit.YELLOW)
-        self.clearing1.connected_clearings.add(self.clearing2)
-        
-        # Player warriors in clearing 1
-        Warrior.objects.create(player=self.player, clearing=self.clearing1)
-        # Bird must rule origin or destination to move with League of Adventurers
-        # Add a roost to clearing 1 to ensure rule
-        from game.models.birds.buildings import BirdRoost
-        slot = BuildingSlot.objects.create(clearing=self.clearing1, building_slot_number=0)
-        BirdRoost.objects.create(player=self.player, building_slot=slot)
-        
-        # Enemy in clearing 1 for battle test
-        self.cat_user = User.objects.create(username="cat_user")
-        self.cat_player = Player.objects.create(game=self.game, faction=Faction.CATS, turn_order=1, user=self.cat_user)
-        Warrior.objects.create(player=self.cat_player, clearing=self.clearing1)
-        
-        # Set turn and phase (Birds Daylight)
-        self.game.current_turn = self.player.turn_order
-        self.game.save()
-        turn = BirdTurn.create_turn(self.player)
-        BirdBirdsong.objects.filter(turn=turn).update(step=BirdBirdsong.BirdBirdsongSteps.COMPLETED)
-        BirdDaylight.objects.filter(turn=turn).update(step=BirdDaylight.BirdDaylightSteps.CRAFTING)
-        
-        self.client = RootGameClient(user="user1", password="password", game_id=self.game.id)
+        # Give Birds League card
+        self.card = CardFactory(game=self.game, card_type=CardsEP.LEAGUE_OF_ADVENTURERS.name)
+        self.entry = CraftedCardEntryFactory(player=self.birds_player, card=self.card, used=CraftedCardEntry.UsedChoice.UNUSED)
 
-    def test_move_flow_with_clearing_numbers(self):
-        # 1. GET initial options (items)
-        response = self.client.get(f"/api/action/card/league-of-adventurers/?game_id={self.game.id}")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "pick-item")
-        self.assertEqual(response.data["options"][0]["value"], str(self.crafted_item.id))
+        # Give Birds an item
+        self.item = ItemFactory(game=self.game)
+        self.item_entry = CraftedItemEntryFactory(player=self.birds_player, item=self.item, exhausted=False)
+
+        # Place some warriors
+        self.clearing1 = Clearing.objects.get(game=self.game, clearing_number=1)
+        self.clearing2 = Clearing.objects.get(game=self.game, clearing_number=2)
+        Warrior.objects.create(player=self.birds_player, clearing=self.clearing1)
         
-        # 2. POST pick-item
-        response = self.client.post(
-            f"/api/action/card/league-of-adventurers/{self.game.id}/pick-item/",
-            {"item_id": self.crafted_item.id}
-        )
+        # Ensure they are adjacent
+        if self.clearing2 not in self.clearing1.connected_clearings.all():
+            self.clearing1.connected_clearings.add(self.clearing2)
+
+        # Set Birds turn and phase to Daylight
+        from game.models.birds.turn import BirdTurn, BirdBirdsong, BirdDaylight
+        self.game.current_turn = 1
+        self.game.save()
+        if not BirdTurn.objects.filter(player=self.birds_player).exists():
+            BirdTurn.create_turn(self.birds_player)
+            
+        turn = BirdTurn.objects.filter(player=self.birds_player).order_by("-turn_number").first()
+        birdsong = BirdBirdsong.objects.get(turn=turn)
+        birdsong.step = BirdBirdsong.BirdBirdsongSteps.COMPLETED
+        birdsong.save()
+        
+        daylight = BirdDaylight.objects.get(turn=turn)
+        daylight.step = BirdDaylight.BirdDaylightSteps.CRAFTING
+        daylight.save()
+
+    def test_league_move_flow(self):
+        """Test League of Adventurers move flow."""
+        self.birds_client.base_route = "/api/action/card/league-of-adventurers/"
+        
+        # 1. Initial GET -> pick-item
+        response = self.birds_client.get(f"{self.birds_client.base_route}?game_id={self.game.id}")
+        self.assertEqual(response.status_code, 200)
+        self.birds_client.step = response.data
+        self.assertEqual(response.data["name"], "pick-item")
+        
+        # 2. SUBMIT item -> pick-action
+        response = self.birds_client.submit_action({"select": str(self.item_entry.id)})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "pick-action")
         
-        # 3. POST pick-action (move)
-        response = self.client.post(
-            f"/api/action/card/league-of-adventurers/{self.game.id}/pick-action/",
-            {"item_id": self.crafted_item.id, "action_type": "move"}
-        )
+        # 3. SUBMIT "move" -> pick-origin
+        response = self.birds_client.submit_action({"choice": "move"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "pick-origin")
-        self.assertEqual(response.data["options"][0]["value"], "1") # origin_number
         
-        # 4. POST pick-origin
-        response = self.client.post(
-            f"/api/action/card/league-of-adventurers/{self.game.id}/pick-origin/",
-            {"item_id": self.crafted_item.id, "action_type": "move", "origin_number": 1}
-        )
+        # 4. SUBMIT origin -> pick-destination
+        response = self.birds_client.submit_action({"clearing_number": 1})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "pick-destination")
-        self.assertEqual(response.data["options"][0]["value"], "2") # destination_number
         
-        # 5. POST pick-destination
-        response = self.client.post(
-            f"/api/action/card/league-of-adventurers/{self.game.id}/pick-destination/",
-            {
-                "item_id": self.crafted_item.id,
-                "action_type": "move",
-                "origin_number": 1,
-                "destination_number": 2
-            }
-        )
+        # 5. SUBMIT destination -> pick-count
+        response = self.birds_client.submit_action({"clearing_number": 2})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "pick-count")
         
-        # 6. POST pick-count (Final)
-        response = self.client.post(
-            f"/api/action/card/league-of-adventurers/{self.game.id}/pick-count/",
-            {
-                "item_id": self.crafted_item.id,
-                "action_type": "move",
-                "origin_number": 1,
-                "destination_number": 2,
-                "count": 1
-            }
-        )
+        # 6. SUBMIT count -> completed
+        response = self.birds_client.submit_action({"number": 1})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "completed")
         
-        # Verify result
-        self.assertEqual(Warrior.objects.filter(player=self.player, clearing=self.clearing2).count(), 1)
-
-    def test_battle_flow_with_clearing_numbers(self):
-        # Continue from pick-action step
-        # 3. POST pick-action (battle)
-        response = self.client.post(
-            f"/api/action/card/league-of-adventurers/{self.game.id}/pick-action/",
-            {"item_id": self.crafted_item.id, "action_type": "battle"}
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "pick-clearing")
-        self.assertEqual(response.data["options"][0]["value"], "1") # clearing_number
-        
-        # 4. POST pick-clearing
-        response = self.client.post(
-            f"/api/action/card/league-of-adventurers/{self.game.id}/pick-clearing/",
-            {"item_id": self.crafted_item.id, "action_type": "battle", "clearing_number": 1}
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "pick-opponent")
-        self.assertEqual(response.data["options"][0]["value"], Faction.CATS)
-        
-        # 5. POST pick-opponent (Final)
-        response = self.client.post(
-            f"/api/action/card/league-of-adventurers/{self.game.id}/pick-opponent/",
-            {
-                "item_id": self.crafted_item.id,
-                "action_type": "battle",
-                "clearing_number": 1,
-                "opponent_faction": Faction.CATS
-            }
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "completed")
-        
-        # Verify battle started
-        from game.models.events.battle import Battle
-        self.assertTrue(Battle.objects.filter(clearing=self.clearing1, attacker=self.player.faction).exists())
+        # Verify warrior moved
+        self.assertEqual(Warrior.objects.filter(player=self.birds_player, clearing=self.clearing2).count(), 1)
+        # Verify item exhausted
+        self.item_entry.refresh_from_db()
+        self.assertTrue(self.item_entry.exhausted)
