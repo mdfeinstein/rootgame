@@ -3,6 +3,7 @@ from .client import RootGameClient
 from game.models.game_models import Faction, Player, CraftedCardEntry, Card, DiscardPileEntry
 from game.tests.my_factories import GameSetupWithFactionsFactory, CardFactory, CraftedCardEntryFactory
 from game.game_data.cards.exiles_and_partisans import CardsEP
+from game.models.events.crafted_cards import SaboteursEvent
 
 class SaboteursViewTestCase(TestCase):
     def setUp(self):
@@ -36,6 +37,9 @@ class SaboteursViewTestCase(TestCase):
         birdsong = BirdBirdsong.objects.get(turn=turn)
         birdsong.step = BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING
         birdsong.save()
+
+        # Create the event
+        SaboteursEvent.create(self.entry)
 
     def test_saboteurs_flow(self):
         """Test Saboteurs flow."""

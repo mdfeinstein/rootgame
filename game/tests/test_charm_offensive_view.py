@@ -40,6 +40,9 @@ class CharmOffensiveViewTestCase(TestCase):
         evening.step = BirdEvening.BirdEveningSteps.SCORING
         evening.save()
 
+        # Create the event
+        CharmOffensiveEvent.create(self.charm_entry)
+
     def test_charm_offensive_flow(self):
         """Test Charm Offensive flow."""
         self.birds_client.base_route = "/api/action/card/charm-offensive/"

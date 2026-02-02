@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from game.views.action_views.general import GameActionView
 from game.models.game_models import Player, Faction, HandEntry
 from game.models.events.crafted_cards import SwapMeetEvent
+from game.models.events.event import EventType
+from game.queries.current_action.events import get_current_event
 from game.transactions.crafted_cards.swap_meet import swap_meet_take_card, swap_meet_give_card
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from django.shortcuts import get_object_or_404
@@ -14,10 +16,7 @@ class SwapMeetView(GameActionView):
         player = self.player(request, game_id)
         
         # Check for active event
-        event = SwapMeetEvent.objects.filter(
-            taking_player=player, 
-            event__is_resolved=False
-        ).first()
+        event = self.get_event(game_id)
         
         if event:
             return self.get_pick_card_to_give(player)
@@ -63,6 +62,8 @@ class SwapMeetView(GameActionView):
         )
 
     def route_post(self, request, game_id: int, route: str, *args, **kwargs):
+        player = self.player(request, game_id)
+        self.faction = Faction(player.faction)
         if route == "pick-opponent":
             return self.post_pick_opponent(request, game_id)
         if route == "pick-card-to-give":
@@ -72,8 +73,11 @@ class SwapMeetView(GameActionView):
     def post_pick_opponent(self, request, game_id: int):
         player = self.player(request, game_id)
         opponent_faction_value = request.data["opponent_faction"]
-        game = self.game(game_id)
-        opponent = get_object_or_404(Player, game=game, faction=opponent_faction_value)
+        
+        try:
+            opponent = Player.objects.get(game_id=game_id, faction=opponent_faction_value)
+        except Player.DoesNotExist:
+             raise ValidationError({"detail": "Opponent player not found"})
         
         try:
             atomic_game_action(swap_meet_take_card)(player, opponent)
@@ -86,18 +90,14 @@ class SwapMeetView(GameActionView):
         player = self.player(request, game_id)
         card_name = request.data["card_name"]
         
+        event = self.get_event(game_id)
+        if not event:
+             raise ValidationError({"detail": "No active Swap Meet event found"})
+            
         try:
             card_ep = CardsEP[card_name.upper()]
         except (KeyError, AttributeError):
             raise ValidationError({"detail": "Invalid card"})
-            
-        event = SwapMeetEvent.objects.filter(
-            taking_player=player, 
-            event__is_resolved=False
-        ).first()
-        
-        if not event:
-            raise ValidationError({"detail": "No active Swap Meet event found"})
             
         try:
             atomic_game_action(swap_meet_give_card)(event, card_ep)
@@ -105,3 +105,33 @@ class SwapMeetView(GameActionView):
             raise ValidationError({"detail": str(e)})
             
         return self.generate_completed_step()
+
+    def get_event(self, game_id: int):
+        event = get_current_event(self.game(game_id))
+        if event and event.type == EventType.SWAP_MEET:
+            try:
+                return SwapMeetEvent.objects.get(event=event)
+            except SwapMeetEvent.DoesNotExist:
+                 return None
+        return None
+
+    def player(self, request, game_id: int) -> Player:
+        event_entry = self.get_event(game_id)
+        if event_entry:
+            return event_entry.taking_player
+        
+        # Fallback to default if no event
+        return self.player_by_request(request, game_id)
+    
+    def validate_timing(self, request, game_id: int, route: str, *args, **kwargs):
+        # Swap Meet is technically triggered by the player choice to use it.
+        # If the event exists, it MUST be Swap Meet.
+        event = get_current_event(self.game(game_id))
+        if event and event.is_resolved == False:
+            if event.type != EventType.SWAP_MEET:
+                 raise ValidationError({"detail": f"Current Event not Swap Meet: {event.type}"})
+    
+    def validate_player(self, request, game_id: int, route: str, *args, **kwargs):
+        player = self.player(request, game_id)
+        if player != self.player_by_request(request, game_id):
+            raise ValidationError({"detail": "Not your turn"})

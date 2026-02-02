@@ -3,8 +3,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from game.views.action_views.general import GameActionView
-from game.models.game_models import Faction, Suit
+from game.models.game_models import Faction, Suit, Player
 from game.models.events.crafted_cards import PartisansEvent
+from game.models.events.event import EventType
+from game.queries.current_action.events import get_current_event
 from game.transactions.battle import use_partisans, skip_partisans
 from game.decorators.transaction_decorator import atomic_game_action
 
@@ -13,14 +15,7 @@ class PartisansView(GameActionView):
         game_id = kwargs.get("game_id") or request.query_params.get("game_id")
         player = self.player(request, game_id)
         
-        event_entry = PartisansEvent.objects.filter(
-            event__game_id=game_id, 
-            event__is_resolved=False, 
-            crafted_card_entry__player=player
-        ).first()
-        
-        if not event_entry:
-            raise ValidationError({"detail": "No active Partisans event for player."})
+        event_entry = self.get_event(game_id)
             
         clearing_suit = event_entry.battle.clearing.suit
         suit_name = Suit(clearing_suit).label
@@ -40,6 +35,8 @@ class PartisansView(GameActionView):
         )
 
     def route_post(self, request, game_id: int, route: str, *args, **kwargs):
+        player = self.player(request, game_id)
+        self.faction = Faction(player.faction)
         match route:
             case "use-or-skip":
                 return self.post_use_or_skip(request, game_id)
@@ -50,14 +47,7 @@ class PartisansView(GameActionView):
         player = self.player(request, game_id)
         choice = request.data["selection"]
         
-        event_entry = PartisansEvent.objects.filter(
-            event__game_id=game_id, 
-            event__is_resolved=False, 
-            crafted_card_entry__player=player
-        ).first()
-        
-        if not event_entry:
-             raise ValidationError("No active event")
+        event_entry = self.get_event(game_id)
 
         match choice:
             case "skip":
@@ -73,3 +63,24 @@ class PartisansView(GameActionView):
             case _:
                 raise ValidationError({"detail": f"Invalid choice: {choice}"})
         return self.generate_completed_step()
+
+    def get_event(self, game_id: int):
+        event = get_current_event(self.game(game_id))
+        try:
+            return PartisansEvent.objects.get(event=event)
+        except PartisansEvent.DoesNotExist:
+             raise ValidationError({"detail": "Current Event not Partisans"})
+
+    def player(self, request, game_id: int) -> Player:
+        event_entry = self.get_event(game_id)
+        return event_entry.crafted_card_entry.player
+    
+    def validate_timing(self, request, game_id: int, route: str, *args, **kwargs):
+        event = get_current_event(self.game(game_id))
+        if not event or event.type != EventType.PARTISANS:
+            raise ValidationError({"detail": "Current Event not Partisans"})
+    
+    def validate_player(self, request, game_id: int, route: str, *args, **kwargs):
+        player = self.player(request, game_id)
+        if player != self.player_by_request(request, game_id):
+            raise ValidationError({"detail": "Not your turn"})

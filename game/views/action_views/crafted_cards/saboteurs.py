@@ -1,3 +1,6 @@
+from game.models import SaboteursEvent
+from game.models.events.event import EventType
+from game.queries.current_action.events import get_current_event
 from game.queries.general import get_current_player
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -13,7 +16,7 @@ class SaboteursView(GameActionView):
     def get(self, request, *args, **kwargs):
         game_id = kwargs.get("game_id") or request.query_params.get("game_id")
         player = self.player(request, game_id)
-        
+        self.faction = Faction(player.faction)
         # Step 1: Pick an enemy faction
         # Get factions that have crafted cards and are not the current player
         enemy_factions_with_cards = CraftedCardEntry.objects.filter(
@@ -42,6 +45,8 @@ class SaboteursView(GameActionView):
         )
 
     def route_post(self, request, game_id: int, route: str, *args, **kwargs):
+        player = self.player(request, game_id)
+        self.faction = Faction(player.faction)
         match route:
             case "pick-faction":
                 return self.post_pick_faction(request, game_id)
@@ -118,3 +123,24 @@ class SaboteursView(GameActionView):
             raise ValidationError({"detail": str(e)})
         
         return self.generate_completed_step()
+
+    def get_event(self, game_id: int):
+        event = get_current_event(self.game(game_id))
+        try:
+            return SaboteursEvent.objects.get(event=event)
+        except SaboteursEvent.DoesNotExist:
+            raise ValidationError({"detail": "Current Event not Saboteurs"})
+
+    def player(self, request, game_id: int) -> Player:
+        sabo_event = self.get_event(game_id)
+        return sabo_event.crafted_card_entry.player
+    
+    def validate_timing(self, request, game_id: int, route: str, *args, **kwargs):
+        event = get_current_event(self.game(game_id))
+        if not event or event.type != EventType.SABOTEURS:
+            raise ValidationError({"detail": "Current Event not Saboteurs"})
+    
+    def validate_player(self, request, game_id: int, route: str, *args, **kwargs):
+        player = self.player(request, game_id)
+        if player != self.player_by_request(request, game_id):
+            raise ValidationError({"detail": "Not your turn"})

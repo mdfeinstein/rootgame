@@ -5,11 +5,11 @@
   - [ ] Dominance
   - [ ] Win checks, game over state
   - [ ] frontend display game over state
-- [ ] Crafted Cards
+- [x] Crafted Cards
   - [x] Backend Support
-  - [ ] Frontend
-    - [ ] Display crafted cards in crafting area
-    - [ ] Display usable crafted cards on main screen. Make clickable to use. (will replace contents of prompter)
+  - [x] Frontend
+    - [x] Display crafted cards in crafting area
+    - [x] Display usable crafted cards on main screen. Make clickable to use. (will replace contents of prompter)
 - [ ] Game Browser
   - [ ] Display games user is in
   - [ ] Display games user can join

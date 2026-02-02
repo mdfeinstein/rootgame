@@ -4,6 +4,9 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from game.views.action_views.general import GameActionView
 from game.models.game_models import Faction, Player
+from game.models.events.crafted_cards import CharmOffensiveEvent
+from game.models.events.event import EventType
+from game.queries.current_action.events import get_current_event
 from game.transactions.crafted_cards.charm_offensive import use_charm_offensive, skip_charm_offensive
 from game.decorators.transaction_decorator import atomic_game_action
 
@@ -38,6 +41,8 @@ class CharmOffensiveView(GameActionView):
         )
 
     def route_post(self, request, game_id: int, route: str, *args, **kwargs):
+        player = self.player(request, game_id)
+        self.faction = Faction(player.faction)
         if route == "pick-opponent":
             return self.post_pick_opponent(request, game_id)
         raise ValidationError("Invalid route")
@@ -54,7 +59,10 @@ class CharmOffensiveView(GameActionView):
             return self.generate_completed_step()
             
         # Get opponent player
-        opponent = get_object_or_404(Player, game_id=game_id, faction=opponent_faction_value)
+        try:
+            opponent = Player.objects.get(game_id=game_id, faction=opponent_faction_value)
+        except Player.DoesNotExist:
+             raise ValidationError({"detail": "Opponent player not found"})
         
         try:
             atomic_game_action(use_charm_offensive)(player, opponent)
@@ -62,3 +70,24 @@ class CharmOffensiveView(GameActionView):
             raise ValidationError({"detail": str(e)})
         
         return self.generate_completed_step()
+
+    def get_event(self, game_id: int):
+        event = get_current_event(self.game(game_id))
+        try:
+            return CharmOffensiveEvent.objects.get(event=event)
+        except CharmOffensiveEvent.DoesNotExist:
+             raise ValidationError({"detail": "Current Event not Charm Offensive"})
+
+    def player(self, request, game_id: int) -> Player:
+        event_entry = self.get_event(game_id)
+        return event_entry.crafted_card_entry.player
+    
+    def validate_timing(self, request, game_id: int, route: str, *args, **kwargs):
+        event = get_current_event(self.game(game_id))
+        if not event or event.type != EventType.CHARM_OFFENSIVE:
+            raise ValidationError({"detail": "Current Event not Charm Offensive"})
+    
+    def validate_player(self, request, game_id: int, route: str, *args, **kwargs):
+        player = self.player(request, game_id)
+        if player != self.player_by_request(request, game_id):
+            raise ValidationError({"detail": "Not your turn"})

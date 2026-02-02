@@ -73,21 +73,25 @@ class RootGameClient(APIClient):
         """
         if self.step is None:
             raise ValueError("No current action")
+        
+        if "payload_details" not in self.step:
+             raise ValueError(f"Step has no payload_details: {self.step}")
+             
         payload_details: list[dict] = self.step["payload_details"]
         # prepare data to post
         to_send = {}
         # Merge accumulated payload if exists
-        if "accumulated_payload" in self.step:
-            to_send.update(self.step["accumulated_payload"])
+        acc = self.step.get("accumulated_payload")
+        if acc:
+            to_send.update(acc)
 
-        payload_details = self.step["payload_details"]
         # process data by picking out matching payload details
         # and naming them according to provided details
         for payload_detail in payload_details:
             if payload_detail["type"] in data:
                 to_send[payload_detail["name"]] = data[payload_detail["type"]]
             else:
-                raise ValueError(f"{payload_detail} not found in submitted data")
+                raise ValueError(f"{payload_detail} not found in submitted data. Available data keys: {list(data.keys())}")
         # send data to endpoint
         response = self.post_action(to_send)
         if not self.ok(response):
