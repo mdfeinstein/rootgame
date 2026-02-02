@@ -55,6 +55,9 @@ class BattleActionView(GameActionView):
                     "payload_details": [
                         {"type": "card", "name": "ambush_card"},
                     ],
+                    "options": [
+                        {"value": "", "label": "Refuse to cancel ambush"},
+                    ],
                 }
 
             case Battle.BattleSteps.ATTACKER_CHOOSE_AMBUSH_HITS:
@@ -91,6 +94,7 @@ class BattleActionView(GameActionView):
         else:
             try:
                 card = CardsEP[card_name]
+
             except KeyError:
                 raise ValidationError("Invalid card")
 

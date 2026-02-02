@@ -123,7 +123,10 @@ class CatCraftStepView(GameActionView):
         return Response(serializer.data)
 
     def post_piece(self, request, game_id: int):
-        satisfied, crafting_pieces = self.validate(request, game_id)
+        try:
+            satisfied, crafting_pieces = self.validate(request, game_id)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
         # check if we have enough pieces. if so, go to confirm. if not, go to piece
         accumulated_payload = {"card_to_craft": request.data["card_to_craft"]}
         cn_count = 0

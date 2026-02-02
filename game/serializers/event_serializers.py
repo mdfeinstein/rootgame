@@ -37,10 +37,11 @@ class TurmoilEventSerializer(serializers.ModelSerializer):
 class FieldHospitalEventSerializer(serializers.ModelSerializer):
     player_id = serializers.IntegerField(source='player.id')
     clearing_id = serializers.IntegerField(source='clearing.id', allow_null=True)
+
     
     class Meta:
         model = FieldHospitalEvent
-        fields = ["player_id", "clearing_id", "warriors_lost"]
+        fields = ["player_id", "clearing_id", "troops_to_save"]
 
 
 class EventSerializer(serializers.ModelSerializer):

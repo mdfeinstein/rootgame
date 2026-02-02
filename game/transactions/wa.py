@@ -40,9 +40,6 @@ from game.queries.wa.supporters import (
 from game.queries.wa.turn import get_phase, validate_step
 from game.queries.wa.warriors import get_warriors_in_supply
 from game.serializers.general_serializers import PlayerPrivateSerializer
-from game.transactions.battle import (
-    start_battle,
-)
 from game.transactions.general import (
     craft_card,
     discard_card_from_hand,
@@ -127,6 +124,11 @@ def revolt(player: Player, clearing: Clearing):
     -- gains troops equal to matching sympathetic clearings
     -- gains an officer
     """
+    from game.transactions.removal import (
+        player_removes_building,
+        player_removes_token,
+        player_removes_warriors,
+    )
     # check that player can revolt
     supporters = validate_revolt(player, clearing)
     # discard supporters
@@ -260,6 +262,7 @@ def operation_battle(player: Player, defender: Player, clearing: Clearing):
     officer.used = True
     officer.save()
     # execute battle
+    from game.transactions.battle import start_battle
     start_battle(player.game, player.faction, defender.faction, clearing)
 
 

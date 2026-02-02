@@ -76,24 +76,22 @@ class CatPlaceWoodView(GameActionView):
         if sawmill_count == 0:
             return {"name": "completed"}
         elif sawmill_count < wood_count:
-            step = {
-                "faction": self.faction_string,
-                "name": "place_all_wood",
-                "prompt": "Confirm to place all wood",
-                "endpoint": "confirm_all",
-                "payload_details": [],
-            }
+            step = self.generate_step(
+                name="place_all_wood",
+                prompt="Confirm to place all wood",
+                endpoint="confirm_all",
+                payload_details=[{"type": "confirm", "name": "confirm"}],
+                options=[{"value": True, "label": "Confirm"}],
+            ).data
         else:
-            step = {
-                "faction": self.faction_string,
-                "name": "place_wood",
-                "prompt": "Select clearings with sawmills for wood production."
+            step = self.generate_step(
+                name="place_wood",
+                prompt="Select clearings with sawmills for wood production."
                 + f"{wood_count} wood tokens remaining",
-                "endpoint": "clearing",
-                "payload_details": [
-                    {"type": "clearing_number", "name": "wood_clearing_number"}
-                ],
-            }
+                endpoint="clearing",
+                payload_details=[{"type": "clearing_number", "name": "wood_clearing_number"}],
+            ).data
+            
         return step
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):

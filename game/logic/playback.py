@@ -16,11 +16,10 @@ def get_function_by_name(full_name):
         raise ValueError(f"Could not resolve function: {full_name}")
 
 @transaction.atomic
-def playback_to_action(game: Game, turn_number: int, action_number: int):
-    # Find Checkpoint for the turn
-
+def playback_to_action(game: Game, checkpoint_id: int, action_number: int):
+    # Find Checkpoint
     try:
-        checkpoint = Checkpoint.objects.get(game=game, turn_number=turn_number)
+        checkpoint = Checkpoint.objects.get(id=checkpoint_id, game=game)
     except Checkpoint.DoesNotExist:
         return 
 
@@ -43,6 +42,7 @@ def playback_to_action(game: Game, turn_number: int, action_number: int):
     set_playback_mode(True)
     try:
         for action in actions:
+            print(f'Action: {action.transaction_name}')
             func = get_function_by_name(action.transaction_name)
             print(f"func: {func}")
             # Deserialize args
@@ -51,6 +51,7 @@ def playback_to_action(game: Game, turn_number: int, action_number: int):
             print(f"raw_args: {raw_args}")
             print(f"raw_kwargs: {raw_kwargs}")
             d_args, d_kwargs = ActionSerializer.deserialize_args(raw_args, raw_kwargs)
+            print(f'Args: {d_args}, {d_kwargs}')
             
             # Execute
             func(*d_args, **d_kwargs)
@@ -59,38 +60,38 @@ def playback_to_action(game: Game, turn_number: int, action_number: int):
         set_playback_mode(False)
 
 @transaction.atomic
+@transaction.atomic
 def undo_last_action(game: Game):
-    current_turn = game.current_turn
-    checkpoint = Checkpoint.objects.filter(game=game).order_by('-created_at').first()
+    # Get the MOST RECENT checkpoint
+    checkpoint = Checkpoint.objects.filter(game=game).order_by('id').last()
     
-    # helper to process undo on a specific checkpoint
-    def undo_on_checkpoint(cp, turn):
-        actions = Action.objects.filter(checkpoint=cp).order_by('action_number')
-        if actions.exists():
-            last_action = actions.last()
-            last_action.delete()
-            # Playback to the NEW last action (if any)
-            new_last_index = actions.count() - 1 # count() is fresh after delete
-            playback_to_action(game, turn, new_last_index)
-            return True
-        return False
+    if not checkpoint:
+        return
 
-    # Try to undo on current turn first
-    if checkpoint:
-        if undo_on_checkpoint(checkpoint, current_turn):
-            return
-        # If checkpoint exists but empty, delete it and fall through to prev turn
+    actions = Action.objects.filter(checkpoint=checkpoint).order_by('action_number')
+    if actions.exists():
+        last_action = actions.last()
+        last_action.delete()
+        # Playback to the NEW last action (if any)
+        # Note: If actions.count() was 1, it is now 0. new_last_index = -1.
+        new_last_index = actions.count() - 1 
+        playback_to_action(game, checkpoint.id, new_last_index)
+    else:
+        # Checkpoint exists but has no actions. 
+        # This implies we are at the very start of a 'turn' (checkpoint created but no actions taken).
+        # We should delete this checkpoint and fall back to the PREVIOUS checkpoint.
         checkpoint.delete()
-
-    # Try previous turn if current turn had no actions to undo
-
-    target_turn = current_turn - 1
-    prev_cp = Checkpoint.objects.filter(game=game, turn_number=target_turn).first()
-    
-    if prev_cp:
-        # Undo the last action of the previous turn (which caused the turn switch)
-        undo_on_checkpoint(prev_cp, target_turn)
         
-        # If previous checkpoint is now empty, ensure state is loaded
-        if not Action.objects.filter(checkpoint=prev_cp).exists():
-             playback_to_action(game, target_turn, -1)
+        prev_checkpoint = Checkpoint.objects.filter(game=game).order_by('id').last()
+        if prev_checkpoint:
+            # We want to undo the LAST action of the PREVIOUS checkpoint.
+            # But wait, 'undo' should only undo ONE action. 
+            # If we just deleted an empty checkpoint, we haven't actually undone a game action yet (unless creating the checkpoint IS the action, but it's usually automatic).
+            # The user might expect clicking "Undo" when at the start of a turn to take them back to the end of the previous turn.
+            
+            # So we recurse? Or just execute undo on the previous one?
+            undo_last_action(game) 
+            # Recursive call seems safe here as we just deleted one checkpoint, so we are guaranteed progress, unless no checkpoints left.
+        else:
+            # No checkpoints left at all.
+            pass
