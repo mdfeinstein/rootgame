@@ -3,15 +3,26 @@ from itertools import chain
 
 # Import all models
 from game.models.game_models import (
-    Game, FactionChoiceEntry, Clearing, BuildingSlot, 
-    Warrior, Building, Token, Ruin, Piece,
-    Card, DeckEntry, DiscardPileEntry,
-    Item, CraftableItemEntry, CraftedItemEntry, CraftedCardEntry,
-    HandEntry, WarriorSupplyEntry
+    Game,
+    FactionChoiceEntry,
+    Clearing,
+    BuildingSlot,
+    Warrior,
+    Building,
+    Token,
+    Ruin,
+    Piece,
+    Card,
+    DeckEntry,
+    DiscardPileEntry,
+    Item,
+    CraftableItemEntry,
+    CraftedItemEntry,
+    CraftedCardEntry,
+    HandEntry,
+    WarriorSupplyEntry,
 )
-from game.models.birds.player import (
-    BirdLeader, DecreeEntry, Vizier
-)
+from game.models.birds.player import BirdLeader, DecreeEntry, Vizier
 from game.models.birds.buildings import BirdRoost
 from game.models.birds.turn import BirdTurn, BirdBirdsong, BirdDaylight, BirdEvening
 
@@ -30,6 +41,7 @@ from game.models.events.wa import OutrageEvent
 from game.models.events.birds import TurmoilEvent
 from game.models.events.cats import FieldHospitalEvent
 
+
 def get_all_game_objects(game: Game):
     """
     Collects all model instances related to the given game instance.
@@ -39,72 +51,71 @@ def get_all_game_objects(game: Game):
 
     # 1. Root Game Object
     objects.append(game)
-    
+
     # 2. Static-ish components (depend on Game)
     objects.extend(FactionChoiceEntry.objects.filter(game=game))
     objects.extend(Clearing.objects.filter(game=game))
     # BuildingSlot depends on Clearing
     objects.extend(BuildingSlot.objects.filter(clearing__game=game))
-    
+
     # Cards & Items (Global/Game level)
     objects.extend(Card.objects.filter(game=game))
     objects.extend(Item.objects.filter(game=game))
-    
+
     # Game State Collections (Deck, Discard, Ruins, Craftable)
     objects.extend(DeckEntry.objects.filter(game=game))
     objects.extend(DiscardPileEntry.objects.filter(game=game))
     objects.extend(Ruin.objects.filter(game=game))
     objects.extend(CraftableItemEntry.objects.filter(game=game))
-    
+
     # 3. Players and their direct assets
-    players = game.players.all().order_by('turn_order')
+    players = game.players.all().order_by("turn_order")
     objects.extend(players)
-    
+
     for player in players:
         # Player generic assets
         objects.extend(HandEntry.objects.filter(player=player))
         objects.extend(CraftedItemEntry.objects.filter(player=player))
         objects.extend(CraftedCardEntry.objects.filter(player=player))
         objects.extend(WarriorSupplyEntry.objects.filter(player=player))
-        
-        
+
         # Pieces (Warriors, Buildings, Tokens)
         # For MTI (Multi-Table Inheritance), we MUST serialize the base models as well
         # to capture the inherited fields (like 'player' on Piece, 'clearing' on Token).
         # Order matters: Base -> Child.
-        
+
         # 3a. Base Piece (Parent of Token, Building, Warrior)
         # Note: We filter by player to keep it organized, though we could do bulk query.
         objects.extend(Piece.objects.filter(player=player))
-        
+
         # 3b. Intermediate Bases (Token, Building)
         objects.extend(Token.objects.filter(player=player))
         objects.extend(Building.objects.filter(player=player))
-        
+
         # 3c. Leaf Classes
         # Warriors (Direct child of Piece)
         objects.extend(Warrior.objects.filter(player=player))
-        
+
         # Faction Specific Assets & Pieces
         # Birds
         objects.extend(BirdLeader.objects.filter(player=player))
         objects.extend(DecreeEntry.objects.filter(player=player))
         objects.extend(Vizier.objects.filter(player=player))
         objects.extend(BirdRoost.objects.filter(player=player))
-        
+
         # Cats
         objects.extend(Workshop.objects.filter(player=player))
         objects.extend(Sawmill.objects.filter(player=player))
         objects.extend(Recruiter.objects.filter(player=player))
         objects.extend(CatKeep.objects.filter(player=player))
         objects.extend(CatWood.objects.filter(player=player))
-        
+
         # WA
         objects.extend(WABase.objects.filter(player=player))
         objects.extend(WASympathy.objects.filter(player=player))
         objects.extend(SupporterStackEntry.objects.filter(player=player))
         objects.extend(OfficerEntry.objects.filter(player=player))
-        
+
         # Turn History / State
         # Birds
         bird_turns = BirdTurn.objects.filter(player=player)
@@ -112,14 +123,14 @@ def get_all_game_objects(game: Game):
         objects.extend(BirdBirdsong.objects.filter(turn__in=bird_turns))
         objects.extend(BirdDaylight.objects.filter(turn__in=bird_turns))
         objects.extend(BirdEvening.objects.filter(turn__in=bird_turns))
-        
+
         # Cats
         cat_turns = CatTurn.objects.filter(player=player)
         objects.extend(cat_turns)
         objects.extend(CatBirdsong.objects.filter(turn__in=cat_turns))
         objects.extend(CatDaylight.objects.filter(turn__in=cat_turns))
         objects.extend(CatEvening.objects.filter(turn__in=cat_turns))
-        
+
         # WA
         wa_turns = WATurn.objects.filter(player=player)
         objects.extend(wa_turns)
@@ -139,7 +150,9 @@ def get_all_game_objects(game: Game):
 
     return objects
 
+
 import json
+
 
 def capture_gamestate(game: Game) -> list:
     """
@@ -147,6 +160,11 @@ def capture_gamestate(game: Game) -> list:
     Ensures datetimes are serialized to strings for JSONField compatibility.
     """
     objects = get_all_game_objects(game)
+    for obj in objects:
+        if isinstance(obj, Battle):
+            print(
+                f"DEBUG: capturing Battle {obj.pk}: Attacker Hits={obj.attacker_hits_taken}, Defender Hits={obj.defender_hits_taken}"
+            )
     # Use 'json' serializer to handle datetimes, then load back to a list of dicts
-    json_data = serializers.serialize('json', objects)
+    json_data = serializers.serialize("json", objects)
     return json.loads(json_data)

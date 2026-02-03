@@ -15,7 +15,7 @@ def set_playback_mode(enabled: bool):
 def is_playback_mode():
     return getattr(_playback_context, 'is_replaying', False)
 
-def atomic_game_action(func):
+def atomic_game_action(func, undoable : bool = True):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         # return func(*args, **kwargs)
@@ -107,7 +107,22 @@ def atomic_game_action(func):
                 transaction_name=full_name,
                 args={'args': s_args, 'kwargs': s_kwargs}
             )
+            #execute function
+            result = func(*args, **kwargs)
+            if not undoable:
+                # Create a new checkpoint
+                gamestate_data = capture_gamestate(game)
+                
+                # Debug: Check DecreeEntry integrity
+                for obj in gamestate_data:
+                    if obj['model'] == 'game.decreeentry':
+                        if 'column' not in obj['fields'] or obj['fields']['column'] is None:
+                            print(f"CRITICAL: Caught bad DecreeEntry in snapshot: {obj}")
 
-            return func(*args, **kwargs)
+                checkpoint = Checkpoint.objects.create(
+                    game=game,
+                    gamestate=gamestate_data
+                )
+            return result
 
     return wrapper

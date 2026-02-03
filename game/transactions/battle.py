@@ -26,7 +26,7 @@ from game.queries.general import (
     player_has_pieces_in_clearing,
     player_has_warriors_in_clearing,
     warrior_count_in_clearing,
-    validate_player_has_crafted_card
+    validate_player_has_crafted_card,
 )
 from game.transactions.general import discard_card_from_hand
 from game.transactions.removal import (
@@ -76,14 +76,17 @@ def defender_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
         return
     else:
         defender_player = Player.objects.get(game=game, faction=battle.defender)
-        #check that card is in hand
+        # check that card is in hand
         card_in_hand = validate_player_has_card_in_hand(defender_player, ambush_card)
         # check that card is actually an ambush
         if ambush_card.value.ambush is False:
             raise ValueError("Card is not an ambush")
         # check that suit matches clearing
-        if card_in_hand.card.suit != battle.clearing.suit and card_in_hand.card.suit != Suit.WILD:
-            raise ValueError("Card suit does not match clearing suit") 
+        if (
+            card_in_hand.card.suit != battle.clearing.suit
+            and card_in_hand.card.suit != Suit.WILD
+        ):
+            raise ValueError("Card suit does not match clearing suit")
         # flag the battle as ambushed
         battle.defender_ambush = True
         battle.step = Battle.BattleSteps.ATTACKER_AMBUSH_CANCEL_CHECK
@@ -138,9 +141,12 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
     # if ambush, check that card is actually an ambush and get the hand entry
     if ambush_card.value.ambush is False:
         raise ValueError("Card is not an ambush")
-    if ambush_card.value.suit != battle.clearing.suit and ambush_card.value.suit != Suit.WILD:
+    if (
+        ambush_card.value.suit != battle.clearing.suit
+        and ambush_card.value.suit != Suit.WILD
+    ):
         raise ValueError("Card suit does not match clearing suit")
-    attacker_player = Player.objects.get(game=game, faction=battle.attacker)    
+    attacker_player = Player.objects.get(game=game, faction=battle.attacker)
     card_in_hand = validate_player_has_card_in_hand(attacker_player, ambush_card)
     # spend card
     discard_card_from_hand(attacker_player, card_in_hand)
@@ -247,12 +253,14 @@ def roll_dice(game: Game, battle: Battle):
     # birds commander extra hit
     if battle.attacker == Faction.BIRDS:
         birds_player = Player.objects.get(game=game, faction=Faction.BIRDS)
-        print(f'bird leaders: {[(leader.leader, leader.active) for leader in BirdLeader.objects.filter(player=birds_player)]}')
+        print(
+            f"bird leaders: {[(leader.leader, leader.active) for leader in BirdLeader.objects.filter(player=birds_player)]}"
+        )
         if (
             BirdLeader.objects.get(player=birds_player, active=True).leader
             == BirdLeader.BirdLeaders.COMMANDER
         ):
-            battle.attacker_hits_taken += 1
+            battle.defender_hits_taken += 1
 
     battle.save()
 

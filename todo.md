@@ -1,6 +1,11 @@
 # Todo List
 
-- [ ] Fix and verify Undo/ checkpoints
+- [ ] Undo/checkpoints/replay
+  - [x] Basic functionality
+  - [ ] some actions (like Battle) are not undoable
+
+- [ ] Battle:
+  - [ ] Choosing Hits (views, transactions, url)
 - [ ] Endgame
   - [ ] Dominance
   - [ ] Win checks, game over state

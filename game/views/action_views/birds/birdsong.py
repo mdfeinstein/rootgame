@@ -92,7 +92,7 @@ class AddToDecreeView(GameActionView):
         ordinal = "first" if num_added == 0 else "second"
         bird_added_str = " Bird card has been added already." if bird_added else ""
         return self.generate_step(
-            "card",
+            "add_to_decree",
             f"Select {ordinal} card to add to the Decree. You must pick one card.{bird_added_str}"
             + "Or, choose nothing to end add to decree step.",
             "card",
@@ -127,7 +127,9 @@ class AddToDecreeView(GameActionView):
     def post_card(self, request, game_id: int):
         if request.data["card_to_add"] == "":
             try:
-                atomic_game_action(end_add_to_decree_step)(self.player(request, game_id))
+                atomic_game_action(end_add_to_decree_step)(
+                    self.player(request, game_id)
+                )
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()

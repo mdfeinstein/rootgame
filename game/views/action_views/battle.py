@@ -102,7 +102,7 @@ class BattleActionView(GameActionView):
         event = get_current_event(game)
         battle = Battle.objects.get(event=event)
         try:
-            atomic_game_action(defender_ambush_choice)(game, battle, card)
+            atomic_game_action(defender_ambush_choice, undoable=False)(game, battle, card)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         serializer = GameActionStepSerializer({"name": "completed"})
@@ -122,7 +122,7 @@ class BattleActionView(GameActionView):
         event = get_current_event(game)
         battle = Battle.objects.get(event=event)
         try:
-            atomic_game_action(attacker_ambush_choice)(game, battle, card)
+            atomic_game_action(attacker_ambush_choice, undoable=False)(game, battle, card)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         serializer = GameActionStepSerializer({"name": "completed"})
