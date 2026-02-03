@@ -89,9 +89,11 @@ class CatPlaceWoodView(GameActionView):
                 prompt="Select clearings with sawmills for wood production."
                 + f"{wood_count} wood tokens remaining",
                 endpoint="clearing",
-                payload_details=[{"type": "clearing_number", "name": "wood_clearing_number"}],
+                payload_details=[
+                    {"type": "clearing_number", "name": "wood_clearing_number"}
+                ],
             ).data
-            
+
         return step
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):

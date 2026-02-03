@@ -22,9 +22,6 @@ from game.models.game_models import CraftedCardEntry
 from game.queries.cards.active_effects import can_use_card, has_active_effect, is_used
 
 
-
-
-
 class CardSerializer(serializers.ModelSerializer):
     card_name = serializers.SerializerMethodField()
     suit_name = serializers.CharField(source="get_suit_display", required=False)
@@ -58,7 +55,6 @@ class CardSerializer(serializers.ModelSerializer):
 
     def get_card_name(self, card: Card):
         return card.enum.name
-
 
 
 class CraftedCardSerializer(serializers.ModelSerializer):
@@ -243,6 +239,8 @@ class PayloadEntry(serializers.Serializer):
 
     def get_value(self, payload_entry):
         # handle more types as we add them in.
+        if payload_entry.get("value") is None:
+            return None
         if payload_entry["type"] == "clearing_number":
             try:
                 return int(payload_entry["value"])

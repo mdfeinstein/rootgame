@@ -1,8 +1,8 @@
 # Todo List
 
-- [ ] Undo/checkpoints/replay
+- [x] Undo/checkpoints/replay
   - [x] Basic functionality
-  - [ ] some actions (like Battle) are not undoable
+  - [x] some actions (like Battle) are not undoable
 
 - [ ] Battle:
   - [ ] Choosing Hits (views, transactions, url)
@@ -24,3 +24,8 @@
 - [ ] Manual refresh button within game.
 - [ ] Employ custom errors
 - [ ] Game Log
+- [ ] Known Business Logic Bugs
+  - [ ] Woodland Alliance:
+    - [ ] Supporter stack limits not enforced
+  - [ ] Crafted Cards:
+    - [ ] Swap Meet: Initial card grab should not be undoable.

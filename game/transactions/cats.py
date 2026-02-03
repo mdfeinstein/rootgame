@@ -1,4 +1,3 @@
-
 from game.transactions.crafted_cards.saboteurs import saboteurs_check
 from game.models.events.cats import FieldHospitalEvent
 from typing import Iterable, Sequence, Union
@@ -88,7 +87,7 @@ def produce_wood(player: Player, sawmill: Sawmill):
     ).exists():
         print("all sawmills used")
         # move to next part of phase
-        next_step(player) 
+        next_step(player)
 
 
 @transaction.atomic
@@ -382,12 +381,12 @@ def cat_resolve_field_hospital(player: Player, card: CardsEP | None):
     assert player.faction == Faction.CATS, "Not a cats player"
     field_hospital_event = get_field_hospital_event(player)
     from game.transactions.removal import return_warrior_to_supply
-    
+
     # save troops
     to_save = field_hospital_event.troops_to_save
     keep = CatKeep.objects.get(player=player)
     warriors = list(Warrior.objects.filter(clearing=None, player=player)[:to_save])
-    
+
     if card is None:
         # Not saved, return to supply/coffin
         for warrior in warriors:
@@ -406,7 +405,7 @@ def cat_resolve_field_hospital(player: Player, card: CardsEP | None):
             warrior.save()
         # discard card
         discard_card_from_hand(player, hand_entry)
-        
+
     # resolve event
     field_hospital_event.event.is_resolved = True
     field_hospital_event.event.save()
@@ -415,14 +414,13 @@ def cat_resolve_field_hospital(player: Player, card: CardsEP | None):
 @transaction.atomic
 def cat_produce_all_wood(player: Player):
     """produces wood at all available sawmills"""
-    sawmills = Sawmill.objects.filter(
-        player=player, used=False, building_slot__isnull=False
-    )
+    sawmills = get_unused_sawmills(player)
     for sawmill in sawmills:
         produce_wood(player, sawmill)
 
+
 @transaction.atomic
-def check_auto_place_wood(player : Player):
+def check_auto_place_wood(player: Player):
     """checks if player has enough wood tokens to place at sawmills.
     If so, produces wood and moves to next step
     """
@@ -444,7 +442,7 @@ def cat_march(player: Player, origin: Clearing, destination: Clearing, count: in
         raise ValueError("Not Daylight phase")
 
     move_warriors(player, origin, destination, count)
-    
+
     if not daylight.midmarch:
         if daylight.actions_left < 1:
             raise ValueError("No actions remaining")
@@ -459,6 +457,7 @@ def cat_march(player: Player, origin: Clearing, destination: Clearing, count: in
 @transaction.atomic
 def cat_battle(player: Player, defender: Player, clearing: Clearing):
     from game.transactions.battle import start_battle
+
     daylight = get_phase(player)
     if type(daylight) != CatDaylight:
         raise ValueError("Not Daylight phase")
@@ -485,15 +484,17 @@ def cat_discard_card(player: Player, card: CardsEP):
         raise ValueError("Not Evening phase")
     if evening.step != CatEvening.CatEveningSteps.DISCARDING:
         raise ValueError("Not discarding step")
-        
+
     hand_entry = validate_player_has_card_in_hand(player, card)
     discard_card_from_hand(player, hand_entry)
     check_auto_discard(player)
+
 
 @transaction.atomic
 def check_auto_discard(player: Player):
     if get_player_hand_size(player) <= 5:
         next_step(player)
+
 
 @transaction.atomic
 def next_step(player: Player):
@@ -513,7 +514,9 @@ def next_step(player: Player):
 
 
 @transaction.atomic
-def step_effect(player : Player, phase: Union[CatBirdsong, CatDaylight, CatEvening, None]=None):
+def step_effect(
+    player: Player, phase: Union[CatBirdsong, CatDaylight, CatEvening, None] = None
+):
     if phase is None:
         phase = get_phase(player)
     match phase:
@@ -523,7 +526,11 @@ def step_effect(player : Player, phase: Union[CatBirdsong, CatDaylight, CatEveni
                     pass
                 case CatBirdsong.CatBirdsongSteps.PLACING_WOOD:
                     from game.queries.crafted_cards import get_coffin_makers_player
-                    from game.transactions.crafted_cards.coffin_makers import score_coffins, release_warriors
+                    from game.transactions.crafted_cards.coffin_makers import (
+                        score_coffins,
+                        release_warriors,
+                    )
+
                     coffin_player = get_coffin_makers_player(player.game)
                     if coffin_player == player:
                         score_coffins(player)
@@ -535,11 +542,14 @@ def step_effect(player : Player, phase: Union[CatBirdsong, CatDaylight, CatEveni
                         check_auto_place_wood(player)
                 case CatBirdsong.CatBirdsongSteps.COMPLETED:
                     from game.transactions.crafted_cards.eyrie_emigre import is_emigre
+
                     if not is_emigre(player):
                         step_effect(player, None)
 
                 case _:
-                    raise ValueError(f"Invalid step in step_effect for Cats Birdsong: {phase.step}")
+                    raise ValueError(
+                        f"Invalid step in step_effect for Cats Birdsong: {phase.step}"
+                    )
         case CatDaylight():
             match phase.step:
                 case CatDaylight.CatDaylightSteps.CRAFTING:
@@ -547,15 +557,23 @@ def step_effect(player : Player, phase: Union[CatBirdsong, CatDaylight, CatEveni
                 case CatDaylight.CatDaylightSteps.ACTIONS:
                     pass
                 case CatDaylight.CatDaylightSteps.COMPLETED:
-                    from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
+                    from game.transactions.crafted_cards.charm_offensive import (
+                        check_charm_offensive,
+                    )
+
                     if not check_charm_offensive(player):
                         step_effect(player, None)
                 case _:
-                    raise ValueError(f"Invalid step in step_effect for Cats Daylight: {phase.step}")
+                    raise ValueError(
+                        f"Invalid step in step_effect for Cats Daylight: {phase.step}"
+                    )
         case CatEvening():
             match phase.step:
                 case CatEvening.CatEveningSteps.DRAWING:
-                    from game.transactions.crafted_cards.informants import informants_check
+                    from game.transactions.crafted_cards.informants import (
+                        informants_check,
+                    )
+
                     is_informants = informants_check(player)
                     if not is_informants:
                         cat_evening_draw(player)
@@ -564,7 +582,6 @@ def step_effect(player : Player, phase: Union[CatBirdsong, CatDaylight, CatEveni
                 case CatEvening.CatEveningSteps.COMPLETED:
                     cat_end_turn(player)
                 case _:
-                    raise ValueError(f"Invalid step in step_effect for Cats Evening: {phase.step}")
-
-                        
-                    
+                    raise ValueError(
+                        f"Invalid step in step_effect for Cats Evening: {phase.step}"
+                    )

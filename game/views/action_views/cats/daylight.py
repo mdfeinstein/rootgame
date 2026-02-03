@@ -83,8 +83,6 @@ class CatCraftStepView(GameActionView):
             return self.post_card(request, game_id)
         elif route == "piece":
             return self.post_piece(request, game_id)
-        elif route == "confirm":
-            return self.post_confirm(request, game_id)
 
         return Response({"error": "Invalid route"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -154,28 +152,21 @@ class CatCraftStepView(GameActionView):
                 "accumulated_payload": accumulated_payload,
             }
         else:  # we have all we need
-            step = {
-                "faction": self.faction_string,
-                "name": "confirm",
-                "prompt": "Confirm crafting",
-                "endpoint": "confirm",
-                "payload_details": [],
-                "accumulated_payload": accumulated_payload,
-            }
+            satisfied, crafting_pieces = self.validate(request, game_id)
+            # craft
+            card_type = CardsEP[request.data["card_to_craft"].upper()]
+            if not satisfied:
+                raise ValidationError("Not enough crafting pieces to craft card")
+            try:
+                atomic_game_action(cat_craft_card)(
+                    self.player(request, game_id), card_type, crafting_pieces
+                )
+            except ValueError as e:
+                raise ValidationError({"detail": str(e)})
+            return self.generate_completed_step()
+
         serializer = GameActionStepSerializer(step)
         return Response(serializer.data)
-
-    def post_confirm(self, request, game_id: int):
-        satisfied, crafting_pieces = self.validate(request, game_id)
-        # craft
-        card_type = CardsEP[request.data["card_to_craft"].upper()]
-        if not satisfied:
-            raise ValidationError("Not enough crafting pieces to craft card")
-        try:
-            atomic_game_action(cat_craft_card)(self.player(request, game_id), card_type, crafting_pieces)
-        except ValueError as e:
-            raise ValidationError({"detail": str(e)})
-        return Response({"name": "completed"})
 
     def validate(self, request, game_id: int) -> tuple[bool, list[Workshop]]:
 
@@ -509,7 +500,7 @@ class CatActionsView(GameActionView):
         return Response(serializer.data)
 
     def post_march_count(self, request, game_id: int):
-        #TODO: this whole view is too complex. should just call a transaction fucntion
+        # TODO: this whole view is too complex. should just call a transaction fucntion
         count = int(request.data["warriors_to_move"])
         origin_clearing = Clearing.objects.get(
             game=self.game(game_id),
@@ -539,7 +530,7 @@ class CatActionsView(GameActionView):
         # if first march, set midmarch to true and return the step for the beginning of a move
 
         daylight = get_phase(self.player(request, game_id))
-        
+
         if not daylight.midmarch:
             step = {"faction": self.faction_string, "name": "completed"}
         else:  # march is done
@@ -553,7 +544,10 @@ class CatActionsView(GameActionView):
         player = self.player(request, game_id)
         clearing_number = int(request.data["battle_clearing_number"])
         defenders = self.validate_battle_clearing(game, player, clearing_number)
-        options = [{"value": Faction(d.faction).value, "label": Faction(d.faction).label} for d in defenders]
+        options = [
+            {"value": Faction(d.faction).value, "label": Faction(d.faction).label}
+            for d in defenders
+        ]
         step = {
             "faction": self.faction_string,
             "name": "select_defender",
@@ -581,7 +575,7 @@ class CatActionsView(GameActionView):
         if defender not in valid_defenders:
             raise ValidationError("Not a valid defender - does not have pieces here")
         clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
-        
+
         try:
             atomic_game_action(cat_battle)(player, defender, clearing)
         except ValueError as e:
@@ -789,7 +783,9 @@ class CatActionsView(GameActionView):
         card_name = request.data["overwork_card"].upper()
         card_data = CardsEP[card_name]
         try:
-            atomic_game_action(overwork)(self.player(request, game_id), clearing, card_data)
+            atomic_game_action(overwork)(
+                self.player(request, game_id), clearing, card_data
+            )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         step = {
@@ -819,7 +815,9 @@ class CatActionsView(GameActionView):
     def post_birdsforhire_card(self, request, game_id: int):
         card_name = request.data["birdsforhire_card"].upper().replace(" ", "_")
         try:
-            atomic_game_action(birds_for_hire)(self.player(request, game_id), CardsEP[card_name])
+            atomic_game_action(birds_for_hire)(
+                self.player(request, game_id), CardsEP[card_name]
+            )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         step = {
