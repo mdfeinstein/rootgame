@@ -1,3 +1,4 @@
+from game.models.game_models import Faction
 from game.models import CatTurn
 from django.db import transaction
 from game.models.cats.buildings import (
@@ -78,15 +79,28 @@ def start_simple_cats_setup(player: Player) -> CatsSimpleSetup:
 
 @transaction.atomic
 def pick_corner(player: Player, clearing: Clearing):
-    """picks a corner for the keep"""
-    # check that it is cats setup
+    """picks a corner for the keep and places the garrison"""
+    # validations
     validate_timing(player, CatsSimpleSetup.Steps.PICKING_CORNER)
+    if player.faction != Faction.CATS:
+        raise ValueError("Player is not cats")
+    if clearing.game != player.game:
+        raise ValueError("Clearing is not in the same game as the player")
+    if clearing.clearing_number not in [1, 2, 3, 4]:
+        raise ValueError("Clearing is not a corner clearing")
+    # place keep
     keep = CatKeep.objects.get(player=player)
     keep.clearing = clearing
     keep.save()
+    # place garrison
+    opposite_clearing_number = ((clearing.clearing_number - 1 + 2) % 4) + 1
+    opposite_clearing = Clearing.objects.get(
+        game=player.game, clearing_number=opposite_clearing_number
+    )
+    place_garrison(player, opposite_clearing)
+    # update setup
     cats_setup = CatsSimpleSetup.objects.get(player=player)
     cats_setup.step = next_choice(CatsSimpleSetup.Steps, cats_setup.step)
-    print(cats_setup.step)
     cats_setup.save()
 
 
@@ -209,8 +223,9 @@ def confirm_completed_setup(player: Player):
     setup.save()
     # create first turn
     cat_turn_count = CatTurn.objects.filter(player=player).count()
-    print(f"cat turn count in confirm_completed_setup before create_cats_turn: {cat_turn_count}")
+    print(
+        f"cat turn count in confirm_completed_setup before create_cats_turn: {cat_turn_count}"
+    )
     create_cats_turn(player)
-    #go to next player setup
+    # go to next player setup
     next_player_setup(player.game)
-

@@ -1,3 +1,4 @@
+from game.decorators.transaction_decorator import atomic_game_action
 from game.queries.general import available_building_slot
 from game.models.cats.buildings import CatBuildingTypes
 from game.models.cats.setup import CatsSimpleSetup
@@ -42,58 +43,27 @@ class CatsPickCornerView(GameActionView):
     def route_post(self, request, game_id: int, route: str):
         if route == "corner":
             return self.post_corner(request, game_id)
-        elif route == "confirm":
-            return self.post_confirm(request, game_id)
 
         return Response({"error": "Invalid route"}, status=status.HTTP_400_BAD_REQUEST)
 
     def post_corner(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        self.validate_timing(request, game_id)
         # check that corner is valid
         clearing_number = int(request.data["corner_clearing_number"])
         if clearing_number not in [1, 2, 3, 4]:
             raise ValidationError(
                 {"detail": f"Invalid clearing number: {clearing_number}"}
             )
-        # serialize the next step
-        serializer = GameActionStepSerializer(
-            {
-                "faction": self.faction_string,
-                "name": "confirm",
-                "prompt": "Confirm keep corner clearing choice",
-                "endpoint": "confirm",
-                "payload_details": [{"type": "confirm", "name": "confirm"}],
-                "accumulated_payload": {
-                    "corner_clearing_number": clearing_number,
-                },
-            }
-        )
-        return Response(serializer.data)
-
-    def post_confirm(self, request, game_id: int):
-        game = self.game(game_id)
-        clearing_number = int(request.data["corner_clearing_number"])
-        player = self.player(request, game_id)
-        confirmation = bool(request.data["confirm"])
-        if not confirmation:
-            # client will reset and check for its next options.
-            return Response({"name": "canceled"})
-        self.validate_timing(request, game_id)
         try:
             clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
         except Clearing.DoesNotExist as e:
             raise ValidationError({"detail": str(e)})
-        # TODO: these should probably be atomic together.
-        pick_corner(player, clearing)
-        opposite_corner_number = ((clearing_number - 1 + 2) % 4) + 1
-        opposite_corner = Clearing.objects.get(
-            game=game, clearing_number=opposite_corner_number
-        )
-        place_garrison(player, opposite_corner)
-        # need formal way to signal action completed, look for next action
-        return Response({"name": "completed"})
+        try:
+            atomic_game_action(pick_corner)(player, clearing)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
+        return self.generate_completed_step()
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""
@@ -124,8 +94,6 @@ class CatsPlaceBuildingView(GameActionView):
             return self.post_clearing(request, game_id)
         elif route == "building_type":
             return self.post_building_type(request, game_id)
-        elif route == "confirm":
-            return self.post_confirm(request, game_id)
         return Response({"error": "Invalid route"}, status=status.HTTP_400_BAD_REQUEST)
 
     def post_clearing(self, request, game_id: int):
@@ -136,63 +104,38 @@ class CatsPlaceBuildingView(GameActionView):
             self.validate_clearing_number(clearing_number, game, player)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
+        options = [
+            {"value": "RECRUITER", "label": "Recruiter"},
+            {"value": "WORKSHOP", "label": "Workshop"},
+            {"value": "SAWMILL", "label": "Sawmill"},
+        ]
         # serialize the next step
-        serializer = GameActionStepSerializer(
-            {
-                "faction": self.faction_string,
-                "name": "building_type",
-                "prompt": "Select building type",
-                "endpoint": "building_type",
-                "payload_details": [{"type": "building_type", "name": "building_type"}],
-                "accumulated_payload": {
-                    "building_clearing_number": clearing_number,
-                },
-            }
+        return self.generate_step(
+            "building_type",
+            "Select building type",
+            "building_type",
+            [{"type": "building_type", "name": "building_type"}],
+            accumulated_payload={"building_clearing_number": clearing_number},
+            options=options,
         )
-        return Response(serializer.data)
 
     def post_building_type(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
         building_type: str = request.data["building_type"]
+
         # check that building type is valid
-        self.validate_building_type(player, building_type)
-
-        serializer = GameActionStepSerializer(
-            {
-                "faction": self.faction_string,
-                "name": "confirm",
-                "prompt": "Confirm building placement",
-                "endpoint": "confirm",
-                "payload_details": [{"type": "confirm", "name": "confirm"}],
-                "accumulated_payload": {
-                    "building_clearing_number": int(
-                        request.data["building_clearing_number"]
-                    ),
-                    "building_type": building_type,
-                },
-            }
-        )
-        return Response(serializer.data)
-
-    def post_confirm(self, request, game_id: int):
-
-        confirmation = bool(request.data["confirm"])
-        if not confirmation:
-            # client will reset and check for its next options.
-            return Response({"name": "canceled"})
-        player = self.player(request, game_id)
+        building_enum = self.validate_building_type(player, building_type)
         clearing_number = int(request.data["building_clearing_number"])
-        building_type = request.data["building_type"]
-        clearing = Clearing.objects.get(
-            game=self.game(game_id), clearing_number=clearing_number
-        )
-        building_enum = CatBuildingTypes(building_type.capitalize())
         try:
-            place_initial_building(player, clearing, building_enum)
+            clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
+        except Clearing.DoesNotExist as e:
+            raise ValidationError({"detail": str(e)})
+        try:
+            atomic_game_action(place_initial_building)(player, clearing, building_enum)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
-        return Response({"name": "completed"})
+        return self.generate_completed_step()
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""
@@ -203,15 +146,18 @@ class CatsPlaceBuildingView(GameActionView):
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
 
-    def validate_building_type(self, player: Player, building_type: str):
+    def validate_building_type(
+        self, player: Player, building_type: str
+    ) -> CatBuildingTypes:
         try:
-            building_type_enum = CatBuildingTypes(building_type.capitalize())
-        except ValueError:
+            building_type_enum = CatBuildingTypes[building_type]
+        except KeyError:
             raise ValidationError({"detail": f"Invalid building type: {building_type}"})
         try:
             validate_building_type(player, building_type_enum)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
+        return building_type_enum
 
     def validate_clearing_number(
         self, clearing_number: int, game: Game, player: Player
@@ -238,7 +184,8 @@ class CatsConfirmCompletedSetupView(GameActionView):
         "name": "confirm",
         "prompt": "Confirm completed setup",
         "endpoint": "confirm",
-        "payload_details": [],
+        "payload_details": [{"type": "confirm", "name": "confirm"}],
+        "options": [{"value": True, "label": "Confirm"}],
     }
 
     def route_post(self, request, game_id: int, route: str):
@@ -246,10 +193,10 @@ class CatsConfirmCompletedSetupView(GameActionView):
             raise ValidationError("Invalid route")
         player = self.player(request, game_id)
         try:
-            confirm_completed_setup(player)
+            atomic_game_action(confirm_completed_setup, undoable=False)(player)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
-        return Response({"name": "completed"})
+        return self.generate_completed_step()
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""

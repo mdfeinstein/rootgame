@@ -1,3 +1,4 @@
+from game.decorators.transaction_decorator import atomic_game_action
 from game.models.birds.player import BirdLeader
 from game.models.birds.setup import BirdsSimpleSetup
 from game.models.events.setup import GameSimpleSetup
@@ -35,8 +36,6 @@ class BirdsPickCornerView(GameActionView):
     def route_post(self, request, game_id: int, route: str):
         if route == "corner":
             return self.post_corner(request, game_id)
-        elif route == "confirm":
-            return self.post_confirm(request, game_id)
         return Response({"error": "Invalid route"}, status=status.HTTP_400_BAD_REQUEST)
 
     def post_corner(self, request, game_id: int):
@@ -45,45 +44,15 @@ class BirdsPickCornerView(GameActionView):
         # check that corner is valid
         clearing_number = int(request.data["corner_clearing_number"])
         try:
-            validate_corner(
-                game, Clearing.objects.get(game=game, clearing_number=clearing_number)
-            )
-        except ValueError as e:
-            raise ValidationError({"detail": str(e)})
-        # serialize the next step
-        serializer = GameActionStepSerializer(
-            {
-                "faction": self.faction_string,
-                "name": "confirm",
-                "prompt": "Confirm corner clearing choice",
-                "endpoint": "confirm",
-                "payload_details": [{"type": "confirm", "name": "confirm"}],
-                "accumulated_payload": {
-                    "corner_clearing_number": clearing_number,
-                },
-            }
-        )
-        return Response(serializer.data)
-
-    def post_confirm(self, request, game_id: int):
-        game = self.game(game_id)
-        clearing_number = int(request.data["corner_clearing_number"])
-        player = self.player(request, game_id)
-        confirmation = bool(request.data["confirm"])
-        if not confirmation:
-            # client will reset and check for its next options.
-            return Response({"name": "canceled"})
-        try:
             clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
         except Clearing.DoesNotExist as e:
             raise ValidationError({"detail": str(e)})
-        # TODO: these should probably be atomic together.
         try:
-            pick_corner(player, clearing)
+            atomic_game_action(pick_corner)(player, clearing)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
-        # need formal way to signal action completed, look for next action
-        return Response({"name": "completed"})
+        # serialize the next step
+        return self.generate_completed_step()
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""
@@ -109,56 +78,31 @@ class BirdsChooseLeaderInitialView(GameActionView):
         "prompt": "Select leader",
         "endpoint": "leader",
         "payload_details": [{"type": "leader", "name": "leader"}],
+        "options": [
+            {"label": leader.label, "value": leader.name}
+            for leader in BirdLeader.BirdLeaders
+        ],
     }
 
     def route_post(self, request, game_id: int, route: str):
         if route == "leader":
             return self.post_leader(request, game_id)
-        elif route == "confirm":
-            return self.post_confirm(request, game_id)
         return Response({"error": "Invalid route"}, status=status.HTTP_400_BAD_REQUEST)
 
     def post_leader(self, request, game_id: int):
         game = self.game(game_id)
         player = self.player(request, game_id)
-        leader = request.data["leader"]
+        leader_str = request.data["leader"]
         # check that leader is valid
         try:
-            leader_value = get_choice_value_by_label_or_value(
-                BirdLeader.BirdLeaders, leader.capitalize()
-            )
-        except ValueError:
-            raise ValidationError({"detail": f"Invalid leader: {leader}"})
-
-        # serialize the next step
-        serializer = GameActionStepSerializer(
-            {
-                "faction": self.faction_string,
-                "name": "confirm",
-                "prompt": "Confirm leader choice",
-                "endpoint": "confirm",
-                "payload_details": [{"type": "confirm", "name": "confirm"}],
-                "accumulated_payload": {
-                    "leader": leader,
-                },
-            }
-        )
-        return Response(serializer.data)
-
-    def post_confirm(self, request, game_id: int):
-        game = self.game(game_id)
-        player = self.player(request, game_id)
-        confirmation = bool(request.data["confirm"])
-        if not confirmation:
-            # client will reset and check for its next options.
-            return Response({"name": "canceled"})
-        leader = request.data["leader"]
-        leader_choice = None
-        leader_value = get_choice_value_by_label_or_value(
-            BirdLeader.BirdLeaders, leader.capitalize()
-        )
-        choose_leader_initial(player, BirdLeader.BirdLeaders(leader_value))
-        return Response({"name": "completed"})
+            leader = BirdLeader.BirdLeaders[leader_str]
+        except KeyError:
+            raise ValidationError({"detail": f"Invalid leader: {leader_str}"})
+        try:
+            atomic_game_action(choose_leader_initial)(player, leader)
+        except ValueError as e:
+            raise ValidationError({"detail": str(e)})
+        return self.generate_completed_step()
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""
@@ -185,6 +129,9 @@ class BirdsConfirmCompletedSetupView(GameActionView):
         "prompt": "Confirm completed setup",
         "endpoint": "confirm",
         "payload_details": [{"type": "confirm", "name": "confirm"}],
+        "options": [
+            {"label": "Confirm", "value": True},
+        ],
     }
 
     def route_post(self, request, game_id: int, route: str):
@@ -192,10 +139,10 @@ class BirdsConfirmCompletedSetupView(GameActionView):
             raise ValidationError("Invalid route")
         player = self.player(request, game_id)
         try:
-            confirm_completed_setup(player)
+            atomic_game_action(confirm_completed_setup, undoable=False)(player)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
-        return Response({"name": "completed"})
+        return self.generate_completed_step()
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):
         """raises if not this player's turn or correct step"""

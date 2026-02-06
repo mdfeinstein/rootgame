@@ -3,7 +3,7 @@
 - [x] Undo/checkpoints/replay
   - [x] Basic functionality
   - [x] some actions (like Battle) are not undoable
-
+- [ ] add ruins to the board and the frontend display
 - [ ] Battle:
   - [ ] Choosing Hits (views, transactions, url)
 - [ ] Endgame
@@ -15,12 +15,12 @@
   - [x] Frontend
     - [x] Display crafted cards in crafting area
     - [x] Display usable crafted cards on main screen. Make clickable to use. (will replace contents of prompter)
-- [ ] Game Browser
-  - [ ] Display games user is in
-  - [ ] Display games user can join
-  - [ ] Create Game option
-  - [ ] Click to go to game screen
-- [ ] Login Screen
+- [x] Game Browser
+  - [x] Display games user is in
+  - [x] Display games user can join
+  - [x] Create Game option
+  - [x] Click to go to game screen
+- [x] Login Screen
 - [ ] Manual refresh button within game.
 - [ ] Employ custom errors
 - [ ] Game Log

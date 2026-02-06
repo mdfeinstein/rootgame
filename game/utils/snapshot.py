@@ -40,6 +40,17 @@ from game.models.events.battle import Battle
 from game.models.events.wa import OutrageEvent
 from game.models.events.birds import TurmoilEvent
 from game.models.events.cats import FieldHospitalEvent
+from game.models.events.setup import GameSimpleSetup
+from game.models.cats.setup import CatsSimpleSetup
+from game.models.birds.setup import BirdsSimpleSetup
+from game.models.events.crafted_cards import (
+    InformantsEvent,
+    EyrieEmigreEvent,
+    SaboteursEvent,
+    CharmOffensiveEvent,
+    PartisansEvent,
+    SwapMeetEvent,
+)
 
 
 def get_all_game_objects(game: Game):
@@ -68,6 +79,9 @@ def get_all_game_objects(game: Game):
     objects.extend(Ruin.objects.filter(game=game))
     objects.extend(CraftableItemEntry.objects.filter(game=game))
 
+    # Setup State (depend on Game)
+    objects.extend(GameSimpleSetup.objects.filter(game=game))
+
     # 3. Players and their direct assets
     players = game.players.all().order_by("turn_order")
     objects.extend(players)
@@ -78,6 +92,10 @@ def get_all_game_objects(game: Game):
         objects.extend(CraftedItemEntry.objects.filter(player=player))
         objects.extend(CraftedCardEntry.objects.filter(player=player))
         objects.extend(WarriorSupplyEntry.objects.filter(player=player))
+
+        # Setup state (depend on Player)
+        objects.extend(CatsSimpleSetup.objects.filter(player=player))
+        objects.extend(BirdsSimpleSetup.objects.filter(player=player))
 
         # Pieces (Warriors, Buildings, Tokens)
         # For MTI (Multi-Table Inheritance), we MUST serialize the base models as well
@@ -147,6 +165,12 @@ def get_all_game_objects(game: Game):
     objects.extend(OutrageEvent.objects.filter(event__in=events))
     objects.extend(TurmoilEvent.objects.filter(event__in=events))
     objects.extend(FieldHospitalEvent.objects.filter(event__in=events))
+    objects.extend(InformantsEvent.objects.filter(event__in=events))
+    objects.extend(EyrieEmigreEvent.objects.filter(event__in=events))
+    objects.extend(SaboteursEvent.objects.filter(event__in=events))
+    objects.extend(CharmOffensiveEvent.objects.filter(event__in=events))
+    objects.extend(PartisansEvent.objects.filter(event__in=events))
+    objects.extend(SwapMeetEvent.objects.filter(event__in=events))
 
     return objects
 
