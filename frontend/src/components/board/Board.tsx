@@ -36,6 +36,9 @@ import { useTurnInfoQuery } from "../../hooks/useTurnInfoQuery";
 import { GameContext } from "../../contexts/GameProvider";
 import { AspectRatio, Paper } from "@mantine/core";
 
+import { useClearingsQuery } from "../../hooks/useClearingsQuery";
+import type { BuildingType } from "./BuildingSlot";
+
 // Board component: positions, nodes, links, simple viewbox scaling
 export default function SvgBoard({
   mapName = "autumn",
@@ -50,6 +53,8 @@ export default function SvgBoard({
 }) {
   const { gameId, isGameStarted } = useContext(GameContext);
   const turnInfo = useTurnInfoQuery(gameId, isGameStarted);
+  const { data: clearingsData } = useClearingsQuery(gameId, isGameStarted);
+
   useEffect(() => {
     if (!turnInfo.data) return;
     console.log(turnInfo.data);
@@ -110,6 +115,16 @@ export default function SvgBoard({
         (b) => b.clearing_number === clearingNumber && b.building_slot === slot,
       );
       if (!b) {
+        // check for ruins
+        const clearingRuins = clearingsData?.find(
+          (c) => c.clearing_number === clearingNumber,
+        )?.ruins;
+        if (clearingRuins?.includes(slot)) {
+          return {
+            buildingType: "ruin" as BuildingType,
+            faction: "Neutral" as any,
+          };
+        }
         return null;
       }
       return {
@@ -117,7 +132,7 @@ export default function SvgBoard({
         faction: b.faction,
       };
     };
-  }, [buildingTable, isSuccessBuilding]);
+  }, [buildingTable, isSuccessBuilding, clearingsData]);
 
   const clearingProps: ClearingProps[] = useMemo(() => {
     return defaultPositions.map((pos, i) => {

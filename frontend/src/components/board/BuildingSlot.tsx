@@ -8,7 +8,8 @@ export type BuildingType =
   | "sawmills"
   | "workshops"
   | "recruiters"
-  | "base";
+  | "base"
+  | "ruin";
 
 export type BuildingInfo = {
   buildingType: BuildingType;
@@ -37,8 +38,13 @@ export const BuildingSlot = ({
   let color = "none";
   let text = "";
   if (buildingInfo) {
-    color = factionToColor[buildingInfo.faction];
-    text = buildingInfo.buildingType[0];
+    if (buildingInfo.buildingType === "ruin") {
+      color = "#808080"; // Grey for ruins
+      text = "R";
+    } else {
+      color = factionToColor[buildingInfo.faction];
+      text = buildingInfo.buildingType[0];
+    }
   }
 
   return (

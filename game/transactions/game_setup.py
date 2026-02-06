@@ -72,12 +72,21 @@ def player_picks_faction(player: Player, faction: FactionChoiceEntry):
 @transaction.atomic
 def assign_turn_order(game: Game):
     players = Player.objects.filter(game=game)
-    turn_orders = [i for i in range(len(players))]
-    # shuffle(turn_orders)
-    # for now, set turn order to be cats, birds, woodland alliance
-    turn_orders = [0, 1, 2]
-    for i, player in enumerate(players):
-        player.turn_order = turn_orders[i]
+    # determine player turn order according to faction guide
+    faction_turn_orders = {
+        Faction.CATS: 0,
+        Faction.BIRDS: 1,
+        Faction.WOODLAND_ALLIANCE: 2,
+    }
+    # rank players by faction turn order value
+    # this will be useful when there are more factions
+    player_turn_orders = []
+    for player in players:
+        player_turn_orders.append((faction_turn_orders[player.faction], player))
+    player_turn_orders.sort(key=lambda x: x[0])
+    # assign turn order to players according to the ranking
+    for i, (_, player) in enumerate(player_turn_orders):
+        player.turn_order = i
         player.save()
 
 

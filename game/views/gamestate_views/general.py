@@ -1,4 +1,3 @@
-from game.serializers.general_serializers import CardSerializer
 from django.urls import reverse
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -21,11 +20,12 @@ from game.queries.cats.turn import get_phase as get_cat_phase
 from game.queries.current_action.setup import get_setup_action
 from game.queries.current_action.turns import get_current_turn_action
 from game.serializers.general_serializers import (
+    CardSerializer,
     GameStatusSerializer,
     PlayerPublicSerializer,
     GameSessionSerializer,
+    ClearingSerializer,
 )
-from game.logic.playback import undo_last_action
 from game.logic.playback import undo_last_action
 
 

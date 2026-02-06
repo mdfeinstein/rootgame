@@ -1,3 +1,4 @@
+from game.models import Ruin
 from game.models.game_models import Suit
 from game.models import BirdEvening
 from game.models.wa.turn import WAEvening
@@ -28,7 +29,10 @@ from game.models.game_models import Card, Game, HandEntry, Piece
 def available_building_slot(clearing: Clearing) -> BuildingSlot | None:
     building_slots = BuildingSlot.objects.filter(clearing=clearing)
     for building_slot in building_slots:
-        if not Building.objects.filter(building_slot=building_slot).exists():
+        if (
+            not Building.objects.filter(building_slot=building_slot).exists()
+            and not Ruin.objects.filter(building_slot=building_slot).exists()
+        ):
             return building_slot
     return None
 
@@ -143,19 +147,23 @@ def get_current_phase(player: Player):
     """
     if player.faction == Faction.BIRDS:
         from game.queries.birds.turn import get_phase as get_bird_phase
+
         return get_bird_phase(player)
     elif player.faction == Faction.WOODLAND_ALLIANCE:
         from game.queries.wa.turn import get_phase as get_wa_phase
+
         return get_wa_phase(player)
     elif player.faction == Faction.CATS:
         from game.queries.cats.turn import get_phase as get_cat_phase
+
         return get_cat_phase(player)
-            
-    return None
-            
+
     return None
 
-def is_phase(player : Player, phase : str) -> bool:
+    return None
+
+
+def is_phase(player: Player, phase: str) -> bool:
     """
     Returns True if the player is in the specified phase.
     """
@@ -168,7 +176,9 @@ def is_phase(player : Player, phase : str) -> bool:
         case "Evening":
             return isinstance(phase_obj, (CatEvening, WAEvening, BirdEvening))
         case _:
-            raise ValueError("Invalid phase argument provided. Must be 'Birdsong', 'Daylight', or 'Evening'")
+            raise ValueError(
+                "Invalid phase argument provided. Must be 'Birdsong', 'Daylight', or 'Evening'"
+            )
 
 
 def is_start_of_phase(player: Player, phase_model_class) -> bool:
@@ -183,7 +193,6 @@ def is_start_of_phase(player: Player, phase_model_class) -> bool:
     if current_step == "1":
         return True
     return False
-
 
 
 def get_crafting_pieces(player: Player, card: CardsEP) -> list[Piece]:
@@ -203,18 +212,23 @@ def validate_player_has_card_in_hand(player: Player, card: CardsEP) -> HandEntry
         raise ValueError(f"Player does not have card in hand. card name: {card.name}")
     return card_in_hand
 
+
 def validate_player_has_crafted_card(player: Player, card: CardsEP) -> CraftedCardEntry:
     """returns CraftedCardEntry instance if player has card in hand, else raises ValueError
     should only be possible to have one at a time of a specific card
     """
-    crafted_card = CraftedCardEntry.objects.filter(player=player, card__card_type=card.name).first()
+    crafted_card = CraftedCardEntry.objects.filter(
+        player=player, card__card_type=card.name
+    ).first()
     if crafted_card is None:
         raise ValueError(f"Player does not have card in hand. card name: {card.name}")
     return crafted_card
 
-def card_matches_clearing(card : CardsEP, clearing : Clearing) -> bool:
+
+def card_matches_clearing(card: CardsEP, clearing: Clearing) -> bool:
     """returns True if card suit matches clearing suit"""
     return card.value.suit == Suit(clearing.suit) or card.value.suit == Suit.WILD
+
 
 def get_player_hand_size(player: Player) -> int:
     """returns the number of cards in the player's hand"""
@@ -240,25 +254,35 @@ def get_adjacent_clearings(player: Player, clearing: Clearing) -> set[Clearing]:
     ).exists():
         # Check if current clearing has any of our crafting pieces
         has_crafting_piece_here = (
-            Workshop.objects.filter(player=player, building_slot__clearing=clearing).exists()
-            or BirdRoost.objects.filter(player=player, building_slot__clearing=clearing).exists()
+            Workshop.objects.filter(
+                player=player, building_slot__clearing=clearing
+            ).exists()
+            or BirdRoost.objects.filter(
+                player=player, building_slot__clearing=clearing
+            ).exists()
             or WASympathy.objects.filter(player=player, clearing=clearing).exists()
         )
         if has_crafting_piece_here:
             # All other clearings with our crafting pieces are adjacent
             crafting_clearing_ids = set()
             crafting_clearing_ids.update(
-                Workshop.objects.filter(player=player, building_slot__isnull=False).values_list("building_slot__clearing_id", flat=True)
+                Workshop.objects.filter(
+                    player=player, building_slot__isnull=False
+                ).values_list("building_slot__clearing_id", flat=True)
             )
             crafting_clearing_ids.update(
-                BirdRoost.objects.filter(player=player, building_slot__isnull=False).values_list("building_slot__clearing_id", flat=True)
+                BirdRoost.objects.filter(
+                    player=player, building_slot__isnull=False
+                ).values_list("building_slot__clearing_id", flat=True)
             )
             crafting_clearing_ids.update(
-                WASympathy.objects.filter(player=player, clearing__isnull=False).values_list("clearing_id", flat=True)
+                WASympathy.objects.filter(
+                    player=player, clearing__isnull=False
+                ).values_list("clearing_id", flat=True)
             )
-            
+
             adjacent.update(Clearing.objects.filter(id__in=crafting_clearing_ids))
-            
+
             # Remove self if it was added
             adjacent.discard(clearing)
 
@@ -279,7 +303,7 @@ def validate_legal_move(
     """
     if not Warrior.objects.filter(clearing=clearing_start, player=player).exists():
         raise ValueError("No warriors in origin clearing")
-    
+
     # check clearing adjacency (Boat Builders, Tunnels handled here)
     adjacent_clearings = get_adjacent_clearings(player, clearing_start)
     if clearing_end not in adjacent_clearings:
@@ -292,7 +316,7 @@ def validate_legal_move(
     except ValueError:
         has_corvid_planners = False
     if has_corvid_planners or ignore_rule:
-        return #skip rulership check
+        return  # skip rulership check
     rule_target = determine_clearing_rule(clearing_end)
     rule_origin = determine_clearing_rule(clearing_start)
     if rule_target != player and rule_origin != player:
@@ -310,7 +334,6 @@ def validate_has_legal_moves(player: Player, clearing: Clearing):
         except ValueError:
             continue
     raise ValueError("No legal moves from the given clearing")
-
 
 
 def validate_enemy_pieces_in_clearing(

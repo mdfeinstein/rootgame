@@ -152,6 +152,7 @@ class ClearingSerializer(serializers.ModelSerializer):
     suit_name = serializers.CharField(source="get_suit_display")
     connected_to = serializers.SerializerMethodField()
     water_connected_to = serializers.SerializerMethodField()
+    ruins = serializers.SerializerMethodField()
 
     class Meta:
         model = Clearing
@@ -161,6 +162,7 @@ class ClearingSerializer(serializers.ModelSerializer):
             "clearing_number",
             "connected_to",
             "water_connected_to",
+            "ruins",
         ]
 
     def get_connected_to(self, clearing: Clearing) -> list[int]:
@@ -173,6 +175,15 @@ class ClearingSerializer(serializers.ModelSerializer):
             clearing.clearing_number
             for clearing in clearing.water_connected_clearings.all()
         ]
+
+    def get_ruins(self, clearing: Clearing) -> list[int]:
+        from game.models.game_models import Ruin
+
+        return list(
+            Ruin.objects.filter(building_slot__clearing=clearing).values_list(
+                "building_slot__building_slot_number", flat=True
+            )
+        )
 
 
 class PlayerPublicSerializer(serializers.ModelSerializer):
