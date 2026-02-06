@@ -54,7 +54,9 @@ class Game(models.Model):
 
 
 class FactionChoiceEntry(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    game = models.ForeignKey(
+        Game, on_delete=models.CASCADE, related_name="faction_choices"
+    )
     faction = models.CharField(
         max_length=2,
         choices=Faction.choices,
@@ -272,7 +274,9 @@ class Player(models.Model):
         "auth.User", on_delete=models.CASCADE
     )  # deleting a user will break the games
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name="players")
-    faction = models.CharField(max_length=2, choices=Faction.choices, null=True)
+    faction = models.CharField(
+        max_length=2, choices=Faction.choices, null=True, blank=True
+    )
     score = models.IntegerField(default=0)
     turn_order = models.PositiveSmallIntegerField(
         default=None,
@@ -281,7 +285,10 @@ class Player(models.Model):
 
     @property
     def faction_label(self) -> str:
-        return Faction(self.faction).label
+        try:
+            return Faction(self.faction).label
+        except ValueError:
+            return ""
 
 
 class WarriorSupplyEntry(models.Model):
@@ -329,11 +336,16 @@ class CraftedCardEntry(models.Model):
     card = models.ForeignKey(
         Card, on_delete=models.CASCADE, related_name="crafted_cards"
     )
+
     class UsedChoice(models.TextChoices):
         UNUSED = "0", "Unused"
         USED = "1", "Used"
         NOT_APPLICABLE = "2", "Not Applicable"
-    used = models.CharField(max_length=1, choices=UsedChoice.choices, default=UsedChoice.NOT_APPLICABLE)
+
+    used = models.CharField(
+        max_length=1, choices=UsedChoice.choices, default=UsedChoice.NOT_APPLICABLE
+    )
+
 
 class HandEntry(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)

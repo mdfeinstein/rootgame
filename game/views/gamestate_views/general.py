@@ -1,3 +1,4 @@
+from game.serializers.general_serializers import CardSerializer
 from django.urls import reverse
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -19,12 +20,10 @@ from game.models.game_models import (
 from game.queries.cats.turn import get_phase as get_cat_phase
 from game.queries.current_action.setup import get_setup_action
 from game.queries.current_action.turns import get_current_turn_action
-from game.queries.general import get_current_player
 from game.serializers.general_serializers import (
-    CardSerializer,
-    ClearingSerializer,
     GameStatusSerializer,
     PlayerPublicSerializer,
+    GameSessionSerializer,
 )
 from game.logic.playback import undo_last_action
 from game.logic.playback import undo_last_action
@@ -46,10 +45,14 @@ def get_discard_pile(request, game_id: int):
 
 
 @api_view(["GET"])
-def get_player_hand(request):
+def get_player_hand(request, game_id: int):
     # TODO: add auth: valid player or spectator
     try:
-        player = Player.objects.get(user=request.user)
+        game = Game.objects.get(pk=game_id)
+    except Game.DoesNotExist:
+        return ValidationError("Game does not exist")
+    try:
+        player = Player.objects.get(user=request.user, game=game)
     except Player.DoesNotExist:
         return ValidationError("Player does not exist")
     hand_cards = HandEntry.objects.filter(player=player)
@@ -119,6 +122,18 @@ def undo_last_action_view(request, game_id: int):
         game = Game.objects.get(pk=game_id)
     except Game.DoesNotExist:
         return Response({"detail": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     undo_last_action(game)
     return Response({"status": "success"}, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def get_game_session_detail(request, game_id: int):
+    """provides detailed information about the game session"""
+    try:
+        game = Game.objects.get(pk=game_id)
+    except Game.DoesNotExist:
+        return Response({"detail": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = GameSessionSerializer(game)
+    return Response(serializer.data, status=status.HTTP_200_OK)

@@ -19,17 +19,22 @@ const tabulateWarriors = (faction: Faction, data: any) => {
 };
 
 const apiUrl = import.meta.env.VITE_API_URL;
-const useWarriorTable = (gameId: number, factions: Faction[]) => {
+const useWarriorTable = (
+  gameId: number,
+  factions: Faction[],
+  enabled: boolean = true,
+) => {
   const results = useQueries({
     queries: factions.map((faction) => ({
-      queryKey: [`public-${faction}`],
+      queryKey: [`public-${faction}`, gameId],
       queryFn: async () => {
         const response = await fetch(
-          apiUrl + `/${faction.toLowerCase()}/player-info/${gameId}/`
+          apiUrl + `/${faction.toLowerCase()}/player-info/${gameId}/`,
         );
         return response.json();
       },
       select: (data) => tabulateWarriors(faction, data),
+      enabled: !!gameId && enabled,
     })),
   });
 

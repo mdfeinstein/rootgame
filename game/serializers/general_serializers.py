@@ -11,6 +11,7 @@ from game.models.game_models import (
     Card,
     Clearing,
     Faction,
+    FactionChoiceEntry,
     Game,
     HandEntry,
     Player,
@@ -318,7 +319,7 @@ class GameStatusSerializer(serializers.Serializer):
             print(current_player.faction)
             print(turn_object_dict)
             faction = Faction(current_player.faction)
-            print(faction)
+            print(f"faction: {faction}")
             turn_object = (
                 turn_object_dict[faction]
                 .objects.filter(player=current_player)
@@ -354,3 +355,60 @@ class PlayerSerializer(serializers.Serializer):
 
     def get_faction_label(self, player: Player):
         return Faction(player.faction).label
+
+
+class GameListSerializer(serializers.ModelSerializer):
+    owner_username = serializers.CharField(source="owner.username")
+    player_count = serializers.SerializerMethodField()
+    status_label = serializers.CharField(source="get_status_display")
+    user_faction = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Game
+        fields = [
+            "id",
+            "owner_username",
+            "player_count",
+            "status",
+            "status_label",
+            "user_faction",
+        ]
+
+    def get_player_count(self, game: Game) -> int:
+        return game.players.count()
+
+    def get_user_faction(self, game: Game) -> str | None:
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            try:
+                player = game.players.get(user=request.user)
+                return player.faction
+            except Player.DoesNotExist:
+                return None
+        return None
+
+
+class FactionChoiceEntrySerializer(serializers.ModelSerializer):
+    faction_label = serializers.CharField(source="get_faction_display", read_only=True)
+
+    class Meta:
+        model = FactionChoiceEntry
+        fields = ["faction", "faction_label", "chosen"]
+
+
+class GameSessionSerializer(serializers.ModelSerializer):
+    owner_username = serializers.CharField(source="owner.username")
+    players = PlayerPublicSerializer(many=True, read_only=True)
+    status_label = serializers.CharField(source="get_status_display")
+    faction_choices = FactionChoiceEntrySerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Game
+        fields = [
+            "id",
+            "owner_username",
+            "status",
+            "status_label",
+            "players",
+            "faction_choices",
+        ]

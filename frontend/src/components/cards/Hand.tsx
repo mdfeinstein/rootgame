@@ -7,8 +7,8 @@ import { Box, Group } from "@mantine/core";
 
 const Hand = () => {
   const { username } = useContext(UserContext);
-  const { gameId } = useContext(GameContext);
-  const { playerHand } = useGetPlayerHandQuery(gameId, username);
+  const { gameId, isGameStarted } = useContext(GameContext);
+  const { playerHand } = useGetPlayerHandQuery(gameId, username, isGameStarted);
   const [isHovered, setIsHovered] = useState(false);
   return (
     <Group

@@ -1,34 +1,44 @@
 import { useMutation } from "@tanstack/react-query";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../contexts/UserProvider";
-const djangoUrl = import.meta.env.VITE_DJANGO_URL;
+import { GameContext } from "../contexts/GameProvider";
 
 export default function DevSignIn() {
-  const { signInMutation: signIn } = useContext(UserContext);
+  const { signInMutation: signIn, username } = useContext(UserContext);
+  const { session } = useContext(GameContext);
 
-  // by default, sign in cats
-  const [signedIn, setSignedIn] = useState<string | null>(null);
-  const signInCallback = (faction: string) => {
-    switch (faction) {
-      case "Cats":
-        signIn.mutate({ username: "user1", password: "password" });
-        setSignedIn("Cats");
-        break;
-      case "Birds":
-        signIn.mutate({ username: "user2", password: "password" });
-        setSignedIn("Birds");
-        break;
-      case "WA":
-        signIn.mutate({ username: "user3", password: "password" });
-        setSignedIn("WA");
-        break;
-      default:
-        break;
+  // status of which faction we currently think we are representing
+  const [activeButton, setActiveButton] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (session?.players && username) {
+      const currentPlayer = session.players.find(
+        (p: any) => p.username.toLowerCase() === username.toLowerCase(),
+      );
+      if (currentPlayer?.faction) {
+        const factionMap: Record<string, string> = {
+          ca: "Cats",
+          bi: "Birds",
+          wa: "WA",
+        };
+        setActiveButton(factionMap[currentPlayer.faction] || null);
+      } else {
+        setActiveButton(null);
+      }
+    }
+  }, [session, username]);
+
+  const signInByFaction = (factionCode: string, label: string) => {
+    const players = session?.players || [];
+    const player = players.find((p: any) => p.faction === factionCode);
+
+    if (player) {
+      signIn.mutate({ username: player.username, password: "password" });
+      setActiveButton(label);
+    } else {
+      console.log(`No player has picked ${label} yet.`);
     }
   };
-  useEffect(() => {
-    signInCallback("Cats");
-  }, []);
 
   return (
     <div
@@ -40,25 +50,25 @@ export default function DevSignIn() {
       }}
     >
       <button
-        onClick={() => signInCallback("Cats")}
+        onClick={() => signInByFaction("ca", "Cats")}
         style={{
-          background: signedIn === "Cats" ? "orange" : "white",
+          background: activeButton === "Cats" ? "orange" : "white",
         }}
       >
         Cats
       </button>
       <button
-        onClick={() => signInCallback("Birds")}
+        onClick={() => signInByFaction("bi", "Birds")}
         style={{
-          background: signedIn === "Birds" ? "blue" : "white",
+          background: activeButton === "Birds" ? "blue" : "white",
         }}
       >
         Birds
       </button>
       <button
-        onClick={() => signInCallback("WA")}
+        onClick={() => signInByFaction("wa", "WA")}
         style={{
-          background: signedIn === "WA" ? "green" : "white",
+          background: activeButton === "WA" ? "green" : "white",
         }}
       >
         WA

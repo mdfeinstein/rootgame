@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
-const apiUrl = import.meta.env.VITE_API_URL;
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
 
 export type RouteData = {
@@ -28,7 +27,7 @@ export type GameActionStep = {
   options?: Option[];
 };
 
-const useGameActionQuery = (gameId: number) => {
+const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
   const queryClient = useQueryClient();
 
   const {
@@ -50,6 +49,7 @@ const useGameActionQuery = (gameId: number) => {
       );
       return response.json();
     },
+    enabled: !!gameId && enabled,
   });
 
   const {
@@ -71,7 +71,7 @@ const useGameActionQuery = (gameId: number) => {
       console.log("action info", response);
       return response;
     },
-    enabled: !!actionRoute?.route,
+    enabled: !!actionRoute?.route && enabled,
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -140,9 +140,9 @@ const useGameActionQuery = (gameId: number) => {
     baseEndpoint: actionRoute?.route,
     actionInfo,
     error,
-    isLoading: actionInfoIsLoading,
-    isError: actionInfoIsError,
-    isSuccess: actionInfoIsSuccess,
+    isLoading: actionInfoIsLoading || actionRouteIsLoading,
+    isError: actionInfoIsError || actionRouteIsError,
+    isSuccess: actionInfoIsSuccess && actionRouteIsSuccess,
     submitPayloadMutation,
     cancelProcess,
     startActionOverride,

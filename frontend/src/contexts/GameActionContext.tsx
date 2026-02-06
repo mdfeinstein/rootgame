@@ -15,7 +15,7 @@ export type SubmitPayload = {
 const GameActionContext = createContext<any>({});
 
 const GameActionProvider = ({ children }: { children: React.ReactNode }) => {
-  const { gameId } = useContext(GameContext);
+  const { gameId, isGameStarted } = useContext(GameContext);
   const {
     baseEndpoint,
     actionInfo,
@@ -26,7 +26,7 @@ const GameActionProvider = ({ children }: { children: React.ReactNode }) => {
     submitPayloadMutation,
     cancelProcess,
     startActionOverride,
-  } = useGameActionQuery(gameId);
+  } = useGameActionQuery(gameId, isGameStarted);
 
   const callBack = (submitPayload: SubmitPayload) => {
     // find relevant types from click

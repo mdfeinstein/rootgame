@@ -17,6 +17,7 @@ from game.models.game_models import Faction, FactionChoiceEntry, Game, Player
 from game.serializers.general_serializers import (
     CreateNewGameSerializer,
     FactionChoiceSerializer,
+    GameListSerializer,
 )
 from game.transactions.game_setup import (
     add_new_player_to_game,
@@ -48,6 +49,7 @@ def create_game(request: Request):
     faction_options = data.get(
         "faction_options", [faction.value for faction in Faction]
     )
+    print(f"faction options: {faction_options}")
     game = create_new_game(owner=user, map=map, faction_options=faction_options)
     return Response({"game_id": game.pk}, status=status.HTTP_201_CREATED)
 
@@ -124,3 +126,29 @@ def start_game_view(request: Request, game_id: int):
 def get_player_turn(request: Request, game_id: int):
     if request.user.is_anonymous:
         raise PermissionDenied("User must be logged in to get turn")
+
+
+@api_view(["GET"])
+def list_active_games(request: Request):
+    if request.user.is_anonymous:
+        raise PermissionDenied("User must be logged in to list games")
+    user = cast(User, request.user)
+    # games where the user is a player
+    games = Game.objects.filter(players__user=user).distinct().order_by("-id")
+    serializer = GameListSerializer(games, many=True, context={"request": request})
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+def list_joinable_games(request: Request):
+    if request.user.is_anonymous:
+        raise PermissionDenied("User must be logged in to list games")
+    user = cast(User, request.user)
+    # games that haven't started and user is not a player
+    games = (
+        Game.objects.filter(status=Game.GameStatus.NOT_STARTED)
+        .exclude(players__user=user)
+        .order_by("-id")
+    )
+    serializer = GameListSerializer(games, many=True, context={"request": request})
+    return Response(serializer.data)

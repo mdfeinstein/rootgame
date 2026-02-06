@@ -35,17 +35,22 @@ const tabulateTokens = (faction: Faction, data: any) => {
 };
 
 const apiUrl = import.meta.env.VITE_API_URL;
-const useTokenTable = (gameId: number, factions: Faction[]) => {
+const useTokenTable = (
+  gameId: number,
+  factions: Faction[],
+  enabled: boolean = true,
+) => {
   const results = useQueries({
     queries: factions.map((faction) => ({
-      queryKey: [`public-${faction}`],
+      queryKey: [`public-${faction}`, gameId, "tokens"],
       queryFn: async () => {
         const response = await fetch(
-          apiUrl + `/${faction.toLowerCase()}/player-info/${gameId}/`
+          apiUrl + `/${faction.toLowerCase()}/player-info/${gameId}/`,
         );
         return response.json();
       },
       select: (data) => tabulateTokens(faction, data),
+      enabled: !!gameId && enabled,
     })),
   });
 

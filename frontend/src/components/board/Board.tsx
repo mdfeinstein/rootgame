@@ -48,8 +48,8 @@ export default function SvgBoard({
   height?: number;
   onNodeClick?: (id: string) => void;
 }) {
-  const { gameId } = useContext(GameContext);
-  const turnInfo = useTurnInfoQuery(gameId);
+  const { gameId, isGameStarted } = useContext(GameContext);
+  const turnInfo = useTurnInfoQuery(gameId, isGameStarted);
   useEffect(() => {
     if (!turnInfo.data) return;
     console.log(turnInfo.data);
@@ -59,12 +59,14 @@ export default function SvgBoard({
   // create list of clearingProps
   const { warriorTable, isSuccess: isSuccessWarrior } = useWarriorTable(
     gameId,
-    factionList
+    factionList,
+    isGameStarted,
   );
 
   const { tokenTable, isSuccess: isSuccessToken } = useTokenTable(
     gameId,
-    factionList
+    factionList,
+    isGameStarted,
   );
 
   const accumulatedTokens: Record<
@@ -81,7 +83,7 @@ export default function SvgBoard({
         map[token.clearing_number] = [];
       }
       const sameTokenTypeIdx = map[token.clearing_number].findIndex(
-        (t) => t.tokenType === token.tokenType
+        (t) => t.tokenType === token.tokenType,
       );
       if (sameTokenTypeIdx === -1) {
         map[token.clearing_number].push({
@@ -98,13 +100,14 @@ export default function SvgBoard({
 
   const { buildingTable, isSuccess: isSuccessBuilding } = useBuildingTable(
     gameId,
-    factionList
+    factionList,
+    isGameStarted,
   );
 
   const buildingInfoByClearingAndSlot = useMemo(() => {
     return (clearingNumber: number, slot: number) => {
       const b = buildingTable.find(
-        (b) => b.clearing_number === clearingNumber && b.building_slot === slot
+        (b) => b.clearing_number === clearingNumber && b.building_slot === slot,
       );
       if (!b) {
         return null;
@@ -198,7 +201,7 @@ export default function SvgBoard({
                     slot_number={i}
                     buildingInfo={buildingInfoByClearingAndSlot(
                       clearingProp.clearingNumber,
-                      i
+                      i,
                     )}
                   ></BuildingSlot>
                 ))}
@@ -213,7 +216,7 @@ export default function SvgBoard({
                           (entry) =>
                             entry.faction === factionList[i] &&
                             entry.clearing_number ===
-                              clearingProp.clearingNumber
+                              clearingProp.clearingNumber,
                         ).length ?? 0,
                     }}
                   />
@@ -234,6 +237,6 @@ export default function SvgBoard({
           </g>
         </svg>
       </Paper>
-      </AspectRatio>
+    </AspectRatio>
   );
 }

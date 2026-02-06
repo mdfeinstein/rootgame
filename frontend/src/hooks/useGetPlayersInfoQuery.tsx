@@ -9,7 +9,7 @@ export type Player = {
   card_count: number;
 };
 
-const useGetPlayersInfoQuery = (gameId: number) => {
+const useGetPlayersInfoQuery = (gameId: number, enabled: boolean = true) => {
   const {
     data: players,
     isLoading,
@@ -25,11 +25,11 @@ const useGetPlayersInfoQuery = (gameId: number) => {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       return response.json();
     },
-    enabled: !!gameId,
+    enabled: !!gameId && enabled,
   });
   return { players, isLoading, isError, isSuccess };
 };

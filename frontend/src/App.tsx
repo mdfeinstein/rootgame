@@ -1,67 +1,48 @@
 import "./App.css";
-import SvgBoard from "./components/board/Board";
-import { GameActionProvider } from "./contexts/GameActionContext";
-import Prompter from "./components/board/Prompter";
-import CraftedCardPrompter from "./components/board/CraftedCardPrompter";
-import Input from "./components/board/Input";
-import DevSignIn from "./components/DevSignIn";
-import Hand from "./components/cards/Hand";
+import "@mantine/core/styles.css";
+import { MantineProvider } from "@mantine/core";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import { GameProvider } from "./contexts/GameProvider";
 import { UserProvider } from "./contexts/UserProvider";
-import "@mantine/core/styles.css";
-import { Group, MantineProvider, Stack } from "@mantine/core";
-import PlayerColumn from "./components/player/PlayerColumn";
-import { PlayerProvider } from "./contexts/PlayerProvider";
-import UndoButton from "./components/prompts/UndoButton";
+import LoginPage from "./pages/Login";
+import LobbyPage from "./pages/Lobby";
+import GamePage from "./pages/GamePage";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/lobby",
+        element: <LobbyPage />,
+      },
+      {
+        path: "/game/:gameId",
+        element: <GamePage />,
+      },
+      {
+        path: "/",
+        element: <Navigate to="/lobby" replace />,
+      },
+    ],
+  },
+]);
 
 function App() {
   return (
     <MantineProvider>
       <UserProvider>
         <GameProvider>
-          <PlayerProvider>
-            <GameActionProvider>
-              <Group>
-                <Stack>
-                  <PlayerColumn />
-                  <UndoButton />
-                </Stack>
-                <div
-                  style={{
-                    width: "800px",
-                    height: "800px",
-                  }}
-                >
-                  <SvgBoard width={800} height={800} />
-                </div>
-              </Group>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                >
-                  <Stack>
-                    <CraftedCardPrompter />
-                    <Prompter />
-                  </Stack>
-                  {/* <Input /> */}
-                </div>
-                <DevSignIn />
-              </div>
-              <Hand />
-            </GameActionProvider>
-          </PlayerProvider>
+          <RouterProvider router={router} />
         </GameProvider>
       </UserProvider>
     </MantineProvider>

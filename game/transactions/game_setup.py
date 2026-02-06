@@ -228,6 +228,9 @@ def deal_starting_cards(game: Game):
 def start_game(game: Game):
     if game.status != Game.GameStatus.NOT_STARTED:
         raise ValueError("Game is already started")
+    players = Player.objects.filter(game=game)
+    if any(player.faction is None for player in players):
+        raise ValueError("Not all players have selected a faction")
     create_game_setup(game)
     map_setup(game)
     construct_deck(game)

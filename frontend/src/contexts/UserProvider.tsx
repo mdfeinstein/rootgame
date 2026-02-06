@@ -18,6 +18,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
           "Content-Type": "application/json",
         },
       });
+      if (!response.ok) {
+        throw new Error("Invalid credentials");
+      }
       return response.json();
     },
     onSuccess: async (data, variables) => {
@@ -25,12 +28,20 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.setItem("refreshToken", data.refresh);
       console.log("success", data);
       queryClient.setQueryData(["user"], { username: variables.username });
-      queryClient.invalidateQueries(["playerInfo"]);
+      queryClient.invalidateQueries({ queryKey: ["playerInfo"] });
     },
     onError: (error) => {
       console.log("error", error);
     },
   });
+
+  const signOut = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    queryClient.setQueryData(["user"], { username: null });
+    queryClient.invalidateQueries();
+  };
+
   const userInfoQuery = useQuery({
     queryKey: ["user"],
     queryFn: async (): Promise<{ username: string | null }> => {
@@ -41,6 +52,10 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
           "Content-Type": "application/json",
         },
       });
+      if (!response.ok) {
+        localStorage.removeItem("accessToken");
+        return { username: null };
+      }
       return response.json();
     },
   });
@@ -49,6 +64,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         username: userInfoQuery.data?.username,
         signInMutation: signIn,
+        signOut,
+        isLoading: userInfoQuery.isLoading,
+        isFetched: userInfoQuery.isFetched,
       }}
     >
       {children}

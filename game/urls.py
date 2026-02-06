@@ -40,6 +40,7 @@ from game.views.gamestate_views.general import (
     get_players,
     get_turn_info,
     undo_last_action_view,
+    get_game_session_detail,
 )
 from game.views.gamestate_views.cards import GetCraftedCardsView
 from game.views.setup_views import (
@@ -47,6 +48,8 @@ from game.views.setup_views import (
     join_game,
     pick_faction,
     start_game_view,
+    list_active_games,
+    list_joinable_games,
     cats,
     birds,
 )
@@ -88,7 +91,7 @@ urlpatterns = [
     path("api/birds/player-info/<int:game_id>/", get_bird_player_public),
     path("api/clearings/<int:game_id>/", get_clearings),
     path("api/discard-pile/<int:game_id>/", get_discard_pile),
-    path("api/player-hand/", get_player_hand),
+    path("api/player-hand/<int:game_id>/", get_player_hand),
     path("api/turn-info/<int:game_id>/", get_turn_info),
     # setup views
     path("api/game/create/", create_game),
@@ -101,7 +104,18 @@ urlpatterns = [
         name="get-current-action",
     ),
     path("api/game/undo/<int:game_id>/", undo_last_action_view, name="undo-action"),
-    path("api/crafted-cards/<int:game_id>/<str:faction>/", GetCraftedCardsView.as_view(), name="get-crafted-cards"),
+    path(
+        "api/game/<int:game_id>/session/",
+        get_game_session_detail,
+        name="game-session-detail",
+    ),
+    path(
+        "api/crafted-cards/<int:game_id>/<str:faction>/",
+        GetCraftedCardsView.as_view(),
+        name="get-crafted-cards",
+    ),
+    path("api/games/active/", list_active_games, name="list-active-games"),
+    path("api/games/joinable/", list_joinable_games, name="list-joinable-games"),
 ]
 register_action(
     "cats-setup-pick-corner",
@@ -256,7 +270,9 @@ register_action(
 from game.views.action_views.crafted_cards.propaganda_bureau import PropagandaBureauView
 from game.views.action_views.crafted_cards.saboteurs import SaboteursView
 from game.views.action_views.crafted_cards.charm_offensive import CharmOffensiveView
-from game.views.action_views.crafted_cards.league_of_adventurers import LeagueOfAdventurersView
+from game.views.action_views.crafted_cards.league_of_adventurers import (
+    LeagueOfAdventurersView,
+)
 from game.views.action_views.crafted_cards.informants import InformantsView
 from game.views.action_views.crafted_cards.eyrie_emigre import EyrieEmigreView
 from game.views.action_views.crafted_cards.partisans import PartisansView
@@ -319,4 +335,3 @@ register_action(
     "api/action/card/swap-meet/",
     urlpatterns,
 )
-
