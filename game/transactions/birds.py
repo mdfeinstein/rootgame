@@ -1,3 +1,4 @@
+from game.transactions.general import draw_card_from_deck_to_hand
 from game.transactions.general import discard_card_from_hand
 from game.transactions.crafted_cards.informants import informants_check
 from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
@@ -65,7 +66,7 @@ def emergency_draw(player: Player):
     validate_step(player, BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING)
     # check if player has cards in hand and draw if not
     if get_player_hand_size(player) == 0:
-        draw_card_from_deck(player)
+        draw_card_from_deck_to_hand(player)
     # move to next step
     next_step(player)
 
@@ -144,9 +145,10 @@ def place_roost(player: Player, clearing: Clearing):
     roost.building_slot = building_slot
     roost.save()
 
+
 @transaction.atomic
-def try_auto_emergency_roost(player : Player):
-    """ 
+def try_auto_emergency_roost(player: Player):
+    """
     Tries to automate the emergency roost step.
     If player does not need to emergency roost (has at least one roost on board),
     then moves to next step.
@@ -164,7 +166,7 @@ def try_auto_emergency_roost(player : Player):
         next_step(player)
     # see if there is one clearing with least warriors
     clearings_in_game = list(Clearing.objects.filter(game=player.game))
-    #first pass: get the lowest warrior count
+    # first pass: get the lowest warrior count
     lowest_warrior_count = None
     for clearing_ in clearings_in_game:
         if lowest_warrior_count is None:
@@ -180,12 +182,14 @@ def try_auto_emergency_roost(player : Player):
         if warrior_count == lowest_warrior_count:
             if clearing_with_lowest_warriors is None:
                 clearing_with_lowest_warriors = clearing_
-            else: #at least two clearings have the same lowest warrior count
-                return # do nothing, player needs to choose
-    assert clearing_with_lowest_warriors is not None, "No clearing with lowest warrior count found, this should never happen"
+            else:  # at least two clearings have the same lowest warrior count
+                return  # do nothing, player needs to choose
+    assert (
+        clearing_with_lowest_warriors is not None
+    ), "No clearing with lowest warrior count found, this should never happen"
     # if we are here, then we have a unique clearing with the lowest warrior count
     emergency_roost(player, clearing_with_lowest_warriors)
- 
+
 
 @transaction.atomic
 def emergency_roost(player: Player, clearing: Clearing):
@@ -242,6 +246,7 @@ def bird_craft_card(player: Player, card: CardsEP, crafting_pieces: list[BirdRoo
     # if no more crafting pieces, move to next step
     if get_player_hand_size(player) == 0 or get_all_unused_roosts(player).count() == 0:
         next_step(player)
+
 
 @transaction.atomic
 def bird_recruit_action(
@@ -321,6 +326,7 @@ def bird_move_action(
     # check if turmoil or next_step
     move_turmoil_check(player)
 
+
 @transaction.atomic
 def bird_battle_action(
     player: Player,
@@ -387,6 +393,7 @@ def bird_build_action(
     # check if turmoil or next_step
     build_turmoil_check(player)
 
+
 @transaction.atomic
 def roost_scoring(player: Player):
     """scoring for roosts"""
@@ -407,6 +414,7 @@ def roost_scoring(player: Player):
     raise_score(player, scoring_per_roost_on_board[roosts_on_board])
     next_step(player)
 
+
 @transaction.atomic
 def draw_cards(player: Player):
     """draws cards for the player during scoring step"""
@@ -416,8 +424,9 @@ def draw_cards(player: Player):
     drawing_per_roost_on_board = [1, 1, 1, 2, 2, 2, 3, 3]
     roosts_on_board = len(get_roosts_on_board(player))
     for _ in range(drawing_per_roost_on_board[roosts_on_board]):
-        draw_card_from_deck(player)
+        draw_card_from_deck_to_hand(player)
     next_step(player)
+
 
 @transaction.atomic
 def check_discard_step(player: Player):
@@ -427,7 +436,8 @@ def check_discard_step(player: Player):
     assert type(evening) == BirdEvening
     if get_player_hand_size(player) <= 5:
         next_step(player)
-    
+
+
 @transaction.atomic
 def discard_card(player: Player, card: CardsEP):
     """discard a card from the player's hand, moving to next step if they are down to 5 cards"""
@@ -439,12 +449,13 @@ def discard_card(player: Player, card: CardsEP):
     card_in_hand = validate_player_has_card_in_hand(player, card)
     if player.faction != Faction.BIRDS.value:
         raise ValueError("Player is not birds")
-    #discard card
+    # discard card
     discard_card_from_hand(player, card_in_hand)
-    #move to next step if player has 5 or fewer cards
+    # move to next step if player has 5 or fewer cards
     if get_player_hand_size(player) <= 5:
         next_step(player)
-    
+
+
 @transaction.atomic
 def begin_evening(player: Player):
     """automates scoring and drawing in evening, and discarding too if possible"""
@@ -468,7 +479,7 @@ def begin_evening(player: Player):
     # draw
     assert evening.step == BirdEvening.BirdEveningSteps.DRAWING
     for _ in range(drawing_per_roost_on_board[roosts_on_board]):
-        draw_card_from_deck(player)
+        draw_card_from_deck_to_hand(player)
     evening.step = next_choice(BirdEvening.BirdEveningSteps, evening.step)
     # ignro discard step, if able
     assert evening.step == BirdEvening.BirdEveningSteps.DISCARDING
@@ -778,7 +789,6 @@ def turmoil(player: Player):
     TurmoilEvent.objects.create(event=event, player=player)
 
 
-
 @transaction.atomic
 def discard_card_from_decree(player: Player, decree_entry: DecreeEntry):
     """discards the given card from the player's Decree into the gamediscard pile"""
@@ -814,6 +824,7 @@ def turmoil_choose_new_leader(player: Player, leader: BirdLeader):
     # go to next step
     next_step(player)
 
+
 @transaction.atomic
 def next_step(player: Player):
     phase = get_phase(player)
@@ -829,8 +840,11 @@ def next_step(player: Player):
     phase.save()
     step_effect(player, phase)
 
+
 @transaction.atomic
-def step_effect(player: Player, phase: BirdBirdsong | BirdDaylight | BirdEvening | None = None):
+def step_effect(
+    player: Player, phase: BirdBirdsong | BirdDaylight | BirdEvening | None = None
+):
     if phase is None:
         phase = get_phase(player)
     match phase:
@@ -840,7 +854,11 @@ def step_effect(player: Player, phase: BirdBirdsong | BirdDaylight | BirdEvening
                     pass
                 case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING:
                     from game.queries.crafted_cards import get_coffin_makers_player
-                    from game.transactions.crafted_cards.coffin_makers import score_coffins, release_warriors
+                    from game.transactions.crafted_cards.coffin_makers import (
+                        score_coffins,
+                        release_warriors,
+                    )
+
                     coffin_player = get_coffin_makers_player(player.game)
                     if coffin_player == player:
                         score_coffins(player)
@@ -869,7 +887,7 @@ def step_effect(player: Player, phase: BirdBirdsong | BirdDaylight | BirdEvening
                     build_turmoil_check(player)
                 case BirdDaylight.BirdDaylightSteps.COMPLETED:
                     if not check_charm_offensive(player):
-                        #call step_effect for current phase (evening) by passing None
+                        # call step_effect for current phase (evening) by passing None
                         step_effect(player, None)
         case BirdEvening():
             match phase.step:
@@ -885,6 +903,3 @@ def step_effect(player: Player, phase: BirdBirdsong | BirdDaylight | BirdEvening
                     end_birds_turn(player)
         case _:
             raise ValueError("Invalid phase")
-    
-
-

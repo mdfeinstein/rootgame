@@ -1,3 +1,5 @@
+from game.transactions.general import draw_card_from_deck_to_hand
+from game.queries.wa.supporters import can_add_supporter
 from typing import Union
 from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
 from game.transactions.crafted_cards.saboteurs import saboteurs_check
@@ -66,26 +68,41 @@ def discard_supporters(player: Player, supporters: list[SupporterStackEntry]):
         supporter.delete()
 
 
-@transaction.atomic
 def add_supporter(player: Player, card: CardsEP):
-    """adds a supporter from hand to the player's stack"""
+    """
+    adds a card (from anywhere) to the players supporter stack
+    Called by mobilize, outrage, etc.
+    If cannot add, card goes to discard pile
+    """
     assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
+    if not can_add_supporter(player):
+        DiscardPileEntry.create_from_card(card)
+    else:
+        SupporterStackEntry.objects.create(player=player, card=card)
+
+
+@transaction.atomic
+def mobilize_supporter(player: Player, card: CardsEP):
+    """adds a supporter from hand to the player's stack, during mobilize action"""
+    assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
+    assert get_phase(player.game) == WADaylight, "Not day phase"
     card_in_hand = validate_player_has_card_in_hand(player, card)
+    if not can_add_supporter(player):
+        raise ValueError("Cannot add a supporter to the stack: no base and at limit")
     # add card to supporter stack
-    supporter = SupporterStackEntry.objects.create(
-        player=player, card=card_in_hand.card
-    )
+    add_supporter(player, card)
     # delete card from player's hand
     card_in_hand.delete()
+
 
 @transaction.atomic
 def draw_card_to_supporters(player: Player):
     """draws a card from the deck to the player's supporters"""
     assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
-    card_in_hand = draw_card_from_deck(player)
-    print(f"card_in_hand: {card_in_hand}")
-    card = CardsEP[card_in_hand.card.card_type]
+    card = draw_card_from_deck(player)
+    card = CardsEP[card.card_type]
     add_supporter(player, card)
+
 
 @transaction.atomic
 def add_officer(player: Player):
@@ -129,6 +146,7 @@ def revolt(player: Player, clearing: Clearing):
         player_removes_token,
         player_removes_warriors,
     )
+
     # check that player can revolt
     supporters = validate_revolt(player, clearing)
     # discard supporters
@@ -263,6 +281,7 @@ def operation_battle(player: Player, defender: Player, clearing: Clearing):
     officer.save()
     # execute battle
     from game.transactions.battle import start_battle
+
     start_battle(player.game, player.faction, defender.faction, clearing)
 
 
@@ -355,6 +374,8 @@ def end_evening_operations(player: Player):
     assert type(evening) == WAEvening
     # move to next step
     next_step(player)
+
+
 @transaction.atomic
 def draw_cards(player: Player):
     evening = get_phase(player)
@@ -365,12 +386,13 @@ def draw_cards(player: Player):
         WABase.objects.filter(player=player, building_slot__isnull=False).count() + 1
     )
     for _ in range(cards_to_draw):
-        draw_card_from_deck(player)
+        draw_card_from_deck_to_hand(player)
     # move to next step
     next_step(player)
 
+
 @transaction.atomic
-def check_discard_step(player : Player):
+def check_discard_step(player: Player):
     evening = get_phase(player)
     assert type(evening) == WAEvening
     assert evening.step == WAEvening.WAEveningSteps.DISCARDING, "Not Discarding step"
@@ -441,6 +463,7 @@ def pay_outrage(outrage_event: OutrageEvent, card: CardsEP):
     outrage_event.card_given = True
     outrage_event.save()
 
+
 @transaction.atomic
 def next_step(player: Player):
     """
@@ -463,8 +486,10 @@ def next_step(player: Player):
 
 
 @transaction.atomic
-def step_effect(player: Player, phase: Union[WABirdsong, WADaylight, WAEvening, None] = None):
-    """ executes any 'passive' effects that should occur at a specific step
+def step_effect(
+    player: Player, phase: Union[WABirdsong, WADaylight, WAEvening, None] = None
+):
+    """executes any 'passive' effects that should occur at a specific step
     ex: drawing or launching events
     typically called from next_step
     """
@@ -477,7 +502,11 @@ def step_effect(player: Player, phase: Union[WABirdsong, WADaylight, WAEvening, 
                     pass
                 case WABirdsong.WABirdsongSteps.REVOLT:
                     from game.queries.crafted_cards import get_coffin_makers_player
-                    from game.transactions.crafted_cards.coffin_makers import score_coffins, release_warriors
+                    from game.transactions.crafted_cards.coffin_makers import (
+                        score_coffins,
+                        release_warriors,
+                    )
+
                     coffin_player = get_coffin_makers_player(player.game)
                     if coffin_player == player:
                         score_coffins(player)
@@ -488,9 +517,12 @@ def step_effect(player: Player, phase: Union[WABirdsong, WADaylight, WAEvening, 
                     pass
                 case WABirdsong.WABirdsongSteps.COMPLETED:
                     from game.transactions.crafted_cards.eyrie_emigre import is_emigre
+
                     is_emigre(player)
                 case _:
-                    raise ValueError(f"Invalid step in step_effect for WA Birdsong: {phase.step.name}")
+                    raise ValueError(
+                        f"Invalid step in step_effect for WA Birdsong: {phase.step.name}"
+                    )
         case WADaylight():
             match phase.step:
                 case WADaylight.WADaylightSteps.ACTIONS:
@@ -498,10 +530,12 @@ def step_effect(player: Player, phase: Union[WABirdsong, WADaylight, WAEvening, 
                 case WADaylight.WADaylightSteps.COMPLETED:
                     if not check_charm_offensive(player):
                         # ensures effect at beginning of evening is called
-                        #not relevant here, but good to have the structure anyway
+                        # not relevant here, but good to have the structure anyway
                         step_effect(player, None)
                 case _:
-                    raise ValueError(f"Invalid step in step_effect for WA Daylight: {phase.step.name}")
+                    raise ValueError(
+                        f"Invalid step in step_effect for WA Daylight: {phase.step.name}"
+                    )
         case WAEvening():
             match phase.step:
                 case WAEvening.WAEveningSteps.MILITARY_OPERATIONS:
@@ -517,4 +551,4 @@ def step_effect(player: Player, phase: Union[WABirdsong, WADaylight, WAEvening, 
                 case _:
                     raise ValueError(f"Invalid step in step_effect: {phase.step.name}")
         case _:
-            raise ValueError("Invalid phase")            
+            raise ValueError("Invalid phase")

@@ -147,19 +147,35 @@ def validate_sympathy_spread(
     has_any_sympathies = WASympathy.objects.filter(
         player=player, clearing__isnull=False
     ).exists()
-    
+
     if has_any_sympathies:
         # Check if ANY on-board sympathy is adjacent to the target clearing
-        on_board_sympathies = WASympathy.objects.filter(player=player, clearing__isnull=False)
+        on_board_sympathies = WASympathy.objects.filter(
+            player=player, clearing__isnull=False
+        )
         has_adjacent = False
         for sympathy_token in on_board_sympathies:
             if clearing in get_adjacent_clearings(player, sympathy_token.clearing):
                 has_adjacent = True
                 break
-        
+
         if not has_adjacent:
             raise ValueError("No adjacent sympathies, but sympathy on the board")
     # get cost of placing sympathy
     cost = get_sympathy_cost(player, clearing)
     # get suited supporters
     return get_supporters(player, clearing, cost)
+
+
+def can_add_supporter(player: Player) -> bool:
+    """returns True if player can add a supporter to their stack
+    Will be true if EITHER:
+    -- player has less than 5 supporters
+    -- player has a base on the board
+    """
+    assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
+    has_base = WABase.objects.filter(
+        player=player, building_slot__isnull=False
+    ).exists()
+    has_less_than_five = SupporterStackEntry.objects.filter(player=player).count() < 5
+    return has_less_than_five or has_base

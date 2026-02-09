@@ -29,5 +29,9 @@
     - [ ] Supporter stack limits not enforced
   - [ ] Crafted Cards:
     - [ ] Swap Meet: Initial card grab should not be undoable.
+    - [ ] Enforce unique named cards in crafting entry (i.e., no two swap meets for single player allowed)
   - [ ] Cats:
     - [ ] Keep does not prevent other faction piece placements (make general transaction for placing a piece that checks for keep, use in piece placement logic)
+- [ ] Known Frontend Bugs
+  - [ ] hand not updating when cards are spent (query should refetch. backend probably not always sending completed step.)
+    - [x] Fixed for WA crafting

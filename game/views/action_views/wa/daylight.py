@@ -23,6 +23,8 @@ from game.transactions.wa import wa_craft_card
 
 
 from game.decorators.transaction_decorator import atomic_game_action
+
+
 class WADaylightActionsView(GameActionView):
     action_name = "WA_DAYLIGHT_ACTIONS"
     faction = Faction.WOODLAND_ALLIANCE
@@ -153,13 +155,11 @@ class WADaylightActionsView(GameActionView):
                 atomic_game_action(wa_craft_card)(player, card, sympathies)
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
-            return Response(self.first_step, status=status.HTTP_200_OK)
+            return self.generate_completed_step()
 
         # otherwise, continue to select pieces
         suits_needed = [cost.label for cost in card.value.cost]
-        suits_selected = [
-            Suit(sympathy.clearing.suit).label for sympathy in sympathies
-        ]
+        suits_selected = [Suit(sympathy.clearing.suit).label for sympathy in sympathies]
         prompt = f"Select more crafting pieces. Needed: {suits_needed}. Selected: {suits_selected}"
         return self.generate_step(
             "select_pieces",
@@ -182,7 +182,7 @@ class WADaylightActionsView(GameActionView):
             raise ValidationError("Invalid card")
         try:
             atomic_game_action(add_supporter)(player, card)
-            
+
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()

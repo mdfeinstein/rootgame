@@ -5,19 +5,23 @@ from game.models.game_models import Player, Faction, HandEntry
 from game.models.events.crafted_cards import SwapMeetEvent
 from game.models.events.event import EventType
 from game.queries.current_action.events import get_current_event
-from game.transactions.crafted_cards.swap_meet import swap_meet_take_card, swap_meet_give_card
+from game.transactions.crafted_cards.swap_meet import (
+    swap_meet_take_card,
+    swap_meet_give_card,
+)
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from django.shortcuts import get_object_or_404
 from game.decorators.transaction_decorator import atomic_game_action
+
 
 class SwapMeetView(GameActionView):
     def get(self, request, *args, **kwargs):
         game_id = kwargs.get("game_id") or request.query_params.get("game_id")
         player = self.player(request, game_id)
-        
+
         # Check for active event
         event = self.get_event(game_id)
-        
+
         if event:
             return self.get_pick_card_to_give(player)
         else:
@@ -31,34 +35,35 @@ class SwapMeetView(GameActionView):
             hand_count = HandEntry.objects.filter(player=opponent).count()
             if hand_count > 0:
                 faction = Faction(opponent.faction)
-                options.append({
-                    "value": faction.value,
-                    "label": f"{faction.label} ({hand_count} cards)"
-                })
-        
+                options.append(
+                    {
+                        "value": faction.value,
+                        "label": f"{faction.label} ({hand_count} cards)",
+                    }
+                )
+
         return self.generate_step(
             name="pick-opponent",
             prompt="Pick a player to take a random card from.",
             endpoint="pick-opponent",
             payload_details=[{"type": "select", "name": "opponent_faction"}],
             options=options,
-            faction=Faction(player.faction)
+            faction=Faction(player.faction),
         )
 
     def get_pick_card_to_give(self, player):
-        hand = HandEntry.objects.filter(player=player).select_related('card')
+        hand = HandEntry.objects.filter(player=player).select_related("card")
         options = [
-            {"value": entry.card.card_type, "label": entry.card.title}
-            for entry in hand
+            {"value": entry.card.card_type, "label": entry.card.title} for entry in hand
         ]
-        
+
         return self.generate_step(
             name="pick-card-to-give",
             prompt="Pick a card to give back.",
             endpoint="pick-card-to-give",
             payload_details=[{"type": "card", "name": "card_name"}],
             options=options,
-            faction=Faction(player.faction)
+            faction=Faction(player.faction),
         )
 
     def route_post(self, request, game_id: int, route: str, *args, **kwargs):
@@ -73,37 +78,39 @@ class SwapMeetView(GameActionView):
     def post_pick_opponent(self, request, game_id: int):
         player = self.player(request, game_id)
         opponent_faction_value = request.data["opponent_faction"]
-        
+
         try:
-            opponent = Player.objects.get(game_id=game_id, faction=opponent_faction_value)
+            opponent = Player.objects.get(
+                game_id=game_id, faction=opponent_faction_value
+            )
         except Player.DoesNotExist:
-             raise ValidationError({"detail": "Opponent player not found"})
-        
+            raise ValidationError({"detail": "Opponent player not found"})
+
         try:
-            atomic_game_action(swap_meet_take_card)(player, opponent)
+            atomic_game_action(swap_meet_take_card, undoable=False)(player, opponent)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
-            
+
         return self.get_pick_card_to_give(player)
 
     def post_pick_card_to_give(self, request, game_id: int):
         player = self.player(request, game_id)
         card_name = request.data["card_name"]
-        
+
         event = self.get_event(game_id)
         if not event:
-             raise ValidationError({"detail": "No active Swap Meet event found"})
-            
+            raise ValidationError({"detail": "No active Swap Meet event found"})
+
         try:
             card_ep = CardsEP[card_name.upper()]
         except (KeyError, AttributeError):
             raise ValidationError({"detail": "Invalid card"})
-            
+
         try:
             atomic_game_action(swap_meet_give_card)(event, card_ep)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
-            
+
         return self.generate_completed_step()
 
     def get_event(self, game_id: int):
@@ -112,25 +119,27 @@ class SwapMeetView(GameActionView):
             try:
                 return SwapMeetEvent.objects.get(event=event)
             except SwapMeetEvent.DoesNotExist:
-                 return None
+                return None
         return None
 
     def player(self, request, game_id: int) -> Player:
         event_entry = self.get_event(game_id)
         if event_entry:
             return event_entry.taking_player
-        
+
         # Fallback to default if no event
         return self.player_by_request(request, game_id)
-    
+
     def validate_timing(self, request, game_id: int, route: str, *args, **kwargs):
         # Swap Meet is technically triggered by the player choice to use it.
         # If the event exists, it MUST be Swap Meet.
         event = get_current_event(self.game(game_id))
         if event and event.is_resolved == False:
             if event.type != EventType.SWAP_MEET:
-                 raise ValidationError({"detail": f"Current Event not Swap Meet: {event.type}"})
-    
+                raise ValidationError(
+                    {"detail": f"Current Event not Swap Meet: {event.type}"}
+                )
+
     def validate_player(self, request, game_id: int, route: str, *args, **kwargs):
         player = self.player(request, game_id)
         if player != self.player_by_request(request, game_id):

@@ -55,8 +55,8 @@ def reshuffle_discard_into_deck(game: Game):
 
 
 @transaction.atomic
-def draw_card_from_deck(player: Player) -> HandEntry:
-    """draws a card from the deck and adds it to the player's hand"""
+def draw_card_from_deck(player: Player) -> Card:
+    """draws a card from the deck and returns the card object"""
     # select top card from deck
     card_in_deck = DeckEntry.objects.filter(game=player.game).first()
     if card_in_deck is None:
@@ -64,10 +64,18 @@ def draw_card_from_deck(player: Player) -> HandEntry:
         card_in_deck = DeckEntry.objects.filter(game=player.game).first()
     # add card to player's hand
     assert card_in_deck is not None, "card_in_deck is none"
-    card_in_hand = HandEntry.objects.create(player=player, card=card_in_deck.card)
+    card = card_in_deck.card
     # delete card from deck
-    assert card_in_deck is not None, "card_in_deck is none"
     card_in_deck.delete()
+    return card
+
+
+@transaction.atomic
+def draw_card_from_deck_to_hand(player: Player) -> HandEntry:
+    """draws a card from the deck and adds it to the player's hand"""
+    # select top card from deck
+    card = draw_card_from_deck(player)
+    card_in_hand = HandEntry.objects.create(player=player, card=card)
     return card_in_hand
 
 
@@ -150,6 +158,12 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
         # check that item is still in the craftable pool
         if not CraftableItemEntry.objects.filter(item__item_type=item.value).exists():
             raise ValueError("item is not in the craftable pool")
+    else:
+        # check that player does not have this same card type already crafted
+        if CraftedCardEntry.objects.filter(
+            card__card_type=card_in_hand.card.card_type, player=card_in_hand.player
+        ).exists():
+            raise ValueError("player already has this card type crafted")
 
     # check that crafting pieces are actually crafting pieces
     for crafting_piece in crafting_pieces:
@@ -181,10 +195,12 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
         CraftedItemEntry(player=card_in_hand.player, item=item).save()
         item_from_pool.delete()
         try:
-            validate_player_has_crafted_card(card_in_hand.player, CardsEP.MASTER_ENGRAVERS)
-            has_master_engravers=True
+            validate_player_has_crafted_card(
+                card_in_hand.player, CardsEP.MASTER_ENGRAVERS
+            )
+            has_master_engravers = True
         except ValueError:
-            has_master_engravers=False
+            has_master_engravers = False
 
         # update score
         card_in_hand.player.score += points
@@ -201,11 +217,13 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
 
     # Murine Brokers check: Whenever ANY OTHER player crafts an item card
     if item is not None:
-        other_players = Player.objects.filter(game=card_in_hand.player.game).exclude(pk=card_in_hand.player.pk)
+        other_players = Player.objects.filter(game=card_in_hand.player.game).exclude(
+            pk=card_in_hand.player.pk
+        )
         for other_player in other_players:
             try:
                 validate_player_has_crafted_card(other_player, CardsEP.MURINE_BROKERS)
-                draw_card_from_deck(other_player)
+                draw_card_from_deck_to_hand(other_player)
             except ValueError:
                 pass
 
@@ -219,10 +237,10 @@ def next_players_turn(game: Game):
     # call next_step on the new player's turn to activate any beginning of turn effects
     new_player = Player.objects.get(game=game, turn_order=game.current_turn)
     # reset used crafted cards
-    CraftedCardEntry.objects.filter(player=new_player).update(used=CraftedCardEntry.UsedChoice.UNUSED)
+    CraftedCardEntry.objects.filter(player=new_player).update(
+        used=CraftedCardEntry.UsedChoice.UNUSED
+    )
     next_step(new_player)
-
-    
 
 
 @transaction.atomic
@@ -236,31 +254,37 @@ def raise_score(player: Player, amount: int):
     if player.score >= 30:
         raise ValueError("Player has won. TODO: implement winning logic")
 
+
 @transaction.atomic
 def next_step(player: Player):
     """moves to the next step in the current player's turn"""
     match player.faction:
         case Faction.CATS:
             from game.transactions.cats import next_step
+
             next_step(player)
         case Faction.WOODLAND_ALLIANCE:
             from game.transactions.wa import next_step
+
             next_step(player)
         case Faction.BIRDS:
             from game.transactions.birds import next_step
+
             next_step(player)
+
 
 @transaction.atomic
 def step_effect(player: Player):
     match player.faction:
         case Faction.CATS:
             from game.transactions.cats import step_effect
+
             step_effect(player)
         case Faction.WOODLAND_ALLIANCE:
             from game.transactions.wa import step_effect
+
             step_effect(player)
         case Faction.BIRDS:
             from game.transactions.birds import step_effect
+
             step_effect(player)
-
-

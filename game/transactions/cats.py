@@ -46,7 +46,7 @@ from game.queries.general import (
 from game.transactions.general import (
     craft_card,
     discard_card_from_hand,
-    draw_card_from_deck,
+    draw_card_from_deck_to_hand,
     move_warriors,
     next_players_turn,
     raise_score,
@@ -314,7 +314,7 @@ def cat_evening_draw(player: Player):
     recruiter_count = buildings_on_board(player, CatBuildingTypes.RECRUITER)
     cards_to_draw = cards_drawn_by_recruiters_on_board[recruiter_count]
     for _ in range(cards_to_draw):
-        draw_card_from_deck(player)
+        draw_card_from_deck_to_hand(player)
     # move to next step (discard, presumably)
     next_step(player)
 

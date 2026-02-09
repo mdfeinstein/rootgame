@@ -20,7 +20,7 @@ from game.models.game_models import Faction
 
 from game.transactions.birds_setup import start_simple_birds_setup
 from game.transactions.cats_setup import start_simple_cats_setup
-from game.transactions.general import draw_card_from_deck
+from game.transactions.general import draw_card_from_deck_to_hand
 from game.transactions.setup_util import next_player_setup
 from game.transactions.wa_setup import wa_setup
 from game.utility.textchoice import next_choice
@@ -230,7 +230,7 @@ def deal_starting_cards(game: Game):
     for player in Player.objects.filter(game=game):
         # deal cards
         for i in range(3):
-            draw_card_from_deck(player)
+            draw_card_from_deck_to_hand(player)
 
 
 @transaction.atomic
