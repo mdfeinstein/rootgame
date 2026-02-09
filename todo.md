@@ -1,14 +1,24 @@
 # Todo List
 
+Game Lobby:
+
+- [ ] owners can delete games
+
 - [x] Undo/checkpoints/replay
   - [x] Basic functionality
   - [x] some actions (like Battle) are not undoable
 - [x] add ruins to the board and the frontend display
 - [ ] Battle:
   - [ ] Choosing Hits (views, transactions, url)
+- [ ] Dominance:
+  - [ ] Dominance discards go to special pool
+  - [ ] Player can select dominance when >=10 points
+  - [ ] Players can swap from dominance cards in pool
+  - [ ] Player no longer has a "score" and can't win by getting to 30 points
+  - [ ] Check for dominance condition at beginning of turn
+  - [ ] Frontend display of available dominances and any actively chosen dominance cards
 - [ ] Endgame
-  - [ ] Dominance
-  - [ ] Win checks, game over state
+  - [x] check for win when scoring
   - [ ] frontend display game over state
 - [x] Crafted Cards
   - [x] Backend Support
@@ -25,13 +35,19 @@
 - [ ] Employ custom errors
 - [ ] Game Log
 - [ ] Known Business Logic Bugs
-  - [ ] Woodland Alliance:
-    - [ ] Supporter stack limits not enforced
-  - [ ] Crafted Cards:
-    - [ ] Swap Meet: Initial card grab should not be undoable.
-    - [ ] Enforce unique named cards in crafting entry (i.e., no two swap meets for single player allowed)
-  - [ ] Cats:
-    - [ ] Keep does not prevent other faction piece placements (make general transaction for placing a piece that checks for keep, use in piece placement logic)
+  - [x] Woodland Alliance:
+    - [x] Supporter stack limits not enforced
+  - [x] Crafted Cards:
+    - [x] Swap Meet: Initial card grab should not be undoable.
+    - [x] Enforce unique named cards in crafting entry (i.e., no two swap meets for single player allowed)
+  - [x] Cats:
+    - [x] Keep does not prevent other faction piece placements (make general transaction for placing a piece that checks for keep, use in piece placement logic)
 - [ ] Known Frontend Bugs
   - [ ] hand not updating when cards are spent (query should refetch. backend probably not always sending completed step.)
     - [x] Fixed for WA crafting
+
+Testing
+
+- [ ] organize tests (transaction level, view level)
+- [ ] add tests for all transactions
+- [ ] add tests for all views

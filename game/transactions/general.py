@@ -273,7 +273,9 @@ def raise_score(player: Player, amount: int):
     player.save()
     # TODO: check if player has won
     if player.score >= 30:
-        raise ValueError("Player has won. TODO: implement winning logic")
+        game = player.game
+        game.status = Game.GameStatus.COMPLETED
+        game.save()
 
 
 @transaction.atomic
