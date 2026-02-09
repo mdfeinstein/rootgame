@@ -49,6 +49,7 @@ from game.transactions.general import (
     draw_card_from_deck_to_hand,
     move_warriors,
     next_players_turn,
+    place_piece_from_supply_into_clearing,
     raise_score,
 )
 from game.utility.textchoice import next_choice
@@ -73,8 +74,7 @@ def produce_wood(player: Player, sawmill: Sawmill):
         raise ValueError("No wood tokens left to place")
     # assign wood token to sawmill clearing
 
-    wood_token.clearing = sawmill.building_slot.clearing
-    wood_token.save()
+    place_piece_from_supply_into_clearing(wood_token, sawmill.building_slot.clearing)
     sawmill.used = True
     sawmill.save()
     print(f"produced wood at {sawmill.building_slot.clearing}")
@@ -133,14 +133,9 @@ def build_building(
     if scoring is None:
         raise ValueError("Building type not in supply. how did we get this far?")
     raise_score(player, scoring)
-    # place the building
-    building_slot = available_building_slot(clearing)
-    if building_slot is None:
-        raise ValueError("No free building slots")
     building_model = apps.get_model("game", building_type.value)
     building = building_model.objects.filter(player=player, building_slot=None).first()
-    building.building_slot = building_slot
-    building.save()
+    place_piece_from_supply_into_clearing(building, clearing)
     # remove wood tokens from board
     for token in wood_tokens:
         token.clearing = None
@@ -173,8 +168,7 @@ def overwork(player: Player, clearing: Clearing, card: CardsEP):
     if wood_token is None:
         raise ValueError("No wood tokens left to overwork")
     # place wood token at clearing
-    wood_token.clearing = clearing
-    wood_token.save()
+    place_piece_from_supply_into_clearing(wood_token, clearing)
     # remove card from player's hand
     discard_card_from_hand(player, hand_entry)
     # reduce actions remaining
@@ -244,8 +238,7 @@ def cat_recruit(player: Player, recruiters: QuerySet[Recruiter]):
     for recruiter in recruiters:
         warrior = Warrior.objects.filter(clearing=None, player=player).first()
         assert warrior is not None, "no warriors left to place"
-        warrior.clearing = recruiter.building_slot.clearing
-        warrior.save()
+        place_piece_from_supply_into_clearing(warrior, recruiter.building_slot.clearing)
         recruiter.used = True
         recruiter.save()
     # update daylight step
@@ -401,8 +394,7 @@ def cat_resolve_field_hospital(player: Player, card: CardsEP | None):
 
         # Saved to keep
         for warrior in warriors:
-            warrior.clearing = keep.clearing
-            warrior.save()
+            place_piece_from_supply_into_clearing(warrior, keep.clearing)
         # discard card
         discard_card_from_hand(player, hand_entry)
 

@@ -48,6 +48,7 @@ from game.transactions.general import (
     draw_card_from_deck,
     move_warriors,
     next_players_turn,
+    place_piece_from_supply_into_clearing,
     place_warriors_into_clearing,
     raise_score,
 )
@@ -133,17 +134,8 @@ def place_roost(player: Player, clearing: Clearing):
     roost = BirdRoost.objects.filter(player=player, building_slot__isnull=True).first()
     if roost is None:
         raise ValueError("No roost on the board")
-    building_slot = available_building_slot(clearing)
-    if building_slot is None:
-        raise ValueError("No building slot available")
-    # check that no other roost in this clearing
-    if BirdRoost.objects.filter(
-        player=player, building_slot__clearing=clearing
-    ).exists():
-        raise ValueError("Roost already exists in this clearing")
     # place roost
-    roost.building_slot = building_slot
-    roost.save()
+    place_piece_from_supply_into_clearing(roost, clearing)
 
 
 @transaction.atomic

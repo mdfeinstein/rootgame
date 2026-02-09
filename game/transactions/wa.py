@@ -48,6 +48,7 @@ from game.transactions.general import (
     draw_card_from_deck,
     move_warriors,
     next_players_turn,
+    place_piece_from_supply_into_clearing,
     place_warriors_into_clearing,
     raise_score,
 )
@@ -166,10 +167,8 @@ def revolt(player: Player, clearing: Clearing):
                 player_removes_building(player.game, building, player)
             # TODO: if vagabond, deal three hits
     # place matching base
-    building_slot = available_building_slot(clearing)
-    WABase.objects.filter(player=player, suit=clearing.suit).update(
-        building_slot=building_slot
-    )
+    base = WABase.objects.get(player=player, suit=clearing.suit)
+    place_piece_from_supply_into_clearing(base, clearing)
     # gain troops
     matching_sympathy_count = WASympathy.objects.filter(
         player=player, clearing__suit=clearing.suit
@@ -195,12 +194,10 @@ def place_sympathy(player: Player, clearing: Clearing):
     """places sympathy at the given clearing, scoring points"""
     # get score after placing sympathy
     to_score = get_sympathy_points(player)
-    # place sympathy token
     token = WASympathy.objects.filter(player=player, clearing=None).first()
     if token is None:
         raise ValueError("No sympathy token in the supply")
-    token.clearing = clearing
-    token.save()
+    place_piece_from_supply_into_clearing(token, clearing)
     # score points
     raise_score(player, to_score)
 
@@ -309,10 +306,7 @@ def operation_recruit(player: Player, clearing: Clearing):
     officer.save()
     # execute recruit
     warrior = get_warriors_in_supply(player).first()
-    if warrior is None:
-        raise ValueError("No warriors in supply")
-    warrior.clearing = clearing
-    warrior.save()
+    place_piece_from_supply_into_clearing(warrior, clearing)
 
 
 @transaction.atomic

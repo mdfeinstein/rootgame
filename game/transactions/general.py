@@ -1,3 +1,4 @@
+from game.models.cats import CatKeep
 from game.queries.general import validate_player_has_crafted_card
 from game.queries.general import validate_legal_move
 from random import shuffle
@@ -123,6 +124,27 @@ def move_warriors(
 
 
 @transaction.atomic
+def place_piece_from_supply_into_clearing(piece: Piece, clearing: Clearing):
+    """
+    places a piece from the supply into a clearing, checking if able
+    -- checks if piece in supply
+    -- non-cats placing into keep clearing will be blocked
+    -- later: crows snare will block
+    """
+    if piece.clearing is not None:
+        raise ValueError("piece is already in a clearing")
+    # check for keep clearing, if relevant
+    if piece.player.faction != Faction.CATS:
+        try:
+            keep = CatKeep.objects.get(clearing=clearing)
+            raise ValueError("Cannot place non-cat piece in keep clearing")
+        except CatKeep.DoesNotExist:
+            pass
+    piece.clearing = clearing
+    piece.save()
+
+
+@transaction.atomic
 def place_warriors_into_clearing(player: Player, clearing: Clearing, number: int):
     """places warriors into the given clearing.
     will raise if not enough warriors in the supply
@@ -134,8 +156,7 @@ def place_warriors_into_clearing(player: Player, clearing: Clearing, number: int
             f"In supply: {count_in_supply}"
         )
     for w in Warrior.objects.filter(clearing=None, player=player)[:number]:
-        w.clearing = clearing
-        w.save()
+        place_piece_from_supply_into_clearing(w, clearing)
 
 
 @transaction.atomic

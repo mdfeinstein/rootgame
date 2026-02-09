@@ -91,6 +91,56 @@ class BuildingSlot(models.Model):
 class Piece(models.Model):
     player = models.ForeignKey("Player", on_delete=models.CASCADE)
 
+    @property
+    def clearing(self) -> Clearing | None:
+        # If this is a child building instance
+        if hasattr(self, "building_slot") and self.building_slot:
+            return self.building_slot.clearing
+
+        # If this is a base Piece instance, check reverse relations
+        if hasattr(self, "warrior"):
+            return self.warrior.clearing
+        if hasattr(self, "token"):
+            return self.token.clearing
+        if hasattr(self, "building") and self.building.building_slot:
+            return self.building.building_slot.clearing
+        return None
+
+    @clearing.setter
+    def clearing(self, clearing: Clearing | None):
+        # 1. Check if self is a Building (or subclass)
+        if hasattr(self, "building_slot"):
+            if clearing is None:
+                self.building_slot = None
+            else:
+                from game.queries.general import available_building_slot
+
+                slot = available_building_slot(clearing)
+                if not slot:
+                    raise ValueError("No available building slots in clearing")
+                self.building_slot = slot
+            self.save()
+            return
+
+        # 2. Check reverse relations for base Piece instances
+        if hasattr(self, "warrior"):
+            self.warrior.clearing = clearing
+            self.warrior.save()
+        elif hasattr(self, "token"):
+            self.token.clearing = clearing
+            self.token.save()
+        elif hasattr(self, "building"):
+            if clearing is None:
+                self.building.building_slot = None
+            else:
+                from game.queries.general import available_building_slot
+
+                slot = available_building_slot(clearing)
+                if not slot:
+                    raise ValueError("No available building slots in clearing")
+                self.building.building_slot = slot
+            self.building.save()
+
 
 class Building(Piece):
     # null building spot: on player mat
