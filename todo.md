@@ -3,7 +3,7 @@
 - [x] Undo/checkpoints/replay
   - [x] Basic functionality
   - [x] some actions (like Battle) are not undoable
-- [ ] add ruins to the board and the frontend display
+- [x] add ruins to the board and the frontend display
 - [ ] Battle:
   - [ ] Choosing Hits (views, transactions, url)
 - [ ] Endgame
@@ -29,3 +29,5 @@
     - [ ] Supporter stack limits not enforced
   - [ ] Crafted Cards:
     - [ ] Swap Meet: Initial card grab should not be undoable.
+  - [ ] Cats:
+    - [ ] Keep does not prevent other faction piece placements (make general transaction for placing a piece that checks for keep, use in piece placement logic)
