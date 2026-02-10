@@ -7,3 +7,10 @@ services:
       - ./db.sqlite3:/app/db.sqlite3
     env_file:
       - .env.prod
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --url http://web:8000
+    depends_on:
+      - web
