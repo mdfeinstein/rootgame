@@ -8,6 +8,11 @@ RUN npm ci
 
 # Copy the rest of the frontend code and build
 COPY frontend/ ./
+# Set production environment variables for the build
+# VITE_DJANGO_URL is empty to ensure root-relative paths
+RUN echo "VITE_API_URL=/api" > .env && \
+    echo "VITE_DJANGO_URL=" >> .env
+
 RUN npm run build
 
 # Stage 2: Build the Django Backend
