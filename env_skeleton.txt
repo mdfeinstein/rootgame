@@ -1,0 +1,6 @@
+SECRET_KEY=your_secret_key_here
+DEBUG=False
+ALLOWED_HOSTS=localhost [IP_ADDRESS]
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+CSRF_TRUSTED_ORIGINS=http://localhost:5173
+CLOUDFLARE_TUNNEL_KEY=your_tunnel_key_here

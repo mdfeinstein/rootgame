@@ -6,11 +6,13 @@ services:
     volumes:
       - ./db.sqlite3:/app/db.sqlite3
     env_file:
-      - .env.prod
+      - .env
 
   cloudflared:
     image: cloudflare/cloudflared:latest
     restart: unless-stopped
-    command: tunnel --url http://web:8000
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_KEY}
     depends_on:
       - web
