@@ -28,6 +28,7 @@ import {
 } from "@tabler/icons-react";
 import { useContext } from "react";
 import { UserContext } from "../contexts/UserProvider";
+import DemoUserSwitch from "../components/DemoUserSwitch";
 
 const LobbyPage = () => {
   const navigate = useNavigate();
@@ -125,6 +126,7 @@ const LobbyPage = () => {
       <Group justify="space-between" align="center" mb="xl">
         <Title order={1}>Game Lobby</Title>
         <Group>
+          <DemoUserSwitch />
           <Text size="sm" fw={500}>
             Logged in as: {username}
           </Text>

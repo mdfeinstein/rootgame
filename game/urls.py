@@ -79,7 +79,6 @@ def register_action(
 
 
 urlpatterns = [
-    path("api/dev/login/", DevLoginView.as_view()),
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/user/", get_user_info, name="user"),
