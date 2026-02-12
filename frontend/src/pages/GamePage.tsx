@@ -33,6 +33,7 @@ import {
   IconUserCheck,
 } from "@tabler/icons-react";
 import { UserContext } from "../contexts/UserProvider";
+import useGameWebSocket from "../hooks/useGameWebSocket";
 
 const GamePage = () => {
   const { gameId: urlGameId } = useParams<{ gameId: string }>();
@@ -42,6 +43,8 @@ const GamePage = () => {
   const startGameMutation = useStartGame();
   const pickFactionMutation = usePickFaction();
   const [selectedFaction, setSelectedFaction] = useState<string | null>(null);
+
+  useGameWebSocket(urlGameId);
 
   useEffect(() => {
     if (urlGameId) {

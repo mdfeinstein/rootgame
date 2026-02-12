@@ -27,6 +27,8 @@ from game.serializers.general_serializers import (
     ClearingSerializer,
 )
 from game.logic.playback import undo_last_action
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 
 @api_view(["GET"])
@@ -124,6 +126,16 @@ def undo_last_action_view(request, game_id: int):
         return Response({"detail": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
 
     undo_last_action(game)
+
+    # Publish update to WebSocket
+    try:
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"game_{game.id}", {"type": "game_update", "message": "update"}
+        )
+    except Exception as e:
+        print(f"Failed to send websocket update: {e}")
+
     return Response({"status": "success"}, status=status.HTTP_200_OK)
 
 
