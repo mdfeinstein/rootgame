@@ -61,7 +61,7 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
     queryKey: ["current-action-info", gameId, actionRoute?.route ?? null],
     queryFn: async (): Promise<GameActionStep> => {
       const response = await fetch(
-        `${djangoUrl}/${actionRoute?.route}?game_id=${gameId}`,
+        `${djangoUrl}${actionRoute?.route}?game_id=${gameId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -81,7 +81,7 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
       payload = { ...actionInfo?.accumulated_payload, ...payload };
 
       const response = await fetch(
-        `${djangoUrl}/${actionRoute?.route}${gameId}/${actionInfo?.endpoint}/`,
+        `${djangoUrl}${actionRoute?.route}${gameId}/${actionInfo?.endpoint}/`,
         {
           method: "POST",
           body: JSON.stringify(payload),
