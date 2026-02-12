@@ -21,6 +21,7 @@ FROM python:3.11-slim AS backend
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV DJANGO_SETTINGS_MODULE=rootGame.settings
 
 WORKDIR /app
 
@@ -54,5 +55,5 @@ RUN python manage.py collectstatic --noinput --clear
 EXPOSE 8000
 
 # Run entrypoint
-# Using sh -c to allow variable expansion if needed, but simple CMD is fine.
-CMD ["gunicorn", "rootGame.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Using Daphne for ASGI (WebSockets + HTTP)
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "rootGame.asgi:application"]

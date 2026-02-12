@@ -13,14 +13,15 @@ const useGameWebSocket = (gameId: string | undefined) => {
     // For now assuming localhost/http for development as per settings
     // const wsUrl = `${protocol}//${window.location.hostname}:8000/ws/game/${gameId}/`;
 
-    const djangoUrl =
-      import.meta.env.VITE_DJANGO_URL || "http://localhost:8000";
-    // If djangoUrl has http/https, replace it.
-    // Or just construct it.
-    // Let's assume djangoUrl is http://...
+    let baseUrl = import.meta.env.VITE_DJANGO_URL;
 
-    // Simple robust way:
-    const wsUrl = djangoUrl.replace(/^http/, "ws") + `/ws/game/${gameId}/`;
+    if (!baseUrl) {
+      // If not defined (e.g. production served by same host), use current origin
+      baseUrl = window.location.origin;
+    }
+
+    // Replace http -> ws, https -> wss
+    const wsUrl = baseUrl.replace(/^http/, "ws") + `/ws/game/${gameId}/`;
 
     const connect = () => {
       const socket = new WebSocket(wsUrl);

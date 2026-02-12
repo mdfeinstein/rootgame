@@ -7,6 +7,8 @@ services:
       - ./db.sqlite3:/app/db.sqlite3
     env_file:
       - .env
+    environment:
+      - REDIS_HOST=redis
 
   cloudflared:
     image: cloudflare/cloudflared:latest
