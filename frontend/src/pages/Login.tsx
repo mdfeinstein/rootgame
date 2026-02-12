@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { IconAlertCircle } from "@tabler/icons-react";
+import DemoUserSwitch from "../components/DemoUserSwitch";
 
 const LoginPage = () => {
   const { signInMutation } = useContext(UserContext);
@@ -73,6 +74,7 @@ const LoginPage = () => {
             >
               Sign in
             </Button>
+            <DemoUserSwitch />
           </Stack>
         </form>
       </Paper>
