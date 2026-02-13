@@ -1,8 +1,7 @@
 services:
   web:
     build: .
-    ports:
-      - "8000:8000"
+
     volumes:
       - ./db.sqlite3:/app/db.sqlite3
     env_file:
@@ -21,5 +20,3 @@ services:
 
   redis:
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
