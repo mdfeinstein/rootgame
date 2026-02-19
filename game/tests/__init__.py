@@ -1,5 +1,3 @@
-from .setup import *
+from .setup_views.test_setup import *
 
-__all__ = [
-    "GameSetupTestCase",
-]
+__all__ = []

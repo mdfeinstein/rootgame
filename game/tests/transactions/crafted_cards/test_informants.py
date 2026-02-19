@@ -28,7 +28,13 @@ class InformantsTransactionTests(TestCase):
         return turn
 
     def test_use_informants_success(self):
-        player = PlayerFactory(faction=Faction.WOODLAND_ALLIANCE)
+        player = PlayerFactory(faction=Faction.WOODLAND_ALLIANCE, turn_order=0)
+        # Add another player to avoid next_players_turn wrapping back to this player and resetting cards
+        cat_player = PlayerFactory(game=player.game, faction=Faction.CATS, turn_order=1)
+        # Setup turn for cat player so transition doesn't fail
+        from game.tests.my_factories import CatTurnFactory
+        CatTurnFactory(player=cat_player)
+        
         self.setup_wa_evening(player)
         game = player.game
         
@@ -51,12 +57,16 @@ class InformantsTransactionTests(TestCase):
         assert HandEntry.objects.filter(player=player, card=ambush_card).exists()
         assert not DiscardPileEntry.objects.filter(id=discard_entry.id).exists()
         crafted_card.refresh_from_db()
-        assert crafted_card.used == CraftedCardEntry.UsedChoice.USED
+        assert crafted_card.used == CraftedCardEntry.UsedChoice.USED, f"crafted card used state: {crafted_card.used}"
         event.refresh_from_db()
         assert event.is_resolved == True
 
     def test_skip_informants_success(self):
-        player = PlayerFactory(faction=Faction.WOODLAND_ALLIANCE)
+        player = PlayerFactory(faction=Faction.WOODLAND_ALLIANCE, turn_order=0)
+        cat_player = PlayerFactory(game=player.game, faction=Faction.CATS, turn_order=1)
+        from game.tests.my_factories import CatTurnFactory
+        CatTurnFactory(player=cat_player)
+
         self.setup_wa_evening(player)
         game = player.game
         

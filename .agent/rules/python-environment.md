@@ -2,7 +2,5 @@
 trigger: always_on
 ---
 
-Prepend python commands with:
-C:\Users\Mati\miniconda3\condabin\conda.bat run -n spyderweb
-
-example: to test, C:\Users\Mati\miniconda3\condabin\conda.bat run -n spyderweb python manage.py test <test_case>
+Python virtual environment is at F:/python/envs/.venv_web
+This will need to be activated with F:/python/envs/.venv_web/scripts/activate before running commands.

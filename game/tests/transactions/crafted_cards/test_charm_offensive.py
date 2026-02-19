@@ -25,7 +25,10 @@ class TestCharmOffensiveTransaction(TestCase):
     def test_use_charm_offensive_success(self):
         # Move to start of Evening for Birds
         self.turn = BirdTurnFactory(player=self.player, turn_number=1)
-        
+        # Setup opponent turn for transition
+        from game.tests.my_factories import CatTurnFactory
+        CatTurnFactory(player=self.opponent, turn_number=1)
+
         from game.models.birds.turn import BirdBirdsong, BirdDaylight, BirdEvening
         
         BirdBirdsong.objects.filter(turn=self.turn).update(step=BirdBirdsong.BirdBirdsongSteps.COMPLETED)
@@ -46,7 +49,8 @@ class TestCharmOffensiveTransaction(TestCase):
         self.crafted_charm.refresh_from_db()
         
         self.assertEqual(self.opponent.score, initial_score + 1)
-        self.assertEqual(get_player_hand_size(self.player), initial_hand_size + 1)
+        # +1 from Charm Offensive, +1 from Draw Step
+        self.assertEqual(get_player_hand_size(self.player), initial_hand_size + 2)
         self.assertEqual(self.crafted_charm.used, CraftedCardEntry.UsedChoice.USED)
 
     def test_use_charm_offensive_wrong_phase(self):
