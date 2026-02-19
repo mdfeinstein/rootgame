@@ -1,6 +1,9 @@
 import { useContext, useState } from "react";
 import type { CardType } from "../../hooks/useGetPlayerHandQuery";
 import { GameActionContext } from "../../contexts/GameActionContext";
+import { GameContext } from "../../contexts/GameProvider";
+import useGetPlayersInfoQuery from "../../hooks/useGetPlayersInfoQuery";
+import { UserContext } from "../../contexts/UserProvider";
 import {
   IconMickey,
   IconBrandFirefox, // Using Flame for Fox/Red
@@ -22,7 +25,16 @@ const label_to_suit = {
   Bird: "b",
 };
 
-import { Badge, Box, Divider, Group, Stack, Text, rem } from "@mantine/core";
+import {
+  Badge,
+  Box,
+  Divider,
+  Group,
+  Stack,
+  Text,
+  rem,
+  Button,
+} from "@mantine/core";
 
 export const GameCard = ({
   cardData,
@@ -36,10 +48,31 @@ export const GameCard = ({
   const config = SUIT_CONFIG[cardData.suit];
   const Icon = config.icon;
   const [isHovered, setIsHovered] = useState(false);
-  const { submitPayloadCallback } = useContext(GameActionContext);
+  const { submitPayloadCallback, startActionOverride } =
+    useContext(GameActionContext);
+  const { gameId } = useContext(GameContext);
+  const { username } = useContext(UserContext);
+  const { players } = useGetPlayersInfoQuery(gameId);
+  const currentPlayer = players?.find((p) => p.username === username);
+
   const submitPayloadOnClick = () => {
     submitPayloadCallback({ card: cardData.card_name });
   };
+
+  const handleActivateDominance = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    startActionOverride("/api/action/dominance/activate/");
+  };
+
+  const map_suit_to_color = (suit: string) => {
+    return SUIT_CONFIG[suit as keyof typeof SUIT_CONFIG]?.color || "gray";
+  };
+
+  const canActivate =
+    cardData.dominance &&
+    (currentPlayer?.score || 0) >= 10 &&
+    !currentPlayer?.active_dominance;
+
   return (
     <Box
       w={250}
@@ -144,6 +177,15 @@ export const GameCard = ({
               <Badge size="xs" color="blue">
                 Dominance
               </Badge>
+            )}
+            {canActivate && (
+              <Button
+                size="xs"
+                color={map_suit_to_color(cardData.suit)}
+                onClick={handleActivateDominance}
+              >
+                Activate
+              </Button>
             )}
           </Group>
         </Stack>

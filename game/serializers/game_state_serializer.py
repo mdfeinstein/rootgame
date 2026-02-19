@@ -1,41 +1,52 @@
 from rest_framework import serializers
 from game.models.game_models import (
-    Game, 
-    DeckEntry, 
-    DiscardPileEntry, 
-    Item, 
-    Ruin, 
-    CraftableItemEntry, 
+    Game,
+    DeckEntry,
+    DiscardPileEntry,
+    Item,
+    Ruin,
+    CraftableItemEntry,
     CraftedItemEntry,
     Player,
-    Faction,
-    HandEntry
+    HandEntry,
 )
+from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
 from game.models.wa.player import SupporterStackEntry, OfficerEntry
 
 from game.serializers.bird_serializers import BirdSerializer, BirdTurnSerializer
 from game.serializers.cat_serializers import CatSerializer, CatTurnSerializer
 from game.serializers.wa_serializers import WASerializer, WATurnSerializer
 from game.serializers.wa_serializers import WASerializer, WATurnSerializer
-from game.serializers.general_serializers import CardSerializer
+from game.serializers.wa_serializers import WASerializer, WATurnSerializer
+from game.serializers.general_serializers import (
+    CardSerializer,
+    DominanceSupplyEntrySerializer,
+    ActiveDominanceEntrySerializer,
+)
 from game.serializers.event_serializers import EventSerializer
 
+
 class DeckEntrySerializer(serializers.ModelSerializer):
-    card = serializers.IntegerField(source='card.id')
+    card = serializers.IntegerField(source="card.id")
+
     class Meta:
         model = DeckEntry
-        fields = ['card', 'spot']
+        fields = ["card", "spot"]
+
 
 class DiscardPileEntrySerializer(serializers.ModelSerializer):
-    card = serializers.IntegerField(source='card.id')
+    card = serializers.IntegerField(source="card.id")
+
     class Meta:
         model = DiscardPileEntry
-        fields = ['card', 'spot']
+        fields = ["card", "spot"]
+
 
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ['item_type', 'exhausted']
+        fields = ["item_type", "exhausted"]
+
 
 class RuinSerializer(serializers.ModelSerializer):
     item = ItemSerializer()
@@ -44,50 +55,65 @@ class RuinSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ruin
-        fields = ['item', 'building_slot_number', 'clearing_number']
+        fields = ["item", "building_slot_number", "clearing_number"]
 
     def get_building_slot_number(self, obj):
         return obj.building_slot.building_slot_number if obj.building_slot else None
 
     def get_clearing_number(self, obj):
-        return obj.building_slot.clearing.clearing_number if obj.building_slot and obj.building_slot.clearing else None
+        return obj.building_slot.clearing.clearing_number if obj.building_slot else None
+
 
 class CraftableItemEntrySerializer(serializers.ModelSerializer):
     item = ItemSerializer()
+
     class Meta:
         model = CraftableItemEntry
-        fields = ['item']
+        fields = ["item"]
+
 
 class CraftedItemEntrySerializer(serializers.ModelSerializer):
     item = ItemSerializer()
-    player_id = serializers.IntegerField(source='player.id')
+    player_id = serializers.IntegerField(source="player.id")
+
     class Meta:
         model = CraftedItemEntry
-        fields = ['item', 'player_id']
+        fields = ["item", "player_id"]
+
 
 # WA Extras
 class SupporterStackEntrySerializer(serializers.ModelSerializer):
-    card = serializers.IntegerField(source='card.id')
+    card = serializers.IntegerField(source="card.id")
+
     class Meta:
         model = SupporterStackEntry
-        fields = ['card']
+        fields = ["card"]
+
 
 class OfficerEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = OfficerEntry
-        fields = ['used']
+        fields = ["used"]
+
 
 class HandEntrySerializer(serializers.ModelSerializer):
-    card = serializers.IntegerField(source='card.id')
+    card = serializers.IntegerField(source="card.id")
+
     class Meta:
         model = HandEntry
-        fields = ['card']
+        fields = ["card"]
+
 
 class GameStateSerializer(serializers.ModelSerializer):
-    deck = DeckEntrySerializer(source='deckentry_set', many=True)
-    discard = DiscardPileEntrySerializer(source='discardpileentry_set', many=True)
-    ruins = RuinSerializer(source='ruin_set', many=True)
-    craftable_items = CraftableItemEntrySerializer(source='craftableitementry_set', many=True)
+    deck = DeckEntrySerializer(source="deckentry_set", many=True)
+    discard = DiscardPileEntrySerializer(source="discardpileentry_set", many=True)
+    ruins = RuinSerializer(source="ruin_set", many=True)
+    craftable_items = CraftableItemEntrySerializer(
+        source="craftableitementry_set", many=True
+    )
+    dominance_supply = DominanceSupplyEntrySerializer(
+        source="dominancesupplyentry_set", many=True
+    )
     crafted_items = serializers.SerializerMethodField()
     players = serializers.SerializerMethodField()
     turn_state = serializers.SerializerMethodField()
@@ -96,25 +122,27 @@ class GameStateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = [
-            'id', 
-            'current_turn', 
-            'boardmap', 
-            'deck', 
-            'discard', 
-            'ruins', 
-            'craftable_items', 
-            'crafted_items',
-
-            'players',
-            'turn_state',
-            'events'
+            "id",
+            "current_turn",
+            "boardmap",
+            "deck",
+            "discard",
+            "ruins",
+            "craftable_items",
+            "dominance_supply",
+            "crafted_items",
+            "players",
+            "turn_state",
+            "events",
         ]
 
     def get_events(self, game):
         from game.models.events.event import Event
-        events = Event.objects.filter(game=game, is_resolved=False).order_by('created_at')
-        return EventSerializer(events, many=True).data
 
+        events = Event.objects.filter(game=game, is_resolved=False).order_by(
+            "created_at"
+        )
+        return EventSerializer(events, many=True).data
 
     def get_turn_state(self, game):
         # Find current player based on game.current_turn
@@ -132,7 +160,7 @@ class GameStateSerializer(serializers.ModelSerializer):
             turn_obj = BirdTurn.objects.filter(player=player).last()
             if turn_obj:
                 return BirdTurnSerializer(turn_obj).data
-        
+
         elif player.faction == Faction.CATS:
             turn_obj = CatTurn.objects.filter(player=player).last()
             if turn_obj:
@@ -142,41 +170,52 @@ class GameStateSerializer(serializers.ModelSerializer):
             turn_obj = WATurn.objects.filter(player=player).last()
             if turn_obj:
                 return WATurnSerializer(turn_obj).data
-        
+
         return None
 
     def get_crafted_items(self, game):
         return CraftedItemEntrySerializer(
-            CraftedItemEntry.objects.filter(player__game=game), 
-            many=True
+            CraftedItemEntry.objects.filter(player__game=game), many=True
         ).data
 
     def get_players(self, game):
         players_data = []
-        for player in game.players.all().order_by('turn_order'):
+        for player in game.players.all().order_by("turn_order"):
             p_data = {
-                'id': player.id,
-                'faction': player.faction,
-                'score': player.score,
-                'turn_order': player.turn_order,
+                "id": player.id,
+                "faction": player.faction,
+                "score": player.score,
+                "turn_order": player.turn_order,
             }
-            
+
             # Serialize Hand (Private State)
-            p_data['hand'] = HandEntrySerializer(HandEntry.objects.filter(player=player), many=True).data
+            p_data["hand"] = HandEntrySerializer(
+                HandEntry.objects.filter(player=player), many=True
+            ).data
+
+            # Serialize Active Dominance
+            try:
+                p_data["active_dominance"] = ActiveDominanceEntrySerializer(
+                    player.active_dominance
+                ).data
+            except ActiveDominanceEntry.DoesNotExist:
+                p_data["active_dominance"] = None
 
             # Faction Logic
             if player.faction == Faction.BIRDS:
-                p_data['faction_state'] = BirdSerializer.from_player(player).data
+                p_data["faction_state"] = BirdSerializer.from_player(player).data
             elif player.faction == Faction.CATS:
-                p_data['faction_state'] = CatSerializer.from_player(player).data
+                p_data["faction_state"] = CatSerializer.from_player(player).data
             elif player.faction == Faction.WOODLAND_ALLIANCE:
                 base_data = WASerializer.from_player(player).data
                 supporters = SupporterStackEntry.objects.filter(player=player)
                 officers = OfficerEntry.objects.filter(player=player)
-                base_data['supporters'] = SupporterStackEntrySerializer(supporters, many=True).data
-                base_data['officers'] = OfficerEntrySerializer(officers, many=True).data
-                p_data['faction_state'] = base_data
-            
+                base_data["supporters"] = SupporterStackEntrySerializer(
+                    supporters, many=True
+                ).data
+                base_data["officers"] = OfficerEntrySerializer(officers, many=True).data
+                p_data["faction_state"] = base_data
+
             players_data.append(p_data)
-        
+
         return players_data

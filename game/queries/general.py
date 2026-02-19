@@ -1,3 +1,5 @@
+from typing import Literal
+from typing import Set
 from game.models import Ruin
 from game.models.game_models import Suit
 from game.models import BirdEvening
@@ -160,10 +162,11 @@ def get_current_phase(player: Player):
 
     return None
 
-    return None
 
-
-def is_phase(player: Player, phase: str) -> bool:
+def is_phase(
+    player: Player,
+    phase: Literal["Birdsong", "Daylight", "Evening"] | None,
+) -> bool:
     """
     Returns True if the player is in the specified phase.
     """
@@ -211,6 +214,28 @@ def validate_player_has_card_in_hand(player: Player, card: CardsEP) -> HandEntry
     if card_in_hand is None:
         raise ValueError(f"Player does not have card in hand. card name: {card.name}")
     return card_in_hand
+
+
+def validate_game_has_dominance_card_in_supply(game: Game, card: CardsEP):
+    """
+    returns DominanceSupplyEntry instance if card is in the dominance supply, else raises ValueError
+    """
+    from game.models.dominance import DominanceSupplyEntry
+
+    dominance_entry = DominanceSupplyEntry.objects.filter(
+        game=game, card__card_type=card.name
+    ).first()
+    if dominance_entry is None:
+        raise ValueError(f"Dominance card not in supply. card name: {card.name}")
+    return dominance_entry
+
+
+def validate_can_activate_dominance(player: Player):
+    """validates that player can activate dominance"""
+    if player.score < 10:
+        raise ValueError("Must have 10 points to activate dominance.")
+    if ActiveDominanceEntry.objects.filter(player=player).exists():
+        raise ValueError("Already have an active dominance card.")
 
 
 def validate_player_has_crafted_card(player: Player, card: CardsEP) -> CraftedCardEntry:

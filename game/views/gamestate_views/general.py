@@ -149,3 +149,22 @@ def get_game_session_detail(request, game_id: int):
 
     serializer = GameSessionSerializer(game)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def get_dominance_supply(request, game_id: int):
+    """
+    Returns the dominance cards currently available in the supply.
+    """
+    try:
+        game = Game.objects.get(pk=game_id)
+    except Game.DoesNotExist:
+        return Response({"detail": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    from game.models.dominance import DominanceSupplyEntry
+    from game.serializers.general_serializers import DominanceSupplyEntrySerializer
+
+    supply_entries = DominanceSupplyEntry.objects.filter(game=game)
+    serializer = DominanceSupplyEntrySerializer(supply_entries, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)

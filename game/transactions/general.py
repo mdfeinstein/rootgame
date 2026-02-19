@@ -24,6 +24,7 @@ from game.models import (
     Token,
     Warrior,
 )
+from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
 from game.models.game_models import Faction
 from game.queries.general import (
     determine_clearing_rule,
@@ -86,8 +87,13 @@ def discard_card_from_hand(player: Player, card_in_hand: HandEntry):
     if player != card_in_hand.player:
         raise ValueError("card is not in player's hand")
     # add card to discard pile
-    spot = DiscardPileEntry.objects.filter(game=player.game).count()
-    DiscardPileEntry(game=player.game, card=card_in_hand.card, spot=spot).save()
+    # add card to discard pile
+    if card_in_hand.card.dominance:
+        # Dominance cards go to the dominance supply
+        DominanceSupplyEntry.objects.create(game=player.game, card=card_in_hand.card)
+    else:
+        spot = DiscardPileEntry.objects.filter(game=player.game).count()
+        DiscardPileEntry(game=player.game, card=card_in_hand.card, spot=spot).save()
     # DiscardPileEntry.create_from_card(card_in_hand.card)
     # delete card from player's hand
     card_in_hand.delete()
@@ -257,6 +263,16 @@ def next_players_turn(game: Game):
     game.save()
     # call next_step on the new player's turn to activate any beginning of turn effects
     new_player = Player.objects.get(game=game, turn_order=game.current_turn)
+
+    # Check Dominance Victory at start of turn
+    from game.transactions.dominance import check_dominance_victory
+
+    check_dominance_victory(new_player)
+    # Refresh logic in case game ended?
+    game.refresh_from_db()
+    if game.status == Game.GameStatus.COMPLETED:
+        return
+
     # reset used crafted cards
     CraftedCardEntry.objects.filter(player=new_player).update(
         used=CraftedCardEntry.UsedChoice.UNUSED
@@ -269,9 +285,17 @@ def raise_score(player: Player, amount: int):
     """
     raise a player's score, and check any relevant score related conditions, such as winning the game.
     """
+
+    # Check if player has active dominance
+    try:
+        if player.active_dominance:
+            # Player has active dominance, score does not increase and standard victory check is skipped
+            return
+    except ActiveDominanceEntry.DoesNotExist:
+        pass
+
     player.score += amount
     player.save()
-    # TODO: check if player has won
     if player.score >= 30:
         game = player.game
         game.status = Game.GameStatus.COMPLETED

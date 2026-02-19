@@ -22,6 +22,7 @@ from game.models.game_models import (
     HandEntry,
     WarriorSupplyEntry,
 )
+from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
 from game.models.birds.player import BirdLeader, DecreeEntry, Vizier
 from game.models.birds.buildings import BirdRoost
 from game.models.birds.turn import BirdTurn, BirdBirdsong, BirdDaylight, BirdEvening
@@ -78,6 +79,7 @@ def get_all_game_objects(game: Game):
     objects.extend(DiscardPileEntry.objects.filter(game=game))
     objects.extend(Ruin.objects.filter(game=game))
     objects.extend(CraftableItemEntry.objects.filter(game=game))
+    objects.extend(DominanceSupplyEntry.objects.filter(game=game))
 
     # Setup State (depend on Game)
     objects.extend(GameSimpleSetup.objects.filter(game=game))
@@ -91,6 +93,7 @@ def get_all_game_objects(game: Game):
         objects.extend(HandEntry.objects.filter(player=player))
         objects.extend(CraftedItemEntry.objects.filter(player=player))
         objects.extend(CraftedCardEntry.objects.filter(player=player))
+        objects.extend(ActiveDominanceEntry.objects.filter(player=player))
         objects.extend(WarriorSupplyEntry.objects.filter(player=player))
 
         # Setup state (depend on Player)

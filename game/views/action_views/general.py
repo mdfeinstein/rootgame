@@ -93,7 +93,7 @@ class GameActionView(APIView):
         options: list[OptionSerializer] | list[dict] | None = None,
     ):
         if faction is None:
-            faction = self.faction.label
+            faction = self.faction.label if self.faction else ""
         step = {
             "faction": self.faction.label if self.faction is not None else "",
             "name": name,
