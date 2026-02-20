@@ -87,12 +87,12 @@ def add_supporter(player: Player, card: Card):
 def mobilize_supporter(player: Player, card: CardsEP):
     """adds a supporter from hand to the player's stack, during mobilize action"""
     assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
-    assert get_phase(player.game) == WADaylight, "Not day phase"
+    assert isinstance(get_phase(player), WADaylight), "Not day phase"
     card_in_hand = validate_player_has_card_in_hand(player, card)
     if not can_add_supporter(player):
         raise ValueError("Cannot add a supporter to the stack: no base and at limit")
     # add card to supporter stack
-    add_supporter(player, card)
+    add_supporter(player, card_in_hand.card)
     # delete card from player's hand
     card_in_hand.delete()
 
@@ -173,9 +173,7 @@ def revolt(player: Player, clearing: Clearing):
     matching_sympathy_count = WASympathy.objects.filter(
         player=player, clearing__suit=clearing.suit
     ).count()
-    print(f"matching sympathy count: {matching_sympathy_count}")
     troops_in_supply = Warrior.objects.filter(player=player, clearing=None).count()
-    print(f"troops in supply: {troops_in_supply}")
     place_warriors_into_clearing(
         player, clearing, min(matching_sympathy_count, troops_in_supply)
     )
@@ -197,6 +195,9 @@ def place_sympathy(player: Player, clearing: Clearing):
     token = WASympathy.objects.filter(player=player, clearing=None).first()
     if token is None:
         raise ValueError("No sympathy token in the supply")
+    # check that there is not already sympathy in that clearing
+    if WASympathy.objects.filter(player=player, clearing=clearing).exists():
+        raise ValueError("Player already has a sympathy token in this clearing")
     place_piece_from_supply_into_clearing(token, clearing)
     # score points
     raise_score(player, to_score)
@@ -224,7 +225,7 @@ def training(player: Player, card: CardsEP):
     -- add officer
     -- discard card from player's hand
     """
-    card_suit = Suit(card.value.suit)
+    card_suit = Suit(card.value.suit.value)
     card_in_hand = validate_player_has_card_in_hand(player, card)
     matching_base = WABase.objects.filter(
         player=player, suit=card_suit, building_slot__isnull=False
@@ -337,7 +338,7 @@ def operation_organize(player: Player, clearing: Clearing):
 def end_revolt_step(player: Player):
     assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
     birdsong = get_phase(player)
-    assert type(birdsong) == WABirdsong, "Not Birdsong phase"
+    assert isinstance(birdsong, WABirdsong), "Not Birdsong phase"
     assert birdsong.step == WABirdsong.WABirdsongSteps.REVOLT, "Not Revolt step"
     next_step(player)
 
@@ -346,7 +347,7 @@ def end_revolt_step(player: Player):
 def end_spread_sympathy_step(player: Player):
     assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
     birdsong = get_phase(player)
-    assert type(birdsong) == WABirdsong, "Not Birdsong phase"
+    assert isinstance(birdsong, WABirdsong), "Not Birdsong phase"
     assert (
         birdsong.step == WABirdsong.WABirdsongSteps.SPREAD_SYMPATHY
     ), "Not Spread Sympathy step"
@@ -357,7 +358,7 @@ def end_spread_sympathy_step(player: Player):
 def end_daylight_actions(player: Player):
     assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
     daylight = get_phase(player)
-    assert type(daylight) == WADaylight
+    assert isinstance(daylight, WADaylight)
     next_step(player)
 
 
@@ -365,7 +366,7 @@ def end_daylight_actions(player: Player):
 def end_evening_operations(player: Player):
     assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
     evening = get_phase(player)
-    assert type(evening) == WAEvening
+    assert isinstance(evening, WAEvening)
     # move to next step
     next_step(player)
 
@@ -373,7 +374,7 @@ def end_evening_operations(player: Player):
 @transaction.atomic
 def draw_cards(player: Player):
     evening = get_phase(player)
-    assert type(evening) == WAEvening
+    assert isinstance(evening, WAEvening)
     assert evening.step == WAEvening.WAEveningSteps.DRAWING, "Not Drawing step"
     # draw cards equal to bases on board + 1
     cards_to_draw = (
@@ -388,7 +389,7 @@ def draw_cards(player: Player):
 @transaction.atomic
 def check_discard_step(player: Player):
     evening = get_phase(player)
-    assert type(evening) == WAEvening
+    assert isinstance(evening, WAEvening)
     assert evening.step == WAEvening.WAEveningSteps.DISCARDING, "Not Discarding step"
     # if over hand limit, exit out so player can handle discarding step
     if get_player_hand_size(player) > 5:
@@ -404,7 +405,7 @@ def end_turn(player: Player):
     """
     try:
         evening = get_phase(player)
-        if type(evening) != WAEvening:
+        if not isinstance(evening, WAEvening):
             raise ValueError("Not Evening phase")
         evening.step = WAEvening.WAEveningSteps.COMPLETED
         evening.save()

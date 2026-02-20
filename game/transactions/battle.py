@@ -48,8 +48,10 @@ def start_battle(game: Game, attacker: Faction, defender: Faction, clearing: Cle
     if not player_has_warriors_in_clearing(player, clearing):
         raise ValueError("Attacker does not have warriors in that clearing")
     # check that defender has pieces in the clearing
-    if not player_has_pieces_in_clearing(player, clearing):
+    defender_player = Player.objects.get(game=game, faction=defender)
+    if not player_has_pieces_in_clearing(defender_player, clearing):
         raise ValueError("Defender does not have pieces in that clearing")
+
     # create battle
     event = Event.objects.create(game=game, type=EventType.BATTLE)
     battle = Battle(
@@ -116,7 +118,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
         if attacking_warriors > 2:
             # resolve ambush by removing attacking warriors and proceeding to roll
             player_removes_warriors(
-                battle.clearing, attacking_player, defending_player, 2
+                battle.clearing, defending_player, attacking_player, 2
             )
             battle.step = Battle.BattleSteps.ROLL_DICE
             battle.save()
@@ -132,7 +134,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
         else:
             # resolve ambush by removing remaining attacking warrior and moving to attacker choosing their hits
             player_removes_warriors(
-                battle.clearing, attacking_player, defending_player, 1
+                battle.clearing, defending_player, attacking_player, 1
             )
             # do i need to convey that attacker must choose one hit, or is this kind of guaranteed to only be one?
             battle.step = Battle.BattleSteps.ATTACKER_CHOOSE_AMBUSH_HITS
@@ -253,9 +255,6 @@ def roll_dice(game: Game, battle: Battle):
     # birds commander extra hit
     if battle.attacker == Faction.BIRDS:
         birds_player = Player.objects.get(game=game, faction=Faction.BIRDS)
-        print(
-            f"bird leaders: {[(leader.leader, leader.active) for leader in BirdLeader.objects.filter(player=birds_player)]}"
-        )
         if (
             BirdLeader.objects.get(player=birds_player, active=True).leader
             == BirdLeader.BirdLeaders.COMMANDER

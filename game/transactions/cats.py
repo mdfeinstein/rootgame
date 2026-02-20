@@ -77,15 +77,9 @@ def produce_wood(player: Player, sawmill: Sawmill):
     place_piece_from_supply_into_clearing(wood_token, sawmill.building_slot.clearing)
     sawmill.used = True
     sawmill.save()
-    print(f"produced wood at {sawmill.building_slot.clearing}")
-    # check if all sawmills have been used
-    print(
-        Sawmill.objects.filter(player=player, used=False, building_slot__isnull=False)
-    )
     if not Sawmill.objects.filter(
         player=player, used=False, building_slot__isnull=False
     ).exists():
-        print("all sawmills used")
         # move to next part of phase
         next_step(player)
 
@@ -182,7 +176,6 @@ def birds_for_hire(player: Player, card: CardsEP):
     hand_entry = validate_player_has_card_in_hand(player, card)
     # check that card is a bird card
     if card.value.suit != Suit.WILD:
-        print(card.value.suit)
         raise ValueError("Not a bird card")
     # check that there is a daylight phase
     daylight = get_phase(player)
@@ -210,6 +203,8 @@ def cat_recruit(player: Player, recruiters: QuerySet[Recruiter]):
     # check that recruit hasn't been used this turn
     if is_recruit_used(player):
         raise ValueError("Recruit has already been used this turn")
+    if recruiters.count() == 0:
+        raise ValueError("No recruiters selected to recruit from")
     # check none of the given recruiters have been used yet and are on the board
     if not all(
         [
@@ -325,7 +320,6 @@ def cat_end_turn(player: Player):
         evening.save()
     except ValueError:  # already done evening, do nothing
         pass
-    print("cats turn ended")
     reset_cats_turn(player)
     create_cats_turn(player)
     next_players_turn(player.game)
@@ -338,7 +332,6 @@ def reset_cats_turn(player: Player):
     -- reset recruiter stations used status
     -- reset sawmills used status
     """
-    print("resetting cats turn")
     # reset workshops
     Workshop.objects.filter(player=player).update(crafted_with=False)
     # reset recruiter stations
@@ -419,7 +412,6 @@ def check_auto_place_wood(player: Player):
     sawmills = get_unused_sawmills(player)
     wood_tokens = count_wood_tokens_in_supply(player)
     if wood_tokens >= sawmills.count():
-        print(f"calling produce all wood")
         cat_produce_all_wood(player)
 
 
@@ -491,7 +483,6 @@ def check_auto_discard(player: Player):
 @transaction.atomic
 def next_step(player: Player):
     phase = get_phase(player)
-    print(f"before calling next step: {phase.step}")
     match phase:
         case CatBirdsong():
             phase.step = next_choice(CatBirdsong.CatBirdsongSteps, phase.step)
@@ -500,9 +491,7 @@ def next_step(player: Player):
         case CatEvening():
             phase.step = next_choice(CatEvening.CatEveningSteps, phase.step)
     phase.save()
-    print(f"after calling next step, before step effect: {phase.step}")
     step_effect(player, phase)
-    print(f"after calling step effect: {phase.step}")
 
 
 @transaction.atomic
@@ -530,7 +519,6 @@ def step_effect(
 
                     if not saboteurs_check(player):
                         # if more wood tokens in supply than tokens to produce, automate placement
-                        print(f"calling auto place wood")
                         check_auto_place_wood(player)
                 case CatBirdsong.CatBirdsongSteps.COMPLETED:
                     from game.transactions.crafted_cards.eyrie_emigre import is_emigre

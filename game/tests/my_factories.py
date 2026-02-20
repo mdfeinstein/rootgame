@@ -11,6 +11,7 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.birds.turn import BirdTurn
 from game.models.cats.turn import CatTurn
 from game.models.wa.turn import WATurn
+from game.models.cats.tokens import CatWood
 
 from game.transactions.game_setup import (
     create_new_game, 
@@ -93,6 +94,18 @@ class WarriorFactory(factory.django.DjangoModelFactory):
         model = Warrior
 
     player = factory.SubFactory(PlayerFactory)
+    clearing = None
+
+
+    player = factory.SubFactory(PlayerFactory)
+    clearing = None
+
+
+class CatWoodFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = CatWood
+
+    player = factory.SubFactory(PlayerFactory, faction=Faction.CATS)
     clearing = None
 
 

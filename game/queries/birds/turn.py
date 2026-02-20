@@ -69,26 +69,39 @@ def validate_step(
     """returns the step if it is the given step, else raises ValueError
     also validates turn and player
     """
-    mapper = {
-        BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING: "Not Emergency Drawing step",
-        BirdBirdsong.BirdBirdsongSteps.ADD_TO_DECREE: "Not Add to Decree step",
-        BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING: "Not Emergency Roosting step",
-        BirdBirdsong.BirdBirdsongSteps.COMPLETED: "Not Birdsong Completed step",
-        BirdDaylight.BirdDaylightSteps.CRAFTING: "Not Crafting step",
-        BirdDaylight.BirdDaylightSteps.RECRUITING: "Not Recruiting step",
-        BirdDaylight.BirdDaylightSteps.MOVING: "Not Moving Step",
-        BirdDaylight.BirdDaylightSteps.BATTLING: "Not battling step",
-        BirdDaylight.BirdDaylightSteps.BUILDING: "Not building step",
-        BirdDaylight.BirdDaylightSteps.COMPLETED: "Not Daylight completed step",
-        BirdEvening.BirdEveningSteps.SCORING: "Not Evening scoring step",
-        BirdEvening.BirdEveningSteps.DRAWING: "Not Evening drawing step",
-        BirdEvening.BirdEveningSteps.DISCARDING: "Not Evening discarding step",
-        BirdEvening.BirdEveningSteps.COMPLETED: "Not Evening completedstep",
-    }
     player_phase = get_phase(player)
     if step != player_phase.step:
-        raise ValueError(mapper[step])
+        # Avoid collisions between different phases with same step values
+        if isinstance(player_phase, BirdBirdsong):
+            birdsong_mapper = {
+                BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING: "Not Emergency Drawing step",
+                BirdBirdsong.BirdBirdsongSteps.ADD_TO_DECREE: "Not Add to Decree step",
+                BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING: "Not Emergency Roosting step",
+                BirdBirdsong.BirdBirdsongSteps.COMPLETED: "Not Birdsong Completed step",
+            }
+            raise ValueError(birdsong_mapper.get(step, "Invalid Birdsong step"))
+        elif isinstance(player_phase, BirdDaylight):
+            daylight_mapper = {
+                BirdDaylight.BirdDaylightSteps.CRAFTING: "Not Crafting step",
+                BirdDaylight.BirdDaylightSteps.RECRUITING: "Not Recruiting step",
+                BirdDaylight.BirdDaylightSteps.MOVING: "Not Moving Step",
+                BirdDaylight.BirdDaylightSteps.BATTLING: "Not battling step",
+                BirdDaylight.BirdDaylightSteps.BUILDING: "Not building step",
+                BirdDaylight.BirdDaylightSteps.COMPLETED: "Not Daylight completed step",
+            }
+            raise ValueError(daylight_mapper.get(step, "Invalid Daylight step"))
+        elif isinstance(player_phase, BirdEvening):
+            evening_mapper = {
+                BirdEvening.BirdEveningSteps.SCORING: "Not Evening scoring step",
+                BirdEvening.BirdEveningSteps.DRAWING: "Not Evening drawing step",
+                BirdEvening.BirdEveningSteps.DISCARDING: "Not Evening discarding step",
+                BirdEvening.BirdEveningSteps.COMPLETED: "Not Evening completedstep",
+            }
+            raise ValueError(evening_mapper.get(step, "Invalid Evening step"))
+        else:
+            raise ValueError(mapper[step])
     return player_phase.step
+
 
 
 def get_turmoil_event(player: Player) -> TurmoilEvent:

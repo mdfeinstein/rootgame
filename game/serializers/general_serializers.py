@@ -345,11 +345,7 @@ class GameStatusSerializer(serializers.Serializer):
                 Faction.WOODLAND_ALLIANCE: WATurn,
             }
         if current_player is not None:
-            print(game.status)
-            print(current_player.faction)
-            print(turn_object_dict)
             faction = Faction(current_player.faction)
-            print(f"faction: {faction}")
             turn_object = (
                 turn_object_dict[faction]
                 .objects.filter(player=current_player)

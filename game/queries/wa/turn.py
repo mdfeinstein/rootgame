@@ -26,9 +26,6 @@ def get_phase(player: Player) -> WABirdsong | WADaylight | WAEvening:
     birdsong = WABirdsong.objects.get(turn=wa_turn)
     daylight = WADaylight.objects.get(turn=wa_turn)
     evening = WAEvening.objects.get(turn=wa_turn)
-    print(f"turn: {wa_turn}")
-    print(f"birdsong: {birdsong}")
-    print(f"birdsong step: {birdsong.step}")
     if birdsong.step != WABirdsong.WABirdsongSteps.COMPLETED:
         return birdsong
     elif daylight.step != WADaylight.WADaylightSteps.COMPLETED:

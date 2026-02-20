@@ -32,8 +32,6 @@ def get_wa_player_public(request, game_id: int):
 @api_view(["GET"])
 def get_wa_player_private(request, game_id: int):
     # grab game
-    user = request.user
-    print(user)
     try:
         game = Game.objects.get(pk=game_id)
     except Game.DoesNotExist:

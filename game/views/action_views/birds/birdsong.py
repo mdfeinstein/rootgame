@@ -44,7 +44,6 @@ class EmergencyDrawingView(GameActionView):
 
     def post_confirm(self, request, game_id: int, *args, **kwargs):
         """confirms the emergency drawing step"""
-        print(request.data["confirm"])
         if not request.data["confirm"]:
             raise ValidationError("Invalid confirmation")
         try:

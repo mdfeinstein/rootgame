@@ -187,11 +187,6 @@ def capture_gamestate(game: Game) -> list:
     Ensures datetimes are serialized to strings for JSONField compatibility.
     """
     objects = get_all_game_objects(game)
-    for obj in objects:
-        if isinstance(obj, Battle):
-            print(
-                f"DEBUG: capturing Battle {obj.pk}: Attacker Hits={obj.attacker_hits_taken}, Defender Hits={obj.defender_hits_taken}"
-            )
     # Use 'json' serializer to handle datetimes, then load back to a list of dicts
     json_data = serializers.serialize("json", objects)
     return json.loads(json_data)
