@@ -25,6 +25,7 @@ from game.models import (
 )
 from game.models.cats.buildings import Workshop
 from game.models.birds.buildings import BirdRoost
+from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
 from game.models.game_models import Card, Game, HandEntry, Piece
 
 

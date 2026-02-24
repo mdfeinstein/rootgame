@@ -86,7 +86,7 @@ def check_dominance_victory(player: Player):
         count = 0
         suit_clearings = Clearing.objects.filter(game=game, suit=suit)
         for clearing in suit_clearings:
-            if determine_clearing_rule(clearing) == player.faction:
+            if determine_clearing_rule(clearing) == player:
                 count += 1
 
         if count >= needed:

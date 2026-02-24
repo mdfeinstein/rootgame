@@ -2345,7 +2345,7 @@
   "pk": 13,
   "fields": {
     "game": 1,
-    "card": 39,
+    "card": 10,
     "spot": 12
   }
 },
@@ -2354,7 +2354,7 @@
   "pk": 14,
   "fields": {
     "game": 1,
-    "card": 47,
+    "card": 40,
     "spot": 13
   }
 },
@@ -2363,7 +2363,7 @@
   "pk": 15,
   "fields": {
     "game": 1,
-    "card": 51,
+    "card": 22,
     "spot": 14
   }
 },
@@ -2372,7 +2372,7 @@
   "pk": 16,
   "fields": {
     "game": 1,
-    "card": 2,
+    "card": 54,
     "spot": 15
   }
 },
@@ -2381,7 +2381,7 @@
   "pk": 17,
   "fields": {
     "game": 1,
-    "card": 9,
+    "card": 38,
     "spot": 16
   }
 },
@@ -2390,7 +2390,7 @@
   "pk": 18,
   "fields": {
     "game": 1,
-    "card": 8,
+    "card": 50,
     "spot": 17
   }
 },
@@ -2399,7 +2399,7 @@
   "pk": 19,
   "fields": {
     "game": 1,
-    "card": 6,
+    "card": 23,
     "spot": 18
   }
 },
@@ -2408,7 +2408,7 @@
   "pk": 20,
   "fields": {
     "game": 1,
-    "card": 5,
+    "card": 47,
     "spot": 19
   }
 },
@@ -2417,7 +2417,7 @@
   "pk": 21,
   "fields": {
     "game": 1,
-    "card": 7,
+    "card": 26,
     "spot": 20
   }
 },
@@ -2426,7 +2426,7 @@
   "pk": 22,
   "fields": {
     "game": 1,
-    "card": 49,
+    "card": 11,
     "spot": 21
   }
 },
@@ -2435,7 +2435,7 @@
   "pk": 23,
   "fields": {
     "game": 1,
-    "card": 20,
+    "card": 8,
     "spot": 22
   }
 },
@@ -2444,7 +2444,7 @@
   "pk": 24,
   "fields": {
     "game": 1,
-    "card": 23,
+    "card": 12,
     "spot": 23
   }
 },
@@ -2453,7 +2453,7 @@
   "pk": 25,
   "fields": {
     "game": 1,
-    "card": 46,
+    "card": 39,
     "spot": 24
   }
 },
@@ -2462,7 +2462,7 @@
   "pk": 26,
   "fields": {
     "game": 1,
-    "card": 1,
+    "card": 3,
     "spot": 25
   }
 },
@@ -2471,7 +2471,7 @@
   "pk": 27,
   "fields": {
     "game": 1,
-    "card": 13,
+    "card": 25,
     "spot": 26
   }
 },
@@ -2480,7 +2480,7 @@
   "pk": 28,
   "fields": {
     "game": 1,
-    "card": 24,
+    "card": 28,
     "spot": 27
   }
 },
@@ -2489,7 +2489,7 @@
   "pk": 29,
   "fields": {
     "game": 1,
-    "card": 45,
+    "card": 24,
     "spot": 28
   }
 },
@@ -2498,7 +2498,7 @@
   "pk": 30,
   "fields": {
     "game": 1,
-    "card": 30,
+    "card": 17,
     "spot": 29
   }
 },
@@ -2507,7 +2507,7 @@
   "pk": 31,
   "fields": {
     "game": 1,
-    "card": 36,
+    "card": 53,
     "spot": 30
   }
 },
@@ -2516,7 +2516,7 @@
   "pk": 32,
   "fields": {
     "game": 1,
-    "card": 27,
+    "card": 51,
     "spot": 31
   }
 },
@@ -2525,7 +2525,7 @@
   "pk": 33,
   "fields": {
     "game": 1,
-    "card": 21,
+    "card": 43,
     "spot": 32
   }
 },
@@ -2534,7 +2534,7 @@
   "pk": 34,
   "fields": {
     "game": 1,
-    "card": 40,
+    "card": 16,
     "spot": 33
   }
 },
@@ -2543,7 +2543,7 @@
   "pk": 35,
   "fields": {
     "game": 1,
-    "card": 53,
+    "card": 1,
     "spot": 34
   }
 },
@@ -2552,7 +2552,7 @@
   "pk": 36,
   "fields": {
     "game": 1,
-    "card": 31,
+    "card": 21,
     "spot": 35
   }
 },
@@ -2561,7 +2561,7 @@
   "pk": 37,
   "fields": {
     "game": 1,
-    "card": 37,
+    "card": 2,
     "spot": 36
   }
 },
@@ -2570,7 +2570,7 @@
   "pk": 38,
   "fields": {
     "game": 1,
-    "card": 12,
+    "card": 41,
     "spot": 37
   }
 },
@@ -2579,7 +2579,7 @@
   "pk": 39,
   "fields": {
     "game": 1,
-    "card": 44,
+    "card": 20,
     "spot": 38
   }
 },
@@ -2588,7 +2588,7 @@
   "pk": 40,
   "fields": {
     "game": 1,
-    "card": 26,
+    "card": 34,
     "spot": 39
   }
 },
@@ -2597,7 +2597,7 @@
   "pk": 41,
   "fields": {
     "game": 1,
-    "card": 48,
+    "card": 9,
     "spot": 40
   }
 },
@@ -2606,7 +2606,7 @@
   "pk": 42,
   "fields": {
     "game": 1,
-    "card": 29,
+    "card": 6,
     "spot": 41
   }
 },
@@ -2615,7 +2615,7 @@
   "pk": 43,
   "fields": {
     "game": 1,
-    "card": 28,
+    "card": 15,
     "spot": 42
   }
 },
@@ -2624,7 +2624,7 @@
   "pk": 44,
   "fields": {
     "game": 1,
-    "card": 19,
+    "card": 52,
     "spot": 43
   }
 },
@@ -2633,7 +2633,7 @@
   "pk": 45,
   "fields": {
     "game": 1,
-    "card": 16,
+    "card": 31,
     "spot": 44
   }
 },
@@ -2642,7 +2642,7 @@
   "pk": 46,
   "fields": {
     "game": 1,
-    "card": 11,
+    "card": 48,
     "spot": 45
   }
 },
@@ -2651,7 +2651,7 @@
   "pk": 47,
   "fields": {
     "game": 1,
-    "card": 43,
+    "card": 45,
     "spot": 46
   }
 },
@@ -2660,7 +2660,7 @@
   "pk": 48,
   "fields": {
     "game": 1,
-    "card": 50,
+    "card": 5,
     "spot": 47
   }
 },
@@ -2669,7 +2669,7 @@
   "pk": 49,
   "fields": {
     "game": 1,
-    "card": 15,
+    "card": 19,
     "spot": 48
   }
 },
@@ -2678,7 +2678,7 @@
   "pk": 50,
   "fields": {
     "game": 1,
-    "card": 35,
+    "card": 37,
     "spot": 49
   }
 },
@@ -2687,7 +2687,7 @@
   "pk": 51,
   "fields": {
     "game": 1,
-    "card": 17,
+    "card": 13,
     "spot": 50
   }
 },
@@ -2696,7 +2696,7 @@
   "pk": 52,
   "fields": {
     "game": 1,
-    "card": 41,
+    "card": 30,
     "spot": 51
   }
 },
@@ -2705,7 +2705,7 @@
   "pk": 53,
   "fields": {
     "game": 1,
-    "card": 22,
+    "card": 4,
     "spot": 52
   }
 },
@@ -2714,7 +2714,7 @@
   "pk": 54,
   "fields": {
     "game": 1,
-    "card": 10,
+    "card": 29,
     "spot": 53
   }
 },
@@ -3075,7 +3075,7 @@
   "pk": 1,
   "fields": {
     "game": 1,
-    "item_type": "4",
+    "item_type": "1",
     "exhausted": false
   }
 },
@@ -3084,7 +3084,7 @@
   "pk": 2,
   "fields": {
     "game": 1,
-    "item_type": "4",
+    "item_type": "1",
     "exhausted": false
   }
 },
@@ -3093,7 +3093,7 @@
   "pk": 3,
   "fields": {
     "game": 1,
-    "item_type": "4",
+    "item_type": "1",
     "exhausted": false
   }
 },
@@ -3102,7 +3102,7 @@
   "pk": 4,
   "fields": {
     "game": 1,
-    "item_type": "4",
+    "item_type": "1",
     "exhausted": false
   }
 },
@@ -3315,7 +3315,7 @@
   "pk": 1,
   "fields": {
     "player": 1,
-    "card": 38
+    "card": 32
   }
 },
 {
@@ -3323,7 +3323,7 @@
   "pk": 2,
   "fields": {
     "player": 1,
-    "card": 25
+    "card": 7
   }
 },
 {
@@ -3331,7 +3331,7 @@
   "pk": 3,
   "fields": {
     "player": 1,
-    "card": 4
+    "card": 44
   }
 },
 {
@@ -3339,7 +3339,7 @@
   "pk": 4,
   "fields": {
     "player": 2,
-    "card": 54
+    "card": 33
   }
 },
 {
@@ -3347,7 +3347,7 @@
   "pk": 5,
   "fields": {
     "player": 2,
-    "card": 3
+    "card": 49
   }
 },
 {
@@ -3355,7 +3355,7 @@
   "pk": 6,
   "fields": {
     "player": 2,
-    "card": 52
+    "card": 35
   }
 },
 {
@@ -3363,7 +3363,7 @@
   "pk": 7,
   "fields": {
     "player": 3,
-    "card": 14
+    "card": 27
   }
 },
 {
@@ -3371,7 +3371,7 @@
   "pk": 8,
   "fields": {
     "player": 3,
-    "card": 33
+    "card": 36
   }
 },
 {
@@ -3379,7 +3379,7 @@
   "pk": 9,
   "fields": {
     "player": 3,
-    "card": 42
+    "card": 18
   }
 },
 {
@@ -3725,7 +3725,7 @@
   "pk": 1,
   "fields": {
     "player": 3,
-    "card": 32
+    "card": 42
   }
 },
 {
@@ -3733,7 +3733,7 @@
   "pk": 2,
   "fields": {
     "player": 3,
-    "card": 18
+    "card": 46
   }
 },
 {
@@ -3741,7 +3741,7 @@
   "pk": 3,
   "fields": {
     "player": 3,
-    "card": 34
+    "card": 14
   }
 },
 {
@@ -3857,10 +3857,8020 @@
   }
 },
 {
+  "model": "game.checkpoint",
+  "pk": 1,
+  "fields": {
+    "game": 1,
+    "gamestate": [
+      {
+        "model": "game.game",
+        "pk": 1,
+        "fields": {
+          "boardmap": "0",
+          "owner": 1,
+          "status": "1",
+          "current_turn": 0
+        }
+      },
+      {
+        "model": "game.factionchoiceentry",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "faction": "ca",
+          "chosen": true
+        }
+      },
+      {
+        "model": "game.factionchoiceentry",
+        "pk": 2,
+        "fields": {
+          "game": 1,
+          "faction": "bi",
+          "chosen": true
+        }
+      },
+      {
+        "model": "game.factionchoiceentry",
+        "pk": 3,
+        "fields": {
+          "game": 1,
+          "faction": "wa",
+          "chosen": true
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "clearing_number": 1,
+          "suit": "r",
+          "connected_clearings": [
+            5,
+            9,
+            10
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 2,
+        "fields": {
+          "game": 1,
+          "clearing_number": 2,
+          "suit": "o",
+          "connected_clearings": [
+            5,
+            6,
+            10
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 3,
+        "fields": {
+          "game": 1,
+          "clearing_number": 3,
+          "suit": "y",
+          "connected_clearings": [
+            6,
+            7,
+            11
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 4,
+        "fields": {
+          "game": 1,
+          "clearing_number": 4,
+          "suit": "y",
+          "connected_clearings": [
+            8,
+            9,
+            12
+          ],
+          "water_connected_clearings": [
+            7
+          ]
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 5,
+        "fields": {
+          "game": 1,
+          "clearing_number": 5,
+          "suit": "y",
+          "connected_clearings": [
+            1,
+            2
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 6,
+        "fields": {
+          "game": 1,
+          "clearing_number": 6,
+          "suit": "r",
+          "connected_clearings": [
+            2,
+            3,
+            11
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 7,
+        "fields": {
+          "game": 1,
+          "clearing_number": 7,
+          "suit": "o",
+          "connected_clearings": [
+            3,
+            8,
+            12
+          ],
+          "water_connected_clearings": [
+            11
+          ]
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 8,
+        "fields": {
+          "game": 1,
+          "clearing_number": 8,
+          "suit": "r",
+          "connected_clearings": [
+            4,
+            7
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 9,
+        "fields": {
+          "game": 1,
+          "clearing_number": 9,
+          "suit": "o",
+          "connected_clearings": [
+            1,
+            4,
+            12
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 10,
+        "fields": {
+          "game": 1,
+          "clearing_number": 10,
+          "suit": "y",
+          "connected_clearings": [
+            1,
+            2,
+            12
+          ],
+          "water_connected_clearings": [
+            5
+          ]
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 11,
+        "fields": {
+          "game": 1,
+          "clearing_number": 11,
+          "suit": "o",
+          "connected_clearings": [
+            3,
+            6,
+            12
+          ],
+          "water_connected_clearings": [
+            10
+          ]
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 12,
+        "fields": {
+          "game": 1,
+          "clearing_number": 12,
+          "suit": "r",
+          "connected_clearings": [
+            4,
+            7,
+            9,
+            10,
+            11
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 1,
+        "fields": {
+          "clearing": 1,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 2,
+        "fields": {
+          "clearing": 2,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 3,
+        "fields": {
+          "clearing": 2,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 4,
+        "fields": {
+          "clearing": 3,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 5,
+        "fields": {
+          "clearing": 4,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 6,
+        "fields": {
+          "clearing": 5,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 7,
+        "fields": {
+          "clearing": 5,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 8,
+        "fields": {
+          "clearing": 6,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 9,
+        "fields": {
+          "clearing": 6,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 10,
+        "fields": {
+          "clearing": 7,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 11,
+        "fields": {
+          "clearing": 7,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 12,
+        "fields": {
+          "clearing": 8,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 13,
+        "fields": {
+          "clearing": 8,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 14,
+        "fields": {
+          "clearing": 9,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 15,
+        "fields": {
+          "clearing": 9,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 16,
+        "fields": {
+          "clearing": 10,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 17,
+        "fields": {
+          "clearing": 10,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 18,
+        "fields": {
+          "clearing": 11,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 19,
+        "fields": {
+          "clearing": 11,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 20,
+        "fields": {
+          "clearing": 11,
+          "building_slot_number": 2
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 21,
+        "fields": {
+          "clearing": 12,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 22,
+        "fields": {
+          "clearing": 12,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "SABOTEURS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 2,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "SOUP_KITCHENS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 3,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "BOAT_BUILDERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 4,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "CORVID_PLANNERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 5,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "EYRIE_EMIGRE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 6,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "INFORMANTS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 7,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "RABBIT_PARTISANS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 8,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "TUNNELS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 9,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "TUNNELS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 10,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "CHARM_OFFENSIVE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 11,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "LEAGUE_OF_ADVENTURERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 12,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "MURINE_BROKERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 13,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "MASTER_ENGRAVERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 14,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "SABOTEURS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 15,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "SABOTEURS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 16,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "TRAVEL_GEAR_RED"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 17,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "PROTECTION_RACKET"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 18,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "FOXFOLK_STEEL"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 19,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "ANVIL"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 20,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "BIRDY_BINDLE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 21,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "TRAVEL_GEAR_ORANGE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 22,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "ROOT_TEA_ORANGE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 23,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "MOUSE_IN_A_SACK"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 24,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "SWORD"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 25,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "CROSSBOW_ORANGE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 26,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "DOMINANCE_WILD"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 27,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "DOMINANCE_RED"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 28,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "DOMINANCE_YELLOW"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 29,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "DOMINANCE_ORANGE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 30,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "FOX_PARTISANS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 31,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "PROPAGANDA_BUREAU"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 32,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "FALSE_ORDERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 33,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "FALSE_ORDERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 34,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "INFORMANTS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 35,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "COFFIN_MAKERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 36,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "SWAP_MEET"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 37,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "SWAP_MEET"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 38,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "MOUSE_PARTISANS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 39,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "LEAGUE_OF_ADVENTURERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 40,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "WOODLAND_RUNNERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 41,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "ARMS_TRADER"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 42,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "CROSSBOW_WILD"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 43,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "GENTLY_USED_KNAPSACK"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 44,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "ROOT_TEA_RED"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 45,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "SMUGGLERS_TRAIL"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 46,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "ROOT_TEA_YELLOW"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 47,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "A_VISIT_TO_FRIENDS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 48,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "BAKE_SALE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 49,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "INVESTMENTS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 50,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "AMBUSH_RED"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 51,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "AMBUSH_YELLOW"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 52,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "AMBUSH_ORANGE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 53,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "AMBUSH_WILD"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 54,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "AMBUSH_WILD"
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "item_type": "1",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 2,
+        "fields": {
+          "game": 1,
+          "item_type": "1",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 3,
+        "fields": {
+          "game": 1,
+          "item_type": "1",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 4,
+        "fields": {
+          "game": 1,
+          "item_type": "1",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 5,
+        "fields": {
+          "game": 1,
+          "item_type": "0",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 6,
+        "fields": {
+          "game": 1,
+          "item_type": "0",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 7,
+        "fields": {
+          "game": 1,
+          "item_type": "1",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 8,
+        "fields": {
+          "game": 1,
+          "item_type": "1",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 9,
+        "fields": {
+          "game": 1,
+          "item_type": "2",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 10,
+        "fields": {
+          "game": 1,
+          "item_type": "3",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 11,
+        "fields": {
+          "game": 1,
+          "item_type": "4",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 12,
+        "fields": {
+          "game": 1,
+          "item_type": "4",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 13,
+        "fields": {
+          "game": 1,
+          "item_type": "5",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 14,
+        "fields": {
+          "game": 1,
+          "item_type": "5",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 15,
+        "fields": {
+          "game": 1,
+          "item_type": "6",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 16,
+        "fields": {
+          "game": 1,
+          "item_type": "6",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 13,
+        "fields": {
+          "game": 1,
+          "card": 10,
+          "spot": 12
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 14,
+        "fields": {
+          "game": 1,
+          "card": 40,
+          "spot": 13
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 15,
+        "fields": {
+          "game": 1,
+          "card": 22,
+          "spot": 14
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 16,
+        "fields": {
+          "game": 1,
+          "card": 54,
+          "spot": 15
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 17,
+        "fields": {
+          "game": 1,
+          "card": 38,
+          "spot": 16
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 18,
+        "fields": {
+          "game": 1,
+          "card": 50,
+          "spot": 17
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 19,
+        "fields": {
+          "game": 1,
+          "card": 23,
+          "spot": 18
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 20,
+        "fields": {
+          "game": 1,
+          "card": 47,
+          "spot": 19
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 21,
+        "fields": {
+          "game": 1,
+          "card": 26,
+          "spot": 20
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 22,
+        "fields": {
+          "game": 1,
+          "card": 11,
+          "spot": 21
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 23,
+        "fields": {
+          "game": 1,
+          "card": 8,
+          "spot": 22
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 24,
+        "fields": {
+          "game": 1,
+          "card": 12,
+          "spot": 23
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 25,
+        "fields": {
+          "game": 1,
+          "card": 39,
+          "spot": 24
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 26,
+        "fields": {
+          "game": 1,
+          "card": 3,
+          "spot": 25
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 27,
+        "fields": {
+          "game": 1,
+          "card": 25,
+          "spot": 26
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 28,
+        "fields": {
+          "game": 1,
+          "card": 28,
+          "spot": 27
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 29,
+        "fields": {
+          "game": 1,
+          "card": 24,
+          "spot": 28
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 30,
+        "fields": {
+          "game": 1,
+          "card": 17,
+          "spot": 29
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 31,
+        "fields": {
+          "game": 1,
+          "card": 53,
+          "spot": 30
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 32,
+        "fields": {
+          "game": 1,
+          "card": 51,
+          "spot": 31
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 33,
+        "fields": {
+          "game": 1,
+          "card": 43,
+          "spot": 32
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 34,
+        "fields": {
+          "game": 1,
+          "card": 16,
+          "spot": 33
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 35,
+        "fields": {
+          "game": 1,
+          "card": 1,
+          "spot": 34
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 36,
+        "fields": {
+          "game": 1,
+          "card": 21,
+          "spot": 35
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 37,
+        "fields": {
+          "game": 1,
+          "card": 2,
+          "spot": 36
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 38,
+        "fields": {
+          "game": 1,
+          "card": 41,
+          "spot": 37
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 39,
+        "fields": {
+          "game": 1,
+          "card": 20,
+          "spot": 38
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 40,
+        "fields": {
+          "game": 1,
+          "card": 34,
+          "spot": 39
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 41,
+        "fields": {
+          "game": 1,
+          "card": 9,
+          "spot": 40
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 42,
+        "fields": {
+          "game": 1,
+          "card": 6,
+          "spot": 41
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 43,
+        "fields": {
+          "game": 1,
+          "card": 15,
+          "spot": 42
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 44,
+        "fields": {
+          "game": 1,
+          "card": 52,
+          "spot": 43
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 45,
+        "fields": {
+          "game": 1,
+          "card": 31,
+          "spot": 44
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 46,
+        "fields": {
+          "game": 1,
+          "card": 48,
+          "spot": 45
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 47,
+        "fields": {
+          "game": 1,
+          "card": 45,
+          "spot": 46
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 48,
+        "fields": {
+          "game": 1,
+          "card": 5,
+          "spot": 47
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 49,
+        "fields": {
+          "game": 1,
+          "card": 19,
+          "spot": 48
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 50,
+        "fields": {
+          "game": 1,
+          "card": 37,
+          "spot": 49
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 51,
+        "fields": {
+          "game": 1,
+          "card": 13,
+          "spot": 50
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 52,
+        "fields": {
+          "game": 1,
+          "card": 30,
+          "spot": 51
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 53,
+        "fields": {
+          "game": 1,
+          "card": 4,
+          "spot": 52
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 54,
+        "fields": {
+          "game": 1,
+          "card": 29,
+          "spot": 53
+        }
+      },
+      {
+        "model": "game.ruin",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "building_slot": 9,
+          "item": 1
+        }
+      },
+      {
+        "model": "game.ruin",
+        "pk": 2,
+        "fields": {
+          "game": 1,
+          "building_slot": 17,
+          "item": 2
+        }
+      },
+      {
+        "model": "game.ruin",
+        "pk": 3,
+        "fields": {
+          "game": 1,
+          "building_slot": 20,
+          "item": 3
+        }
+      },
+      {
+        "model": "game.ruin",
+        "pk": 4,
+        "fields": {
+          "game": 1,
+          "building_slot": 22,
+          "item": 4
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "item": 5
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 2,
+        "fields": {
+          "game": 1,
+          "item": 6
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 3,
+        "fields": {
+          "game": 1,
+          "item": 7
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 4,
+        "fields": {
+          "game": 1,
+          "item": 8
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 5,
+        "fields": {
+          "game": 1,
+          "item": 9
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 6,
+        "fields": {
+          "game": 1,
+          "item": 10
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 7,
+        "fields": {
+          "game": 1,
+          "item": 11
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 8,
+        "fields": {
+          "game": 1,
+          "item": 12
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 9,
+        "fields": {
+          "game": 1,
+          "item": 13
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 10,
+        "fields": {
+          "game": 1,
+          "item": 14
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 11,
+        "fields": {
+          "game": 1,
+          "item": 15
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 12,
+        "fields": {
+          "game": 1,
+          "item": 16
+        }
+      },
+      {
+        "model": "game.gamesimplesetup",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "status": "a"
+        }
+      },
+      {
+        "model": "game.player",
+        "pk": 1,
+        "fields": {
+          "user": 1,
+          "game": 1,
+          "faction": "ca",
+          "score": 0,
+          "turn_order": 0
+        }
+      },
+      {
+        "model": "game.player",
+        "pk": 2,
+        "fields": {
+          "user": 2,
+          "game": 1,
+          "faction": "bi",
+          "score": 0,
+          "turn_order": 1
+        }
+      },
+      {
+        "model": "game.player",
+        "pk": 3,
+        "fields": {
+          "user": 3,
+          "game": 1,
+          "faction": "wa",
+          "score": 0,
+          "turn_order": 2
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 1,
+        "fields": {
+          "player": 1,
+          "card": 32
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 2,
+        "fields": {
+          "player": 1,
+          "card": 7
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 3,
+        "fields": {
+          "player": 1,
+          "card": 44
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 1,
+        "fields": {
+          "player": 1,
+          "warrior": 1
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 2,
+        "fields": {
+          "player": 1,
+          "warrior": 2
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 3,
+        "fields": {
+          "player": 1,
+          "warrior": 3
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 4,
+        "fields": {
+          "player": 1,
+          "warrior": 4
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 5,
+        "fields": {
+          "player": 1,
+          "warrior": 5
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 6,
+        "fields": {
+          "player": 1,
+          "warrior": 6
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 7,
+        "fields": {
+          "player": 1,
+          "warrior": 7
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 8,
+        "fields": {
+          "player": 1,
+          "warrior": 8
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 9,
+        "fields": {
+          "player": 1,
+          "warrior": 9
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 10,
+        "fields": {
+          "player": 1,
+          "warrior": 10
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 11,
+        "fields": {
+          "player": 1,
+          "warrior": 11
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 12,
+        "fields": {
+          "player": 1,
+          "warrior": 12
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 13,
+        "fields": {
+          "player": 1,
+          "warrior": 13
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 14,
+        "fields": {
+          "player": 1,
+          "warrior": 14
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 15,
+        "fields": {
+          "player": 1,
+          "warrior": 15
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 16,
+        "fields": {
+          "player": 1,
+          "warrior": 16
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 17,
+        "fields": {
+          "player": 1,
+          "warrior": 17
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 18,
+        "fields": {
+          "player": 1,
+          "warrior": 18
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 19,
+        "fields": {
+          "player": 1,
+          "warrior": 19
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 20,
+        "fields": {
+          "player": 1,
+          "warrior": 20
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 21,
+        "fields": {
+          "player": 1,
+          "warrior": 21
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 22,
+        "fields": {
+          "player": 1,
+          "warrior": 22
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 23,
+        "fields": {
+          "player": 1,
+          "warrior": 23
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 24,
+        "fields": {
+          "player": 1,
+          "warrior": 24
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 25,
+        "fields": {
+          "player": 1,
+          "warrior": 25
+        }
+      },
+      {
+        "model": "game.catssimplesetup",
+        "pk": 1,
+        "fields": {
+          "player": 1,
+          "step": "1",
+          "recruiter_placed": false,
+          "sawmill_placed": false,
+          "workshop_placed": false
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 1,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 2,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 3,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 4,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 5,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 6,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 7,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 8,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 9,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 10,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 11,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 12,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 13,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 14,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 15,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 16,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 17,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 18,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 19,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 20,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 21,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 22,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 23,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 24,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 25,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 26,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 27,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 28,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 29,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 30,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 31,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 32,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 33,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 34,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 35,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 36,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 37,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 38,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 39,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 40,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 41,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 42,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 43,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 44,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 45,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 46,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 47,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 48,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 49,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 50,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 51,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 52,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 26,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 27,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 28,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 29,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 30,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 31,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 32,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 33,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 34,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 35,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 36,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 37,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 38,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 39,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 40,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 41,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 42,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 43,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 44,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 45,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 46,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 47,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 48,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 49,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 50,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 51,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 52,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 1,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 2,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 3,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 4,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 5,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 6,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 7,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 8,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 9,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 10,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 11,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 12,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 13,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 14,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 15,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 16,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 17,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 18,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 19,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 20,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 21,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 22,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 23,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 24,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 25,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.workshop",
+        "pk": 35,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.workshop",
+        "pk": 38,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.workshop",
+        "pk": 41,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.workshop",
+        "pk": 44,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.workshop",
+        "pk": 47,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.workshop",
+        "pk": 50,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.sawmill",
+        "pk": 37,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.sawmill",
+        "pk": 40,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.sawmill",
+        "pk": 43,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.sawmill",
+        "pk": 46,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.sawmill",
+        "pk": 49,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.sawmill",
+        "pk": 52,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.recruiter",
+        "pk": 36,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.recruiter",
+        "pk": 39,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.recruiter",
+        "pk": 42,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.recruiter",
+        "pk": 45,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.recruiter",
+        "pk": 48,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.recruiter",
+        "pk": 51,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.catkeep",
+        "pk": 26,
+        "fields": {
+          "destroyed": false
+        }
+      },
+      {
+        "model": "game.catwood",
+        "pk": 27,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 28,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 29,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 30,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 31,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 32,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 33,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 34,
+        "fields": {}
+      },
+      {
+        "model": "game.handentry",
+        "pk": 4,
+        "fields": {
+          "player": 2,
+          "card": 33
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 5,
+        "fields": {
+          "player": 2,
+          "card": 49
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 6,
+        "fields": {
+          "player": 2,
+          "card": 35
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 26,
+        "fields": {
+          "player": 2,
+          "warrior": 53
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 27,
+        "fields": {
+          "player": 2,
+          "warrior": 54
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 28,
+        "fields": {
+          "player": 2,
+          "warrior": 55
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 29,
+        "fields": {
+          "player": 2,
+          "warrior": 56
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 30,
+        "fields": {
+          "player": 2,
+          "warrior": 57
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 31,
+        "fields": {
+          "player": 2,
+          "warrior": 58
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 32,
+        "fields": {
+          "player": 2,
+          "warrior": 59
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 33,
+        "fields": {
+          "player": 2,
+          "warrior": 60
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 34,
+        "fields": {
+          "player": 2,
+          "warrior": 61
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 35,
+        "fields": {
+          "player": 2,
+          "warrior": 62
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 36,
+        "fields": {
+          "player": 2,
+          "warrior": 63
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 37,
+        "fields": {
+          "player": 2,
+          "warrior": 64
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 38,
+        "fields": {
+          "player": 2,
+          "warrior": 65
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 39,
+        "fields": {
+          "player": 2,
+          "warrior": 66
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 40,
+        "fields": {
+          "player": 2,
+          "warrior": 67
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 41,
+        "fields": {
+          "player": 2,
+          "warrior": 68
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 42,
+        "fields": {
+          "player": 2,
+          "warrior": 69
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 43,
+        "fields": {
+          "player": 2,
+          "warrior": 70
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 44,
+        "fields": {
+          "player": 2,
+          "warrior": 71
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 45,
+        "fields": {
+          "player": 2,
+          "warrior": 72
+        }
+      },
+      {
+        "model": "game.birdssimplesetup",
+        "pk": 1,
+        "fields": {
+          "player": 2,
+          "step": "1"
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 53,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 54,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 55,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 56,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 57,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 58,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 59,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 60,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 61,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 62,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 63,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 64,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 65,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 66,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 67,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 68,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 69,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 70,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 71,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 72,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 73,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 74,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 75,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 76,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 77,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 78,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 79,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 73,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 74,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 75,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 76,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 77,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 78,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 79,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 53,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 54,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 55,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 56,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 57,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 58,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 59,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 60,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 61,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 62,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 63,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 64,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 65,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 66,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 67,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 68,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 69,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 70,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 71,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 72,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.birdleader",
+        "pk": 1,
+        "fields": {
+          "player": 2,
+          "leader": "0",
+          "available": true,
+          "active": false
+        }
+      },
+      {
+        "model": "game.birdleader",
+        "pk": 2,
+        "fields": {
+          "player": 2,
+          "leader": "1",
+          "available": true,
+          "active": false
+        }
+      },
+      {
+        "model": "game.birdleader",
+        "pk": 3,
+        "fields": {
+          "player": 2,
+          "leader": "2",
+          "available": true,
+          "active": false
+        }
+      },
+      {
+        "model": "game.birdleader",
+        "pk": 4,
+        "fields": {
+          "player": 2,
+          "leader": "3",
+          "available": true,
+          "active": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 73,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 74,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 75,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 76,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 77,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 78,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 79,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 7,
+        "fields": {
+          "player": 3,
+          "card": 27
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 8,
+        "fields": {
+          "player": 3,
+          "card": 36
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 9,
+        "fields": {
+          "player": 3,
+          "card": 18
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 46,
+        "fields": {
+          "player": 3,
+          "warrior": 80
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 47,
+        "fields": {
+          "player": 3,
+          "warrior": 81
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 48,
+        "fields": {
+          "player": 3,
+          "warrior": 82
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 49,
+        "fields": {
+          "player": 3,
+          "warrior": 83
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 50,
+        "fields": {
+          "player": 3,
+          "warrior": 84
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 51,
+        "fields": {
+          "player": 3,
+          "warrior": 85
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 52,
+        "fields": {
+          "player": 3,
+          "warrior": 86
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 53,
+        "fields": {
+          "player": 3,
+          "warrior": 87
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 54,
+        "fields": {
+          "player": 3,
+          "warrior": 88
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 55,
+        "fields": {
+          "player": 3,
+          "warrior": 89
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 80,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 81,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 82,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 83,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 84,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 85,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 86,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 87,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 88,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 89,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 90,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 91,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 92,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 93,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 94,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 95,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 96,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 97,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 98,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 99,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 100,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 101,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 102,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 90,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 91,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 92,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 93,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 94,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 95,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 96,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 97,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 98,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 99,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 100,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 101,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 102,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 80,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 81,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 82,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 83,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 84,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 85,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 86,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 87,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 88,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 89,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.wabase",
+        "pk": 100,
+        "fields": {
+          "suit": "r"
+        }
+      },
+      {
+        "model": "game.wabase",
+        "pk": 101,
+        "fields": {
+          "suit": "y"
+        }
+      },
+      {
+        "model": "game.wabase",
+        "pk": 102,
+        "fields": {
+          "suit": "o"
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 90,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 91,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 92,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 93,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 94,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 95,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 96,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 97,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 98,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 99,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.supporterstackentry",
+        "pk": 1,
+        "fields": {
+          "player": 3,
+          "card": 42
+        }
+      },
+      {
+        "model": "game.supporterstackentry",
+        "pk": 2,
+        "fields": {
+          "player": 3,
+          "card": 46
+        }
+      },
+      {
+        "model": "game.supporterstackentry",
+        "pk": 3,
+        "fields": {
+          "player": 3,
+          "card": 14
+        }
+      },
+      {
+        "model": "game.waturn",
+        "pk": 1,
+        "fields": {
+          "player": 3,
+          "turn_number": 0
+        }
+      },
+      {
+        "model": "game.wabirdsong",
+        "pk": 1,
+        "fields": {
+          "turn": 1,
+          "step": "0"
+        }
+      },
+      {
+        "model": "game.wadaylight",
+        "pk": 1,
+        "fields": {
+          "turn": 1,
+          "step": "1"
+        }
+      },
+      {
+        "model": "game.waevening",
+        "pk": 1,
+        "fields": {
+          "turn": 1,
+          "step": "1",
+          "operations_perfomed": 0,
+          "cards_drawn": 0
+        }
+      }
+    ],
+    "created_at": "2026-02-19T20:40:42.644Z"
+  }
+},
+{
+  "model": "game.checkpoint",
+  "pk": 2,
+  "fields": {
+    "game": 1,
+    "gamestate": [
+      {
+        "model": "game.game",
+        "pk": 1,
+        "fields": {
+          "boardmap": "0",
+          "owner": 1,
+          "status": "1",
+          "current_turn": 0
+        }
+      },
+      {
+        "model": "game.factionchoiceentry",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "faction": "ca",
+          "chosen": true
+        }
+      },
+      {
+        "model": "game.factionchoiceentry",
+        "pk": 2,
+        "fields": {
+          "game": 1,
+          "faction": "bi",
+          "chosen": true
+        }
+      },
+      {
+        "model": "game.factionchoiceentry",
+        "pk": 3,
+        "fields": {
+          "game": 1,
+          "faction": "wa",
+          "chosen": true
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "clearing_number": 1,
+          "suit": "r",
+          "connected_clearings": [
+            5,
+            9,
+            10
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 2,
+        "fields": {
+          "game": 1,
+          "clearing_number": 2,
+          "suit": "o",
+          "connected_clearings": [
+            5,
+            6,
+            10
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 3,
+        "fields": {
+          "game": 1,
+          "clearing_number": 3,
+          "suit": "y",
+          "connected_clearings": [
+            6,
+            7,
+            11
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 4,
+        "fields": {
+          "game": 1,
+          "clearing_number": 4,
+          "suit": "y",
+          "connected_clearings": [
+            8,
+            9,
+            12
+          ],
+          "water_connected_clearings": [
+            7
+          ]
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 5,
+        "fields": {
+          "game": 1,
+          "clearing_number": 5,
+          "suit": "y",
+          "connected_clearings": [
+            1,
+            2
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 6,
+        "fields": {
+          "game": 1,
+          "clearing_number": 6,
+          "suit": "r",
+          "connected_clearings": [
+            2,
+            3,
+            11
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 7,
+        "fields": {
+          "game": 1,
+          "clearing_number": 7,
+          "suit": "o",
+          "connected_clearings": [
+            3,
+            8,
+            12
+          ],
+          "water_connected_clearings": [
+            11
+          ]
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 8,
+        "fields": {
+          "game": 1,
+          "clearing_number": 8,
+          "suit": "r",
+          "connected_clearings": [
+            4,
+            7
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 9,
+        "fields": {
+          "game": 1,
+          "clearing_number": 9,
+          "suit": "o",
+          "connected_clearings": [
+            1,
+            4,
+            12
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 10,
+        "fields": {
+          "game": 1,
+          "clearing_number": 10,
+          "suit": "y",
+          "connected_clearings": [
+            1,
+            2,
+            12
+          ],
+          "water_connected_clearings": [
+            5
+          ]
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 11,
+        "fields": {
+          "game": 1,
+          "clearing_number": 11,
+          "suit": "o",
+          "connected_clearings": [
+            3,
+            6,
+            12
+          ],
+          "water_connected_clearings": [
+            10
+          ]
+        }
+      },
+      {
+        "model": "game.clearing",
+        "pk": 12,
+        "fields": {
+          "game": 1,
+          "clearing_number": 12,
+          "suit": "r",
+          "connected_clearings": [
+            4,
+            7,
+            9,
+            10,
+            11
+          ],
+          "water_connected_clearings": []
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 1,
+        "fields": {
+          "clearing": 1,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 2,
+        "fields": {
+          "clearing": 2,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 3,
+        "fields": {
+          "clearing": 2,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 4,
+        "fields": {
+          "clearing": 3,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 5,
+        "fields": {
+          "clearing": 4,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 6,
+        "fields": {
+          "clearing": 5,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 7,
+        "fields": {
+          "clearing": 5,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 8,
+        "fields": {
+          "clearing": 6,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 9,
+        "fields": {
+          "clearing": 6,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 10,
+        "fields": {
+          "clearing": 7,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 11,
+        "fields": {
+          "clearing": 7,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 12,
+        "fields": {
+          "clearing": 8,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 13,
+        "fields": {
+          "clearing": 8,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 14,
+        "fields": {
+          "clearing": 9,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 15,
+        "fields": {
+          "clearing": 9,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 16,
+        "fields": {
+          "clearing": 10,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 17,
+        "fields": {
+          "clearing": 10,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 18,
+        "fields": {
+          "clearing": 11,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 19,
+        "fields": {
+          "clearing": 11,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 20,
+        "fields": {
+          "clearing": 11,
+          "building_slot_number": 2
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 21,
+        "fields": {
+          "clearing": 12,
+          "building_slot_number": 0
+        }
+      },
+      {
+        "model": "game.buildingslot",
+        "pk": 22,
+        "fields": {
+          "clearing": 12,
+          "building_slot_number": 1
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "SABOTEURS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 2,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "SOUP_KITCHENS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 3,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "BOAT_BUILDERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 4,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "CORVID_PLANNERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 5,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "EYRIE_EMIGRE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 6,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "INFORMANTS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 7,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "RABBIT_PARTISANS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 8,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "TUNNELS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 9,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "TUNNELS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 10,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "CHARM_OFFENSIVE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 11,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "LEAGUE_OF_ADVENTURERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 12,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "MURINE_BROKERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 13,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "MASTER_ENGRAVERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 14,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "SABOTEURS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 15,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "SABOTEURS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 16,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "TRAVEL_GEAR_RED"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 17,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "PROTECTION_RACKET"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 18,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "FOXFOLK_STEEL"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 19,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "ANVIL"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 20,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "BIRDY_BINDLE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 21,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "TRAVEL_GEAR_ORANGE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 22,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "ROOT_TEA_ORANGE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 23,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "MOUSE_IN_A_SACK"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 24,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "SWORD"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 25,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "CROSSBOW_ORANGE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 26,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "DOMINANCE_WILD"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 27,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "DOMINANCE_RED"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 28,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "DOMINANCE_YELLOW"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 29,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "DOMINANCE_ORANGE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 30,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "FOX_PARTISANS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 31,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "PROPAGANDA_BUREAU"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 32,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "FALSE_ORDERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 33,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "FALSE_ORDERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 34,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "INFORMANTS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 35,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "COFFIN_MAKERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 36,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "SWAP_MEET"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 37,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "SWAP_MEET"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 38,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "MOUSE_PARTISANS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 39,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "LEAGUE_OF_ADVENTURERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 40,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "WOODLAND_RUNNERS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 41,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "ARMS_TRADER"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 42,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "CROSSBOW_WILD"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 43,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "GENTLY_USED_KNAPSACK"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 44,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "ROOT_TEA_RED"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 45,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "SMUGGLERS_TRAIL"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 46,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "ROOT_TEA_YELLOW"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 47,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "A_VISIT_TO_FRIENDS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 48,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "BAKE_SALE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 49,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "INVESTMENTS"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 50,
+        "fields": {
+          "game": 1,
+          "suit": "r",
+          "card_type": "AMBUSH_RED"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 51,
+        "fields": {
+          "game": 1,
+          "suit": "y",
+          "card_type": "AMBUSH_YELLOW"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 52,
+        "fields": {
+          "game": 1,
+          "suit": "o",
+          "card_type": "AMBUSH_ORANGE"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 53,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "AMBUSH_WILD"
+        }
+      },
+      {
+        "model": "game.card",
+        "pk": 54,
+        "fields": {
+          "game": 1,
+          "suit": "b",
+          "card_type": "AMBUSH_WILD"
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "item_type": "1",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 2,
+        "fields": {
+          "game": 1,
+          "item_type": "1",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 3,
+        "fields": {
+          "game": 1,
+          "item_type": "1",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 4,
+        "fields": {
+          "game": 1,
+          "item_type": "1",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 5,
+        "fields": {
+          "game": 1,
+          "item_type": "0",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 6,
+        "fields": {
+          "game": 1,
+          "item_type": "0",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 7,
+        "fields": {
+          "game": 1,
+          "item_type": "1",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 8,
+        "fields": {
+          "game": 1,
+          "item_type": "1",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 9,
+        "fields": {
+          "game": 1,
+          "item_type": "2",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 10,
+        "fields": {
+          "game": 1,
+          "item_type": "3",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 11,
+        "fields": {
+          "game": 1,
+          "item_type": "4",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 12,
+        "fields": {
+          "game": 1,
+          "item_type": "4",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 13,
+        "fields": {
+          "game": 1,
+          "item_type": "5",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 14,
+        "fields": {
+          "game": 1,
+          "item_type": "5",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 15,
+        "fields": {
+          "game": 1,
+          "item_type": "6",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.item",
+        "pk": 16,
+        "fields": {
+          "game": 1,
+          "item_type": "6",
+          "exhausted": false
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 13,
+        "fields": {
+          "game": 1,
+          "card": 10,
+          "spot": 12
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 14,
+        "fields": {
+          "game": 1,
+          "card": 40,
+          "spot": 13
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 15,
+        "fields": {
+          "game": 1,
+          "card": 22,
+          "spot": 14
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 16,
+        "fields": {
+          "game": 1,
+          "card": 54,
+          "spot": 15
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 17,
+        "fields": {
+          "game": 1,
+          "card": 38,
+          "spot": 16
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 18,
+        "fields": {
+          "game": 1,
+          "card": 50,
+          "spot": 17
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 19,
+        "fields": {
+          "game": 1,
+          "card": 23,
+          "spot": 18
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 20,
+        "fields": {
+          "game": 1,
+          "card": 47,
+          "spot": 19
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 21,
+        "fields": {
+          "game": 1,
+          "card": 26,
+          "spot": 20
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 22,
+        "fields": {
+          "game": 1,
+          "card": 11,
+          "spot": 21
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 23,
+        "fields": {
+          "game": 1,
+          "card": 8,
+          "spot": 22
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 24,
+        "fields": {
+          "game": 1,
+          "card": 12,
+          "spot": 23
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 25,
+        "fields": {
+          "game": 1,
+          "card": 39,
+          "spot": 24
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 26,
+        "fields": {
+          "game": 1,
+          "card": 3,
+          "spot": 25
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 27,
+        "fields": {
+          "game": 1,
+          "card": 25,
+          "spot": 26
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 28,
+        "fields": {
+          "game": 1,
+          "card": 28,
+          "spot": 27
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 29,
+        "fields": {
+          "game": 1,
+          "card": 24,
+          "spot": 28
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 30,
+        "fields": {
+          "game": 1,
+          "card": 17,
+          "spot": 29
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 31,
+        "fields": {
+          "game": 1,
+          "card": 53,
+          "spot": 30
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 32,
+        "fields": {
+          "game": 1,
+          "card": 51,
+          "spot": 31
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 33,
+        "fields": {
+          "game": 1,
+          "card": 43,
+          "spot": 32
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 34,
+        "fields": {
+          "game": 1,
+          "card": 16,
+          "spot": 33
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 35,
+        "fields": {
+          "game": 1,
+          "card": 1,
+          "spot": 34
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 36,
+        "fields": {
+          "game": 1,
+          "card": 21,
+          "spot": 35
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 37,
+        "fields": {
+          "game": 1,
+          "card": 2,
+          "spot": 36
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 38,
+        "fields": {
+          "game": 1,
+          "card": 41,
+          "spot": 37
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 39,
+        "fields": {
+          "game": 1,
+          "card": 20,
+          "spot": 38
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 40,
+        "fields": {
+          "game": 1,
+          "card": 34,
+          "spot": 39
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 41,
+        "fields": {
+          "game": 1,
+          "card": 9,
+          "spot": 40
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 42,
+        "fields": {
+          "game": 1,
+          "card": 6,
+          "spot": 41
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 43,
+        "fields": {
+          "game": 1,
+          "card": 15,
+          "spot": 42
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 44,
+        "fields": {
+          "game": 1,
+          "card": 52,
+          "spot": 43
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 45,
+        "fields": {
+          "game": 1,
+          "card": 31,
+          "spot": 44
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 46,
+        "fields": {
+          "game": 1,
+          "card": 48,
+          "spot": 45
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 47,
+        "fields": {
+          "game": 1,
+          "card": 45,
+          "spot": 46
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 48,
+        "fields": {
+          "game": 1,
+          "card": 5,
+          "spot": 47
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 49,
+        "fields": {
+          "game": 1,
+          "card": 19,
+          "spot": 48
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 50,
+        "fields": {
+          "game": 1,
+          "card": 37,
+          "spot": 49
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 51,
+        "fields": {
+          "game": 1,
+          "card": 13,
+          "spot": 50
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 52,
+        "fields": {
+          "game": 1,
+          "card": 30,
+          "spot": 51
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 53,
+        "fields": {
+          "game": 1,
+          "card": 4,
+          "spot": 52
+        }
+      },
+      {
+        "model": "game.deckentry",
+        "pk": 54,
+        "fields": {
+          "game": 1,
+          "card": 29,
+          "spot": 53
+        }
+      },
+      {
+        "model": "game.ruin",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "building_slot": 9,
+          "item": 1
+        }
+      },
+      {
+        "model": "game.ruin",
+        "pk": 2,
+        "fields": {
+          "game": 1,
+          "building_slot": 17,
+          "item": 2
+        }
+      },
+      {
+        "model": "game.ruin",
+        "pk": 3,
+        "fields": {
+          "game": 1,
+          "building_slot": 20,
+          "item": 3
+        }
+      },
+      {
+        "model": "game.ruin",
+        "pk": 4,
+        "fields": {
+          "game": 1,
+          "building_slot": 22,
+          "item": 4
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "item": 5
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 2,
+        "fields": {
+          "game": 1,
+          "item": 6
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 3,
+        "fields": {
+          "game": 1,
+          "item": 7
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 4,
+        "fields": {
+          "game": 1,
+          "item": 8
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 5,
+        "fields": {
+          "game": 1,
+          "item": 9
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 6,
+        "fields": {
+          "game": 1,
+          "item": 10
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 7,
+        "fields": {
+          "game": 1,
+          "item": 11
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 8,
+        "fields": {
+          "game": 1,
+          "item": 12
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 9,
+        "fields": {
+          "game": 1,
+          "item": 13
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 10,
+        "fields": {
+          "game": 1,
+          "item": 14
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 11,
+        "fields": {
+          "game": 1,
+          "item": 15
+        }
+      },
+      {
+        "model": "game.craftableitementry",
+        "pk": 12,
+        "fields": {
+          "game": 1,
+          "item": 16
+        }
+      },
+      {
+        "model": "game.gamesimplesetup",
+        "pk": 1,
+        "fields": {
+          "game": 1,
+          "status": "b"
+        }
+      },
+      {
+        "model": "game.player",
+        "pk": 1,
+        "fields": {
+          "user": 1,
+          "game": 1,
+          "faction": "ca",
+          "score": 0,
+          "turn_order": 0
+        }
+      },
+      {
+        "model": "game.player",
+        "pk": 2,
+        "fields": {
+          "user": 2,
+          "game": 1,
+          "faction": "bi",
+          "score": 0,
+          "turn_order": 1
+        }
+      },
+      {
+        "model": "game.player",
+        "pk": 3,
+        "fields": {
+          "user": 3,
+          "game": 1,
+          "faction": "wa",
+          "score": 0,
+          "turn_order": 2
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 1,
+        "fields": {
+          "player": 1,
+          "card": 32
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 2,
+        "fields": {
+          "player": 1,
+          "card": 7
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 3,
+        "fields": {
+          "player": 1,
+          "card": 44
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 12,
+        "fields": {
+          "player": 1,
+          "warrior": 12
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 13,
+        "fields": {
+          "player": 1,
+          "warrior": 13
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 14,
+        "fields": {
+          "player": 1,
+          "warrior": 14
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 15,
+        "fields": {
+          "player": 1,
+          "warrior": 15
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 16,
+        "fields": {
+          "player": 1,
+          "warrior": 16
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 17,
+        "fields": {
+          "player": 1,
+          "warrior": 17
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 18,
+        "fields": {
+          "player": 1,
+          "warrior": 18
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 19,
+        "fields": {
+          "player": 1,
+          "warrior": 19
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 20,
+        "fields": {
+          "player": 1,
+          "warrior": 20
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 21,
+        "fields": {
+          "player": 1,
+          "warrior": 21
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 22,
+        "fields": {
+          "player": 1,
+          "warrior": 22
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 23,
+        "fields": {
+          "player": 1,
+          "warrior": 23
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 24,
+        "fields": {
+          "player": 1,
+          "warrior": 24
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 25,
+        "fields": {
+          "player": 1,
+          "warrior": 25
+        }
+      },
+      {
+        "model": "game.catssimplesetup",
+        "pk": 1,
+        "fields": {
+          "player": 1,
+          "step": "4",
+          "recruiter_placed": true,
+          "sawmill_placed": true,
+          "workshop_placed": true
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 1,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 2,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 3,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 4,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 5,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 6,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 7,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 8,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 9,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 10,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 11,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 12,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 13,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 14,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 15,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 16,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 17,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 18,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 19,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 20,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 21,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 22,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 23,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 24,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 25,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 26,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 27,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 28,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 29,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 30,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 31,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 32,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 33,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 34,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 35,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 36,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 37,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 38,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 39,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 40,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 41,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 42,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 43,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 44,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 45,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 46,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 47,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 48,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 49,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 50,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 51,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 52,
+        "fields": {
+          "player": 1
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 26,
+        "fields": {
+          "clearing": 1
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 27,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 28,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 29,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 30,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 31,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 32,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 33,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 34,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 35,
+        "fields": {
+          "building_slot": 6
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 36,
+        "fields": {
+          "building_slot": 16
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 37,
+        "fields": {
+          "building_slot": 1
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 38,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 39,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 40,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 41,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 42,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 43,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 44,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 45,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 46,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 47,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 48,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 49,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 50,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 51,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 52,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 1,
+        "fields": {
+          "clearing": 1
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 2,
+        "fields": {
+          "clearing": 2
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 3,
+        "fields": {
+          "clearing": 4
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 4,
+        "fields": {
+          "clearing": 5
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 5,
+        "fields": {
+          "clearing": 6
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 6,
+        "fields": {
+          "clearing": 7
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 7,
+        "fields": {
+          "clearing": 8
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 8,
+        "fields": {
+          "clearing": 9
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 9,
+        "fields": {
+          "clearing": 10
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 10,
+        "fields": {
+          "clearing": 11
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 11,
+        "fields": {
+          "clearing": 12
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 12,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 13,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 14,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 15,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 16,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 17,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 18,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 19,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 20,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 21,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 22,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 23,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 24,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 25,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.workshop",
+        "pk": 35,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.workshop",
+        "pk": 38,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.workshop",
+        "pk": 41,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.workshop",
+        "pk": 44,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.workshop",
+        "pk": 47,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.workshop",
+        "pk": 50,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.sawmill",
+        "pk": 37,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.sawmill",
+        "pk": 40,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.sawmill",
+        "pk": 43,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.sawmill",
+        "pk": 46,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.sawmill",
+        "pk": 49,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.sawmill",
+        "pk": 52,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.recruiter",
+        "pk": 36,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.recruiter",
+        "pk": 39,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.recruiter",
+        "pk": 42,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.recruiter",
+        "pk": 45,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.recruiter",
+        "pk": 48,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.recruiter",
+        "pk": 51,
+        "fields": {
+          "used": false
+        }
+      },
+      {
+        "model": "game.catkeep",
+        "pk": 26,
+        "fields": {
+          "destroyed": false
+        }
+      },
+      {
+        "model": "game.catwood",
+        "pk": 27,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 28,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 29,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 30,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 31,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 32,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 33,
+        "fields": {}
+      },
+      {
+        "model": "game.catwood",
+        "pk": 34,
+        "fields": {}
+      },
+      {
+        "model": "game.catturn",
+        "pk": 1,
+        "fields": {
+          "player": 1,
+          "turn_number": 0
+        }
+      },
+      {
+        "model": "game.catbirdsong",
+        "pk": 1,
+        "fields": {
+          "step": "0",
+          "turn": 1
+        }
+      },
+      {
+        "model": "game.catdaylight",
+        "pk": 1,
+        "fields": {
+          "step": "1",
+          "actions_left": 3,
+          "recruit_used": false,
+          "turn": 1,
+          "midmarch": false
+        }
+      },
+      {
+        "model": "game.catevening",
+        "pk": 1,
+        "fields": {
+          "step": "1",
+          "cards_drawn": 0,
+          "turn": 1
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 4,
+        "fields": {
+          "player": 2,
+          "card": 33
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 5,
+        "fields": {
+          "player": 2,
+          "card": 49
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 6,
+        "fields": {
+          "player": 2,
+          "card": 35
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 26,
+        "fields": {
+          "player": 2,
+          "warrior": 53
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 27,
+        "fields": {
+          "player": 2,
+          "warrior": 54
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 28,
+        "fields": {
+          "player": 2,
+          "warrior": 55
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 29,
+        "fields": {
+          "player": 2,
+          "warrior": 56
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 30,
+        "fields": {
+          "player": 2,
+          "warrior": 57
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 31,
+        "fields": {
+          "player": 2,
+          "warrior": 58
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 32,
+        "fields": {
+          "player": 2,
+          "warrior": 59
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 33,
+        "fields": {
+          "player": 2,
+          "warrior": 60
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 34,
+        "fields": {
+          "player": 2,
+          "warrior": 61
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 35,
+        "fields": {
+          "player": 2,
+          "warrior": 62
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 36,
+        "fields": {
+          "player": 2,
+          "warrior": 63
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 37,
+        "fields": {
+          "player": 2,
+          "warrior": 64
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 38,
+        "fields": {
+          "player": 2,
+          "warrior": 65
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 39,
+        "fields": {
+          "player": 2,
+          "warrior": 66
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 40,
+        "fields": {
+          "player": 2,
+          "warrior": 67
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 41,
+        "fields": {
+          "player": 2,
+          "warrior": 68
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 42,
+        "fields": {
+          "player": 2,
+          "warrior": 69
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 43,
+        "fields": {
+          "player": 2,
+          "warrior": 70
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 44,
+        "fields": {
+          "player": 2,
+          "warrior": 71
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 45,
+        "fields": {
+          "player": 2,
+          "warrior": 72
+        }
+      },
+      {
+        "model": "game.birdssimplesetup",
+        "pk": 1,
+        "fields": {
+          "player": 2,
+          "step": "1"
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 53,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 54,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 55,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 56,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 57,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 58,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 59,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 60,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 61,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 62,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 63,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 64,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 65,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 66,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 67,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 68,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 69,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 70,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 71,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 72,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 73,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 74,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 75,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 76,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 77,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 78,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 79,
+        "fields": {
+          "player": 2
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 73,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 74,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 75,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 76,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 77,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 78,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 79,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 53,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 54,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 55,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 56,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 57,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 58,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 59,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 60,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 61,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 62,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 63,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 64,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 65,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 66,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 67,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 68,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 69,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 70,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 71,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 72,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.birdleader",
+        "pk": 1,
+        "fields": {
+          "player": 2,
+          "leader": "0",
+          "available": true,
+          "active": false
+        }
+      },
+      {
+        "model": "game.birdleader",
+        "pk": 2,
+        "fields": {
+          "player": 2,
+          "leader": "1",
+          "available": true,
+          "active": false
+        }
+      },
+      {
+        "model": "game.birdleader",
+        "pk": 3,
+        "fields": {
+          "player": 2,
+          "leader": "2",
+          "available": true,
+          "active": false
+        }
+      },
+      {
+        "model": "game.birdleader",
+        "pk": 4,
+        "fields": {
+          "player": 2,
+          "leader": "3",
+          "available": true,
+          "active": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 73,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 74,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 75,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 76,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 77,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 78,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.birdroost",
+        "pk": 79,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 7,
+        "fields": {
+          "player": 3,
+          "card": 27
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 8,
+        "fields": {
+          "player": 3,
+          "card": 36
+        }
+      },
+      {
+        "model": "game.handentry",
+        "pk": 9,
+        "fields": {
+          "player": 3,
+          "card": 18
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 46,
+        "fields": {
+          "player": 3,
+          "warrior": 80
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 47,
+        "fields": {
+          "player": 3,
+          "warrior": 81
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 48,
+        "fields": {
+          "player": 3,
+          "warrior": 82
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 49,
+        "fields": {
+          "player": 3,
+          "warrior": 83
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 50,
+        "fields": {
+          "player": 3,
+          "warrior": 84
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 51,
+        "fields": {
+          "player": 3,
+          "warrior": 85
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 52,
+        "fields": {
+          "player": 3,
+          "warrior": 86
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 53,
+        "fields": {
+          "player": 3,
+          "warrior": 87
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 54,
+        "fields": {
+          "player": 3,
+          "warrior": 88
+        }
+      },
+      {
+        "model": "game.warriorsupplyentry",
+        "pk": 55,
+        "fields": {
+          "player": 3,
+          "warrior": 89
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 80,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 81,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 82,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 83,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 84,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 85,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 86,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 87,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 88,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 89,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 90,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 91,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 92,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 93,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 94,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 95,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 96,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 97,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 98,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 99,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 100,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 101,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.piece",
+        "pk": 102,
+        "fields": {
+          "player": 3
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 90,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 91,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 92,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 93,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 94,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 95,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 96,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 97,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 98,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.token",
+        "pk": 99,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 100,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 101,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.building",
+        "pk": 102,
+        "fields": {
+          "building_slot": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 80,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 81,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 82,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 83,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 84,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 85,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 86,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 87,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 88,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.warrior",
+        "pk": 89,
+        "fields": {
+          "clearing": null
+        }
+      },
+      {
+        "model": "game.wabase",
+        "pk": 100,
+        "fields": {
+          "suit": "r"
+        }
+      },
+      {
+        "model": "game.wabase",
+        "pk": 101,
+        "fields": {
+          "suit": "y"
+        }
+      },
+      {
+        "model": "game.wabase",
+        "pk": 102,
+        "fields": {
+          "suit": "o"
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 90,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 91,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 92,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 93,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 94,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 95,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 96,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 97,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 98,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.wasympathy",
+        "pk": 99,
+        "fields": {
+          "crafted_with": false
+        }
+      },
+      {
+        "model": "game.supporterstackentry",
+        "pk": 1,
+        "fields": {
+          "player": 3,
+          "card": 42
+        }
+      },
+      {
+        "model": "game.supporterstackentry",
+        "pk": 2,
+        "fields": {
+          "player": 3,
+          "card": 46
+        }
+      },
+      {
+        "model": "game.supporterstackentry",
+        "pk": 3,
+        "fields": {
+          "player": 3,
+          "card": 14
+        }
+      },
+      {
+        "model": "game.waturn",
+        "pk": 1,
+        "fields": {
+          "player": 3,
+          "turn_number": 0
+        }
+      },
+      {
+        "model": "game.wabirdsong",
+        "pk": 1,
+        "fields": {
+          "turn": 1,
+          "step": "0"
+        }
+      },
+      {
+        "model": "game.wadaylight",
+        "pk": 1,
+        "fields": {
+          "turn": 1,
+          "step": "1"
+        }
+      },
+      {
+        "model": "game.waevening",
+        "pk": 1,
+        "fields": {
+          "turn": 1,
+          "step": "1",
+          "operations_perfomed": 0,
+          "cards_drawn": 0
+        }
+      }
+    ],
+    "created_at": "2026-02-19T20:40:42.959Z"
+  }
+},
+{
+  "model": "game.action",
+  "pk": 1,
+  "fields": {
+    "checkpoint": 1,
+    "action_number": 0,
+    "transaction_name": "game.transactions.cats_setup.pick_corner",
+    "args": {
+      "args": [
+        {
+          "_type": "model",
+          "model": "game.Player",
+          "pk": 1
+        },
+        {
+          "_type": "model",
+          "model": "game.Clearing",
+          "pk": 1
+        }
+      ],
+      "kwargs": {}
+    },
+    "created_at": "2026-02-19T20:40:42.646Z"
+  }
+},
+{
+  "model": "game.action",
+  "pk": 2,
+  "fields": {
+    "checkpoint": 1,
+    "action_number": 1,
+    "transaction_name": "game.transactions.cats_setup.place_initial_building",
+    "args": {
+      "args": [
+        {
+          "_type": "model",
+          "model": "game.Player",
+          "pk": 1
+        },
+        {
+          "_type": "model",
+          "model": "game.Clearing",
+          "pk": 10
+        },
+        {
+          "_type": "enum",
+          "module": "game.models.cats.buildings",
+          "class": "CatBuildingTypes",
+          "name": "RECRUITER"
+        }
+      ],
+      "kwargs": {}
+    },
+    "created_at": "2026-02-19T20:40:42.696Z"
+  }
+},
+{
+  "model": "game.action",
+  "pk": 3,
+  "fields": {
+    "checkpoint": 1,
+    "action_number": 2,
+    "transaction_name": "game.transactions.cats_setup.place_initial_building",
+    "args": {
+      "args": [
+        {
+          "_type": "model",
+          "model": "game.Player",
+          "pk": 1
+        },
+        {
+          "_type": "model",
+          "model": "game.Clearing",
+          "pk": 5
+        },
+        {
+          "_type": "enum",
+          "module": "game.models.cats.buildings",
+          "class": "CatBuildingTypes",
+          "name": "WORKSHOP"
+        }
+      ],
+      "kwargs": {}
+    },
+    "created_at": "2026-02-19T20:40:42.740Z"
+  }
+},
+{
+  "model": "game.action",
+  "pk": 4,
+  "fields": {
+    "checkpoint": 1,
+    "action_number": 3,
+    "transaction_name": "game.transactions.cats_setup.place_initial_building",
+    "args": {
+      "args": [
+        {
+          "_type": "model",
+          "model": "game.Player",
+          "pk": 1
+        },
+        {
+          "_type": "model",
+          "model": "game.Clearing",
+          "pk": 1
+        },
+        {
+          "_type": "enum",
+          "module": "game.models.cats.buildings",
+          "class": "CatBuildingTypes",
+          "name": "SAWMILL"
+        }
+      ],
+      "kwargs": {}
+    },
+    "created_at": "2026-02-19T20:40:42.861Z"
+  }
+},
+{
+  "model": "game.action",
+  "pk": 5,
+  "fields": {
+    "checkpoint": 1,
+    "action_number": 4,
+    "transaction_name": "game.transactions.cats_setup.confirm_completed_setup",
+    "args": {
+      "args": [
+        {
+          "_type": "model",
+          "model": "game.Player",
+          "pk": 1
+        }
+      ],
+      "kwargs": {}
+    },
+    "created_at": "2026-02-19T20:40:42.896Z"
+  }
+},
+{
   "model": "auth.user",
   "pk": 1,
   "fields": {
-    "password": "pbkdf2_sha256$720000$g63q8ikWPNEzw9d7rJlKBA$DS8LIi21tfXmuVnj3SX6YIhyNqVd/vdS8sdebqq8IiY=",
+    "password": "pbkdf2_sha256$720000$wafbQmbDcs2M1AEk3VO2Zi$W/+IdJWBWK0n7+jF+NLIfIs11vcD+kVea9dMpOer2EY=",
     "last_login": null,
     "is_superuser": false,
     "username": "user1",
@@ -3869,7 +11879,7 @@
     "email": "",
     "is_staff": false,
     "is_active": true,
-    "date_joined": "2026-01-29T01:39:25.719Z",
+    "date_joined": "2026-02-19T20:40:37.968Z",
     "groups": [],
     "user_permissions": []
   }
@@ -3878,7 +11888,7 @@
   "model": "auth.user",
   "pk": 2,
   "fields": {
-    "password": "pbkdf2_sha256$720000$fSsUvAPnqu3W8ffPO2PeN3$Q4ia8gCIdvJ+PHg1uyfeS+hqlLlTkWKqx2Q/XbuD8D8=",
+    "password": "pbkdf2_sha256$720000$TLvWrl25LHDenj3LUsxs0h$r2pMoVkDXoP//UdQwKb+rSfbITFYjwiryVlG5W3bUhk=",
     "last_login": null,
     "is_superuser": false,
     "username": "user2",
@@ -3887,7 +11897,7 @@
     "email": "",
     "is_staff": false,
     "is_active": true,
-    "date_joined": "2026-01-29T01:39:26.036Z",
+    "date_joined": "2026-02-19T20:40:38.462Z",
     "groups": [],
     "user_permissions": []
   }
@@ -3896,7 +11906,7 @@
   "model": "auth.user",
   "pk": 3,
   "fields": {
-    "password": "pbkdf2_sha256$720000$pxSQ8PuUrxpY0D1LaS9ySw$gCU/qIqIVyHUoUipCy399NzDczD8GaMRUu24bGvFFVE=",
+    "password": "pbkdf2_sha256$720000$Dwud8JcxTrmPB221u4FM01$Ni0CIW1WyGQEhFjBGhFx2OFYixxX6g8gitB9N2AtqaY=",
     "last_login": null,
     "is_superuser": false,
     "username": "user3",
@@ -3905,7 +11915,7 @@
     "email": "",
     "is_staff": false,
     "is_active": true,
-    "date_joined": "2026-01-29T01:39:26.333Z",
+    "date_joined": "2026-02-19T20:40:38.971Z",
     "groups": [],
     "user_permissions": []
   }

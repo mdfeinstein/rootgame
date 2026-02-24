@@ -7,12 +7,15 @@ def validate_corner(game: Game, corner: Clearing):
     if corner.clearing_number not in [1, 2, 3, 4]:
         raise ValueError("Clearing number must be 1, 2, 3, or 4 to be a corner")
     try:
-        keep = CatKeep.objects.get(player__game=game)
+        keep = CatKeep.objects.get(player__game=game, clearing__isnull=False)
+        opposite_corner_number = ((keep.clearing.clearing_number - 1 + 2) % 4) + 1
     except CatKeep.DoesNotExist:
         opposite_corner_number = None
-    opposite_corner_number = ((keep.clearing.clearing_number - 1 + 2) % 4) + 1
+
+
     if (
         opposite_corner_number is not None
         and opposite_corner_number != corner.clearing_number
     ):
         raise ValueError("Cat's Keep is not in the opposite corner")
+

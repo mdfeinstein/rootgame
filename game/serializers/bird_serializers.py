@@ -96,7 +96,6 @@ class BirdSerializer(serializers.Serializer):
         leaders = BirdLeader.objects.filter(player=player)
         decree = DecreeEntry.objects.filter(player=player)
         viziers = Vizier.objects.filter(player=player)
-        print(f"viziers: {viziers}")
         return cls(
             instance={
                 "player": player,

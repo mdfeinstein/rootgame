@@ -33,12 +33,12 @@ class CreateGameTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_create_game_wrong_map(self):
-        self.client.force_login(user=self.user1)
+        login_client(self.client, "user1")
         response = create_game(self.client, {"map_label": "wrong_map"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_game_valid(self):
-        self.client.force_login(user=self.user1)
+        login_client(self.client, "user1")
         response = create_game(self.client, {"map_label": "Autumn"})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -55,6 +55,8 @@ class JoinGameTestCase(TestCase):
         self.user3 = User.objects.create_user(username="user3", password="password")
         self.user4 = User.objects.create_user(username="user4", password="password")
         self.client.force_login(user=self.user1)
+        # login_client(self.client, self.user1.username)
+        login_client(self.client, "user1")
         response = create_game(self.client, {"map_label": "Autumn"})
         self.game_id = response.data["game_id"]
         self.client.logout()
@@ -64,27 +66,27 @@ class JoinGameTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_single_joined_ok(self):
-        self.client.force_login(user=self.user2)
+        login_client(self.client, "user2")
         response = join_game(self.client, self.game_id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_three_joined_ok_fourth_rejected(self):
         # this will fail when more factions are added as default will be larger list of faction entries
-        self.client.force_login(user=self.user1)
+        login_client(self.client, "user1")
         response = join_game(self.client, self.game_id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.client.force_login(user=self.user2)
+        login_client(self.client, "user2")
         response = join_game(self.client, self.game_id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.client.force_login(user=self.user3)
+        login_client(self.client, "user3")
         response = join_game(self.client, self.game_id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.client.force_login(user=self.user4)
+        login_client(self.client, "user4")
         response = join_game(self.client, self.game_id)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_reject_join_twice(self):
-        self.client.force_login(user=self.user2)
+        login_client(self.client, "user2")
         response = join_game(self.client, self.game_id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         response = join_game(self.client, self.game_id)
@@ -118,29 +120,29 @@ class PickFactionTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_players_pick_unique_factions(self):
-        self.client.force_login(user=self.user1)
+        login_client(self.client, "user1")
         response = pick_faction(self.client, self.game_id, "Cats")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.client.force_login(user=self.user2)
+        login_client(self.client, "user2")
         response = pick_faction(self.client, self.game_id, "Birds")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.client.force_login(user=self.user3)
+        login_client(self.client, "user3")
         response = pick_faction(self.client, self.game_id, "Woodland Alliance")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_players_pick_same_faction(self):
-        self.client.force_login(user=self.user1)
+        login_client(self.client, "user1")
         response = pick_faction(self.client, self.game_id, "Cats")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.client.force_login(user=self.user2)
+        login_client(self.client, "user2")
         response = pick_faction(self.client, self.game_id, "Cats")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.client.force_login(user=self.user3)
+        login_client(self.client, "user3")
         response = pick_faction(self.client, self.game_id, "Cats")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_players_pick_faction_not_in_list(self):
-        self.client.force_login(user=self.user1)
+        login_client(self.client, "user1")
         response = pick_faction(self.client, self.game_id, "helloworld")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -158,17 +160,17 @@ class StartGameTestCase(TestCase):
         self.user1 = User.objects.create_user(username="user1", password="password")
         self.user2 = User.objects.create_user(username="user2", password="password")
         self.user3 = User.objects.create_user(username="user3", password="password")
-        self.client.force_login(user=self.user1)
+        login_client(self.client, "user1")
         # create game
         response = create_game(self.client, data={"map_label": "Autumn"})
         self.game_id = response.data["game_id"]
         # all players join and pick faction
         join_game(self.client, self.game_id)
         pick_faction(self.client, self.game_id, "Cats")
-        self.client.force_login(user=self.user2)
+        login_client(self.client, "user2")
         join_game(self.client, self.game_id)
         pick_faction(self.client, self.game_id, "Birds")
-        self.client.force_login(user=self.user3)
+        login_client(self.client, "user3")
         join_game(self.client, self.game_id)
         pick_faction(self.client, self.game_id, "Woodland Alliance")
         self.client.logout()
@@ -178,19 +180,19 @@ class StartGameTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_start_game_as_owner(self):
-        self.client.force_login(user=self.user1)
+        login_client(self.client, "user1")
         response = start_game(self.client, self.game_id)
         print("game started")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_start_game_as_non_owner(self):
-        self.client.force_login(user=self.user2)
+        login_client(self.client, "user2")
         response = start_game(self.client, self.game_id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_start_game_twice(self):
         # will fail. need to add a game status field so we can check if its started and block a second start
-        self.client.force_login(user=self.user1)
+        login_client(self.client, "user1")
         response = start_game(self.client, self.game_id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         response = start_game(self.client, self.game_id)
@@ -248,24 +250,24 @@ class CatsSetupTestCase(TestCase):
         self.assertEqual(response.data["player"]["card_count"], 3)
 
     def test_picked_not_corner(self):
-        self.client.force_login(user=self.user1)
+        login_client(self.client, "user1")
         response = cats_pick_corner(self.client, self.game_id, 6)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_wrong_player_picked_corner(self):
-        self.client.force_login(user=self.user2)
+        login_client(self.client, "user2")
         response = cats_pick_corner(self.client, self.game_id, 1)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_placing_building_too_early(self):
-        self.client.force_login(user=self.user1)
+        login_client(self.client, "user1")
         response = cats_place_initial_building(
             self.client, self.game_id, 1, "Recruiter"
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_picked_corner(self):
-        self.client.force_login(user=self.user1)
+        login_client(self.client, "user1")
         response = cats_pick_corner(self.client, self.game_id, 1)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
@@ -296,14 +298,11 @@ class CatsSetupTestCase(TestCase):
         print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        # submit confirmation
-        response = cat_client.submit_action({"confirm": True})
-        print(response.json())
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
         # place initial buildings
-        self.place_initial_building(cat_client, 10, "Recruiter")
-        self.place_initial_building(cat_client, 5, "Workshop")
-        self.place_initial_building(cat_client, 1, "Sawmill")
+        self.place_initial_building(cat_client, 10, "RECRUITER")
+        self.place_initial_building(cat_client, 5, "WORKSHOP")
+        self.place_initial_building(cat_client, 1, "SAWMILL")
         # placements complete. confirm
         response = cat_client.submit_action({"confirm": True})
         print(response.json())
@@ -340,10 +339,8 @@ class CatsSetupTestCase(TestCase):
         print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        # submit confirm
-        response = cat_client.submit_action({"confirm": True})
-        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
 
 
 class BirdsSetupTestCase(TestCase):

@@ -81,13 +81,13 @@ class TestCraftedCardsEndpoint(TestCase):
         used = next(item for item in data if item["used"] is True)
 
         # Saboteurs should be active in Birdsong
-        self.assertTrue(saboteurs["has_active"])
+        self.assertTrue(saboteurs["can_be_used"])
         self.assertFalse(saboteurs["used"])
         self.assertIsNotNone(saboteurs["action_endpoint"])
         self.assertIn("saboteurs", saboteurs["action_endpoint"])
 
         # Informants should NOT be active in Birdsong
-        self.assertTrue(informants["has_active"])
+        self.assertTrue(informants["can_be_used"])
         self.assertFalse(informants["used"])
         self.assertIsNone(informants["action_endpoint"])
 

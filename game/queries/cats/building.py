@@ -70,11 +70,9 @@ def get_usable_wood_for_building(
 
         if determine_clearing_rule(clearing) == player:
             ruled_set.add(clearing)
-        for connected_clearing in clearing.connected_clearings.all():
-            if connected_clearing in visited:
-                # not sure if this second check is needed, but unclear how the order of traversal may make the first check insufficient
-                continue
-            clearing_stack.append(connected_clearing)
+            for connected_clearing in clearing.connected_clearings.all():
+                if connected_clearing not in visited:
+                    clearing_stack.append(connected_clearing)
 
     # tally up wood tokens in ruled sets
     for clearing_ in ruled_set:

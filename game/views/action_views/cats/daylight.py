@@ -97,8 +97,6 @@ class CatCraftStepView(GameActionView):
         card_type = CardsEP[request.data["card_to_craft"]]
         suits_needed = [suit.label for suit in card_type.value.cost]
         workshop_count = get_all_unused_workshops(self.player(request, game_id)).count()
-        print(f"workshop count: {workshop_count}")
-        print(f"suits needed: {suits_needed}")
         if workshop_count < len(suits_needed):
             raise ValidationError(
                 f"Not enough unused workshops to craft this card. ({workshop_count} unused workshops remaining)"
@@ -569,7 +567,6 @@ class CatActionsView(GameActionView):
         player = self.player(request, game_id)
         clearing_number = int(request.data["battle_clearing_number"])
         defender_faction = Faction(request.data["defender_faction"])
-        print(defender_faction)
         defender = Player.objects.get(game=game, faction=defender_faction)
         valid_defenders = self.validate_battle_clearing(game, player, clearing_number)
         if defender not in valid_defenders:

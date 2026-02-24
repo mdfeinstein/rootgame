@@ -48,8 +48,10 @@ def start_battle(game: Game, attacker: Faction, defender: Faction, clearing: Cle
     if not player_has_warriors_in_clearing(player, clearing):
         raise ValueError("Attacker does not have warriors in that clearing")
     # check that defender has pieces in the clearing
-    if not player_has_pieces_in_clearing(player, clearing):
+    defender_player = Player.objects.get(game=game, faction=defender)
+    if not player_has_pieces_in_clearing(defender_player, clearing):
         raise ValueError("Defender does not have pieces in that clearing")
+
     # create battle
     event = Event.objects.create(game=game, type=EventType.BATTLE)
     battle = Battle(
@@ -116,7 +118,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
         if attacking_warriors > 2:
             # resolve ambush by removing attacking warriors and proceeding to roll
             player_removes_warriors(
-                battle.clearing, attacking_player, defending_player, 2
+                battle.clearing, defending_player, attacking_player, 2
             )
             battle.step = Battle.BattleSteps.ROLL_DICE
             battle.save()
@@ -132,7 +134,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
         else:
             # resolve ambush by removing remaining attacking warrior and moving to attacker choosing their hits
             player_removes_warriors(
-                battle.clearing, attacking_player, defending_player, 1
+                battle.clearing, defending_player, attacking_player, 1
             )
             # do i need to convey that attacker must choose one hit, or is this kind of guaranteed to only be one?
             battle.step = Battle.BattleSteps.ATTACKER_CHOOSE_AMBUSH_HITS
@@ -156,6 +158,39 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
     battle.save()
     # roll dice
     roll_dice(game, battle)
+
+
+@transaction.atomic
+def attacker_choose_ambush_hit(game: Game, battle: Battle, piece: Piece):
+    """
+    if attacker gets hit by ambush but only had 1 warrior, they must choose 
+    a building or token to remove for the remaining hit.
+    """
+    if battle.step != Battle.BattleSteps.ATTACKER_CHOOSE_AMBUSH_HITS:
+        raise ValueError("Not attacker choose ambush hits step")
+    
+    attacking_player = Player.objects.get(game=game, faction=battle.attacker)
+    defending_player = Player.objects.get(game=game, faction=battle.defender)
+    
+    if piece.player != attacking_player:
+        raise ValueError("Piece must belong to the attacker")
+        
+    if isinstance(piece, Warrior):
+        raise ValueError("Cannot choose a warrior")
+    
+    # Verify piece is in the battle clearing
+    if isinstance(piece, Building):
+        if getattr(piece, 'building_slot', None) is None or getattr(piece.building_slot, 'clearing', None) != battle.clearing:
+            raise ValueError("Piece is not in the battle clearing")
+        player_removes_building(game, piece, defending_player)
+    elif isinstance(piece, Token):
+        if piece.clearing != battle.clearing:
+            raise ValueError("Piece is not in the battle clearing")
+        player_removes_token(game, piece, defending_player)
+    else:
+        raise ValueError("Piece must be a building or token")
+        
+    end_battle(game, battle)
 
 
 def get_partisan_card_type(suit_str: str) -> CardsEP | None:
@@ -253,9 +288,6 @@ def roll_dice(game: Game, battle: Battle):
     # birds commander extra hit
     if battle.attacker == Faction.BIRDS:
         birds_player = Player.objects.get(game=game, faction=Faction.BIRDS)
-        print(
-            f"bird leaders: {[(leader.leader, leader.active) for leader in BirdLeader.objects.filter(player=birds_player)]}"
-        )
         if (
             BirdLeader.objects.get(player=birds_player, active=True).leader
             == BirdLeader.BirdLeaders.COMMANDER
@@ -419,7 +451,62 @@ def apply_dice_hits(game: Game, battle: Battle):
 
 
 def defender_chooses_hit(game: Game, battle: Battle, piece: Piece):
-    pass
+    if battle.step != Battle.BattleSteps.DEFENDER_CHOOSE_HITS:
+        raise ValueError("Not defender choose hits step")
+    defending_player = Player.objects.get(game=game, faction=battle.defender)
+    attacking_player = Player.objects.get(game=game, faction=battle.attacker)
+    if piece.player != defending_player:
+        raise ValueError("Piece must belong to the defender")
+    if isinstance(piece, Warrior):
+        raise ValueError("Cannot choose a warrior")
+        
+    if isinstance(piece, Building):
+        if getattr(piece, 'building_slot', None) is None or getattr(piece.building_slot, 'clearing', None) != battle.clearing:
+            raise ValueError("Piece is not in the battle clearing")
+        player_removes_building(game, piece, attacking_player)
+    elif isinstance(piece, Token):
+        if piece.clearing != battle.clearing:
+            raise ValueError("Piece is not in the battle clearing")
+        player_removes_token(game, piece, attacking_player)
+    else:
+        raise ValueError("Piece must be a building or token")
+        
+    battle.defender_hits_assigned += 1
+    if battle.defender_hits_assigned >= battle.defender_hits_taken:
+        # Move to attacker choosing hits or end
+        attacking_pieces_count = count_player_pieces_in_clearing(attacking_player, battle.clearing)
+        attacking_hits_left_to_assign = battle.attacker_hits_taken - battle.attacker_hits_assigned
+        if attacking_hits_left_to_assign > 0 and attacking_pieces_count > 0:
+            battle.step = Battle.BattleSteps.ATTACKER_CHOOSE_HITS
+        else:
+            end_battle(game, battle)
+    battle.save()
+
+def attacker_chooses_hit(game: Game, battle: Battle, piece: Piece):
+    if battle.step != Battle.BattleSteps.ATTACKER_CHOOSE_HITS:
+        raise ValueError("Not attacker choose hits step")
+    attacking_player = Player.objects.get(game=game, faction=battle.attacker)
+    defending_player = Player.objects.get(game=game, faction=battle.defender)
+    if piece.player != attacking_player:
+        raise ValueError("Piece must belong to the attacker")
+    if isinstance(piece, Warrior):
+        raise ValueError("Cannot choose a warrior")
+        
+    if isinstance(piece, Building):
+        if getattr(piece, 'building_slot', None) is None or getattr(piece.building_slot, 'clearing', None) != battle.clearing:
+            raise ValueError("Piece is not in the battle clearing")
+        player_removes_building(game, piece, defending_player)
+    elif isinstance(piece, Token):
+        if piece.clearing != battle.clearing:
+            raise ValueError("Piece is not in the battle clearing")
+        player_removes_token(game, piece, defending_player)
+    else:
+        raise ValueError("Piece must be a building or token")
+        
+    battle.attacker_hits_assigned += 1
+    if battle.attacker_hits_assigned >= battle.attacker_hits_taken:
+        end_battle(game, battle)
+    battle.save()
 
 
 def end_battle(game: Game, battle: Battle):

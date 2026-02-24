@@ -49,8 +49,7 @@ class BirdTurnFlowTestCase(TestCase):
         from game.queries.birds.turn import get_phase
         cp = get_current_player(self.game)
         phase = get_phase(self.birds_player)
-        print(f"DEBUG: current_turn={self.game.current_turn}, current_player={cp.faction}, phase={type(phase).__name__}, step={phase.step}")
-        
+                
         # Ensure Birds has a Rabbit card to add to Recruit (roost is in clearing 3, which is Rabbit)
         from game.tests.my_factories import CardFactory
         rabbit_card = CardFactory(game=self.game, suit="y")

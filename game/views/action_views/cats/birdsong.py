@@ -27,7 +27,6 @@ class CatPlaceWoodView(GameActionView):
         # check that more sawmills than wood tokens
         game_id = int(request.query_params.get("game_id"))
         game = self.game(game_id)
-        print(game_id)
         player = Player.objects.get(game=game, faction=Faction.CATS)
         sawmill_count = Sawmill.objects.filter(player=player, used=False).count()
         wood_count = CatWood.objects.filter(player=player, clearing=None).count()
