@@ -20,7 +20,9 @@ from game.models.game_models import (
 )
 from game.models.wa.turn import WATurn
 from game.models.game_models import CraftedCardEntry
+from game.models.game_models import CraftedCardEntry
 from game.queries.cards.active_effects import can_use_card, has_active_effect, is_used
+from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
 
 
 class CardSerializer(serializers.ModelSerializer):
@@ -58,10 +60,19 @@ class CardSerializer(serializers.ModelSerializer):
         return card.enum.name
 
 
+class DominanceSupplyEntrySerializer(serializers.ModelSerializer):
+    card = CardSerializer()
+
+    class Meta:
+        model = DominanceSupplyEntry
+        fields = ["card"]
+
+
 class CraftedCardSerializer(serializers.ModelSerializer):
     card = CardSerializer()
     can_be_used = serializers.SerializerMethodField()
     used = serializers.SerializerMethodField()
+
     action_endpoint = serializers.SerializerMethodField()
 
     class Meta:
@@ -193,6 +204,7 @@ class PlayerPublicSerializer(serializers.ModelSerializer):
     score = serializers.IntegerField()
     turn_order = serializers.IntegerField()
     card_count = serializers.SerializerMethodField()
+    active_dominance = serializers.SerializerMethodField()
 
     class Meta:
         model = Player
@@ -203,7 +215,13 @@ class PlayerPublicSerializer(serializers.ModelSerializer):
             "score",
             "turn_order",
             "card_count",
+            "active_dominance",
         ]
+
+    def get_active_dominance(self, player: Player):
+        if hasattr(player, "active_dominance"):
+            return player.active_dominance.card.suit
+        return None
 
     def get_card_count(self, player: Player) -> int:
         return HandEntry.objects.filter(player=player).count()
@@ -305,13 +323,14 @@ class GameStatusSerializer(serializers.Serializer):
     current_turn_player = serializers.CharField(required=False)
     # current_setup_object = serializers.SerializerMethodField(required=False)
     # current_event_object = GameEventSerializer(required=False)
+    # current_event_object = GameEventSerializer(required=False)
 
     # TODO: event queue serializer (or just one event at a time?)
-
     @classmethod
     def from_game(cls, game: Game):
         setup_status = GameSimpleSetup.objects.get(game=game).status
         current_player = Player.objects.get(game=game, turn_order=game.current_turn)
+
         # if in setup, use setup turn objects
         if game.status == Game.GameStatus.STARTED:
             turn_object_dict = {
@@ -363,9 +382,16 @@ class UserSerializer(serializers.ModelSerializer):
 class PlayerSerializer(serializers.Serializer):
     faction = serializers.CharField()
     faction_label = serializers.SerializerMethodField()
+    score = serializers.IntegerField()
+    active_dominance = serializers.SerializerMethodField()
 
     def get_faction_label(self, player: Player):
         return Faction(player.faction).label
+
+    def get_active_dominance(self, player: Player):
+        if hasattr(player, "active_dominance"):
+            return player.active_dominance.card.suit
+        return None
 
 
 class GameListSerializer(serializers.ModelSerializer):

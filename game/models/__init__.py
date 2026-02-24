@@ -4,6 +4,7 @@ from .cats import *
 from .wa import *
 from .events import *
 from .checkpoint_models import Checkpoint, Action
+from .dominance import DominanceSupplyEntry, ActiveDominanceEntry
 
 __all__ = [
     "Faction",
@@ -31,4 +32,6 @@ __all__ = [
     "HandEntry",
     "Checkpoint",
     "Action",
+    "DominanceSupplyEntry",
+    "ActiveDominanceEntry",
 ]

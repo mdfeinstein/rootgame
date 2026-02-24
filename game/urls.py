@@ -40,7 +40,9 @@ from game.views.gamestate_views.general import (
     get_players,
     get_turn_info,
     undo_last_action_view,
+    undo_last_action_view,
     get_game_session_detail,
+    get_dominance_supply,
 )
 from game.views.gamestate_views.cards import GetCraftedCardsView
 from game.views.setup_views import (
@@ -115,6 +117,11 @@ urlpatterns = [
     ),
     path("api/games/active/", list_active_games, name="list-active-games"),
     path("api/games/joinable/", list_joinable_games, name="list-joinable-games"),
+    path(
+        "api/dominance-supply/<int:game_id>/",
+        get_dominance_supply,
+        name="get-dominance-supply",
+    ),
 ]
 register_action(
     "cats-setup-pick-corner",
@@ -332,5 +339,24 @@ register_action(
     "swap-meet",
     SwapMeetView,
     "api/action/card/swap-meet/",
+    urlpatterns,
+)
+
+from game.views.action_views.dominance_views import (
+    SwapDominanceView,
+    ActivateDominanceView,
+)
+
+register_action(
+    "swap-dominance",
+    SwapDominanceView,
+    "api/action/dominance/swap/",
+    urlpatterns,
+)
+
+register_action(
+    "activate-dominance",
+    ActivateDominanceView,
+    "api/action/dominance/activate/",
     urlpatterns,
 )

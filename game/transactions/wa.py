@@ -1,3 +1,4 @@
+from game.models.game_models import Card
 from game.transactions.general import draw_card_from_deck_to_hand
 from game.queries.wa.supporters import can_add_supporter
 from typing import Union
@@ -69,7 +70,7 @@ def discard_supporters(player: Player, supporters: list[SupporterStackEntry]):
         supporter.delete()
 
 
-def add_supporter(player: Player, card: CardsEP):
+def add_supporter(player: Player, card: Card):
     """
     adds a card (from anywhere) to the players supporter stack
     Called by mobilize, outrage, etc.
@@ -101,7 +102,6 @@ def draw_card_to_supporters(player: Player):
     """draws a card from the deck to the player's supporters"""
     assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
     card = draw_card_from_deck(player)
-    card = CardsEP[card.card_type]
     add_supporter(player, card)
 
 

@@ -19,6 +19,7 @@ import {
 import PlayerColumn from "../components/player/PlayerColumn";
 import { PlayerProvider } from "../contexts/PlayerProvider";
 import UndoButton from "../components/prompts/UndoButton";
+import DominanceSupply from "../components/board/DominanceSupply";
 import { useParams, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import {
@@ -201,6 +202,7 @@ const GamePage = () => {
                     }}
                   >
                     <Stack gap="md">
+                      <DominanceSupply />
                       <PlayerColumn />
                       <UndoButton />
                     </Stack>

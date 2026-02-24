@@ -1,4 +1,4 @@
-import { Group, Paper, Text, Avatar, rem, Badge } from "@mantine/core";
+import { Group, Paper, Text, Avatar, Badge } from "@mantine/core";
 import { IconTrophy } from "@tabler/icons-react";
 import { GameContext } from "../../contexts/GameProvider";
 import type { Player } from "../../hooks/useGetPlayersInfoQuery";
@@ -14,12 +14,18 @@ const FACTION_BOARDS: Record<string, React.FC<any>> = {
   bi: BirdPlayerBoard,
   Birds: BirdPlayerBoard,
   wa: WaPlayerBoard,
-  Wolves: WaPlayerBoard,
+  WoodlandAlliance: WaPlayerBoard,
 };
 
 const PlayerIcon = ({ player }: { player: Player }) => {
   // Reuse the suit mapping logic for colors/icons
   const colors = { ca: "orange.5", bi: "blue.5", wa: "green.3" };
+  const suit_colors: Record<string, string> = {
+    o: "orange.6",
+    r: "red.7",
+    y: "yellow.5",
+    b: "blue.6",
+  };
   const { faction, username, score } = player;
   const { gameId } = useContext(GameContext);
   const color = colors[faction as keyof typeof colors] || "gray.5";
@@ -59,14 +65,27 @@ const PlayerIcon = ({ player }: { player: Player }) => {
               faction={faction}
               factionLabel={player.faction_label}
             />
-            <Badge
-              size="lg"
-              variant="light"
-              color="gray"
-              leftSection={<IconTrophy size={20} />}
-            >
-              {score}
-            </Badge>
+            {player.active_dominance ? (
+              <Badge
+                size="lg"
+                variant="filled"
+                color={
+                  suit_colors[player.active_dominance.suit as string] || "gray"
+                }
+                leftSection={<IconTrophy size={20} />}
+              >
+                DOM: {player.active_dominance.suit.toUpperCase()}
+              </Badge>
+            ) : (
+              <Badge
+                size="lg"
+                variant="light"
+                color="gray"
+                leftSection={<IconTrophy size={20} />}
+              >
+                {score}
+              </Badge>
+            )}
           </Group>
         </Group>
       </Paper>

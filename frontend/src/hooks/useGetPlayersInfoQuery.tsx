@@ -7,6 +7,11 @@ export type Player = {
   score: number;
   turn_order: number;
   card_count: number;
+  active_dominance: {
+    card: number;
+    card_name: string;
+    suit: string;
+  } | null;
 };
 
 const useGetPlayersInfoQuery = (gameId: number, enabled: boolean = true) => {
