@@ -12,4 +12,4 @@ game\tests\test_wa_turn_flow.py
 game\tests\test_eyrie_emigre.py
 
 to test:
-C:\Users\Mati\miniconda3\condabin\conda.bat run -n spyderweb python manage.py test tests.test_wa_turn_flow
+see skills/test.md
