@@ -62,7 +62,6 @@ def saboteurs_check(player: Player)->bool:
 
     if has_saboteurs:
         # 2. Launch the event
-        print("launching saboteurs event")
         from game.models.events.crafted_cards import SaboteursEvent
         SaboteursEvent.create(saboteurs_entry)
     return has_saboteurs

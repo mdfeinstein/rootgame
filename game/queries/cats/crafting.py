@@ -51,11 +51,9 @@ def validate_crafting_pieces_satisfy_requirements(
         if workshop.crafted_with:
             raise ValueError("A workshop is already used")
         workshop_suit = Suit(workshop.building_slot.clearing.suit)
-        print(workshop_suit)
         first_wild_idx: int | None = None
         for i, suit_needed in enumerate(suits_needed):
             if not satisfied[i] and suit_needed.value == workshop_suit.value:
-                print(f"satisfied suit {suit_needed.value}")
                 satisfied[i] = True
                 break
             elif (

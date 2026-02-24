@@ -49,7 +49,6 @@ def create_game(request: Request):
     faction_options = data.get(
         "faction_options", [faction.value for faction in Faction]
     )
-    print(f"faction options: {faction_options}")
     game = create_new_game(owner=user, map=map, faction_options=faction_options)
     return Response({"game_id": game.pk}, status=status.HTTP_201_CREATED)
 

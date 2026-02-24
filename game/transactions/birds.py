@@ -85,9 +85,10 @@ def add_card_to_decree(player: Player, card: CardsEP, column: DecreeEntry.Column
     if birdsong.cards_added_to_decree > 2:
         raise ValueError("More than two cards already added to decree! Critical Error")
     elif birdsong.cards_added_to_decree == 2:
-        ValueError(
+        raise ValueError(
             "Two cards already added to decree. We should have already moved to next step"
         )
+
 
     # check if bird card. if so, check that we haven't already added a bird card to decree
     if card.value.suit == Suit.WILD:
@@ -473,13 +474,14 @@ def begin_evening(player: Player):
     for _ in range(drawing_per_roost_on_board[roosts_on_board]):
         draw_card_from_deck_to_hand(player)
     evening.step = next_choice(BirdEvening.BirdEveningSteps, evening.step)
-    # ignro discard step, if able
+    # ignore discard step, if able
     assert evening.step == BirdEvening.BirdEveningSteps.DISCARDING
     if get_player_hand_size(player) <= 5:
         evening.step = next_choice(BirdEvening.BirdEveningSteps, evening.step)
-        evening.save()
-        if evening.step == BirdEvening.BirdEveningSteps.COMPLETED:
-            end_birds_turn(player)
+        
+    evening.save()
+    if evening.step == BirdEvening.BirdEveningSteps.COMPLETED:
+        end_birds_turn(player)
 
 
 @transaction.atomic
@@ -573,7 +575,6 @@ def move_turmoil_check(player: Player):
         player=player, column=Vizier.Column.MOVE, fulfilled=False
     )
     move_decrees_remaining = move_cards.count() + viziers.count()
-    print(f"move decrees remaining: {move_decrees_remaining}")
     if move_decrees_remaining == 0:
         # move to next step
         next_step(player)
@@ -609,7 +610,6 @@ def move_turmoil_check(player: Player):
             pass
     # if we get here, no legal moves. turmoil
     turmoil(player)
-    return
 
 
 @transaction.atomic
@@ -666,7 +666,8 @@ def battle_turmoil_check(player: Player):
             if player_has_pieces_in_clearing(player_, clearing):
                 # we have something legal to do, exit out
                 return
-
+    # if we get here, no legal battles. turmoil
+    turmoil(player)
 
 @transaction.atomic
 def build_turmoil_check(player: Player):
@@ -694,7 +695,7 @@ def build_turmoil_check(player: Player):
     # otherwise, do turmoil checks
     # turmoil if no roosts left in supply
     if not BirdRoost.objects.filter(
-        player=player, building_slot__isnull=False
+        player=player, building_slot__isnull=True
     ).exists():
         turmoil(player)
         return
@@ -742,7 +743,6 @@ def build_turmoil_check(player: Player):
 @transaction.atomic
 def turmoil(player: Player):
     """turmoil the player.
-    (NOT YET IMPLEMENTED)
     --lose points,
     --clear their decree,
     --set leader to unavailable
@@ -750,7 +750,6 @@ def turmoil(player: Player):
     -- move the daylight step to "completed"
     -- create turmoil event (where player chooses new leader)
     """
-    print("turmoil occured! not yet implemented")
     assert player.faction == Faction.BIRDS
     # lose points according to birds in decree (2 automatically from viziers)
     points_to_lose = 2

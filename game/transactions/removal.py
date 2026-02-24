@@ -65,7 +65,8 @@ def player_removes_warriors(
     # Warriors are temporarily moved to clearing=None (supply) so they can be saved to keep.
     # If not saved, they will eventually go to Coffin/Supply via return_warrior_to_supply.
 
-    if removed_player.faction == Faction.CATS and not CatKeep.objects.get(player=removed_player).destroyed:
+    keep = CatKeep.objects.filter(player=removed_player).first()
+    if removed_player.faction == Faction.CATS and keep and not keep.destroyed:
         for warrior in warriors:
             warrior.clearing = None
             warrior.save()
@@ -81,17 +82,18 @@ def player_removes_token(game: Game, token: Token, removing_player: Player):
     clearing = token.clearing
     # check faction relevant events
     # check if token is a sympathy token
-    wa_player = Player.objects.get(game=game, faction=Faction.WOODLAND_ALLIANCE)
-    if token in Token.objects.filter(player=wa_player, clearing=clearing):
+    wa_player = Player.objects.filter(game=game, faction=Faction.WOODLAND_ALLIANCE).first()
+    from game.models.wa.tokens import WASympathy
+    if wa_player and WASympathy.objects.filter(pk=token.pk).exists():
         # launch Outrage event
-        wa_player = Player.objects.get(game=game, faction=Faction.WOODLAND_ALLIANCE)
         create_outrage_event(token.clearing, removing_player, wa_player)
     #if token is the keep, mark as destroyed
-    cat_player = Player.objects.get(game=game, faction=Faction.CATS)
-    keep = CatKeep.objects.get(player=cat_player)
-    if token.pk == keep.pk:
-        keep.destroyed = True
-        keep.save()
+    cat_player = Player.objects.filter(game=game, faction=Faction.CATS).first()
+    if cat_player:
+        keep = CatKeep.objects.filter(player=cat_player).first()
+        if keep and token.pk == keep.pk:
+            keep.destroyed = True
+            keep.save()
 
     
     # remove token

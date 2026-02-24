@@ -32,7 +32,7 @@ class WABirdsong(models.Model):
         SPREAD_SYMPATHY = "2", "Spread Sympathy"
         COMPLETED = "3", "Completed"
 
-    turn = models.ForeignKey(WATurn, on_delete=models.CASCADE)
+    turn = models.ForeignKey(WATurn, on_delete=models.CASCADE, related_name="birdsong")
     step = models.CharField(
         max_length=1,
         choices=WABirdsongSteps.choices,
@@ -45,7 +45,7 @@ class WADaylight(models.Model):
         ACTIONS = "1", "Actions"
         COMPLETED = "2", "Completed"
 
-    turn = models.ForeignKey(WATurn, on_delete=models.CASCADE)
+    turn = models.ForeignKey(WATurn, on_delete=models.CASCADE, related_name="daylight")
     step = models.CharField(
         max_length=1,
         choices=WADaylightSteps.choices,
@@ -60,7 +60,7 @@ class WAEvening(models.Model):
         DISCARDING = "3", "Discarding Cards"
         COMPLETED = "4", "Completed"
 
-    turn = models.ForeignKey(WATurn, on_delete=models.CASCADE)
+    turn = models.ForeignKey(WATurn, on_delete=models.CASCADE, related_name="evening")
     step = models.CharField(
         max_length=1,
         choices=WAEveningSteps.choices,

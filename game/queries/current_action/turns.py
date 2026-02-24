@@ -26,7 +26,6 @@ def get_current_turn_action(game: Game) -> str | None:
 
     match player.faction:
         case Faction.CATS:
-            print(f"cats turn!")
             return get_cats_turn_action(player)
         case Faction.BIRDS:
             return get_birds_turn_action(player)
@@ -41,7 +40,6 @@ def get_cats_turn_action(player: Player) -> str | None:
     phase = get_cat_phase(player)
     match phase:
         case CatBirdsong():
-            print(f"cats birdsong!")
             return get_cats_birdsong_turn_action(phase)
         case CatDaylight():
             return get_cats_daylight_turn_action(phase)
@@ -54,7 +52,6 @@ def get_cats_turn_action(player: Player) -> str | None:
 def get_cats_birdsong_turn_action(phase: CatBirdsong):
     match phase.step:
         case CatBirdsong.CatBirdsongSteps.PLACING_WOOD:
-            print(f"cats birdsong place wood!")
             return reverse("cats-birdsong-place-wood")
         case _:
             raise ValueError(f"Invalid cats birdsong step: {phase.step}")

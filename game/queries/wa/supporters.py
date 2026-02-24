@@ -93,7 +93,6 @@ def has_enough_to_spread_sympathy(player: Player) -> bool:
         player=player, clearing__isnull=False
     ).count()
     current_cost = sympathy_cost[sympathy_on_board]
-    print(f"supporter count: {supporter_count}, current cost: {current_cost}")
     return supporter_count >= current_cost
 
 

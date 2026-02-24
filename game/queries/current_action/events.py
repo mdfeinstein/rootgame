@@ -7,11 +7,8 @@ from game.models.game_models import Game
 def get_current_event_action(game: Game) -> str | None:
     """returns the current event action for the game, or None if no event"""
     event = get_current_event(game)
-    print(f"event: {event}")
     if event is None:
         return None
-    print(f"event.type: {event.type}")
-    print(f"event.is_resolved: {event.is_resolved}")
     match event.type:
         case EventType.BATTLE:
             return reverse("battle")

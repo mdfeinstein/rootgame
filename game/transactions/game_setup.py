@@ -220,7 +220,6 @@ def begin_faction_setup(game: Game):
     }
     players = Player.objects.filter(game=game)
     for player in players:
-        print(f"starting setup for {player.faction}")
         setup_func_dict[player.faction](player)
 
 

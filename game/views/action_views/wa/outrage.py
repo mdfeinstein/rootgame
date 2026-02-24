@@ -30,11 +30,9 @@ class OutrageView(GameActionView):
         game_id = int(request.query_params.get("game_id"))
         game = self.game(game_id)
         outrage = get_current_outrage_event(game)
-        print((f"outrage_suit: {outrage.suit}"))
         suit = Suit(outrage.suit).label
         prompt = f"Play a card of suit {suit} to pay the outrage."
         # assert type(self.faction) == Faction
-        print(f"faction: {self.faction}")
         self.first_step = {
             "faction": self.faction.label,
             "name": "card",

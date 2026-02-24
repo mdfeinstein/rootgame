@@ -110,6 +110,8 @@ def move_warriors(
     """moves warriors from one clearing to another"""
     from game.transactions.outrage import create_outrage_event
 
+    if number <= 0:
+        raise ValueError("Cannot move 0 warriors")
     warriors = list(
         Warrior.objects.filter(clearing=clearing_start, player=player)[:number]
     )
@@ -230,6 +232,14 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
             has_master_engravers = False
 
         # update score
+        # Birds Disdain for Trade: items only score 1VP unless Builder leader
+        if card_in_hand.player.faction == Faction.BIRDS:
+            from game.models.birds.player import BirdLeader
+
+            leader = BirdLeader.objects.get(player=card_in_hand.player, active=True)
+            if leader.leader != BirdLeader.BirdLeaders.BUILDER.value:
+                points = 1
+
         card_in_hand.player.score += points
         if has_master_engravers:
             card_in_hand.player.score += 1

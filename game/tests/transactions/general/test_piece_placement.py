@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .my_factories import GameSetupWithFactionsFactory
+from game.tests.my_factories import GameSetupWithFactionsFactory
 from game.models.game_models import Faction, Warrior, Clearing
 from game.models.cats.buildings import Recruiter, Sawmill, Workshop
 from game.models.cats.tokens import CatKeep, CatWood
