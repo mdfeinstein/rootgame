@@ -157,6 +157,7 @@ def try_auto_emergency_roost(player: Player):
     # if player has a roost on the board, move to next step
     if get_roosts_on_board(player).exists():
         next_step(player)
+        return
     # see if there is one clearing with least warriors
     clearings_in_game = list(Clearing.objects.filter(game=player.game))
     # first pass: get the lowest warrior count
