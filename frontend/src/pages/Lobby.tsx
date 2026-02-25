@@ -29,6 +29,7 @@ import {
 import { useContext } from "react";
 import { UserContext } from "../contexts/UserProvider";
 import DemoUserSwitch from "../components/DemoUserSwitch";
+import DemoQuickStart from "../components/DemoQuickStart";
 
 const LobbyPage = () => {
   const navigate = useNavigate();
@@ -157,29 +158,27 @@ const LobbyPage = () => {
         </Tabs.Panel>
 
         <Tabs.Panel value="create">
-          <Paper withBorder p="md" radius="md">
-            <Stack>
-              <Title order={3}>Start a New Game</Title>
-              <Select
-                label="Select Map"
-                data={[
-                  { value: "0", label: "Autumn" },
-                  { value: "1", label: "Winter" },
-                  { value: "2", label: "Mountain" },
-                  { value: "3", label: "Lake" },
-                ]}
-                value={map}
-                onChange={(val) => setMap(val || "0")}
-              />
-              <Button
-                leftSection={<IconPlus size={14} />}
-                onClick={handleCreateGame}
-                loading={createGameMutation.isPending}
-              >
-                Create Game
-              </Button>
-            </Stack>
-          </Paper>
+          <Stack gap="md">
+            <DemoQuickStart />
+            <Paper withBorder p="md" radius="md">
+              <Stack>
+                <Title order={3}>Start a New Game</Title>
+                <Select
+                  label="Select Map"
+                  data={[{ value: "0", label: "Autumn" }]}
+                  value={map}
+                  onChange={(val) => setMap(val || "0")}
+                />
+                <Button
+                  leftSection={<IconPlus size={14} />}
+                  onClick={handleCreateGame}
+                  loading={createGameMutation.isPending}
+                >
+                  Create Game
+                </Button>
+              </Stack>
+            </Paper>
+          </Stack>
         </Tabs.Panel>
       </Tabs>
     </Container>

@@ -47,6 +47,7 @@ from game.views.gamestate_views.general import (
 from game.views.gamestate_views.cards import GetCraftedCardsView
 from game.views.setup_views import (
     create_game,
+    create_demo_game,
     join_game,
     pick_faction,
     start_game_view,
@@ -96,6 +97,7 @@ urlpatterns = [
     path("api/turn-info/<int:game_id>/", get_turn_info),
     # setup views
     path("api/game/create/", create_game),
+    path("api/game/create-demo/", create_demo_game),
     path("api/game/join/<int:game_id>/", join_game),
     path("api/game/pick-faction/<int:game_id>/", pick_faction),
     path("api/game/start/<int:game_id>/", start_game_view),
