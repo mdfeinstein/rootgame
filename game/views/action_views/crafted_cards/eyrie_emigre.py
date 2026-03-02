@@ -29,9 +29,9 @@ class EyrieEmigreView(GameActionView):
                 {"value": "skip", "label": "Skip"}
             ]
             return self.generate_step(
-                name="use-or-skip",
+                name="use_or_skip",
                 prompt="Do you want to use Eyrie Emigre to move and battle?",
-                endpoint="use-or-skip",
+                endpoint="use_or_skip",
                 payload_details=[{"type": "choice", "name": "choice"}],
                 options=options,
                 faction=Faction(player.faction)
@@ -44,7 +44,7 @@ class EyrieEmigreView(GameActionView):
         player = self.player(request, game_id)
         self.faction = Faction(player.faction)
         match route:
-            case "use-or-skip":
+            case "use_or_skip":
                 return self.post_use_or_skip(request, game_id)
             case "origin":
                 return self.post_origin(request, game_id)
@@ -52,7 +52,7 @@ class EyrieEmigreView(GameActionView):
                 return self.post_destination(request, game_id)
             case "count":
                 return self.post_count(request, game_id)
-            case "battle-choice":
+            case "battle_choice":
                 return self.post_battle_choice(request, game_id)
             case "battle":
                 return self.post_battle(request, game_id)
@@ -162,9 +162,9 @@ class EyrieEmigreView(GameActionView):
             {"value": "skip", "label": "Skip (Discards Card)"}
         ]
         return self.generate_step(
-            name="battle-choice",
+            name="battle_choice",
             prompt=f"Do you want to battle in clearing {event.move_destination.clearing_number}?",
-            endpoint="battle-choice",
+            endpoint="battle_choice",
             payload_details=[{"type": "choice", "name": "choice"}],
             options=options,
             faction=Faction(player.faction)

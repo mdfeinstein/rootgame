@@ -1,4 +1,8 @@
+export type Faction = "Cats" | "Birds" | "WA" | "Crows";
 
-export type Faction = "Cats" | "Birds" | "WA";
-
-export type BuildingType = "Roost" | "Sawmill" | "Recruiter" | "Workshop" | "Base";
+export type BuildingType =
+  | "Roost"
+  | "Sawmill"
+  | "Recruiter"
+  | "Workshop"
+  | "Base";

@@ -36,6 +36,11 @@ from game.models.wa.tokens import WASympathy
 from game.models.wa.player import SupporterStackEntry, OfficerEntry
 from game.models.wa.turn import WATurn, WABirdsong, WADaylight, WAEvening
 
+from game.models.crows.setup import CrowsSimpleSetup
+from game.models.crows.tokens import PlotToken
+from game.models.crows.turn import CrowTurn, CrowBirdsong, CrowDaylight, CrowEvening
+from game.models.crows.exposure import ExposureRevealedCards, ExposureGuessedPlot
+
 from game.models.events.event import Event
 from game.models.events.battle import Battle
 from game.models.events.wa import OutrageEvent
@@ -52,6 +57,7 @@ from game.models.events.crafted_cards import (
     PartisansEvent,
     SwapMeetEvent,
 )
+from game.models.events.crows import CrowRecruitEvent, CrowRaidEvent
 
 
 def get_all_game_objects(game: Game):
@@ -99,6 +105,7 @@ def get_all_game_objects(game: Game):
         # Setup state (depend on Player)
         objects.extend(CatsSimpleSetup.objects.filter(player=player))
         objects.extend(BirdsSimpleSetup.objects.filter(player=player))
+        objects.extend(CrowsSimpleSetup.objects.filter(player=player))
 
         # Pieces (Warriors, Buildings, Tokens)
         # For MTI (Multi-Table Inheritance), we MUST serialize the base models as well
@@ -159,6 +166,17 @@ def get_all_game_objects(game: Game):
         objects.extend(WADaylight.objects.filter(turn__in=wa_turns))
         objects.extend(WAEvening.objects.filter(turn__in=wa_turns))
 
+        # Crows
+        crow_turns = CrowTurn.objects.filter(player=player)
+        objects.extend(crow_turns)
+        objects.extend(CrowBirdsong.objects.filter(turn__in=crow_turns))
+        objects.extend(CrowDaylight.objects.filter(turn__in=crow_turns))
+        objects.extend(CrowEvening.objects.filter(turn__in=crow_turns))
+        objects.extend(PlotToken.objects.filter(player=player))
+        objects.extend(ExposureRevealedCards.objects.filter(player=player))
+        objects.extend(ExposureGuessedPlot.objects.filter(player=player))
+
+
     # 4. Events
     # Events depend on Game, but sub-events depend on Event + Players/Clearings
     events = Event.objects.filter(game=game)
@@ -174,6 +192,8 @@ def get_all_game_objects(game: Game):
     objects.extend(CharmOffensiveEvent.objects.filter(event__in=events))
     objects.extend(PartisansEvent.objects.filter(event__in=events))
     objects.extend(SwapMeetEvent.objects.filter(event__in=events))
+    objects.extend(CrowRecruitEvent.objects.filter(event__in=events))
+    objects.extend(CrowRaidEvent.objects.filter(event__in=events))
 
     return objects
 

@@ -57,7 +57,7 @@ class RootGameClient(APIClient):
         if self.step is None:
             raise ValueError("No current action")
         step_route = f"{self.base_route}{self.game_id}/{self.step['endpoint']}/"
-        response = self.post(step_route, data=data)
+        response = self.post(step_route, data=data, format="json")
         if self.ok(response):
             self.step = response.json()
         self.last_post_response = response

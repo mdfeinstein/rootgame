@@ -34,9 +34,9 @@ class FalseOrdersView(GameActionView):
         valid_clearings.append({"value": "skip", "label": "Skip"})
         
         return self.generate_step(
-            name="pick-origin",
+            name="pick_origin",
             prompt="Pick a clearing to move enemy warriors from",
-            endpoint="pick-origin",
+            endpoint="pick_origin",
             payload_details=[{"type": "select", "name": "origin_number"}],
             options=valid_clearings,
             faction=Faction(player.faction)
@@ -44,11 +44,11 @@ class FalseOrdersView(GameActionView):
 
     def route_post(self, request, game_id: int, route: str, *args, **kwargs):
         match route:
-            case "pick-origin":
+            case "pick_origin":
                 return self.post_pick_origin(request, game_id)
-            case "pick-faction":
+            case "pick_faction":
                 return self.post_pick_faction(request, game_id)
-            case "pick-destination":
+            case "pick_destination":
                 return self.post_pick_destination(request, game_id)
             case _:
                 raise ValidationError("Invalid route")
@@ -72,9 +72,9 @@ class FalseOrdersView(GameActionView):
             })
             
         return self.generate_step(
-            name="pick-faction",
+            name="pick_faction",
             prompt="Pick an enemy faction to move",
-            endpoint="pick-faction",
+            endpoint="pick_faction",
             payload_details=[{"type": "faction", "name": "target_faction"}],
             accumulated_payload={"origin_number": origin_number},
             options=options,
@@ -95,9 +95,9 @@ class FalseOrdersView(GameActionView):
             })
             
         return self.generate_step(
-            name="pick-destination",
+            name="pick_destination",
             prompt="Pick a destination clearing",
-            endpoint="pick-destination",
+            endpoint="pick_destination",
             payload_details=[{"type": "clearing_number", "name": "destination_number"}],
             accumulated_payload={
                 "origin_number": origin_number,

@@ -11,6 +11,7 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.birds.turn import BirdTurn
 from game.models.cats.turn import CatTurn
 from game.models.wa.turn import WATurn
+from game.models.crows.turn import CrowTurn
 from game.models.cats.tokens import CatWood
 
 from game.transactions.game_setup import (
@@ -166,6 +167,19 @@ class WATurnFactory(factory.django.DjangoModelFactory):
         return model_class.create_turn(player=player)
 
 
+class CrowTurnFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = CrowTurn
+
+    player = factory.SubFactory(PlayerFactory, faction=Faction.CROWS)
+    turn_number = 1
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        player = kwargs.get('player')
+        return model_class.create_turn(player=player)
+
+
 class GameSetupFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Game
@@ -253,4 +267,16 @@ class GameSetupWithFactionsFactory(GameSetupFactory):
             # WA setup is mostly automatic (drawing cards), usually handled by initial setup.
             # But let's check if there's any manual step.
             pass
-        
+            
+        # 4. Crows Setup
+        crows_player = Player.objects.filter(game=self, faction=Faction.CROWS).first()
+        if crows_player:
+            from game.transactions.crows_setup import place_initial_warrior, confirm_completed_setup
+            # Need to pick 3 clearings of different suits (Fox, Rabbit, Mouse)
+            fox_c = Clearing.objects.get(game=self, suit=Suit.RED.value, clearing_number=6)
+            rabbit_c = Clearing.objects.get(game=self, suit=Suit.YELLOW.value, clearing_number=4)
+            mouse_c = Clearing.objects.get(game=self, suit=Suit.ORANGE.value, clearing_number=2)
+            place_initial_warrior(crows_player, fox_c)
+            place_initial_warrior(crows_player, rabbit_c)
+            place_initial_warrior(crows_player, mouse_c)
+            confirm_completed_setup(crows_player)

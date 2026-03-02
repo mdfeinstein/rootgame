@@ -24,9 +24,9 @@ class InformantsView(GameActionView):
         ]
         
         return self.generate_step(
-            name="use-or-skip",
+            name="use_or_skip",
             prompt="Do you want to use Informants to take an ambush card from the discard pile?",
-            endpoint="use-or-skip",
+            endpoint="use_or_skip",
             payload_details=[{"type": "choice", "name": "choice"}],
             options=options,
             faction=Faction(player.faction)
@@ -36,9 +36,9 @@ class InformantsView(GameActionView):
         player = self.player(request, game_id)
         self.faction = Faction(player.faction)
         match route:
-            case "use-or-skip":
+            case "use_or_skip":
                 return self.post_use_or_skip(request, game_id)
-            case "pick-ambush-card":
+            case "pick_ambush_card":
                 return self.post_pick_ambush_card(request, game_id)
             case _:
                 raise ValidationError("Invalid route")
@@ -77,9 +77,9 @@ class InformantsView(GameActionView):
             raise ValidationError({"detail": "No ambush cards available in the discard pile."})
 
         return self.generate_step(
-            name="pick-ambush-card",
+            name="pick_ambush_card",
             prompt="Pick an ambush card from the discard pile",
-            endpoint="pick-ambush-card",
+            endpoint="pick_ambush_card",
             payload_details=[{"type": "card", "name": "card_name"}],
             options=options,
             faction=Faction(player.faction)

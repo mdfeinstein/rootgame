@@ -20,6 +20,7 @@ from game.models.game_models import Faction
 
 from game.transactions.birds_setup import start_simple_birds_setup
 from game.transactions.cats_setup import start_simple_cats_setup
+from game.transactions.crows_setup import start_simple_crows_setup
 from game.transactions.general import draw_card_from_deck_to_hand
 from game.transactions.setup_util import next_player_setup
 from game.transactions.wa_setup import wa_setup
@@ -43,7 +44,9 @@ def add_new_player_to_game(game: Game, user_to_add: User) -> Player:
     # check there aren't already as many players as faction choices
     player_count = Player.objects.filter(game=game).count()
     faction_count = FactionChoiceEntry.objects.filter(game=game).count()
+    print(f"DEBUG add_new_player_to_game: player_count={player_count} faction_count={faction_count}")
     if player_count >= faction_count:
+        print(f"DEBUG: Raising ValueError: player_count {player_count} >= faction_count {faction_count}")
         raise ValueError(
             f"Can't add a { player_count + 1 }th player, there are only { faction_count } factions"
         )
@@ -77,6 +80,7 @@ def assign_turn_order(game: Game):
         Faction.CATS: 0,
         Faction.BIRDS: 1,
         Faction.WOODLAND_ALLIANCE: 2,
+        Faction.CROWS: 7,
     }
     # rank players by faction turn order value
     # this will be useful when there are more factions
@@ -217,6 +221,7 @@ def begin_faction_setup(game: Game):
         Faction.CATS: start_simple_cats_setup,
         Faction.BIRDS: start_simple_birds_setup,
         Faction.WOODLAND_ALLIANCE: wa_setup,
+        Faction.CROWS: start_simple_crows_setup,
     }
     players = Player.objects.filter(game=game)
     for player in players:

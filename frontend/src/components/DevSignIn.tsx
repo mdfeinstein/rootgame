@@ -20,6 +20,7 @@ export default function DevSignIn() {
           ca: "Cats",
           bi: "Birds",
           wa: "WA",
+          cr: "Crows",
         };
         setActiveButton(factionMap[currentPlayer.faction] || null);
       } else {
@@ -72,6 +73,15 @@ export default function DevSignIn() {
         }}
       >
         WA
+      </button>
+      <button
+        onClick={() => signInByFaction("cr", "Crows")}
+        style={{
+          background: activeButton === "Crows" ? "indigo" : "white",
+          color: activeButton === "Crows" ? "white" : "black",
+        }}
+      >
+        Crows
       </button>
     </div>
   );

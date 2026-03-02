@@ -5,11 +5,13 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.wa.turn import WABirdsong, WADaylight, WAEvening
 from game.queries.current_action.events import get_current_event_action
 from game.queries.general import get_current_player
-from game.queries.cats.turn import get_phase as get_cat_phase
-from game.queries.birds.turn import get_phase as get_birds_phase
-from game.queries.wa.turn import get_phase as get_wa_phase
+from game.queries.crows.turn import get_phase as get_crows_phase
+from game.models.crows.turn import CrowBirdsong, CrowDaylight, CrowEvening
 from game.models.cats.turn import CatBirdsong, CatDaylight, CatEvening
 from game.models.birds.turn import BirdBirdsong, BirdDaylight, BirdEvening
+from game.queries.cats.turn import get_phase as get_cats_phase
+from game.queries.birds.turn import get_phase as get_birds_phase
+from game.queries.wa.turn import get_phase as get_wa_phase
 
 
 def get_current_turn_action(game: Game) -> str | None:
@@ -31,13 +33,15 @@ def get_current_turn_action(game: Game) -> str | None:
             return get_birds_turn_action(player)
         case Faction.WOODLAND_ALLIANCE:
             return get_wa_turn_action(player)
+        case Faction.CROWS:
+            return get_crows_turn_action(player)
         case _:
             raise ValueError("Invalid faction")
 
 
 def get_cats_turn_action(player: Player) -> str | None:
     """Return the current cats turn action route for the player or raises if unexpected step"""
-    phase = get_cat_phase(player)
+    phase = get_cats_phase(player)
     match phase:
         case CatBirdsong():
             return get_cats_birdsong_turn_action(phase)
@@ -51,7 +55,7 @@ def get_cats_turn_action(player: Player) -> str | None:
 
 def get_cats_birdsong_turn_action(phase: CatBirdsong):
     match phase.step:
-        case CatBirdsong.CatBirdsongSteps.PLACING_WOOD:
+        case CatBirdsong.CatBirdsongSteps.NOT_STARTED | CatBirdsong.CatBirdsongSteps.PLACING_WOOD:
             return reverse("cats-birdsong-place-wood")
         case _:
             raise ValueError(f"Invalid cats birdsong step: {phase.step}")
@@ -79,10 +83,10 @@ def get_cats_evening_turn_action(phase: CatEvening):
 
 def get_birds_birdsong_turn_action(phase: BirdBirdsong):
     match phase.step:
+        case BirdBirdsong.BirdBirdsongSteps.NOT_STARTED | BirdBirdsong.BirdBirdsongSteps.ADD_TO_DECREE:
+            return reverse("birds-add-to-decree")
         case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING:
             return reverse("birds-emergency-draw")
-        case BirdBirdsong.BirdBirdsongSteps.ADD_TO_DECREE:
-            return reverse("birds-add-to-decree")
         case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING:
             return reverse("birds-emergency-roosting")
         case _:
@@ -143,12 +147,12 @@ def get_wa_turn_action(player: Player) -> str | None:
 
 def get_wa_birdsong_turn_action(phase: WABirdsong):
     match phase.step:
-        case WABirdsong.WABirdsongSteps.REVOLT:
+        case WABirdsong.WABirdsongSteps.NOT_STARTED | WABirdsong.WABirdsongSteps.REVOLT:
             return reverse("wa-revolt")
         case WABirdsong.WABirdsongSteps.SPREAD_SYMPATHY:
             return reverse("wa-spread-sympathy")
         case _:
-            raise ValueError("Invalid Woodland Alliance birdsong step")
+            raise ValueError(f"Invalid Woodland Alliance birdsong step: {phase.step}")
 
 
 def get_wa_daylight_turn_action(phase: WADaylight):
@@ -167,3 +171,55 @@ def get_wa_evening_turn_action(phase: WAEvening):
             return reverse("wa-discard-cards")
         case _:
             raise ValueError("Invalid Woodland Alliance evening step")
+
+
+def get_crows_turn_action(player: Player) -> str | None:
+    """Return the current crows turn action route for the player."""
+    phase = get_crows_phase(player)
+    match phase:
+        case CrowBirdsong():
+            return get_crows_birdsong_turn_action(phase)
+        case CrowDaylight():
+            return get_crows_daylight_turn_action(phase)
+        case CrowEvening():
+            return get_crows_evening_turn_action(phase)
+        case _:
+            raise ValueError(f"Invalid crows phase: {phase}")
+
+
+def get_crows_birdsong_turn_action(phase: CrowBirdsong):
+    match phase.step:
+        case CrowBirdsong.CrowBirdsongSteps.CRAFT:
+            return reverse("crows-crafting")
+        case CrowBirdsong.CrowBirdsongSteps.FLIP:
+            return reverse("crows-flipping")
+        case CrowBirdsong.CrowBirdsongSteps.RECRUIT:
+            return reverse("crows-recruiting")
+        case CrowBirdsong.CrowBirdsongSteps.COMPLETED:
+            return None
+        case _:
+            raise ValueError(f"Invalid crows birdsong step: {phase.step}")
+
+
+def get_crows_daylight_turn_action(phase: CrowDaylight):
+    match phase.step:
+        case CrowDaylight.CrowDaylightSteps.ACTIONS:
+            return reverse("crows-daylight")
+        case CrowDaylight.CrowDaylightSteps.COMPLETED:
+            return None
+        case _:
+            raise ValueError("Invalid crows daylight step")
+
+
+def get_crows_evening_turn_action(phase: CrowEvening):
+    match phase.step:
+        case CrowEvening.CrowEveningSteps.EXERT:
+            return reverse("crows-exert")
+        case CrowEvening.CrowEveningSteps.DISCARDING:
+            return reverse("crows-discard-cards")
+        case CrowEvening.CrowEveningSteps.DRAWING:
+            return None
+        case CrowEvening.CrowEveningSteps.COMPLETED:
+            return None
+        case _:
+            raise ValueError("Invalid crows evening step")

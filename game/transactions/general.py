@@ -137,17 +137,14 @@ def place_piece_from_supply_into_clearing(piece: Piece, clearing: Clearing):
     places a piece from the supply into a clearing, checking if able
     -- checks if piece in supply
     -- non-cats placing into keep clearing will be blocked
-    -- later: crows snare will block
+    -- crows snare will block
     """
     if piece.clearing is not None:
         raise ValueError("piece is already in a clearing")
-    # check for keep clearing, if relevant
-    if piece.player.faction != Faction.CATS:
-        try:
-            keep = CatKeep.objects.get(clearing=clearing)
-            raise ValueError("Cannot place non-cat piece in keep clearing")
-        except CatKeep.DoesNotExist:
-            pass
+        
+    from game.queries.general import validate_can_place_piece_in_clearing
+    validate_can_place_piece_in_clearing(piece.player, clearing)
+
     piece.clearing = clearing
     piece.save()
 
@@ -326,6 +323,10 @@ def next_step(player: Player):
             next_step(player)
         case Faction.BIRDS:
             from game.transactions.birds import next_step
+
+            next_step(player)
+        case Faction.CROWS:
+            from game.transactions.crows import next_step
 
             next_step(player)
 

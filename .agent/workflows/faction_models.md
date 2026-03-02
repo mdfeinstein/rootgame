@@ -19,4 +19,6 @@ When adding the database layer for a new faction, perform the following steps:
    - The event model should store the state of the interruption (who triggered it, who needs to respond, what data is pending).
 5. **Setup Models**: Include any pre-game setup requirements in a `setup.py` file or hook into the core `game_setup.py`.
 
+6. **Snapshot/Undo** Game models related to the faction will need to be included in the game snapshot. see .agent/workflows/snapshot_undo.md
+
 _Tip for AI_: Always verify model relations (OneToOne vs ForeignKey) and ensure `on_delete` parameters are appropriately set to avoid orphans.

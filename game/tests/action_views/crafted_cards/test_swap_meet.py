@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .client import RootGameClient
+from game.tests.client import RootGameClient
 from game.models.game_models import Faction, Player, HandEntry, CraftedCardEntry, Warrior, Clearing
 from game.tests.my_factories import GameSetupWithFactionsFactory, CardFactory, CraftedCardEntryFactory
 from game.game_data.cards.exiles_and_partisans import CardsEP
@@ -58,7 +58,7 @@ class SwapMeetViewTestCase(TestCase):
         response = self.birds_client.get(f"{self.birds_client.base_route}?game_id={self.game.id}")
         self.assertEqual(response.status_code, 200)
         self.birds_client.step = response.data
-        self.assertEqual(self.birds_client.step["name"], "pick-opponent")
+        self.assertEqual(self.birds_client.step["name"], "pick_opponent")
         
         # Check options: Cats should be there
         options = self.birds_client.step["options"]
@@ -69,8 +69,8 @@ class SwapMeetViewTestCase(TestCase):
         response = self.birds_client.submit_action({"select": Faction.CATS.value})
         self.assertEqual(response.status_code, 200)
         
-        # Should now be on the next step: "pick-card-to-give"
-        self.assertEqual(self.birds_client.step["name"], "pick-card-to-give")
+        # Should now be on the next step: "pick_card_to_give"
+        self.assertEqual(self.birds_client.step["name"], "pick_card_to_give")
         
         # Verify card was taken
         self.assertTrue(HandEntry.objects.filter(player=self.birds_player, card=self.card_to_take).exists())

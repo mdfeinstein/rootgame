@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from game.models.game_models import Game, Player, Faction, CraftedCardEntry, Card, Suit
 from game.models.birds.turn import BirdTurn, BirdBirdsong, BirdDaylight, BirdEvening
 from game.models.cats.turn import CatTurn, CatBirdsong, CatDaylight, CatEvening
+from game.models.crows.turn import CrowTurn, CrowBirdsong, CrowDaylight, CrowEvening
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.queries.cards.active_effects import can_use_card
 
@@ -17,6 +18,11 @@ class ActiveEffectsTests(TestCase):
         self.user2 = User.objects.create(username="testuser2")
         self.player_cats = Player.objects.create(game=self.game, faction=Faction.CATS, user=self.user2, turn_order=1)
         self.turn_cats = CatTurn.create_turn(self.player_cats)
+
+        # Setup Crows
+        self.user3 = User.objects.create(username="testuser3")
+        self.player_crows = Player.objects.create(game=self.game, faction=Faction.CROWS, user=self.user3, turn_order=2)
+        self.turn_crows = CrowTurn.create_turn(self.player_crows)
 
         # Create Dummy Cards in DB required for CraftedCardEntry
         # We need to ensure Card objects exist for the enums we test
@@ -136,3 +142,44 @@ class ActiveEffectsTests(TestCase):
         birdsong.save()
         
         self.assertFalse(can_use_card(self.player_birds, entry))
+
+    def test_crows_timing(self):
+        # 1. Saboteurs (Start of Birdsong -> CRAFT)
+        entry_sab = CraftedCardEntry.objects.create(player=self.player_crows, card=self.card_saboteurs)
+        
+        birdsong = self.turn_crows.birdsong.first()
+        birdsong.step = CrowBirdsong.CrowBirdsongSteps.CRAFT
+        birdsong.save()
+        
+        self.game.current_turn = 2
+        self.game.save()
+        
+        self.assertTrue(can_use_card(self.player_crows, entry_sab))
+        
+        birdsong.step = CrowBirdsong.CrowBirdsongSteps.COMPLETED
+        birdsong.save()
+        self.assertFalse(can_use_card(self.player_crows, entry_sab))
+        
+        # 2. Propaganda Bureau (Daylight)
+        entry_prop = CraftedCardEntry.objects.create(player=self.player_crows, card=self.card_propaganda)
+        
+        daylight = self.turn_crows.daylight.first()
+        daylight.step = CrowDaylight.CrowDaylightSteps.ACTIONS
+        daylight.save()
+        
+        self.assertTrue(can_use_card(self.player_crows, entry_prop))
+        
+        # 3. Informants (Evening, Drawing)
+        entry_inf = CraftedCardEntry.objects.create(player=self.player_crows, card=self.card_informants)
+        daylight.step = CrowDaylight.CrowDaylightSteps.COMPLETED
+        daylight.save()
+        
+        evening = self.turn_crows.evening.first()
+        evening.step = CrowEvening.CrowEveningSteps.DRAWING
+        evening.save()
+        self.assertTrue(can_use_card(self.player_crows, entry_inf))
+        
+        # Advance to Discarding
+        evening.step = CrowEvening.CrowEveningSteps.DISCARDING
+        evening.save()
+        self.assertFalse(can_use_card(self.player_crows, entry_inf))

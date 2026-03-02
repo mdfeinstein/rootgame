@@ -222,10 +222,6 @@ def confirm_completed_setup(player: Player):
     setup.step = next_choice(CatsSimpleSetup.Steps, setup.step)
     setup.save()
     # create first turn
-    cat_turn_count = CatTurn.objects.filter(player=player).count()
-    print(
-        f"cat turn count in confirm_completed_setup before create_cats_turn: {cat_turn_count}"
-    )
     create_cats_turn(player)
     # go to next player setup
     next_player_setup(player.game)

@@ -31,6 +31,10 @@ def get_current_event_action(game: Game) -> str | None:
             return reverse("partisans")
         case EventType.SWAP_MEET:
             return reverse("swap-meet")
+        case EventType.CROW_RECRUIT:
+            return reverse("crows-manual-recruit")
+        case EventType.PLACE_RAID_WARRIORS:
+            return reverse("crows-place-raid-warriors")
         case _:
             raise ValueError("Invalid event type")
 

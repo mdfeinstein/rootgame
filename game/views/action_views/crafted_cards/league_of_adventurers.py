@@ -25,9 +25,9 @@ class LeagueOfAdventurersView(GameActionView):
             raise ValidationError({"detail": "No items available to exhaust."})
 
         return self.generate_step(
-            name="pick-item",
+            name="pick_item",
             prompt="Pick an item to exhaust for League of Adventurers",
-            endpoint="pick-item",
+            endpoint="pick_item",
             payload_details=[{"type": "select", "name": "item_id"}],
             options=options,
             faction=Faction(player.faction)
@@ -35,19 +35,19 @@ class LeagueOfAdventurersView(GameActionView):
 
     def route_post(self, request, game_id: int, route: str, *args, **kwargs):
         match route:
-            case "pick-item":
+            case "pick_item":
                 return self.post_pick_item(request, game_id)
-            case "pick-action":
+            case "pick_action":
                 return self.post_pick_action(request, game_id)
-            case "pick-origin":
+            case "pick_origin":
                 return self.post_pick_origin(request, game_id)
-            case "pick-destination":
+            case "pick_destination":
                 return self.post_pick_destination(request, game_id)
-            case "pick-count":
+            case "pick_count":
                 return self.post_pick_count(request, game_id)
-            case "pick-clearing":
+            case "pick_clearing":
                 return self.post_pick_clearing(request, game_id)
-            case "pick-opponent":
+            case "pick_opponent":
                 return self.post_pick_opponent(request, game_id)
             case _:
                 raise ValidationError("Invalid route")
@@ -65,9 +65,9 @@ class LeagueOfAdventurersView(GameActionView):
         ]
         
         return self.generate_step(
-            name="pick-action",
+            name="pick_action",
             prompt="Choose an action to perform",
-            endpoint="pick-action",
+            endpoint="pick_action",
             payload_details=[{"type": "choice", "name": "action_type"}],
             accumulated_payload={"item_id": item_id},
             options=options,
@@ -91,9 +91,9 @@ class LeagueOfAdventurersView(GameActionView):
                     })
             
             return self.generate_step(
-                name="pick-origin",
+                name="pick_origin",
                 prompt="Select origin clearing",
-                endpoint="pick-origin",
+                endpoint="pick_origin",
                 payload_details=[{"type": "clearing_number", "name": "origin_number"}],
                 accumulated_payload={"item_id": item_id, "action_type": action_type},
                 options=options,
@@ -113,9 +113,9 @@ class LeagueOfAdventurersView(GameActionView):
                         })
             
             return self.generate_step(
-                name="pick-clearing",
+                name="pick_clearing",
                 prompt="Select clearing for battle",
-                endpoint="pick-clearing",
+                endpoint="pick_clearing",
                 payload_details=[{"type": "clearing_number", "name": "clearing_number"}],
                 accumulated_payload={"item_id": item_id, "action_type": action_type},
                 options=options,
@@ -140,9 +140,9 @@ class LeagueOfAdventurersView(GameActionView):
                 })
         
         return self.generate_step(
-            name="pick-destination",
+            name="pick_destination",
             prompt="Select destination clearing",
-            endpoint="pick-destination",
+            endpoint="pick_destination",
             payload_details=[{"type": "clearing_number", "name": "destination_number"}],
             accumulated_payload=request.data,
             options=options,
@@ -158,9 +158,9 @@ class LeagueOfAdventurersView(GameActionView):
         options = [{"value": str(i), "label": str(i)} for i in range(1, count + 1)]
         
         return self.generate_step(
-            name="pick-count",
+            name="pick_count",
             prompt="Select number of warriors to move",
-            endpoint="pick-count",
+            endpoint="pick_count",
             payload_details=[{"type": "number", "name": "count"}],
             accumulated_payload=request.data,
             options=options,
@@ -204,9 +204,9 @@ class LeagueOfAdventurersView(GameActionView):
         ]
              
         return self.generate_step(
-            name="pick-opponent",
+            name="pick_opponent",
             prompt="Select opponent to battle",
-            endpoint="pick-opponent",
+            endpoint="pick_opponent",
             payload_details=[{"type": "faction", "name": "opponent_faction"}],
             accumulated_payload=request.data,
             options=options,

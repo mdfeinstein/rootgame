@@ -294,6 +294,13 @@ def roll_dice(game: Game, battle: Battle):
         ):
             battle.defender_hits_taken += 1
 
+    # crows embedded agents extra hit
+    if battle.defender == Faction.CROWS:
+        from game.models.crows.tokens import PlotToken
+        crows_player = Player.objects.get(game=game, faction=Faction.CROWS)
+        if PlotToken.objects.filter(player=crows_player, clearing=battle.clearing, is_facedown=True).exists():
+            battle.attacker_hits_taken += 1
+
     battle.save()
 
     # Check for partisans

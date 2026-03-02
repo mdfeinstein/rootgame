@@ -38,13 +38,13 @@ class TestActionViews(TestCase):
         
         # Mark setup as completed (GameSetupWithFactionsFactory should have done this, but let's be sure)
         from game.models.events.setup import GameSimpleSetup
-        GameSimpleSetup.objects.filter(game=game).update(status=GameSimpleSetup.GameSetupStatus.ALL_SETUP_COMPLETED)
+        GameSimpleSetup.objects.filter(game=game).update(status=GameSimpleSetup.GameSetupStatus.COMPLETED)
         
         turn = WATurnFactory(player=self.wa_player)
         from game.models.wa.turn import WABirdsong, WADaylight, WAEvening
         WABirdsong.objects.filter(turn=turn).update(step=WABirdsong.WABirdsongSteps.COMPLETED)
         WADaylight.objects.filter(turn=turn).update(step=WADaylight.WADaylightSteps.COMPLETED)
-        WAEvening.objects.filter(turn=turn).update(step=WAEvening.WAEveningSteps.MILITARY_OPERATIONS)
+        WAEvening.objects.filter(turn=turn).update(step=WAEvening.WAEveningSteps.DRAWING)
         
         # Populate deck
         for i in range(10):
@@ -73,25 +73,16 @@ class TestActionViews(TestCase):
         
         # Initialize action
         self.root_client.get_action()
-        self.assertEqual(self.root_client.step['name'], 'use-or-skip')
+        self.assertEqual(self.root_client.step['name'], 'use_or_skip')
         
         # Step 1: Use Informants
         self.root_client.submit_action({"choice": "use"})
-        self.assertEqual(self.root_client.step['name'], 'pick-ambush-card')
+        self.assertEqual(self.root_client.step['name'], 'pick_ambush_card')
         
         # Step 2: Pick ambush card
         # This will trigger drawing. hand size is small, so it will complete everything.
-        # We expect a ValueError on the server side currently, but we can't easily assert it here 
-        # without it failing the status_code check in submit_action.
         
-        # Wait, if I want to "assert that we have completed the evening phase", 
-        # I should probably catch the error in submit_action or just check db.
-        
-        try:
-            self.root_client.submit_action({"discard_card": str(discard_entry.id)})
-        except Exception:
-            # We expect an error if the turn ends abruptly and query fails
-            pass
+        self.root_client.submit_action({"card": ambush_card.card_type})
             
         # Verify effects
         self.assertTrue(HandEntry.objects.filter(player=self.wa_player, card=ambush_card).exists())
@@ -113,13 +104,10 @@ class TestActionViews(TestCase):
         
         # Initialize action
         self.root_client.get_action()
-        self.assertEqual(self.root_client.step['name'], 'use-or-skip')
+        self.assertEqual(self.root_client.step['name'], 'use_or_skip')
         
         # Step 1: Skip Informants
-        try:
-            self.root_client.submit_action({"choice": "skip"})
-        except Exception:
-            pass
+        self.root_client.submit_action({"choice": "skip"})
             
         # Verify effects
         crafted_entry.refresh_from_db()

@@ -9,6 +9,7 @@ from game.models.game_models import (
     CraftedItemEntry,
     Player,
     HandEntry,
+    Faction,
 )
 from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
 from game.models.wa.player import SupporterStackEntry, OfficerEntry
@@ -17,11 +18,10 @@ from game.serializers.bird_serializers import BirdSerializer, BirdTurnSerializer
 from game.serializers.cat_serializers import CatSerializer, CatTurnSerializer
 from game.serializers.wa_serializers import WASerializer, WATurnSerializer
 from game.serializers.wa_serializers import WASerializer, WATurnSerializer
-from game.serializers.wa_serializers import WASerializer, WATurnSerializer
+from game.serializers.crows_serializers import CrowsSerializer, CrowTurnSerializer
 from game.serializers.general_serializers import (
     CardSerializer,
     DominanceSupplyEntrySerializer,
-    ActiveDominanceEntrySerializer,
 )
 from game.serializers.event_serializers import EventSerializer
 
@@ -155,6 +155,7 @@ class GameStateSerializer(serializers.ModelSerializer):
         from game.models.birds.turn import BirdTurn
         from game.models.cats.turn import CatTurn
         from game.models.wa.turn import WATurn
+        from game.models.crows.turn import CrowTurn
 
         if player.faction == Faction.BIRDS:
             turn_obj = BirdTurn.objects.filter(player=player).last()
@@ -170,6 +171,11 @@ class GameStateSerializer(serializers.ModelSerializer):
             turn_obj = WATurn.objects.filter(player=player).last()
             if turn_obj:
                 return WATurnSerializer(turn_obj).data
+
+        elif player.faction == Faction.CROWS:
+            turn_obj = CrowTurn.objects.filter(player=player).last()
+            if turn_obj:
+                return CrowTurnSerializer(turn_obj).data
 
         return None
 
@@ -195,9 +201,7 @@ class GameStateSerializer(serializers.ModelSerializer):
 
             # Serialize Active Dominance
             try:
-                p_data["active_dominance"] = ActiveDominanceEntrySerializer(
-                    player.active_dominance
-                ).data
+                p_data["active_dominance"] = player.active_dominance.card.suit
             except ActiveDominanceEntry.DoesNotExist:
                 p_data["active_dominance"] = None
 
@@ -215,6 +219,8 @@ class GameStateSerializer(serializers.ModelSerializer):
                 ).data
                 base_data["officers"] = OfficerEntrySerializer(officers, many=True).data
                 p_data["faction_state"] = base_data
+            elif player.faction == Faction.CROWS:
+                p_data["faction_state"] = CrowsSerializer.from_player(player).data
 
             players_data.append(p_data)
 

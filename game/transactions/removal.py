@@ -77,9 +77,17 @@ def player_removes_warriors(
             return_warrior_to_supply(warrior)
 
 
-def player_removes_token(game: Game, token: Token, removing_player: Player):
+def player_removes_token(game: Game, token: Token, removing_player: Player, **kwargs):
     """removes a token from the board by player, scoring points and triggering any relevant events"""
     clearing = token.clearing
+    is_exposure = kwargs.get("is_exposure", False)
+    
+    # check for Crow Raid effect
+    from game.models.crows.tokens import PlotToken
+    if isinstance(token, PlotToken) and token.plot_type == PlotToken.PlotType.RAID and not is_exposure:
+        from game.transactions.crows.raid import trigger_raid_effect
+        trigger_raid_effect(token.player, clearing)
+
     # check faction relevant events
     # check if token is a sympathy token
     wa_player = Player.objects.filter(game=game, faction=Faction.WOODLAND_ALLIANCE).first()

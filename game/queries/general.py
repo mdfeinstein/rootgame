@@ -141,6 +141,8 @@ def get_current_player(game: Game) -> Player:
     """returns the player whose turn it is"""
     return Player.objects.get(game=game, turn_order=game.current_turn)
 
+from game.models.crows.turn import CrowBirdsong, CrowDaylight, CrowEvening
+
 
 def get_current_phase(player: Player):
     """
@@ -160,6 +162,10 @@ def get_current_phase(player: Player):
         from game.queries.cats.turn import get_phase as get_cat_phase
 
         return get_cat_phase(player)
+    elif player.faction == Faction.CROWS:
+        from game.queries.crows.turn import get_phase as get_crows_phase
+        
+        return get_crows_phase(player)
 
     return None
 
@@ -174,11 +180,11 @@ def is_phase(
     phase_obj = get_current_phase(player)
     match phase:
         case "Birdsong":
-            return isinstance(phase_obj, (CatBirdsong, WABirdsong, BirdBirdsong))
+            return isinstance(phase_obj, (CatBirdsong, WABirdsong, BirdBirdsong, CrowBirdsong))
         case "Daylight":
-            return isinstance(phase_obj, (CatDaylight, WADaylight, BirdDaylight))
+            return isinstance(phase_obj, (CatDaylight, WADaylight, BirdDaylight, CrowDaylight))
         case "Evening":
-            return isinstance(phase_obj, (CatEvening, WAEvening, BirdEvening))
+            return isinstance(phase_obj, (CatEvening, WAEvening, BirdEvening, CrowEvening))
         case _:
             raise ValueError(
                 "Invalid phase argument provided. Must be 'Birdsong', 'Daylight', or 'Evening'"
@@ -335,6 +341,12 @@ def validate_legal_move(
     if clearing_end not in adjacent_clearings:
         raise ValueError("clearing_start is not adjacent to clearing_end")
 
+    # check for Snare in origin
+    if player.faction != Faction.CROWS:
+        from game.models.crows.tokens import PlotToken
+        if PlotToken.objects.filter(clearing=clearing_start, plot_type=PlotToken.PlotType.SNARE, is_facedown=False).exists():
+            raise ValueError("Cannot move out of a clearing with a face-up Snare")
+
     # Corvid Planners: ignore rule while moving
     try:
         validate_player_has_crafted_card(player, CardsEP.CORVID_PLANNERS)
@@ -380,3 +392,27 @@ def validate_enemy_pieces_in_clearing(
     if len(players_with_pieces) == 0:
         raise ValueError("No enemy pieces in clearing")
     return players_with_pieces
+
+
+def validate_can_place_piece_in_clearing(player: Player, clearing: Clearing):
+    """
+    Validates if a piece for the given player can be placed in the clearing.
+    Checks for:
+    - Cat's Keep blocking non-cats
+    - Face-up Snare blocking non-crows
+    """
+    from game.models.game_models import Faction
+
+    # Check for Cat Keep
+    if player.faction != Faction.CATS:
+        from game.models.cats.tokens import CatKeep
+        if CatKeep.objects.filter(clearing=clearing).exists():
+            raise ValueError("Cannot place non-cat piece in keep clearing")
+
+    # Check for face-up Snare
+    if player.faction != Faction.CROWS:
+        from game.models.crows.tokens import PlotToken
+        if PlotToken.objects.filter(
+            clearing=clearing, plot_type=PlotToken.PlotType.SNARE, is_facedown=False
+        ).exists():
+            raise ValueError("Cannot place piece in clearing with a face-up Snare")

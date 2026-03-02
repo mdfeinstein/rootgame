@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .client import RootGameClient
+from game.tests.client import RootGameClient
 from game.models.game_models import Faction, Player, Game, HandEntry, Clearing, Warrior
 from game.tests.my_factories import GameSetupWithFactionsFactory, CardFactory, CraftedCardEntryFactory
 from game.game_data.cards.exiles_and_partisans import CardsEP
@@ -64,12 +64,12 @@ class EyrieEmigreTestCase(TestCase):
         # Step 5: Battle Choice
         self.birds_client.get_action()
         self.assertEqual(self.birds_client.base_route, "/api/action/card/eyrie-emigre/")
-        self.assertEqual(self.birds_client.step["name"], "battle-choice")
+        self.assertEqual(self.birds_client.step["name"], "battle_choice")
         
         self.birds_client.submit_action({"choice": "battle"})
         
         # Step 6: Select Faction
-        self.birds_client.submit_action({"faction": "CATS"})
+        self.birds_client.submit_action({"faction": Faction.CATS.value})
         
         # Should be completed and move back to Daylight CRAFTING
         self.game.refresh_from_db()

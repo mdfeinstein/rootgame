@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .client import RootGameClient
+from game.tests.client import RootGameClient
 from game.models.game_models import Faction, Player, CraftedCardEntry, Clearing, Warrior, Card, HandEntry
 from game.models.events.battle import Battle
 from game.models.events.event import Event, EventType

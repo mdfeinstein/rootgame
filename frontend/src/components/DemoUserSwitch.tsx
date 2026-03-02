@@ -47,6 +47,13 @@ export default function DemoUserSwitch() {
       >
         User 3
       </Button>
+      <Button
+        variant="outline"
+        size="xs"
+        onClick={() => handleDemoLogin("user4")}
+      >
+        User 4
+      </Button>
     </Group>
   );
 }

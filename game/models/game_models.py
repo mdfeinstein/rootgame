@@ -13,6 +13,7 @@ class Faction(models.TextChoices):
     CATS = "ca", "Cats"
     BIRDS = "bi", "Birds"
     WOODLAND_ALLIANCE = "wa", "Woodland Alliance"
+    CROWS = "cr", "Crows"
 
 
 class Suit(models.TextChoices):
@@ -166,8 +167,8 @@ class Ruin(models.Model):
 
 class Token(Piece):
     clearing = models.ForeignKey(
-        Clearing, on_delete=models.CASCADE, null=True, blank=True
-    )  # null clearing means token is on player mat
+        Clearing, on_delete=models.CASCADE, null=True, blank=True,
+    default=None)  # null clearing means token is on player mat
 
 
 class CraftingPieceMixin(models.Model):

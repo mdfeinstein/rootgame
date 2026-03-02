@@ -14,7 +14,7 @@ class SwapMeetTest(TestCase):
         self.owner = User.objects.create(username="owner")
         self.game = Game.objects.create(owner=self.owner)
         construct_deck(self.game)
-        GameSimpleSetup.objects.create(game=self.game, status=GameSimpleSetup.GameSetupStatus.ALL_SETUP_COMPLETED)
+        GameSimpleSetup.objects.create(game=self.game, status=GameSimpleSetup.GameSetupStatus.COMPLETED)
         
         # Player 1 (Birds)
         self.user1 = User.objects.create(username="user1")
@@ -70,15 +70,15 @@ class SwapMeetTest(TestCase):
     def test_view_flow(self):
         # 1. Pick opponent (Take Card)
         # Swap Meet is a manual action, so we HIT the endpoint first
-        response = self.client.get(f"/api/action/card/swap-meet-take/?game_id={self.game.id}")
+        response = self.client.get(f"/api/action/card/swap-meet/?game_id={self.game.id}")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "pick-opponent")
+        self.assertEqual(response.data["name"], "pick_opponent")
         
         # Use submit_action helper
         # RootGameClient.submit_action expects a dict where keys are payload "type"
         # In SwapMeetPickOpponentView, type is "select"
         self.client.step = response.json()
-        self.client.base_route = f"/api/action/card/swap-meet-take/"
+        self.client.base_route = f"/api/action/card/swap-meet/"
         
         response = self.client.submit_action({"select": Faction.CATS})
         self.assertEqual(response.status_code, 200)
@@ -90,7 +90,7 @@ class SwapMeetTest(TestCase):
         # This is an event-driven action, so it should be returned by get_action()
         response = self.client.get_action()
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.client.step["name"], "pick-card-to-give")
+        self.assertEqual(self.client.step["name"], "pick_card_to_give")
         
         # In SwapMeetGiveCardView, type is "card"
         response = self.client.submit_action({"card": self.give_card.card_type})

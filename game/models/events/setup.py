@@ -5,17 +5,19 @@ from game.models.game_models import Game
 
 class GameSimpleSetup(models.Model):
     class GameSetupStatus(models.TextChoices):
-        INITIAL_SETUP = "0", "Initial Setup"
-        CATS_SETUP = "a", "Cats Setup"
-        BIRDS_SETUP = "b", "Birds Setup"
-        # WOODLAND_ALLIANCE_SETUP = "c", "Woodland Alliance Setup"
-        ALL_SETUP_COMPLETED = "2", "All Setup Completed"
+        INITIAL_SETUP = "INIT", "Initial Setup"
+        CATS_SETUP = "CAT", "Cats Setup"
+        BIRDS_SETUP = "BIRD", "Birds Setup"
+        WA_SETUP = "WA", "Woodland Alliance Setup"
+        VB_SETUP = "VB", "Vagabond Setup"
+        CROWS_SETUP = "CROW", "Crows Setup"
+        COMPLETED = "COMP", "Completed"
 
     game = models.ForeignKey(
         Game, on_delete=models.CASCADE, related_name="simple_setup"
     )
     status = models.CharField(
-        max_length=1,
+        max_length=4,
         choices=GameSetupStatus.choices,
         default=GameSetupStatus.INITIAL_SETUP,
     )

@@ -24,9 +24,9 @@ class PropagandaBureauView(GameActionView):
             })
             
         return self.generate_step(
-            name="pick-card",
+            name="pick_card",
             prompt="Pick a card to spend for Propaganda Bureau",
-            endpoint="pick-card",
+            endpoint="pick_card",
             payload_details=[{"type": "card", "name": "card_name"}],
             options=options,
             faction=Faction(player.faction)
@@ -34,11 +34,11 @@ class PropagandaBureauView(GameActionView):
 
     def route_post(self, request, game_id: int, route: str, *args, **kwargs):
         match route:
-            case "pick-card":
+            case "pick_card":
                 return self.post_pick_card(request, game_id)
-            case "pick-clearing":
+            case "pick_clearing":
                 return self.post_pick_clearing(request, game_id)
-            case "pick-opponent":
+            case "pick_opponent":
                 return self.post_pick_opponent(request, game_id)
             case _:
                 raise ValidationError("Invalid route")
@@ -74,9 +74,9 @@ class PropagandaBureauView(GameActionView):
             raise ValidationError({"detail": "No valid clearings with enemies match that suit"})
         
         return self.generate_step(
-            name="pick-clearing",
+            name="pick_clearing",
             prompt="Pick a clearing to target",
-            endpoint="pick-clearing",
+            endpoint="pick_clearing",
             payload_details=[{"type": "clearing_number", "name": "clearing_number"}],
             accumulated_payload={"card_name": card_name},
             options=valid_clearings,
@@ -95,9 +95,9 @@ class PropagandaBureauView(GameActionView):
         ]
              
         return self.generate_step(
-            name="pick-opponent",
+            name="pick_opponent",
             prompt="Pick an opponent to remove a warrior from",
-            endpoint="pick-opponent",
+            endpoint="pick_opponent",
             payload_details=[{"type": "faction", "name": "opponent_faction"}],
             accumulated_payload=request.data,
             options=options,

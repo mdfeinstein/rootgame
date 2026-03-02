@@ -46,9 +46,12 @@ def create_game(request: Request):
     map = data.get("map_label", Game.BoardMaps.AUTUMN)
 
     # get faction choices, defaulting to full list
-    faction_options = data.get(
-        "faction_options", [faction.value for faction in Faction]
-    )
+    faction_options_data = data.get("faction_options")
+    if faction_options_data:
+        faction_options = [item["faction"] for item in faction_options_data]
+    else:
+        faction_options = [faction.value for faction in Faction]
+
     game = create_new_game(owner=user, map=map, faction_options=faction_options)
     return Response({"game_id": game.pk}, status=status.HTTP_201_CREATED)
 
@@ -63,6 +66,9 @@ def join_game(request: Request, game_id: int):
     except Game.DoesNotExist:
         raise NotFound("Game does not exist")
     try:
+        player_count = Player.objects.filter(game=game).count()
+        faction_count = FactionChoiceEntry.objects.filter(game=game).count()
+        print(f"Join game debug: player_count={player_count}, faction_count={faction_count}")
         add_new_player_to_game(game, user)
     except ValueError as e:
         raise ValidationError({"detail": str(e)})
@@ -156,8 +162,8 @@ def list_joinable_games(request: Request):
 @api_view(["POST"])
 def create_demo_game(request: Request):
     """
-    Creates a new demo game, adds user1, user2, user3. 
-    Assigns them Cats, Birds, and WA respectively, and starts the game.
+    Creates a new demo game, adds user1, user2, user3, user4. 
+    Assigns them Cats, Birds, WA, and Crows respectively, and starts the game.
     """
     if request.user.is_anonymous:
         raise PermissionDenied("User must be logged in to create a demo game")
@@ -172,15 +178,16 @@ def create_demo_game(request: Request):
         user1 = User.objects.get(username="user1")
         user2 = User.objects.get(username="user2")
         user3 = User.objects.get(username="user3")
+        user4 = User.objects.get(username="user4")
     except User.DoesNotExist:
         # If the users don't exist for some reason, hard fail.
-        raise ValidationError({"detail": "Demo users (user1, user2, user3) not found in the system."})
+        raise ValidationError({"detail": "Demo users (user1, user2, user3, user4) not found in the system."})
 
     # 3. Add users to the game
     # The owner (request.user) might be one of user1, user2, or user3. 
     # create_new_game already adds the owner as a player. 
     # We should ensure we don't add them twice or crash.
-    for u in [user1, user2, user3]:
+    for u in [user1, user2, user3, user4]:
         # Only add if they aren't already a player
         if not Player.objects.filter(game=game, user=u).exists():
             add_new_player_to_game(game, u)
@@ -190,7 +197,8 @@ def create_demo_game(request: Request):
     faction_map = {
         user1: Faction.CATS,
         user2: Faction.BIRDS,
-        user3: Faction.WOODLAND_ALLIANCE
+        user3: Faction.WOODLAND_ALLIANCE,
+        user4: Faction.CROWS
     }
     
     for u, faction_val in faction_map.items():

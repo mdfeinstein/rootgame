@@ -15,6 +15,8 @@ from game.models.game_models import (
 from game.transactions.general import craft_card
 
 
+from game.models.birds.player import BirdLeader
+
 class CraftingLogicTests(TestCase):
     def setUp(self):
         self.user = User.objects.create(username="testuser")
@@ -22,6 +24,7 @@ class CraftingLogicTests(TestCase):
         self.player = Player.objects.create(
             game=self.game, faction=Faction.BIRDS, user=self.user
         )
+        BirdLeader.objects.create(player=self.player, leader=BirdLeader.BirdLeaders.DESPOT.value, active=True)
         self.fox_clearing = Clearing.objects.create(
             game=self.game, suit=Suit.RED, clearing_number=1
         )  # RED=FOX

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .client import RootGameClient
+from game.tests.client import RootGameClient
 from game.models.game_models import Faction, Player, CraftedCardEntry, Clearing, Warrior, Card, HandEntry
 from game.tests.my_factories import GameSetupWithFactionsFactory, CardFactory, CraftedCardEntryFactory, HandEntryFactory
 from game.game_data.cards.exiles_and_partisans import CardsEP
@@ -27,6 +27,10 @@ class PropagandaBureauViewTestCase(TestCase):
 
         # Place a Cat warrior in a Fox clearing (Clearing 1)
         self.clearing = Clearing.objects.get(game=self.game, clearing_number=1)
+        
+        # Clear any existing warriors from setup
+        Warrior.objects.filter(clearing=self.clearing).delete()
+        
         Warrior.objects.create(player=self.cats_player, clearing=self.clearing)
 
         # Set Birds turn and phase to Daylight
@@ -53,17 +57,17 @@ class PropagandaBureauViewTestCase(TestCase):
         response = self.birds_client.get(f"{self.birds_client.base_route}?game_id={self.game.id}")
         self.assertEqual(response.status_code, 200)
         self.birds_client.step = response.data
-        self.assertEqual(response.data["name"], "pick-card")
+        self.assertEqual(response.data["name"], "pick_card")
         
         # 2. SUBMIT card -> pick-clearing
         response = self.birds_client.submit_action({"card": CardsEP.AMBUSH_RED.name})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "pick-clearing")
+        self.assertEqual(response.data["name"], "pick_clearing")
         
         # 3. SUBMIT clearing -> pick-opponent
         response = self.birds_client.submit_action({"clearing_number": 1})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "pick-opponent")
+        self.assertEqual(response.data["name"], "pick_opponent")
         
         # 4. SUBMIT opponent -> completed
         response = self.birds_client.submit_action({"faction": Faction.CATS.value})

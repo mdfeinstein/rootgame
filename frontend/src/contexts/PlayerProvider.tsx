@@ -3,12 +3,13 @@ import { GameContext } from "./GameProvider";
 import { type Faction } from "../data/frontend_types";
 import { useQuery } from "@tanstack/react-query";
 
-type FactionStub = "ca" | "bi" | "wa";
+type FactionStub = "ca" | "bi" | "wa" | "cr";
 
 const FactionStubToFaction: Record<FactionStub, Faction> = {
   ca: "Cats",
   bi: "Birds",
   wa: "WA",
+  cr: "Crows",
 };
 
 const PlayerContext = createContext<{ faction: Faction | null }>({

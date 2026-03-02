@@ -90,6 +90,9 @@ def get_turn_info(request, game_id: int):
 @api_view(["GET"])
 def get_current_action(request, game_id: int):
     """provides the route for the current action"""
+@api_view(["GET"])
+def get_current_action(request, game_id: int):
+    """provides the route for the current action"""
     # grab game
     try:
         game = Game.objects.get(pk=game_id)

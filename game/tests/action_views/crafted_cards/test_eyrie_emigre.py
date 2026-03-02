@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .client import RootGameClient
+from game.tests.client import RootGameClient
 from game.models.game_models import Faction, Player, CraftedCardEntry, Clearing, Warrior
 from game.tests.my_factories import GameSetupWithFactionsFactory, CardFactory, CraftedCardEntryFactory
 from game.game_data.cards.exiles_and_partisans import CardsEP
@@ -24,6 +24,10 @@ class EyrieEmigreViewTestCase(TestCase):
         # Place some warriors for move
         self.clearing1 = Clearing.objects.get(game=self.game, clearing_number=1)
         self.clearing2 = Clearing.objects.get(game=self.game, clearing_number=2)
+        
+        # Clear any existing warriors from setup
+        Warrior.objects.filter(clearing__in=[self.clearing1, self.clearing2]).delete()
+        
         Warrior.objects.create(player=self.birds_player, clearing=self.clearing1)
         # Add enemy to destination so battle is possible
         Warrior.objects.create(player=self.cats_player, clearing=self.clearing2)
@@ -62,7 +66,7 @@ class EyrieEmigreViewTestCase(TestCase):
         response = self.birds_client.get(f"{self.birds_client.base_route}?game_id={self.game.id}")
         self.assertEqual(response.status_code, 200)
         self.birds_client.step = response.data
-        self.assertEqual(response.data["name"], "use-or-skip")
+        self.assertEqual(response.data["name"], "use_or_skip")
         
         # 2. SUBMIT "use" -> origin
         response = self.birds_client.submit_action({"choice": "use"})
@@ -79,10 +83,10 @@ class EyrieEmigreViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "count")
         
-        # 5. SUBMIT count -> battle-choice
+        # 5. SUBMIT count -> battle_choice
         response = self.birds_client.submit_action({"number": 1})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "battle-choice")
+        self.assertEqual(response.data["name"], "battle_choice")
         
         # 6. SUBMIT battle choice -> battle
         response = self.birds_client.submit_action({"choice": "battle"})

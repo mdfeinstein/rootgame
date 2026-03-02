@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .client import RootGameClient
+from game.tests.client import RootGameClient
 from game.models.game_models import Faction, Player, CraftedCardEntry, Card, DiscardPileEntry
 from game.tests.my_factories import GameSetupWithFactionsFactory, CardFactory, CraftedCardEntryFactory, DiscardPileEntryFactory
 from game.game_data.cards.exiles_and_partisans import CardsEP
@@ -59,12 +59,12 @@ class InformantsViewTestCase(TestCase):
         response = self.birds_client.get(f"{self.birds_client.base_route}?game_id={self.game.id}")
         self.assertEqual(response.status_code, 200)
         self.birds_client.step = response.data
-        self.assertEqual(response.data["name"], "use-or-skip")
+        self.assertEqual(response.data["name"], "use_or_skip")
         
         # 2. SUBMIT "use" -> pick-ambush-card
         response = self.birds_client.submit_action({"choice": "use"})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "pick-ambush-card")
+        self.assertEqual(response.data["name"], "pick_ambush_card")
         
         # 3. SUBMIT ambush -> completed
         response = self.birds_client.submit_action({"card": CardsEP.AMBUSH_RED.name})

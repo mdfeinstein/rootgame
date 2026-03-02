@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .client import RootGameClient
+from game.tests.client import RootGameClient
 from game.models.game_models import Faction, Player, CraftedCardEntry, Clearing, Warrior, CraftedItemEntry, Item
 from game.tests.my_factories import GameSetupWithFactionsFactory, CardFactory, CraftedCardEntryFactory, ItemFactory, CraftedItemEntryFactory
 from game.game_data.cards.exiles_and_partisans import CardsEP
@@ -28,6 +28,10 @@ class LeagueOfAdventurersViewTestCase(TestCase):
         # Place some warriors
         self.clearing1 = Clearing.objects.get(game=self.game, clearing_number=1)
         self.clearing2 = Clearing.objects.get(game=self.game, clearing_number=2)
+        
+        # Clear any existing warriors from setup
+        Warrior.objects.filter(clearing__in=[self.clearing1, self.clearing2]).delete()
+        
         Warrior.objects.create(player=self.birds_player, clearing=self.clearing1)
         
         # Ensure they are adjacent
@@ -58,27 +62,27 @@ class LeagueOfAdventurersViewTestCase(TestCase):
         response = self.birds_client.get(f"{self.birds_client.base_route}?game_id={self.game.id}")
         self.assertEqual(response.status_code, 200)
         self.birds_client.step = response.data
-        self.assertEqual(response.data["name"], "pick-item")
+        self.assertEqual(response.data["name"], "pick_item")
         
         # 2. SUBMIT item -> pick-action
         response = self.birds_client.submit_action({"select": str(self.item_entry.id)})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "pick-action")
+        self.assertEqual(response.data["name"], "pick_action")
         
         # 3. SUBMIT "move" -> pick-origin
         response = self.birds_client.submit_action({"choice": "move"})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "pick-origin")
+        self.assertEqual(response.data["name"], "pick_origin")
         
         # 4. SUBMIT origin -> pick-destination
         response = self.birds_client.submit_action({"clearing_number": 1})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "pick-destination")
+        self.assertEqual(response.data["name"], "pick_destination")
         
         # 5. SUBMIT destination -> pick-count
         response = self.birds_client.submit_action({"clearing_number": 2})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "pick-count")
+        self.assertEqual(response.data["name"], "pick_count")
         
         # 6. SUBMIT count -> completed
         response = self.birds_client.submit_action({"number": 1})

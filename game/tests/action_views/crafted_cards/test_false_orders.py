@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .client import RootGameClient
+from game.tests.client import RootGameClient
 from game.models.game_models import Faction, Player, CraftedCardEntry, Clearing, Warrior
 from game.tests.my_factories import GameSetupWithFactionsFactory, CardFactory, CraftedCardEntryFactory
 from game.game_data.cards.exiles_and_partisans import CardsEP
@@ -24,6 +24,10 @@ class FalseOrdersViewTestCase(TestCase):
         # Place some warriors for move
         self.clearing1 = Clearing.objects.get(game=self.game, clearing_number=1)
         self.clearing2 = Clearing.objects.get(game=self.game, clearing_number=2)
+        
+        # Clear any existing warriors from setup
+        Warrior.objects.filter(clearing__in=[self.clearing1, self.clearing2]).delete()
+        
         Warrior.objects.create(player=self.cats_player, clearing=self.clearing1)
         
         # Ensure they are adjacent
@@ -50,18 +54,18 @@ class FalseOrdersViewTestCase(TestCase):
         response = self.birds_client.get(f"{self.birds_client.base_route}?game_id={self.game.id}")
         self.assertEqual(response.status_code, 200)
         self.birds_client.step = response.data
-        self.assertEqual(response.data["name"], "pick-origin")
+        self.assertEqual(response.data["name"], "pick_origin")
         
         # 2. SUBMIT origin -> pick-faction
         # Client needs to send 'select' because that's what payload_details says
         response = self.birds_client.submit_action({"select": "1"})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "pick-faction")
+        self.assertEqual(response.data["name"], "pick_faction")
         
         # 3. SUBMIT faction -> pick-destination
         response = self.birds_client.submit_action({"faction": "ca"})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "pick-destination")
+        self.assertEqual(response.data["name"], "pick_destination")
         
         # 4. SUBMIT destination -> completed
         response = self.birds_client.submit_action({"clearing_number": 2})

@@ -1,11 +1,4 @@
-import React, {
-  createContext,
-  use,
-  useContext,
-  useEffect,
-  useMemo,
-  type JSX,
-} from "react";
+import { useContext, useEffect, useMemo } from "react";
 
 export type Point = { x: number; y: number };
 
@@ -19,18 +12,14 @@ import {
   defaultLinks,
   waterLinks,
 } from "../../data/autumn_map";
-import { useQuery } from "@tanstack/react-query";
 import { Clearing, type ClearingProps } from "./Clearing";
 import { Path } from "./Path";
 import { BuildingSlot } from "./BuildingSlot";
 import { WarriorSlot } from "./WarriorSlot";
-import { TokenSlot, type TokenInfo } from "./TokenSlot";
+import { TokenSlot } from "./TokenSlot";
 import useWarriorTable from "../../hooks/useWarriorTable";
 import useTokenTable from "../../hooks/useTokenTable";
-import useBuildingTable, {
-  type BuildingTableType,
-} from "../../hooks/useBuildingTable";
-import { Roost, Sawmill } from "./Buildings";
+import useBuildingTable from "../../hooks/useBuildingTable";
 import type { Faction } from "../../data/frontend_types";
 import { useTurnInfoQuery } from "../../hooks/useTurnInfoQuery";
 import { GameContext } from "../../contexts/GameProvider";
@@ -38,6 +27,7 @@ import { Paper } from "@mantine/core";
 
 import { useClearingsQuery } from "../../hooks/useClearingsQuery";
 import type { BuildingType } from "./BuildingSlot";
+import { useCrowPlayerQuery } from "../../hooks/useCrowPlayerQuery";
 
 // Board component: positions, nodes, links, simple viewbox scaling
 export default function SvgBoard({
@@ -54,25 +44,18 @@ export default function SvgBoard({
   const { gameId, isGameStarted } = useContext(GameContext);
   const turnInfo = useTurnInfoQuery(gameId, isGameStarted);
   const { data: clearingsData } = useClearingsQuery(gameId, isGameStarted);
+  const { privateInfo } = useCrowPlayerQuery(gameId, isGameStarted);
 
   useEffect(() => {
     if (!turnInfo.data) return;
     console.log(turnInfo.data);
   }, [turnInfo.data]);
 
-  const factionList: Faction[] = ["Cats", "Birds", "WA"];
+  const factionList: Faction[] = ["Cats", "Birds", "WA", "Crows"];
   // create list of clearingProps
-  const { warriorTable, isSuccess: isSuccessWarrior } = useWarriorTable(
-    gameId,
-    factionList,
-    isGameStarted,
-  );
+  const { warriorTable } = useWarriorTable(gameId, factionList, isGameStarted);
 
-  const { tokenTable, isSuccess: isSuccessToken } = useTokenTable(
-    gameId,
-    factionList,
-    isGameStarted,
-  );
+  const { tokenTable } = useTokenTable(gameId, factionList, isGameStarted);
 
   const accumulatedTokens: Record<
     number,
@@ -178,7 +161,6 @@ export default function SvgBoard({
       };
     });
   }, [mapName, width, height]);
-  const sq_size = 0.3;
 
   return (
     <Paper
@@ -240,17 +222,33 @@ export default function SvgBoard({
                   }}
                 />
               ))}
-              {accumulatedTokens[clearingProp.clearingNumber]?.map((t, i) => (
-                <TokenSlot
-                  key={`t-${i}`}
-                  {...tokenSlotMap[clearingProp.clearingNumber][i]}
-                  tokenInfo={{
-                    faction: t.faction,
-                    tokenType: t.tokenType,
-                    count: t.count,
-                  }}
-                />
-              ))}
+              {accumulatedTokens[clearingProp.clearingNumber]?.map((t, i) => {
+                let tooltip = undefined;
+                if (t.faction === "Crows" && t.tokenType === "?") {
+                  const privatePlot = privateInfo?.facedown_plots?.find(
+                    (p) =>
+                      p.clearing_number === clearingProp.clearingNumber &&
+                      p.is_facedown,
+                  );
+                  if (privatePlot) {
+                    tooltip =
+                      privatePlot.plot_type.charAt(0).toUpperCase() +
+                      privatePlot.plot_type.slice(1);
+                  }
+                }
+                return (
+                  <TokenSlot
+                    key={`t-${i}`}
+                    {...tokenSlotMap[clearingProp.clearingNumber][i]}
+                    tokenInfo={{
+                      faction: t.faction,
+                      tokenType: t.tokenType,
+                      count: t.count,
+                    }}
+                    tooltip={tooltip}
+                  />
+                );
+              })}
             </Clearing>
           ))}
         </g>

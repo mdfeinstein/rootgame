@@ -7,6 +7,7 @@ import CraftedCardBadge from "../cards/CraftedCardBadge";
 import CatPlayerBoard from "../playerboards/CatPlayerBoard";
 import WaPlayerBoard from "../playerboards/WaPlayerBoard";
 import BirdPlayerBoard from "../playerboards/BirdPlayerBoard";
+import CrowsPlayerBoard from "../playerboards/CrowsPlayerBoard";
 
 const FACTION_BOARDS: Record<string, React.FC<any>> = {
   ca: CatPlayerBoard,
@@ -15,11 +16,18 @@ const FACTION_BOARDS: Record<string, React.FC<any>> = {
   Birds: BirdPlayerBoard,
   wa: WaPlayerBoard,
   WoodlandAlliance: WaPlayerBoard,
+  cr: CrowsPlayerBoard,
+  Crows: CrowsPlayerBoard,
 };
 
 const PlayerIcon = ({ player }: { player: Player }) => {
   // Reuse the suit mapping logic for colors/icons
-  const colors = { ca: "orange.5", bi: "blue.5", wa: "green.3" };
+  const colors = {
+    ca: "orange.5",
+    bi: "blue.5",
+    wa: "green.3",
+    cr: "indigo.6",
+  };
   const suit_colors: Record<string, string> = {
     o: "orange.6",
     r: "red.7",

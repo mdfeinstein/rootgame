@@ -26,6 +26,18 @@ from game.views.action_views.wa.birdsong import RevoltView, SpreadSympathyView
 from game.views.action_views.wa.daylight import WADaylightActionsView
 from game.views.action_views.wa.evening import WAOperationsView
 from game.views.action_views.wa.outrage import OutrageView
+from game.views.action_views.crows.birdsong import (
+    CrowsCraftingView,
+    CrowsFlippingView,
+    CrowsRecruitingView,
+    CrowsManualRecruitView
+)
+from game.views.action_views.crows.daylight import CrowsDaylightActionsView
+from game.views.action_views.crows.evening import CrowsExertView, CrowsDiscardingView
+from game.views.action_views.setup.crows import (
+    CrowsPickClearingView,
+    CrowsConfirmCompletedSetupView,
+)
 from game.views.gamestate_views import (
     get_bird_player_public,
     get_cat_player_public,
@@ -33,6 +45,10 @@ from game.views.gamestate_views import (
     get_discard_pile,
     get_player_hand,
     get_wa_player_public,
+)
+from game.views.gamestate_views.crows import (
+    get_crows_player_public,
+    get_crows_player_private,
 )
 
 from game.views.gamestate_views.general import (
@@ -90,6 +106,8 @@ urlpatterns = [
     path("api/cats/player-info/<int:game_id>/", get_cat_player_public),
     path("api/wa/player-info/<int:game_id>/", get_wa_player_public),
     path("api/wa/player-private-info/<int:game_id>/", get_wa_player_private),
+    path("api/crows/player-info/<int:game_id>/", get_crows_player_public),
+    path("api/crows/player-private-info/<int:game_id>/", get_crows_player_private),
     path("api/birds/player-info/<int:game_id>/", get_bird_player_public),
     path("api/clearings/<int:game_id>/", get_clearings),
     path("api/discard-pile/<int:game_id>/", get_discard_pile),
@@ -161,6 +179,23 @@ register_action(
     "birds-setup-confirm-completed-setup",
     BirdsConfirmCompletedSetupView,
     "api/birds/setup/confirm-completed-setup/",
+    urlpatterns,
+)
+
+
+
+# Crows setup
+register_action(
+    "crows-setup-pick-clearing",
+    CrowsPickClearingView,
+    "api/crows/setup/pick-clearing/",
+    urlpatterns,
+)
+
+register_action(
+    "crows-setup-confirm-completed-setup",
+    CrowsConfirmCompletedSetupView,
+    "api/crows/setup/confirm-completed-setup/",
     urlpatterns,
 )
 register_action(
@@ -256,6 +291,59 @@ register_action(
     "api/battle/",
     urlpatterns,
 )
+
+# Crows Actions
+register_action(
+    "crows-crafting",
+    CrowsCraftingView,
+    "api/crows/action/crafting/",
+    urlpatterns,
+)
+register_action(
+    "crows-flipping",
+    CrowsFlippingView,
+    "api/crows/action/flipping/",
+    urlpatterns,
+)
+register_action(
+    "crows-recruiting",
+    CrowsRecruitingView,
+    "api/crows/action/recruiting/",
+    urlpatterns,
+)
+register_action(
+    "crows-manual-recruit",
+    CrowsManualRecruitView,
+    "api/crows/action/manual-recruit/",
+    urlpatterns,
+)
+
+from game.views.action_views.crows.raid import CrowsPlaceRaidWarriorsView
+register_action(
+    "crows-place-raid-warriors",
+    CrowsPlaceRaidWarriorsView,
+    "api/crows/action/place-raid-warriors/",
+    urlpatterns,
+)
+register_action(
+    "crows-daylight",
+    CrowsDaylightActionsView,
+    "api/crows/action/daylight/",
+    urlpatterns,
+)
+register_action(
+    "crows-exert",
+    CrowsExertView,
+    "api/crows/action/exert/",
+    urlpatterns,
+)
+register_action(
+    "crows-discard-cards",
+    CrowsDiscardingView,
+    "api/crows/action/discard/",
+    urlpatterns,
+)
+
 register_action(
     "outrage",
     OutrageView,
@@ -285,6 +373,8 @@ from game.views.action_views.crafted_cards.informants import InformantsView
 from game.views.action_views.crafted_cards.eyrie_emigre import EyrieEmigreView
 from game.views.action_views.crafted_cards.partisans import PartisansView
 from game.views.action_views.crafted_cards.false_orders import FalseOrdersView
+from game.views.action_views.crafted_cards.false_orders import FalseOrdersView
+
 
 register_action(
     "propaganda-bureau",

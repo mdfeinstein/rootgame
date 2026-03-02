@@ -43,9 +43,9 @@ class SwapMeetView(GameActionView):
                 )
 
         return self.generate_step(
-            name="pick-opponent",
+            name="pick_opponent",
             prompt="Pick a player to take a random card from.",
-            endpoint="pick-opponent",
+            endpoint="pick_opponent",
             payload_details=[{"type": "select", "name": "opponent_faction"}],
             options=options,
             faction=Faction(player.faction),
@@ -58,9 +58,9 @@ class SwapMeetView(GameActionView):
         ]
 
         return self.generate_step(
-            name="pick-card-to-give",
+            name="pick_card_to_give",
             prompt="Pick a card to give back.",
-            endpoint="pick-card-to-give",
+            endpoint="pick_card_to_give",
             payload_details=[{"type": "card", "name": "card_name"}],
             options=options,
             faction=Faction(player.faction),
@@ -69,9 +69,9 @@ class SwapMeetView(GameActionView):
     def route_post(self, request, game_id: int, route: str, *args, **kwargs):
         player = self.player(request, game_id)
         self.faction = Faction(player.faction)
-        if route == "pick-opponent":
+        if route == "pick_opponent":
             return self.post_pick_opponent(request, game_id)
-        if route == "pick-card-to-give":
+        if route == "pick_card_to_give":
             return self.post_pick_card_to_give(request, game_id)
         raise ValidationError("Invalid route")
 

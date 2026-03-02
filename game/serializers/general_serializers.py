@@ -1,3 +1,5 @@
+from game.models.crows import CrowTurn
+from game.models.crows.setup import CrowsSimpleSetup
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from game.models.birds.setup import BirdsSimpleSetup
@@ -337,12 +339,14 @@ class GameStatusSerializer(serializers.Serializer):
                 Faction.CATS: CatsSimpleSetup,
                 Faction.BIRDS: BirdsSimpleSetup,
                 Faction.WOODLAND_ALLIANCE: None,  #
+                Faction.CROWS: CrowsSimpleSetup,
             }
         elif game.status == Game.GameStatus.SETUP_COMPLETED:
             turn_object_dict = {
                 Faction.CATS: CatTurn,
                 Faction.BIRDS: BirdTurn,
                 Faction.WOODLAND_ALLIANCE: WATurn,
+                Faction.CROWS: CrowTurn,
             }
         if current_player is not None:
             faction = Faction(current_player.faction)

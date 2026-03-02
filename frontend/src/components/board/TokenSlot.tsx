@@ -1,5 +1,6 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { ClearingContext } from "./Clearing";
+import { Tooltip } from "@mantine/core";
 
 import { factionToColor } from "./WarriorTroop";
 import type { Faction } from "../../data/frontend_types";
@@ -14,13 +15,13 @@ export const TokenSlot = ({
   y,
   size,
   tokenInfo,
-  children,
+  tooltip,
 }: {
   x: number;
   y: number;
   size: number;
   tokenInfo: TokenInfo | null;
-  children?: React.ReactNode;
+  tooltip?: string;
 }) => {
   const ctx = useContext(ClearingContext);
   if (!ctx) throw new Error("Square must be nested inside Circle");
@@ -62,16 +63,18 @@ export const TokenSlot = ({
   );
 
   return (
-    <>
-      <rect
-        x={absX}
-        y={absY}
-        width={absSize}
-        height={absSize}
-        stroke="none"
-        fill="none"
-      />
-      {token}
-    </>
+    <Tooltip label={tooltip} disabled={!tooltip} openDelay={0} withArrow>
+      <g>
+        <rect
+          x={absX}
+          y={absY}
+          width={absSize}
+          height={absSize}
+          stroke="none"
+          fill="none"
+        />
+        {token}
+      </g>
+    </Tooltip>
   );
 };

@@ -79,8 +79,8 @@ const DemoQuickStart = () => {
             </Title>
           </Group>
           <Text size="sm" c="dimmed">
-            Instantly create and start a 3-player demo game (Cats, Birds, WA)
-            with users `user1`, `user2`, and `user3`.
+            Instantly create and start a 4-player demo game (Cats, Birds, WA,
+            Crows) with users `user1`, `user2`, `user3`, and `user4`.
           </Text>
         </Stack>
         <Button

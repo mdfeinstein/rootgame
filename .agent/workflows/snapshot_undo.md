@@ -52,6 +52,9 @@ def get_all_game_objects(game: Game):
     # ... existing player loop ...
     for player in players:
         # 3. Add Player Objects (if related to Player)
+
+        # NOTE: If adding Faction-specific pieces (Tokens, Buildings), put them under
+        # the "Faction Specific Assets & Pieces" section, NOT under the intermediate base classes section!
         objects.extend(NewToken.objects.filter(player=player))
 ```
 

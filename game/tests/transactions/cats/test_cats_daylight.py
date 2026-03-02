@@ -220,6 +220,7 @@ class CatMovementTests(CatBaseTestCase):
 
 class CatActionTests(CatBaseTestCase):
     def test_birds_for_hire_adds_actions(self):
+        HandEntry.objects.filter(player=self.player).delete()
         card_enum = CardsEP.AMBUSH_WILD
         card_obj = CardFactory(game=self.game, card_type=card_enum.name)
         HandEntry.objects.create(player=self.player, card=card_obj)

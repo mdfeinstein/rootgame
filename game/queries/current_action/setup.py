@@ -1,6 +1,7 @@
 from django.urls import reverse
 from game.models.birds.setup import BirdsSimpleSetup
 from game.models.cats.setup import CatsSimpleSetup
+from game.models.crows.setup import CrowsSimpleSetup
 from game.models.events.setup import GameSimpleSetup
 from game.models.game_models import Faction, Game, Player
 
@@ -16,10 +17,18 @@ def get_setup_action(game: Game) -> str | None:
             return get_cats_setup_action(game)
         case GameSimpleSetup.GameSetupStatus.BIRDS_SETUP:
             return get_birds_setup_action(game)
-        case GameSimpleSetup.GameSetupStatus.ALL_SETUP_COMPLETED:
+        case GameSimpleSetup.GameSetupStatus.WA_SETUP:
+            # WA setup is now fully automatic and bypassed in next_player_setup
+            return None
+        case GameSimpleSetup.GameSetupStatus.VB_SETUP:
+            # Placeholder until VB setup views are implemented
+            return None
+        case GameSimpleSetup.GameSetupStatus.CROWS_SETUP:
+            return get_crows_setup_action(game)
+        case GameSimpleSetup.GameSetupStatus.COMPLETED:
             return None
         case _:
-            raise ValueError("Invalid setup status")
+            raise ValueError(f"Invalid setup status: {setup.status}")
 
 
 def get_cats_setup_action(game: Game) -> str | None:
@@ -50,3 +59,14 @@ def get_birds_setup_action(game: Game) -> str | None:
             return reverse("birds-setup-confirm-completed-setup")
         case _:
             raise ValueError("Invalid birds setup step")
+def get_crows_setup_action(game: Game) -> str | None:
+    """Return the current crows setup action route for the game or raises if unexpected step"""
+    crow_player = Player.objects.get(game=game, faction=Faction.CROWS)
+    crows_setup = CrowsSimpleSetup.objects.get(player=crow_player)
+    match crows_setup.step:
+        case CrowsSimpleSetup.Steps.WARRIOR_PLACE:
+            return reverse("crows-setup-pick-clearing")
+        case CrowsSimpleSetup.Steps.PENDING_CONFIRMATION:
+            return reverse("crows-setup-confirm-completed-setup")
+        case _:
+            raise ValueError("Invalid crows setup step")
