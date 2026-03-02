@@ -11,7 +11,7 @@ The game's Undo/Redo functionality relies on a **Snapshot/restore** mechanism.
 
 ## 🚨 Critical Rule: All Game State Models Must Be Captured
 
-If you add a **new Database Model** that stores game state (e.g., a new token type, a new card supply, a tracking table), you **MUST** add it to `game/utils/snapshot.py`.
+If you add a **new Database Model** that stores game state (e.g., a new token type, a new card supply, a tracking table, or an **`Event` model** like `OutrageEvent`), you **MUST** add it to `game/utils/snapshot.py`.
 
 ### What happens if you forget?
 

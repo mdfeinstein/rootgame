@@ -12,7 +12,8 @@ Structure:
 
 - Provides client with the first step of an action via get request. By default, will use self.first_step if it's static. If the first step may vary, calculate it in get request and return. If faction is static, provide it as self.faction. Else, calculate it in the get or post methods
 - Post requests are routed to the appropriate method (route_post) and provide the next step or a "completed" message.
-- validation methods to validate player and timing can be overridden and shoudl be used.
+- validation methods to validate player and timing can be overridden and should be used. Ensure validation strictly checks phase types using `isinstance()` to avoid cross-phase step name collisions (e.g. `validate_step` logic).
+- If the game state is interrupted by a pending `Event` model, the view's get and post methods must resolve the event before allowing standard turn actions.
 - generate_step and generate_completed_step methods provide interface for generating correct step structure.
 - transaction functions that effect the game state change should use atomic_game_action (game/decorators/transaction_decorator)
 

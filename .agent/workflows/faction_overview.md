@@ -12,5 +12,6 @@ When tasked with adding a new faction to the game, follow these sequential steps
 4. **Current Action & Game Loop (`/faction_views`)**: You MUST hook the faction's logic into `game/queries/get_current_action.py` (or related query). This dictates what the client sees as their "active" action (e.g., standard turn vs. resolving an event).
 5. **API Endpoints (`/faction_views`)**: Stand up DRF views in `game/views/action_views/[faction]/` and connect them to urls, linking frontend requests to your transactions.
 6. **Frontend Integration (`/faction_frontend`)**: Create `[Faction]PlayerBoard.tsx`, map specific pieces physically on the `Clearing` components, and write user Prompts to handle complex inputs.
+7. **Demo Integration**: Register the new Faction inside `create_demo_game` within `game/views/setup_views/general.py`. Then update the frontend Demo components (`DevSignIn.tsx`, `DemoUserSwitch.tsx`, `DemoQuickStart.tsx`) so testers can instantly load into the faction.
 
 _Refer to the other faction-specific workflow guides using `view_file` on them to dive into the technical execution of each step._

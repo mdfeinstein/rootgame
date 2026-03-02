@@ -16,3 +16,6 @@ Serializers translate the faction's Django models into JSON format so the fronte
    - Without this step, the frontend will never receive or see the faction's data when it boots up or parses a turn.
 6. **Event Serialization**:
    - If the faction uses `Event` models (from step 1), build serializers for them in `game/serializers/event_serializers.py`.
+7. **Private State (Hidden Info)**:
+   - If the faction has hidden components (like facedown tokens or unrevealed cards), create a `[Faction]PrivateSerializer` in `game/serializers/[faction]_serializers.py`.
+   - Build a matching private API view (e.g., `get_[faction]_player_private`) inside `game/views/gamestate_views/[faction].py` and register it in `game/urls.py`.
