@@ -59,12 +59,12 @@ Validation of timing and the player making requests is handled by the custom Gam
 
 ## State of the Project
 
-Games can be created and played, but right now there are only 3 factions: Cats, Birds, and Woodland Alliance. All basic game features are implemented and the core functions have been well tested. More factions will be added, more features will be provided, and the UI will be improved over time.
+Games can be created and played, but right now there are only 4 factions: Cats, Birds, Woodland Alliance, and Crows. All basic game features are implemented and the core functions have been well tested. More factions will be added, more features will be provided, and the UI will be improved over time.
 
 #### Implemented Features:
 
 - Basic Setup Rules
-- 3 factions have been fully implemented: Cats, Birds, and Woodland Alliance.
+- 4 factions have been fully implemented: Cats, Birds, Woodland Alliance, and Crows.
 - Cards can be crafted.
   - Cards with passive effects are checked for and handled in the appropriate business logic.
   - Cards with active effects also work, launching events if the action has a narrow timing window or are simply made available when usable if they have a broader timing window.
