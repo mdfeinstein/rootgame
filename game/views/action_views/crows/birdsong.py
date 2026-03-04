@@ -1,4 +1,4 @@
-from game.models.events import Event
+from game.models.events import Event, EventType
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -10,15 +10,19 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.decorators.transaction_decorator import atomic_game_action
 from game.views.action_views.general import GameActionView
 from game.queries.crows.turn import validate_step
-from game.queries.crows.crafting import is_able_to_be_crafted, validate_crafting_pieces_satisfy_requirements
+from game.queries.crows.crafting import (
+    is_able_to_be_crafted,
+    validate_crafting_pieces_satisfy_requirements,
+)
 from game.transactions.crows.birdsong import (
-    crows_craft_card, 
+    crows_craft_card,
     end_craft_step,
     flip_plot,
     end_flip_step,
     crows_recruit,
-    manual_recruit
+    manual_recruit,
 )
+
 
 class CrowsCraftingView(GameActionView):
     action_name = "CROWS_CRAFTING"
@@ -51,11 +55,11 @@ class CrowsCraftingView(GameActionView):
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
-            
+
         card = CardsEP[request.data["card_to_craft"]]
         if not is_able_to_be_crafted(player, card):
             raise ValidationError("Not enough plot tokens to craft this card")
-            
+
         suits_needed = [cost.label for cost in card.value.cost]
         prompt = f"Select plot tokens (revealed or hidden) to craft this card. Needed: {suits_needed}."
         return self.generate_step(
@@ -76,17 +80,21 @@ class CrowsCraftingView(GameActionView):
         old_clearing_numbers = request.data["plot_clearing_numbers"]
         new_clearing_number = int(request.data["plot_clearing_number"])
         clearing_numbers = old_clearing_numbers + [new_clearing_number]
-        
+
         try:
             plots = [
                 PlotToken.objects.get(player=player, clearing__clearing_number=c_num)
                 for c_num in clearing_numbers
             ]
         except PlotToken.DoesNotExist:
-            raise ValidationError({"detail": "Plot token not found in one or more selected clearings"})
-            
+            raise ValidationError(
+                {"detail": "Plot token not found in one or more selected clearings"}
+            )
+
         try:
-            all_pieces_satisfied = validate_crafting_pieces_satisfy_requirements(player, card, plots)
+            all_pieces_satisfied = validate_crafting_pieces_satisfy_requirements(
+                player, card, plots
+            )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
 
@@ -97,12 +105,10 @@ class CrowsCraftingView(GameActionView):
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
-            
+
         # otherwise, continue to select pieces
         suits_needed = [cost.label for cost in card.value.cost]
-        suits_selected = [
-            Suit(plot.clearing.suit).label for plot in plots
-        ]
+        suits_selected = [Suit(plot.clearing.suit).label for plot in plots]
         prompt = f"Select more crafting pieces. Needed: {suits_needed}. Selected: {suits_selected}"
         return self.generate_step(
             "select_pieces",
@@ -148,20 +154,24 @@ class CrowsFlippingView(GameActionView):
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
-            
+
         clearing_number = int(request.data["plot_clearing"])
         try:
             token = PlotToken.objects.get(
-                player=player, is_facedown=True, clearing__clearing_number=clearing_number
+                player=player,
+                is_facedown=True,
+                clearing__clearing_number=clearing_number,
             )
         except PlotToken.DoesNotExist:
-            raise ValidationError({"detail": "No facedown plot token found in this clearing."})
-            
+            raise ValidationError(
+                {"detail": "No facedown plot token found in this clearing."}
+            )
+
         try:
             atomic_game_action(flip_plot)(player, token)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
-            
+
         return self.generate_completed_step()
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):
@@ -191,7 +201,7 @@ class CrowsRecruitingView(GameActionView):
     def post_card(self, request, game_id: int):
         player = self.player(request, game_id)
         card = CardsEP[request.data["card_used"]]
-        
+
         # If it's a bird card, prompt the user to select the suit they are activating as
         if Suit(card.value.suit) == Suit.WILD:
             return self.generate_step(
@@ -204,7 +214,7 @@ class CrowsRecruitingView(GameActionView):
                     {"value": "fox", "label": "Fox"},
                     {"value": "mouse", "label": "Mouse"},
                     {"value": "rabbit", "label": "Rabbit"},
-                ]
+                ],
             )
 
         # Otherwise recruit directly
@@ -213,35 +223,22 @@ class CrowsRecruitingView(GameActionView):
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
 
-        # Check if they entered an event from partial fulfilling or just finished the step
-        from game.models.events.crows import CrowRecruitEvent
-        from game.models.events.event import Event, EventType
-        active_event = Event.objects.filter(
-            game=self.game(game_id), 
-            event_type=EventType.CROW_RECRUIT, 
-            is_completed=False,
-            acting_player=player
-        ).first()
-
-        if active_event:
-            return self.generate_completed_step() # it will get re-routed nicely to manual recruiter view
-
         return self.generate_completed_step()
-        
+
     def post_bird_suit(self, request, game_id: int):
         player = self.player(request, game_id)
         card = CardsEP[request.data["card_used"]]
         suit_string = request.data["selected_suit"]
         if not suit_string:
             raise ValidationError("You must provide a chosen suit for a bird card")
-        
+
         target_suit = Suit(suit_string)
-        
+
         try:
             atomic_game_action(crows_recruit)(player, card, target_suit)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
-            
+
         return self.generate_completed_step()
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):
@@ -256,21 +253,22 @@ class CrowsManualRecruitView(GameActionView):
     def get(self, request):
         game_id = int(request.query_params.get("game_id"))
         player = self.player_by_faction(request, game_id)
-        
+
         from game.models.events.crows import CrowRecruitEvent
         from game.models.events.event import Event, EventType
+
         active_event = Event.objects.filter(
-            game=self.game(game_id), 
-            event_type=EventType.CROW_RECRUIT, 
+            game=self.game(game_id),
+            event_type=EventType.CROW_RECRUIT,
             is_completed=False,
-            acting_player=player
+            acting_player=player,
         ).first()
 
         if not active_event:
             raise ValidationError("No active recruit event")
-            
+
         recruit_event = CrowRecruitEvent.objects.get(event=active_event)
-        
+
         self.first_step = {
             "faction": self.faction.label,
             "name": "select_clearing",
@@ -288,18 +286,22 @@ class CrowsManualRecruitView(GameActionView):
     def post_clearing(self, request, game_id: int):
         player = self.player(request, game_id)
         clearing_number = int(request.data["clearing_number"])
-        
+
         from game.models.game_models import Clearing
+
         try:
-            clearing = Clearing.objects.get(game=self.game(game_id), clearing_number=clearing_number)
+            clearing = Clearing.objects.get(
+                game=self.game(game_id), clearing_number=clearing_number
+            )
         except Clearing.DoesNotExist:
             raise ValidationError("Clearing not found")
-            
+
         # grab the event again
         from game.models.events.event import Event, EventType
+
         active_event = Event.objects.filter(
-            game=self.game(game_id), 
-            type=EventType.CROW_RECRUIT, 
+            game=self.game(game_id),
+            type=EventType.CROW_RECRUIT,
             is_resolved=False,
         ).first()
 
@@ -315,7 +317,7 @@ class CrowsManualRecruitView(GameActionView):
         active_event.refresh_from_db()
         if active_event.is_resolved:
             return self.generate_completed_step()
-            
+
         return self.generate_completed_step()
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):
@@ -326,10 +328,9 @@ class CrowsManualRecruitView(GameActionView):
             raise ValidationError({"detail": str(e)})
         try:
             event = Event.objects.get(
-                game=self.game(game_id), 
-                type=EventType.CROW_RECRUIT, 
+                game=self.game(game_id),
+                type=EventType.CROW_RECRUIT,
                 is_resolved=False,
             )
         except Event.DoesNotExist:
             raise ValidationError("No active recruit event")
-
