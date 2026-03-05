@@ -41,7 +41,10 @@ const CraftedCardBadge = ({
         }}
         style={{ display: "inline-block" }}
       >
-        <Tooltip label={isDisabled ? "No crafted cards" : "View crafted cards"}>
+        <Tooltip
+          label={isDisabled ? "No crafted cards" : "View crafted cards"}
+          zIndex={1100}
+        >
           <Indicator
             label={count}
             size={16}
@@ -54,9 +57,7 @@ const CraftedCardBadge = ({
               color={isDisabled ? "gray" : "blue"}
               leftSection={<IconCards size={14} />}
               style={{ cursor: isDisabled ? "default" : "pointer" }}
-            >
-              Crafted
-            </Badge>
+            ></Badge>
           </Indicator>
         </Tooltip>
       </div>

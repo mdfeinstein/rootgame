@@ -16,7 +16,7 @@ import {
   Select,
   Container,
 } from "@mantine/core";
-import PlayerColumn from "../components/player/PlayerColumn";
+import PlayerRow from "../components/player/PlayerRow";
 import { PlayerProvider } from "../contexts/PlayerProvider";
 import UndoButton from "../components/prompts/UndoButton";
 import DominanceSupply from "../components/board/DominanceSupply";
@@ -76,43 +76,49 @@ const GamePage = () => {
     session?.owner_username.toLowerCase() === username?.toLowerCase();
 
   return (
-    <Container size="xl" py="md" style={{ maxWidth: "1200px" }}>
-      <Stack gap="xl">
-        {/* Top Info Bar */}
-        <Paper withBorder p="md" radius="md" shadow="sm">
-          <Group justify="space-between">
-            <Group>
-              <Button
-                variant="subtle"
-                leftSection={<IconArrowLeft size={16} />}
-                onClick={() => navigate("/lobby")}
-              >
-                Lobby
-              </Button>
-              <Title order={4}>Game #{urlGameId}</Title>
-              <Badge color={isGameStarted ? "green" : "orange"}>
-                {session?.status_label || "Loading..."}
-              </Badge>
-              <Text size="sm">
-                Owner: <b>{session?.owner_username}</b>
-              </Text>
-            </Group>
-            <Group>
-              {!isGameStarted && session && username && isOwner && (
+    <Container size="xl" pt={100} style={{}}>
+      <Stack gap="xs">
+        {/* Pre-Game Setup Info */}
+        {!isGameStarted && session && (
+          <Paper
+            withBorder
+            p="md"
+            radius={0}
+            shadow="sm"
+            style={{ borderTop: "none" }}
+          >
+            <Group justify="space-between">
+              <Group>
                 <Button
-                  color="green"
-                  leftSection={<IconPlayerPlay size={16} />}
-                  loading={startGameMutation.isPending}
-                  disabled={!allPlayersPicked}
-                  onClick={handleStartGame}
+                  variant="subtle"
+                  leftSection={<IconArrowLeft size={16} />}
+                  onClick={() => navigate("/lobby")}
                 >
-                  Start Game
+                  Lobby
                 </Button>
-              )}
+                <Title order={4}>Game #{urlGameId}</Title>
+                <Badge color="orange">
+                  {session?.status_label || "Loading..."}
+                </Badge>
+                <Text size="sm">
+                  Owner: <b>{session?.owner_username}</b>
+                </Text>
+              </Group>
+              <Group>
+                {username && isOwner && (
+                  <Button
+                    color="green"
+                    leftSection={<IconPlayerPlay size={16} />}
+                    loading={startGameMutation.isPending}
+                    disabled={!allPlayersPicked}
+                    onClick={handleStartGame}
+                  >
+                    Start Game
+                  </Button>
+                )}
+              </Group>
             </Group>
-          </Group>
 
-          {!isGameStarted && session && (
             <Group mt="md" justify="space-between">
               <Group>
                 {!hasCurrentUserPicked && (
@@ -174,45 +180,30 @@ const GamePage = () => {
                 )}
               </Text>
             </Group>
-          )}
-        </Paper>
+          </Paper>
+        )}
 
         {/* Game Content */}
         {isGameStarted && (
           <PlayerProvider>
             <GameActionProvider>
-              <Stack gap="xl" align="center">
-                {/* Sidebar and Board Row */}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    width: "100%",
-                    minWidth: "1160px",
-                    gap: "60px",
-                    position: "relative",
-                  }}
-                >
-                  {/* Left Column (Player Info) */}
-                  <div
-                    style={{
-                      width: "300px",
-                      position: "relative",
-                      zIndex: 10,
-                    }}
-                  >
-                    <Stack gap="md">
-                      <DominanceSupply />
-                      <PlayerColumn />
-                      <UndoButton />
-                    </Stack>
-                  </div>
+              <Stack gap="sm" align="center" style={{ paddingBottom: "80px" }}>
+                {/* Top Row: Player Row */}
+                <PlayerRow />
 
-                  {/* Right Column (Board) */}
+                {/* Main Content Row */}
+                <Group
+                  align="flex-start"
+                  justify="center"
+                  gap="xl"
+                  wrap="nowrap"
+                  w="100%"
+                >
+                  {/* Left Column (Board) */}
                   <div
                     style={{
                       width: "800px",
-                      height: "800px",
+                      height: "670px",
                       position: "relative",
                       zIndex: 1,
                       overflow: "hidden",
@@ -220,18 +211,23 @@ const GamePage = () => {
                   >
                     <SvgBoard width={800} height={800} />
                   </div>
-                </div>
 
-                {/* Actions Section (Below Row) */}
-                <Stack
-                  gap="md"
-                  align="center"
-                  style={{ width: "100%", maxWidth: "800px" }}
-                >
-                  <CraftedCardPrompter />
-                  <Prompter />
-                  <DevSignIn />
-                </Stack>
+                  {/* Right Column (Sidebar) */}
+                  <Stack
+                    gap="md"
+                    align="stretch"
+                    justify="flex-end"
+                    w={320}
+                    h="100%"
+                    style={{ minHeight: "670px" }}
+                  >
+                    <DominanceSupply />
+                    <CraftedCardPrompter />
+                    <Prompter />
+                    <UndoButton />
+                    <DevSignIn />
+                  </Stack>
+                </Group>
 
                 {/* Hand at Bottom */}
                 <div style={{ width: "100%" }}>

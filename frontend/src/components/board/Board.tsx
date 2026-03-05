@@ -171,7 +171,7 @@ export default function SvgBoard({
       style={{ width: "100%", height: "100%", boxSizing: "border-box" }}
     >
       <svg
-        viewBox={`0 0 ${width} ${height}`}
+        viewBox={`0 80 ${width} ${height - 130}`}
         style={{ width: "100%", height: "100%", display: "block" }}
       >
         <defs>

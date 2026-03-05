@@ -12,18 +12,22 @@ const Hand = () => {
   const [isHovered, setIsHovered] = useState(false);
   return (
     <Group
-      mt={"50px"}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       wrap="nowrap"
-      pos="relative"
-      gap={"xs"}
       justify="center"
       align="center"
       style={{
-        width: "100%", // Use 100% to give them room to spread
-        height: "60px", // Fixed height for the "tray"
-        // overflow: "visible" is default, but ensures cards can float out
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        width: "100vw",
+        zIndex: 1000,
+        backgroundColor: "rgba(255, 255, 255, 0.9)", // slightly more opaque
+        paddingBottom: "10px",
+        borderTop: "1px solid #eee",
+        boxShadow: "0 -4px 12px rgba(0,0,0,0.1)", // slightly stronger shadow
+        margin: 0,
       }}
     >
       {playerHand?.map((card, i) => (

@@ -1,8 +1,8 @@
-import { Group, Paper, Text, Avatar, Badge } from "@mantine/core";
+import { Group, Paper, Text, Avatar, Badge, Tooltip } from "@mantine/core";
 import { IconTrophy } from "@tabler/icons-react";
 import { GameContext } from "../../contexts/GameProvider";
 import type { Player } from "../../hooks/useGetPlayersInfoQuery";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import CraftedCardBadge from "../cards/CraftedCardBadge";
 import CatPlayerBoard from "../playerboards/CatPlayerBoard";
 import WaPlayerBoard from "../playerboards/WaPlayerBoard";
@@ -20,7 +20,15 @@ const FACTION_BOARDS: Record<string, React.FC<any>> = {
   Crows: CrowsPlayerBoard,
 };
 
-const PlayerIcon = ({ player }: { player: Player }) => {
+const PlayerIcon = ({
+  player,
+  isBoardOpen,
+  onBoardToggle,
+}: {
+  player: Player;
+  isBoardOpen?: boolean;
+  onBoardToggle?: () => void;
+}) => {
   // Reuse the suit mapping logic for colors/icons
   const colors = {
     ca: "orange.5",
@@ -37,7 +45,6 @@ const PlayerIcon = ({ player }: { player: Player }) => {
   const { faction, username, score } = player;
   const { gameId } = useContext(GameContext);
   const color = colors[faction as keyof typeof colors] || "gray.5";
-  const [showBoard, setShowBoard] = useState(false);
 
   const BoardComponent = FACTION_BOARDS[faction];
   const hasBoard = !!BoardComponent;
@@ -50,20 +57,18 @@ const PlayerIcon = ({ player }: { player: Player }) => {
         radius="md"
         shadow="sm"
         onClick={() => {
-          if (hasBoard) setShowBoard(true);
+          if (hasBoard && onBoardToggle) onBoardToggle();
         }}
         style={{ cursor: hasBoard ? "pointer" : "default" }}
       >
         <Group justify="space-between">
           <Group gap="sm">
             {/* Faction Icon / Avatar */}
-            <Avatar color={color} radius="sm" variant="filled">
-              {faction.toUpperCase()}
-            </Avatar>
-
-            <Text fw={700} size="sm">
-              {username}
-            </Text>
+            <Tooltip label={username} zIndex={1100}>
+              <Avatar color={color} radius="sm" variant="filled">
+                {faction.toUpperCase()}
+              </Avatar>
+            </Tooltip>
           </Group>
 
           {/* Score Badge */}
@@ -99,8 +104,8 @@ const PlayerIcon = ({ player }: { player: Player }) => {
       </Paper>
       {BoardComponent && (
         <BoardComponent
-          isOpen={showBoard}
-          onClose={() => setShowBoard(false)}
+          isOpen={isBoardOpen}
+          onClose={() => onBoardToggle && onBoardToggle()}
         />
       )}
     </>
