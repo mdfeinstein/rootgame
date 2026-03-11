@@ -3,7 +3,8 @@ import { useContext } from "react";
 import { useDominanceSupplyQuery } from "../../hooks/useDominanceSupplyQuery";
 import { GameContext } from "../../contexts/GameProvider";
 import { GameActionContext } from "../../contexts/GameActionContext";
-import { SUIT_CONFIG } from "../cards/Card";
+import { SUIT_CONFIG } from "../../data/suitConfig";
+import type { SuitValue } from "../../data/suitConfig";
 import type { CardType } from "../../hooks/useGetPlayerHandQuery";
 
 const DominanceSupply = () => {
@@ -28,7 +29,7 @@ const DominanceSupply = () => {
         <Group gap="xs">
           {dominanceSupply.map((entry: { card: CardType }) => {
             const card = entry.card;
-            const config = SUIT_CONFIG[card.suit.value];
+            const config = SUIT_CONFIG[card.suit.value as SuitValue];
             const Icon = config?.icon;
             return (
               <Tooltip

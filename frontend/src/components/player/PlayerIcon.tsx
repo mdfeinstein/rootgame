@@ -4,21 +4,10 @@ import { GameContext } from "../../contexts/GameProvider";
 import type { Player } from "../../hooks/useGetPlayersInfoQuery";
 import { useContext } from "react";
 import CraftedCardBadge from "../cards/CraftedCardBadge";
-import CatPlayerBoard from "../playerboards/CatPlayerBoard";
-import WaPlayerBoard from "../playerboards/WaPlayerBoard";
-import BirdPlayerBoard from "../playerboards/BirdPlayerBoard";
-import CrowsPlayerBoard from "../playerboards/CrowsPlayerBoard";
-
-const FACTION_BOARDS: Record<string, React.FC<any>> = {
-  ca: CatPlayerBoard,
-  Cats: CatPlayerBoard,
-  bi: BirdPlayerBoard,
-  Birds: BirdPlayerBoard,
-  wa: WaPlayerBoard,
-  WoodlandAlliance: WaPlayerBoard,
-  cr: CrowsPlayerBoard,
-  Crows: CrowsPlayerBoard,
-};
+import { FACTION_CONFIG } from "../../data/factionConfig";
+import type { FactionValue } from "../../data/factionConfig";
+import { SUIT_CONFIG } from "../../data/suitConfig";
+import type { SuitValue } from "../../data/suitConfig";
 
 const PlayerIcon = ({
   player,
@@ -29,24 +18,12 @@ const PlayerIcon = ({
   isBoardOpen?: boolean;
   onBoardToggle?: () => void;
 }) => {
-  // Reuse the suit mapping logic for colors/icons
-  const colors = {
-    ca: "orange.5",
-    bi: "blue.5",
-    wa: "green.3",
-    cr: "indigo.6",
-  };
-  const suit_colors: Record<string, string> = {
-    o: "orange.6",
-    r: "red.7",
-    y: "yellow.5",
-    b: "blue.6",
-  };
   const { faction, username, score } = player;
   const { gameId } = useContext(GameContext);
-  const color = colors[faction.value as keyof typeof colors] || "gray.5";
 
-  const BoardComponent = FACTION_BOARDS[faction.value];
+  const factionConfig = FACTION_CONFIG[faction.value as FactionValue];
+  const color = factionConfig?.color || "gray.5";
+  const BoardComponent = factionConfig?.boardComponent;
   const hasBoard = !!BoardComponent;
 
   return (
@@ -66,7 +43,8 @@ const PlayerIcon = ({
             {/* Faction Icon / Avatar */}
             <Tooltip label={username} zIndex={1100}>
               <Avatar color={color} radius="sm" variant="filled">
-                {faction.value.toUpperCase()}
+                {factionConfig?.abbreviation ||
+                  faction.value.substring(0, 2).toUpperCase()}
               </Avatar>
             </Tooltip>
           </Group>
@@ -82,7 +60,10 @@ const PlayerIcon = ({
               <Badge
                 size="lg"
                 variant="filled"
-                color={suit_colors[player.active_dominance] || "gray"}
+                color={
+                  SUIT_CONFIG[player.active_dominance as SuitValue]?.color ||
+                  "gray"
+                }
                 leftSection={<IconTrophy size={20} />}
               >
                 DOM: {player.active_dominance.toUpperCase()}
@@ -102,7 +83,7 @@ const PlayerIcon = ({
       </Paper>
       {BoardComponent && (
         <BoardComponent
-          isOpen={isBoardOpen}
+          isOpen={isBoardOpen || false}
           onClose={() => onBoardToggle && onBoardToggle()}
         />
       )}

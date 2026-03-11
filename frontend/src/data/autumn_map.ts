@@ -17,21 +17,21 @@ export const suitMap: Record<number, string> = {
 
 // positions of clearings in the autumn map, realitve to width and height
 export const defaultPositions = [
-    { x: 0.2, y: 0.2},
-    { x: 0.8, y: 0.3 },
-    { x: 0.8 , y: 0.8  },
-    { x: 0.2 , y: 0.8  },
-    { x: 0.55 , y: 0.2 },
-    { x: 0.85 , y: 0.5  },
-    { x: 0.6 , y: 0.7  },
-    { x: 0.4 , y: 0.85  },
-    { x: 0.15 , y: 0.4 },
-    { x: 0.4 , y: 0.35  },
-    { x: 0.6 , y: 0.5  },
-    { x: 0.4 , y: 0.6 },
-  ];
+  { x: 0.2, y: 0.2 },
+  { x: 0.8, y: 0.3 },
+  { x: 0.8, y: 0.8 },
+  { x: 0.2, y: 0.8 },
+  { x: 0.55, y: 0.2 },
+  { x: 0.85, y: 0.5 },
+  { x: 0.6, y: 0.7 },
+  { x: 0.4, y: 0.85 },
+  { x: 0.15, y: 0.4 },
+  { x: 0.4, y: 0.35 },
+  { x: 0.6, y: 0.5 },
+  { x: 0.4, y: 0.6 },
+];
 
-export const defaultLinks : { from: number, to: number }[] = [
+export const defaultLinks: { from: number; to: number }[] = [
   { from: 1, to: 10 },
   { from: 1, to: 5 },
   { from: 1, to: 9 },

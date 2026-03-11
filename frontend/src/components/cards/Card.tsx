@@ -4,19 +4,9 @@ import { GameActionContext } from "../../contexts/GameActionContext";
 import { GameContext } from "../../contexts/GameProvider";
 import useGetPlayersInfoQuery from "../../hooks/useGetPlayersInfoQuery";
 import { UserContext } from "../../contexts/UserProvider";
-import {
-  IconMickey,
-  IconBrandFirefox, // Using Flame for Fox/Red
-  IconCarrot, // Using Carrot for Rabbit/Yellow
-  IconFeather, // Using Bird/Blue
-} from "@tabler/icons-react";
 
-export const SUIT_CONFIG = {
-  o: { color: "orange.6", icon: IconMickey, label: "Mouse" },
-  r: { color: "red.7", icon: IconBrandFirefox, label: "Fox" },
-  y: { color: "yellow.5", icon: IconCarrot, label: "Rabbit" },
-  b: { color: "blue.6", icon: IconFeather, label: "Bird" },
-};
+import { SUIT_CONFIG } from "../../data/suitConfig";
+import type { SuitValue } from "../../data/suitConfig";
 
 import {
   Badge,
@@ -38,7 +28,7 @@ export const GameCard = ({
   isCollapsed: boolean;
   index: number;
 }) => {
-  const config = SUIT_CONFIG[cardData.suit.value];
+  const config = SUIT_CONFIG[cardData.suit.value as SuitValue];
   const Icon = config.icon;
   const [isHovered, setIsHovered] = useState(false);
   const { submitPayloadCallback, startActionOverride } =
@@ -58,7 +48,7 @@ export const GameCard = ({
   };
 
   const map_suit_to_color = (suit: string) => {
-    return SUIT_CONFIG[suit as keyof typeof SUIT_CONFIG]?.color || "gray";
+    return SUIT_CONFIG[suit as SuitValue]?.color || "gray";
   };
 
   const canActivate =
@@ -115,8 +105,7 @@ export const GameCard = ({
               <Group gap={4}>
                 {cardData.cost?.map((s: any, i) => {
                   const sValue = s?.value || s;
-                  const config =
-                    SUIT_CONFIG[sValue as keyof typeof SUIT_CONFIG];
+                  const config = SUIT_CONFIG[sValue as SuitValue];
                   if (!config) {
                     console.warn("Missing SUIT_CONFIG for suit:", sValue, s);
                     return null;
@@ -219,11 +208,6 @@ const Card = ({ cardData }: { cardData: CardType }) => {
       <div>{cardData.title}</div>
       <div>{cardData.text}</div>
       <div>{cardData.cost?.map((c) => c.label).join(", ")}</div>
-      {/* <div>{cardData.craftable}</div>
-      <div>{cardData.item}</div>
-      <div>{cardData.craftedPoints}</div>
-      <div>{cardData.ambush}</div>
-      <div>{cardData.dominance}</div> */}
     </div>
   );
 };
