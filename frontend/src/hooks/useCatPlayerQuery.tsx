@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { useMemo } from "react";
 import type { Faction } from "../data/frontend_types";
 
 export type tokensTableType = {

@@ -167,8 +167,8 @@ class Ruin(models.Model):
 
 class Token(Piece):
     clearing = models.ForeignKey(
-        Clearing, on_delete=models.CASCADE, null=True, blank=True,
-    default=None)  # null clearing means token is on player mat
+        Clearing, on_delete=models.CASCADE, null=True, blank=True, default=None
+    )  # null clearing means token is on player mat
 
 
 class CraftingPieceMixin(models.Model):
@@ -242,7 +242,7 @@ class Card(models.Model):
         self,
     ) -> list[str]:
         # convert list of enums to list of strings
-        return [cast(str, suit.label) for suit in self.enum.value.cost]
+        return [cast(str, suit.value) for suit in self.enum.value.cost]
 
     @property
     def text(self) -> str:

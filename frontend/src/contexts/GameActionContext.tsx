@@ -1,5 +1,4 @@
-import { createContext, useContext, useState } from "react";
-import type { GameActionStep, StepPayload } from "../hooks/useGameActionQuery";
+import { createContext, useContext } from "react";
 import useGameActionQuery from "../hooks/useGameActionQuery";
 import { GameContext } from "./GameProvider";
 
@@ -17,12 +16,8 @@ const GameActionContext = createContext<any>({});
 const GameActionProvider = ({ children }: { children: React.ReactNode }) => {
   const { gameId, isGameStarted } = useContext(GameContext);
   const {
-    baseEndpoint,
     actionInfo,
     error,
-    isLoading,
-    isError,
-    isSuccess,
     submitPayloadMutation,
     cancelProcess,
     startActionOverride,

@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import { GameContext } from "../../contexts/GameProvider";
 import useGetPlayersInfoQuery from "../../hooks/useGetPlayersInfoQuery";
-import { Group, Button, Title, Badge, Text } from "@mantine/core";
+import { Group, Button, Title, Text } from "@mantine/core";
 import PlayerIcon from "./PlayerIcon";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,6 @@ const PlayerRow = () => {
     (a, b) => a.turn_order - b.turn_order,
   );
   const [openBoardFaction, setOpenBoardFaction] = useState<string | null>(null);
-  const { session } = useContext(GameContext);
   const { username } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -63,7 +62,7 @@ const PlayerRow = () => {
         <Title order={4}>Game #{gameId}</Title>
 
         <Text size="sm">
-          Playing as: <b>{currentUserPlayer?.faction_label || "Spectator"}</b>
+          Playing as: <b>{currentUserPlayer?.faction.label || "Spectator"}</b>
         </Text>
       </Group>
 
@@ -72,10 +71,10 @@ const PlayerRow = () => {
           <PlayerIcon
             key={player.username}
             player={player}
-            isBoardOpen={openBoardFaction === player.faction}
+            isBoardOpen={openBoardFaction === player.faction.value}
             onBoardToggle={() =>
               setOpenBoardFaction((prev) =>
-                prev === player.faction ? null : player.faction,
+                prev === player.faction.value ? null : player.faction.value,
               )
             }
           />

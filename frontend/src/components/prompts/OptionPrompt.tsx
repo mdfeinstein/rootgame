@@ -4,8 +4,6 @@ import useGameActionQuery from "../../hooks/useGameActionQuery";
 import { GameContext } from "../../contexts/GameProvider";
 import type { Option } from "../../hooks/useGameActionQuery";
 import { Button, Group } from "@mantine/core";
-import useGetPlayerQuery from "../../hooks/useGetPlayerQuery";
-import { UserContext } from "../../contexts/UserProvider";
 
 const factionColorMap = {
   Cats: "orange",
@@ -18,12 +16,11 @@ const OptionPrompt = () => {
   const { gameId } = useContext(GameContext);
   const { submitPayloadCallback } = useContext(GameActionContext);
   const { actionInfo } = useGameActionQuery(gameId);
-  const faction = actionInfo?.faction.replace(" ", "");
+  const faction = actionInfo?.faction?.label?.replace(" ", "");
   console.log(faction);
-  console.log(factionColorMap[faction as keyof typeof factionColorMap]);
   const options = actionInfo?.options;
   if (!options) return null;
-  const optionType = actionInfo?.payload_details[0].type;
+  const optionType = actionInfo?.payload_details?.[0]?.type;
   const onSelect = (option: Option) => {
     const payload: Record<string, string> = {};
     if (!optionType) return;

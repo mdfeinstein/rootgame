@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import type { CardType } from "./useGetPlayerHandQuery";
 import { PlayerContext } from "../contexts/PlayerProvider";
 import { useContext } from "react";
 
@@ -31,7 +30,7 @@ const useWAPlayerQuery = (gameId: number) => {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       return response.json();
     },

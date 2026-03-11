@@ -18,13 +18,6 @@ export const SUIT_CONFIG = {
   b: { color: "blue.6", icon: IconFeather, label: "Bird" },
 };
 
-const label_to_suit = {
-  Mouse: "o",
-  Fox: "r",
-  Rabbit: "y",
-  Bird: "b",
-};
-
 import {
   Badge,
   Box,
@@ -45,7 +38,7 @@ export const GameCard = ({
   isCollapsed: boolean;
   index: number;
 }) => {
-  const config = SUIT_CONFIG[cardData.suit];
+  const config = SUIT_CONFIG[cardData.suit.value];
   const Icon = config.icon;
   const [isHovered, setIsHovered] = useState(false);
   const { submitPayloadCallback, startActionOverride } =
@@ -120,16 +113,18 @@ export const GameCard = ({
           {cardData.craftable && (
             <Group justify="space-between" align="flex-start">
               <Group gap={4}>
-                {cardData.cost?.map((label, i) => {
-                  const s = label_to_suit[label];
-                  const CostIcon =
-                    SUIT_CONFIG[s as keyof typeof SUIT_CONFIG].icon;
+                {cardData.cost?.map((s: any, i) => {
+                  const sValue = s?.value || s;
+                  const config =
+                    SUIT_CONFIG[sValue as keyof typeof SUIT_CONFIG];
+                  if (!config) {
+                    console.warn("Missing SUIT_CONFIG for suit:", sValue, s);
+                    return null;
+                  }
+                  const CostIcon = config.icon;
                   return (
-                    <Box
-                      key={i}
-                      c={SUIT_CONFIG[s as keyof typeof SUIT_CONFIG].color}
-                    >
-                      <CostIcon size={50} />
+                    <Box key={i} c={config.color}>
+                      <CostIcon size={rem(40)} />
                     </Box>
                   );
                 })}
@@ -157,7 +152,7 @@ export const GameCard = ({
               }}
             >
               <Text size="xs" fw={700} c="dimmed" ta="center">
-                ITEM: {cardData.item_name}
+                ITEM: {cardData.item.label}
               </Text>
               {cardData.crafted_points > 0 && (
                 <Badge variant="filled" color="yellow.8" radius="sm">
@@ -181,7 +176,7 @@ export const GameCard = ({
             {canActivate && (
               <Button
                 size="xs"
-                color={map_suit_to_color(cardData.suit)}
+                color={map_suit_to_color(cardData.suit.value)}
                 onClick={handleActivateDominance}
               >
                 Activate
@@ -218,10 +213,12 @@ const Card = ({ cardData }: { cardData: CardType }) => {
       }}
       onClick={() => submitPayloadOnClick()}
     >
-      <div style={{ color: colormap[cardData.suit] }}>{cardData.suit}</div>
+      <div style={{ color: colormap[cardData.suit.value] }}>
+        {cardData.suit.label}
+      </div>
       <div>{cardData.title}</div>
       <div>{cardData.text}</div>
-      <div>{cardData.cost}</div>
+      <div>{cardData.cost?.map((c) => c.label).join(", ")}</div>
       {/* <div>{cardData.craftable}</div>
       <div>{cardData.item}</div>
       <div>{cardData.craftedPoints}</div>

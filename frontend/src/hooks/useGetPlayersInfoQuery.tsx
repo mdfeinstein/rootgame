@@ -1,18 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import type { components } from "../api/types";
 
-export type Player = {
-  username: string;
-  faction: "ca" | "bi" | "wa";
-  faction_label: "Cats" | "Birds" | "Woodland Alliance";
-  score: number;
-  turn_order: number;
-  card_count: number;
-  active_dominance: {
-    card: number;
-    card_name: string;
-    suit: string;
-  } | null;
-};
+export type Player = components["schemas"]["PlayerPublic"];
 
 const useGetPlayersInfoQuery = (gameId: number, enabled: boolean = true) => {
   const {

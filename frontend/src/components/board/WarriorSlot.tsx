@@ -1,6 +1,5 @@
-import { use, useContext, useEffect } from "react";
+import { useContext } from "react";
 import { ClearingContext } from "./Clearing";
-import React from "react";
 import { WarriorTroop } from "./WarriorTroop";
 import type { Faction } from "../../data/frontend_types";
 
@@ -9,13 +8,11 @@ export const WarriorSlot = ({
   y,
   size,
   warriorInfo,
-  children,
 }: {
   x: number;
   y: number;
   size: number;
   warriorInfo: { faction: Faction; count: number } | null;
-  children?: React.ReactNode;
 }) => {
   const ctx = useContext(ClearingContext);
   if (!ctx) throw new Error("Clearing must be nested inside Circle");

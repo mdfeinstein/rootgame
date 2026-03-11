@@ -46,6 +46,7 @@ const useGameWebSocket = (gameId: string | undefined) => {
         const data = JSON.parse(event.data);
         if (data.type === "authenticated") {
           console.log("WebSocket authenticated");
+          queryClient.setQueryData(["ws-authenticated", gameId], true);
         } else if (data.message === "update") {
           console.log("Game update received, invalidating queries");
           // Invalidate all queries related to the game
@@ -57,6 +58,7 @@ const useGameWebSocket = (gameId: string | undefined) => {
 
       socket.onclose = () => {
         console.log("WebSocket disconnected");
+        queryClient.setQueryData(["ws-authenticated", gameId], false);
         // Reconnect logic could go here
       };
 

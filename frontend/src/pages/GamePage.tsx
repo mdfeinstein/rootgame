@@ -68,9 +68,9 @@ const GamePage = () => {
   const currentUserPlayer = session?.players?.find(
     (p: PlayerInfo) => p.username.toLowerCase() === username?.toLowerCase(),
   );
-  const hasCurrentUserPicked = !!currentUserPlayer?.faction;
+  const hasCurrentUserPicked = !!currentUserPlayer?.faction?.value;
   const allPlayersPicked = session?.players?.every(
-    (p: PlayerInfo) => !!p.faction,
+    (p: PlayerInfo) => !!p.faction?.value,
   );
   const isOwner =
     session?.owner_username.toLowerCase() === username?.toLowerCase();
@@ -98,7 +98,7 @@ const GamePage = () => {
                 </Button>
                 <Title order={4}>Game #{urlGameId}</Title>
                 <Badge color="orange">
-                  {session?.status_label || "Loading..."}
+                  {session?.status?.label || "Loading..."}
                 </Badge>
                 <Text size="sm">
                   Owner: <b>{session?.owner_username}</b>
@@ -133,8 +133,8 @@ const GamePage = () => {
                         session.faction_choices
                           ?.filter((fc: FactionChoice) => !fc.chosen)
                           .map((fc: FactionChoice) => ({
-                            value: fc.faction,
-                            label: fc.faction_label,
+                            value: fc.faction.value,
+                            label: fc.faction.label,
                           })) || []
                       }
                       onChange={setSelectedFaction}
@@ -159,7 +159,7 @@ const GamePage = () => {
                     color="blue"
                     leftSection={<IconUserCheck size={14} />}
                   >
-                    You are: {currentUserPlayer?.faction_label}
+                    You are: {currentUserPlayer?.faction.label}
                   </Badge>
                 )}
               </Group>
@@ -173,7 +173,7 @@ const GamePage = () => {
                       fw={p.faction ? 700 : 400}
                     >
                       {p.username}
-                      {p.faction ? ` (${p.faction_label})` : ""}
+                      {p.faction?.value ? ` (${p.faction.label})` : ""}
                       {idx < arr.length - 1 ? ", " : ""}
                     </Text>
                   ),

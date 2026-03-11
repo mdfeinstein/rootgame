@@ -1,31 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import type { components } from "../api/types";
 
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
 
-export type RouteData = {
-  route: string;
-};
-export type StepPayload = {
-  type: string;
-  name: string;
-  value: number | string | boolean | null;
-};
-
-export type Option = {
-  label: string;
-  value: string;
-};
-
-export type GameActionStep = {
-  faction: string;
-  name: string;
-  prompt: string;
-  endpoint: string;
-  payload_details: StepPayload[];
-  accumulated_payload: StepPayload[];
-  options?: Option[];
-};
+export type RouteData = components["schemas"]["CurrentAction"];
+export type GameActionStep = components["schemas"]["GameActionStep"];
+export type Option = components["schemas"]["Option"];
 
 const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
   const queryClient = useQueryClient();
@@ -78,7 +59,10 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
   const submitPayloadMutation = useMutation({
     mutationFn: async (payload: Record<string, unknown>) => {
       // add accumulated payload to payload
-      payload = { ...actionInfo?.accumulated_payload, ...payload };
+      payload = {
+        ...(actionInfo?.accumulated_payload as Record<string, unknown>),
+        ...payload,
+      };
 
       const response = await fetch(
         `${djangoUrl}${actionRoute?.route}${gameId}/${actionInfo?.endpoint}/`,

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createContext, useState } from "react";
+import { createContext } from "react";
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
 const UserContext = createContext<any>({});
 

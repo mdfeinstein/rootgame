@@ -25,8 +25,6 @@ export const EquilateralTriangle: React.FC<Props> = ({
   stroke = "black",
   strokeWidth = 2,
   fill = "none",
-  svgWidth,
-  svgHeight,
 }) => {
   // compute 3 vertices at rotation, rotation+120, rotation+240 degrees
   const angles = [rotationDeg, rotationDeg + 120, rotationDeg + 240];
@@ -41,7 +39,6 @@ export const EquilateralTriangle: React.FC<Props> = ({
 
   // If svg width/height not provided, create a viewBox that comfortably contains the triangle.
   // We'll use bounding box of the circumscribed circle: [cx - r, cy - r, 2r, 2r]
-  const viewBox = `${cx - r} ${cy - r} ${2 * r} ${2 * r}`;
 
   return (
     <polygon

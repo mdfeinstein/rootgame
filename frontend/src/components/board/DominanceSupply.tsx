@@ -28,12 +28,12 @@ const DominanceSupply = () => {
         <Group gap="xs">
           {dominanceSupply.map((entry: { card: CardType }) => {
             const card = entry.card;
-            const config = SUIT_CONFIG[card.suit as keyof typeof SUIT_CONFIG];
+            const config = SUIT_CONFIG[card.suit.value];
             const Icon = config?.icon;
             return (
               <Tooltip
                 key={card.card_name}
-                label={`Click to Swap for ${card.suit_name} Dominance`}
+                label={`Click to Swap for ${card.suit.label} Dominance`}
               >
                 <ActionIcon
                   variant="light"

@@ -1,5 +1,6 @@
 from rest_framework.views import APIView, Response
 from rest_framework.exceptions import ValidationError
+from drf_spectacular.utils import extend_schema
 
 from game.queries.general import player_has_warriors_in_clearing
 from game.models.game_models import Clearing, Faction, Game, Player
@@ -8,6 +9,7 @@ from game.serializers.general_serializers import (
     GameActionSerializer,
     GameActionStepSerializer,
     OptionSerializer,
+    ValidationErrorSerializer,
 )
 
 
@@ -16,6 +18,7 @@ class GameActionView(APIView):
     first_step: dict = {}
     faction: Faction | None = None
 
+    @extend_schema(responses={200: GameActionStepSerializer})
     def get(self, request, *args, **kwargs):
         """Return initial step data."""
         serializer = GameActionStepSerializer(
@@ -23,6 +26,9 @@ class GameActionView(APIView):
         )
         return Response(serializer.data)
 
+    @extend_schema(
+        responses={200: GameActionStepSerializer, 400: ValidationErrorSerializer}
+    )
     def post(self, request, game_id: int, route: str, *args, **kwargs):
         self.validate_player(request, game_id, route, *args, **kwargs)
         self.validate_timing(request, game_id, route, *args, **kwargs)
@@ -63,6 +69,7 @@ class GameActionView(APIView):
         if self.faction is not None:
             player_of_faction_in_game = self.player_by_faction(request, game_id)
             if player_requesting != player_of_faction_in_game:
+
                 raise ValidationError(
                     "Player is not the correct faction for this action"
                 )

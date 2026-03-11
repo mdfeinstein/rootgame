@@ -1,23 +1,9 @@
 // query players hand using api/get-player-hand
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import type { components } from "../api/types";
 
-type SuitLabel = "Mouse" | "Fox" | "Rabbit" | "Bird";
-
-export type CardType = {
-  card_name: string;
-  suit: "r" | "y" | "o" | "b";
-  suit_name: SuitLabel;
-  title: string;
-  text: string;
-  craftable: boolean;
-  cost?: SuitLabel[];
-  item?: string;
-  item_name?: string;
-  crafted_points: number;
-  ambush: boolean;
-  dominance: boolean;
-};
+export type CardType = components["schemas"]["Card"];
 // use the token for authentication
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
 

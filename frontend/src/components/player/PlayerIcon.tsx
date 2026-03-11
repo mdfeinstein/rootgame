@@ -1,4 +1,4 @@
-import { Group, Paper, Text, Avatar, Badge, Tooltip } from "@mantine/core";
+import { Group, Paper, Avatar, Badge, Tooltip } from "@mantine/core";
 import { IconTrophy } from "@tabler/icons-react";
 import { GameContext } from "../../contexts/GameProvider";
 import type { Player } from "../../hooks/useGetPlayersInfoQuery";
@@ -44,9 +44,9 @@ const PlayerIcon = ({
   };
   const { faction, username, score } = player;
   const { gameId } = useContext(GameContext);
-  const color = colors[faction as keyof typeof colors] || "gray.5";
+  const color = colors[faction.value as keyof typeof colors] || "gray.5";
 
-  const BoardComponent = FACTION_BOARDS[faction];
+  const BoardComponent = FACTION_BOARDS[faction.value];
   const hasBoard = !!BoardComponent;
 
   return (
@@ -66,7 +66,7 @@ const PlayerIcon = ({
             {/* Faction Icon / Avatar */}
             <Tooltip label={username} zIndex={1100}>
               <Avatar color={color} radius="sm" variant="filled">
-                {faction.toUpperCase()}
+                {faction.value.toUpperCase()}
               </Avatar>
             </Tooltip>
           </Group>
@@ -75,19 +75,17 @@ const PlayerIcon = ({
           <Group gap="xs">
             <CraftedCardBadge
               gameId={gameId}
-              faction={faction}
-              factionLabel={player.faction_label}
+              faction={faction.value as any}
+              factionLabel={faction.label}
             />
             {player.active_dominance ? (
               <Badge
                 size="lg"
                 variant="filled"
-                color={
-                  suit_colors[player.active_dominance.suit as string] || "gray"
-                }
+                color={suit_colors[player.active_dominance] || "gray"}
                 leftSection={<IconTrophy size={20} />}
               >
-                DOM: {player.active_dominance.suit.toUpperCase()}
+                DOM: {player.active_dominance.toUpperCase()}
               </Badge>
             ) : (
               <Badge

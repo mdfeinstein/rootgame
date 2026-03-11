@@ -19,23 +19,68 @@ from game.models.game_models import (
     Player,
     Warrior,
     Token,
+    CraftedCardEntry,
+    Suit,
+    ItemTypes,
 )
 from game.models.wa.turn import WATurn
-from game.models.game_models import CraftedCardEntry
-from game.models.game_models import CraftedCardEntry
-from game.queries.cards.active_effects import can_use_card, has_active_effect, is_used
 from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
+from drf_spectacular.utils import extend_schema_field, Direction
+from drf_spectacular.extensions import OpenApiSerializerFieldExtension
+
+
+class ValidationErrorSerializer(serializers.Serializer):
+    detail = serializers.JSONField(help_text="Error message or object.")
+
+
+class LabeledChoiceField(serializers.ChoiceField):
+    def to_representation(self, value):
+        result = super().to_representation(value)
+        if result is None:
+            return None
+        return {"value": result, "label": self.choices.get(result, result)}
+
+    def to_internal_value(self, data):
+        if isinstance(data, dict) and "value" in data:
+            data = data["value"]
+        return super().to_internal_value(data)
+
+
+class LabeledChoiceFieldExtension(OpenApiSerializerFieldExtension):
+    target_class = LabeledChoiceField
+    match_subclasses = True
+
+    def map_serializer_field(self, auto_schema, direction):
+        if direction == "request":
+            return auto_schema._map_serializer_field(
+                serializers.ChoiceField(choices=self.target.choices), direction
+            )
+
+        labels = []
+        for _, label in self.target.choices.items():
+            labels.append(str(label))
+        labels = sorted(list(set(labels)))
+
+        return {
+            "type": "object",
+            "properties": {
+                "value": auto_schema._map_serializer_field(
+                    serializers.ChoiceField(choices=self.target.choices), direction
+                ),
+                "label": {"type": "string", "enum": labels},
+            },
+            "required": ["value", "label"],
+        }
 
 
 class CardSerializer(serializers.ModelSerializer):
     card_name = serializers.SerializerMethodField()
-    suit_name = serializers.CharField(source="get_suit_display", required=False)
+    suit = LabeledChoiceField(choices=Suit.choices)
     title = serializers.CharField()
     text = serializers.CharField()
     craftable = serializers.BooleanField()
-    cost = serializers.ListField()
-    item = serializers.CharField()
-    item_name = serializers.CharField()
+    cost = serializers.ListField(child=LabeledChoiceField(choices=Suit.choices))
+    item = LabeledChoiceField(choices=ItemTypes.choices, allow_null=True)
     crafted_points = serializers.IntegerField()
     ambush = serializers.BooleanField()
     dominance = serializers.BooleanField()
@@ -46,13 +91,11 @@ class CardSerializer(serializers.ModelSerializer):
             "id",
             "card_name",
             "suit",
-            "suit_name",
             "title",
             "text",
             "craftable",
             "cost",
             "item",
-            "item_name",
             "crafted_points",
             "ambush",
             "dominance",
@@ -121,7 +164,7 @@ class WarriorSerializer(serializers.ModelSerializer):
 
 class BuildingSerializer(serializers.ModelSerializer):
     player_name = serializers.CharField(source="player.user.username")
-    clearing_number = clearing_number = serializers.SerializerMethodField()
+    clearing_number = serializers.SerializerMethodField()
     building_slot_number = serializers.SerializerMethodField()
 
     class Meta:
@@ -162,7 +205,7 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 class ClearingSerializer(serializers.ModelSerializer):
-    suit_name = serializers.CharField(source="get_suit_display")
+    suit = LabeledChoiceField(choices=Suit.choices)
     connected_to = serializers.SerializerMethodField()
     water_connected_to = serializers.SerializerMethodField()
     ruins = serializers.SerializerMethodField()
@@ -170,7 +213,6 @@ class ClearingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Clearing
         fields = [
-            "suit_name",
             "suit",
             "clearing_number",
             "connected_to",
@@ -201,8 +243,7 @@ class ClearingSerializer(serializers.ModelSerializer):
 
 class PlayerPublicSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username")
-    faction = serializers.CharField()  # this will be two char stub...
-    faction_label = serializers.CharField()
+    faction = LabeledChoiceField(choices=Faction.choices)
     score = serializers.IntegerField()
     turn_order = serializers.IntegerField()
     card_count = serializers.SerializerMethodField()
@@ -213,7 +254,6 @@ class PlayerPublicSerializer(serializers.ModelSerializer):
         fields = [
             "username",
             "faction",
-            "faction_label",
             "score",
             "turn_order",
             "card_count",
@@ -221,8 +261,10 @@ class PlayerPublicSerializer(serializers.ModelSerializer):
         ]
 
     def get_active_dominance(self, player: Player):
-        if hasattr(player, "active_dominance"):
-            return player.active_dominance.card.suit
+        if hasattr(player, "active_dominance") and player.active_dominance:
+            return LabeledChoiceField(choices=Suit.choices).to_representation(
+                player.active_dominance.card.suit
+            )
         return None
 
     def get_card_count(self, player: Player) -> int:
@@ -296,7 +338,7 @@ class OptionSerializer(serializers.Serializer):
 
 
 class GameActionStepSerializer(serializers.Serializer):
-    faction = serializers.CharField(required=False)
+    faction = LabeledChoiceField(choices=Faction.choices, required=False)
     name = serializers.CharField()
     prompt = serializers.CharField(required=False)
     endpoint = serializers.CharField(required=False)
@@ -312,14 +354,18 @@ class GameActionSerializer(serializers.Serializer):
     route = serializers.CharField()
 
 
+class CurrentActionSerializer(serializers.Serializer):
+    route = serializers.CharField()
+
+
 class GameStatusSerializer(serializers.Serializer):
     """
     Serializer for information on the current game status
     This includes the current turn information as well as any relevant events
     """
 
-    game_status = serializers.ChoiceField(choices=Game.GameStatus.choices)
-    setup_status = serializers.ChoiceField(
+    game_status = LabeledChoiceField(choices=Game.GameStatus.choices)
+    setup_status = LabeledChoiceField(
         choices=GameSimpleSetup.GameSetupStatus.choices, required=False
     )
     current_turn_player = serializers.CharField(required=False)
@@ -380,24 +426,22 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PlayerSerializer(serializers.Serializer):
-    faction = serializers.CharField()
-    faction_label = serializers.SerializerMethodField()
+    faction = LabeledChoiceField(choices=Faction.choices)
     score = serializers.IntegerField()
     active_dominance = serializers.SerializerMethodField()
 
-    def get_faction_label(self, player: Player):
-        return Faction(player.faction).label
-
     def get_active_dominance(self, player: Player):
-        if hasattr(player, "active_dominance"):
-            return player.active_dominance.card.suit
+        if hasattr(player, "active_dominance") and player.active_dominance:
+            return LabeledChoiceField(choices=Suit.choices).to_representation(
+                player.active_dominance.card.suit
+            )
         return None
 
 
 class GameListSerializer(serializers.ModelSerializer):
     owner_username = serializers.CharField(source="owner.username")
     player_count = serializers.SerializerMethodField()
-    status_label = serializers.CharField(source="get_status_display")
+    status = LabeledChoiceField(choices=Game.GameStatus.choices)
     user_faction = serializers.SerializerMethodField()
 
     class Meta:
@@ -407,45 +451,52 @@ class GameListSerializer(serializers.ModelSerializer):
             "owner_username",
             "player_count",
             "status",
-            "status_label",
             "user_faction",
         ]
 
     def get_player_count(self, game: Game) -> int:
         return game.players.count()
 
-    def get_user_faction(self, game: Game) -> str | None:
+    @extend_schema_field(LabeledChoiceField(choices=Faction.choices, allow_null=True))
+    def get_user_faction(self, game: Game) -> dict | None:
         request = self.context.get("request")
         if request and request.user.is_authenticated:
             try:
                 player = game.players.get(user=request.user)
-                return player.faction
+                return LabeledChoiceField(choices=Faction.choices).to_representation(
+                    player.faction
+                )
             except Player.DoesNotExist:
                 return None
         return None
 
 
 class FactionChoiceEntrySerializer(serializers.ModelSerializer):
-    faction_label = serializers.CharField(source="get_faction_display", read_only=True)
+    faction = LabeledChoiceField(choices=Faction.choices)
 
     class Meta:
         model = FactionChoiceEntry
-        fields = ["faction", "faction_label", "chosen"]
+        fields = ["faction", "chosen"]
 
 
 class GameSessionSerializer(serializers.ModelSerializer):
     owner_username = serializers.CharField(source="owner.username")
     players = PlayerPublicSerializer(many=True, read_only=True)
-    status_label = serializers.CharField(source="get_status_display")
     faction_choices = FactionChoiceEntrySerializer(many=True, read_only=True)
+    status = LabeledChoiceField(choices=Game.GameStatus.choices)
+
+    player_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Game
         fields = [
             "id",
             "owner_username",
+            "player_count",
             "status",
-            "status_label",
             "players",
             "faction_choices",
         ]
+
+    def get_player_count(self, game: Game) -> int:
+        return game.players.count()

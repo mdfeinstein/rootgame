@@ -3,6 +3,8 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
+from drf_spectacular.utils import extend_schema, inline_serializer
+from rest_framework import serializers
 
 from game.models.birds.setup import BirdsSimpleSetup
 from game.models.cats.setup import CatsSimpleSetup
@@ -25,12 +27,16 @@ from game.serializers.general_serializers import (
     PlayerPublicSerializer,
     GameSessionSerializer,
     ClearingSerializer,
+    CurrentActionSerializer,
+    DominanceSupplyEntrySerializer,
+    ValidationErrorSerializer,
 )
 from game.logic.playback import undo_last_action
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 
+@extend_schema(responses={200: CardSerializer(many=True)})
 @api_view(["GET"])
 def get_discard_pile(request, game_id: int):
     # grab game
@@ -46,22 +52,26 @@ def get_discard_pile(request, game_id: int):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    responses={200: CardSerializer(many=True), 400: ValidationErrorSerializer}
+)
 @api_view(["GET"])
 def get_player_hand(request, game_id: int):
     # TODO: add auth: valid player or spectator
     try:
         game = Game.objects.get(pk=game_id)
     except Game.DoesNotExist:
-        return ValidationError("Game does not exist")
+        raise ValidationError("Game does not exist")
     try:
         player = Player.objects.get(user=request.user, game=game)
     except Player.DoesNotExist:
-        return ValidationError("Player does not exist")
+        raise ValidationError("Player does not exist")
     hand_cards = HandEntry.objects.filter(player=player)
     serializer = CardSerializer([card.card for card in hand_cards], many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(responses={200: ClearingSerializer(many=True)})
 @api_view(["GET"])
 def get_clearings(request, game_id: int):
     # grab game
@@ -76,6 +86,7 @@ def get_clearings(request, game_id: int):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(responses={200: GameStatusSerializer, 400: ValidationErrorSerializer})
 @api_view(["GET"])
 def get_turn_info(request, game_id: int):
     # grab game
@@ -87,9 +98,7 @@ def get_turn_info(request, game_id: int):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(["GET"])
-def get_current_action(request, game_id: int):
-    """provides the route for the current action"""
+@extend_schema(responses={200: CurrentActionSerializer, 400: ValidationErrorSerializer})
 @api_view(["GET"])
 def get_current_action(request, game_id: int):
     """provides the route for the current action"""
@@ -109,6 +118,9 @@ def get_current_action(request, game_id: int):
     raise ValidationError("Not yet implemented")
 
 
+@extend_schema(
+    responses={200: PlayerPublicSerializer(many=True), 400: ValidationErrorSerializer}
+)
 @api_view(["GET"])
 def get_players(request, game_id: int):
     """provides information about all players in the game"""
@@ -121,6 +133,13 @@ def get_players(request, game_id: int):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    responses={
+        200: inline_serializer(
+            name="UndoResponse", fields={"status": serializers.CharField()}
+        )
+    }
+)
 @api_view(["POST"])
 def undo_last_action_view(request, game_id: int):
     try:
@@ -142,6 +161,7 @@ def undo_last_action_view(request, game_id: int):
     return Response({"status": "success"}, status=status.HTTP_200_OK)
 
 
+@extend_schema(responses={200: GameSessionSerializer})
 @api_view(["GET"])
 def get_game_session_detail(request, game_id: int):
     """provides detailed information about the game session"""
@@ -154,6 +174,7 @@ def get_game_session_detail(request, game_id: int):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(responses={200: DominanceSupplyEntrySerializer(many=True)})
 @api_view(["GET"])
 def get_dominance_supply(request, game_id: int):
     """
@@ -165,7 +186,6 @@ def get_dominance_supply(request, game_id: int):
         return Response({"detail": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
 
     from game.models.dominance import DominanceSupplyEntry
-    from game.serializers.general_serializers import DominanceSupplyEntrySerializer
 
     supply_entries = DominanceSupplyEntry.objects.filter(game=game)
     serializer = DominanceSupplyEntrySerializer(supply_entries, many=True)

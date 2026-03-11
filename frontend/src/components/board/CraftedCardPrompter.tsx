@@ -13,7 +13,7 @@ const CraftedCardPrompter = () => {
   const { startActionOverride } = useContext(GameActionContext);
 
   const userPlayer = players?.find((p) => p.username === username);
-  const factionStub = userPlayer?.faction || "";
+  const factionStub = userPlayer?.faction.value || "";
 
   const { craftedCards } = useCraftedCardsQuery(gameId, factionStub);
   const usableCards = craftedCards?.filter((c) => c.can_be_used) || [];

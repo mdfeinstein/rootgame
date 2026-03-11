@@ -17,7 +17,7 @@ export default function Prompter() {
         height: "100%",
       }}
     >
-      <div>{faction}</div>
+      <div>{faction?.label}</div>
       <div>{actionPrompt}</div>
       <div style={{ color: "red" }}>{error}</div>
       <OptionPrompt />

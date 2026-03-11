@@ -89,7 +89,7 @@ const LobbyPage = () => {
               <Table.Td>{game.owner_username}</Table.Td>
               <Table.Td>{game.player_count}</Table.Td>
               <Table.Td>
-                <Badge variant="light">{game.status_label}</Badge>
+                <Badge variant="light">{game.status.label}</Badge>
               </Table.Td>
               <Table.Td>
                 {type === "active" ? (

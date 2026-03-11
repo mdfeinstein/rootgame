@@ -2,14 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export interface ClearingData {
-  suit_name: string;
-  suit: string;
-  clearing_number: number;
-  connected_to: number[];
-  water_connected_to: number[];
-  ruins: number[];
-}
+import type { components } from "../api/types";
+
+export type ClearingData = components["schemas"]["Clearing"];
 
 export const useClearingsQuery = (gameId: number, enabled: boolean = true) => {
   return useQuery<ClearingData[]>({

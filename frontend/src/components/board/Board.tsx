@@ -34,12 +34,10 @@ export default function SvgBoard({
   mapName = "autumn",
   width = 800,
   height = 800,
-  onNodeClick,
 }: {
   mapName?: "autumn";
   width?: number;
   height?: number;
-  onNodeClick?: (id: string) => void;
 }) {
   const { gameId, isGameStarted } = useContext(GameContext);
   const turnInfo = useTurnInfoQuery(gameId, isGameStarted);
@@ -99,10 +97,10 @@ export default function SvgBoard({
       );
       if (!b) {
         // check for ruins
-        const clearingRuins = clearingsData?.find(
+        const ruins = clearingsData?.find(
           (c) => c.clearing_number === clearingNumber,
         )?.ruins;
-        if (clearingRuins?.includes(slot)) {
+        if (ruins?.includes(slot)) {
           return {
             buildingType: "ruin" as BuildingType,
             faction: "Neutral" as any,
@@ -135,7 +133,7 @@ export default function SvgBoard({
 
   // create list of paths
   const pathList = useMemo(() => {
-    return defaultLinks.map((link, i) => {
+    return defaultLinks.map((link) => {
       const a = defaultPositions[link.from - 1];
       const b = defaultPositions[link.to - 1];
       const aScaled = { x: a.x * width, y: a.y * height };
@@ -149,7 +147,7 @@ export default function SvgBoard({
   }, [mapName, width, height]);
 
   const waterPathList = useMemo(() => {
-    return waterLinks.map((link, i) => {
+    return waterLinks.map((link) => {
       const a = defaultPositions[link.from - 1];
       const b = defaultPositions[link.to - 1];
       const aScaled = { x: a.x * width, y: a.y * height };
@@ -200,23 +198,22 @@ export default function SvgBoard({
                 <BuildingSlot
                   key={`b-${i}`}
                   {...s}
-                  slot_number={i}
                   buildingInfo={buildingInfoByClearingAndSlot(
                     clearingProp.clearingNumber,
                     i,
                   )}
                 ></BuildingSlot>
               ))}
-              {factionList?.map((f, i) => (
+              {factionList?.map((faction, i) => (
                 <WarriorSlot
                   key={`w-${i}`}
                   {...warriorSlotMap[clearingProp.clearingNumber][i]}
                   warriorInfo={{
-                    faction: factionList[i],
+                    faction: faction,
                     count:
                       warriorTable?.filter(
                         (entry) =>
-                          entry.faction === factionList[i] &&
+                          entry.faction === faction &&
                           entry.clearing_number === clearingProp.clearingNumber,
                       ).length ?? 0,
                   }}

@@ -2,30 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
 
-export interface FactionChoice {
-  faction: string;
-  faction_label: string;
-  chosen: boolean;
-}
+import type { components } from "../api/types";
 
-export interface PlayerInfo {
-  username: string;
-  faction: string | null;
-  faction_label: string;
-  score: number;
-  turn_order: number | null;
-}
-
-export interface GameListItem {
-  id: number;
-  owner_username: string;
-  player_count: number;
-  status: string;
-  status_label: string;
-  user_faction: string | null;
-  players?: PlayerInfo[];
-  faction_choices?: FactionChoice[];
-}
+export type FactionChoice = components["schemas"]["FactionChoiceEntry"];
+export type PlayerInfo = components["schemas"]["PlayerPublic"];
+export type GameListItem = components["schemas"]["GameSession"];
 
 const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
   const token = localStorage.getItem("accessToken");

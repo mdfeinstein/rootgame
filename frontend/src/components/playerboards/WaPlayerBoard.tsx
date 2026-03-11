@@ -36,10 +36,10 @@ const SupporterStack = () => {
 
   const supporterCards: CardType[] = privateInfo.supporter_cards;
   const counts = {
-    fox: supporterCards.filter((c) => c.suit === "r").length,
-    rabbit: supporterCards.filter((c) => c.suit === "y").length,
-    mouse: supporterCards.filter((c) => c.suit === "o").length,
-    bird: supporterCards.filter((c) => c.suit === "b").length,
+    fox: supporterCards.filter((c) => c.suit.value === "r").length,
+    rabbit: supporterCards.filter((c) => c.suit.value === "y").length,
+    mouse: supporterCards.filter((c) => c.suit.value === "o").length,
+    bird: supporterCards.filter((c) => c.suit.value === "b").length,
   };
 
   return (
@@ -84,9 +84,8 @@ export default function WaPlayerBoard({ isOpen, onClose }: WaPlayerBoardProps) {
   const { tokenTable } = useTokenTable(gameId, ["WA"]);
   const playerIsWA = faction === "WA";
   const tokensOnMap = tokenTable.filter(
-    (t) => t.faction === "WA" && t.clearing_number !== null
+    (t) => t.faction === "WA" && t.clearing_number !== null,
   ).length;
-  const tokensOnBoard = 10 - tokensOnMap;
 
   const supporterCount = publicInfo?.supporter_count ?? 0;
 
@@ -179,7 +178,7 @@ export default function WaPlayerBoard({ isOpen, onClose }: WaPlayerBoardProps) {
                             SUIT_CONFIG[suit as keyof typeof SUIT_CONFIG];
                           const SuitIcon = config.icon;
                           const base = publicInfo?.buildings?.base?.find(
-                            (b: any) => b.suit === suit
+                            (b: any) => b.suit.value === suit,
                           );
                           const isOnBoard =
                             base?.building?.clearing_number === null;

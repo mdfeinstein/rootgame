@@ -1,0 +1,5240 @@
+openapi: 3.0.3
+info:
+  title: Root Board Game API
+  version: 1.0.0
+  description: API for Root Board Game App
+paths:
+  /api/action/card/charm-offensive/:
+    get:
+      operationId: action_card_charm_offensive_retrieve
+      description: Return initial step data.
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_charm_offensive_create
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/charm-offensive/{game_id}/{route}/:
+    get:
+      operationId: action_card_charm_offensive_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_charm_offensive_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/eyrie-emigre/:
+    get:
+      operationId: action_card_eyrie_emigre_retrieve
+      description: Return initial step data.
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_eyrie_emigre_create
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/eyrie-emigre/{game_id}/{route}/:
+    get:
+      operationId: action_card_eyrie_emigre_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_eyrie_emigre_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/false-orders/:
+    get:
+      operationId: action_card_false_orders_retrieve
+      description: Return initial step data.
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_false_orders_create
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/false-orders/{game_id}/{route}/:
+    get:
+      operationId: action_card_false_orders_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_false_orders_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/informants/:
+    get:
+      operationId: action_card_informants_retrieve
+      description: Return initial step data.
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_informants_create
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/informants/{game_id}/{route}/:
+    get:
+      operationId: action_card_informants_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_informants_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/league-of-adventurers/:
+    get:
+      operationId: action_card_league_of_adventurers_retrieve
+      description: Return initial step data.
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_league_of_adventurers_create
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/league-of-adventurers/{game_id}/{route}/:
+    get:
+      operationId: action_card_league_of_adventurers_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_league_of_adventurers_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/partisans/:
+    get:
+      operationId: action_card_partisans_retrieve
+      description: Return initial step data.
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_partisans_create
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/partisans/{game_id}/{route}/:
+    get:
+      operationId: action_card_partisans_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_partisans_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/propaganda-bureau/:
+    get:
+      operationId: action_card_propaganda_bureau_retrieve
+      description: Return initial step data.
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_propaganda_bureau_create
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/propaganda-bureau/{game_id}/{route}/:
+    get:
+      operationId: action_card_propaganda_bureau_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_propaganda_bureau_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/saboteurs/:
+    get:
+      operationId: action_card_saboteurs_retrieve
+      description: Return initial step data.
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_saboteurs_create
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/saboteurs/{game_id}/{route}/:
+    get:
+      operationId: action_card_saboteurs_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_saboteurs_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/swap-meet/:
+    get:
+      operationId: action_card_swap_meet_retrieve
+      description: Return initial step data.
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_swap_meet_create
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/card/swap-meet/{game_id}/{route}/:
+    get:
+      operationId: action_card_swap_meet_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_card_swap_meet_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/dominance/activate/:
+    get:
+      operationId: action_dominance_activate_retrieve
+      description: Return initial step data.
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_dominance_activate_create
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/dominance/activate/{game_id}/{route}/:
+    get:
+      operationId: action_dominance_activate_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_dominance_activate_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/dominance/swap/:
+    get:
+      operationId: action_dominance_swap_retrieve
+      description: Return initial step data.
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_dominance_swap_create
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/action/dominance/swap/{game_id}/{route}/:
+    get:
+      operationId: action_dominance_swap_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: action_dominance_swap_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - action
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/battle/:
+    get:
+      operationId: battle_retrieve
+      description: Return initial step data.
+      tags:
+      - battle
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: battle_create
+      tags:
+      - battle
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/battle/{game_id}/{route}/:
+    get:
+      operationId: battle_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - battle
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: battle_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - battle
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/birdsong/add-to-decree/:
+    get:
+      operationId: birds_birdsong_add_to_decree_retrieve
+      description: Return initial step data.
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: birds_birdsong_add_to_decree_create
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/birdsong/add-to-decree/{game_id}/{route}/:
+    get:
+      operationId: birds_birdsong_add_to_decree_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: birds_birdsong_add_to_decree_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/birdsong/emergency-draw/:
+    get:
+      operationId: birds_birdsong_emergency_draw_retrieve
+      description: Return initial step data.
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_birdsong_emergency_draw_create
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/birdsong/emergency-draw/{game_id}/{route}/:
+    get:
+      operationId: birds_birdsong_emergency_draw_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_birdsong_emergency_draw_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/daylight/battle/:
+    get:
+      operationId: birds_daylight_battle_retrieve
+      description: Return initial step data.
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_daylight_battle_create
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/daylight/battle/{game_id}/{route}/:
+    get:
+      operationId: birds_daylight_battle_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_daylight_battle_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/daylight/building/:
+    get:
+      operationId: birds_daylight_building_retrieve
+      description: Return initial step data.
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_daylight_building_create
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/daylight/building/{game_id}/{route}/:
+    get:
+      operationId: birds_daylight_building_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_daylight_building_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/daylight/craft/:
+    get:
+      operationId: birds_daylight_craft_retrieve
+      description: Return initial step data.
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_daylight_craft_create
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/daylight/craft/{game_id}/{route}/:
+    get:
+      operationId: birds_daylight_craft_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_daylight_craft_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/daylight/move/:
+    get:
+      operationId: birds_daylight_move_retrieve
+      description: Return initial step data.
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_daylight_move_create
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/daylight/move/{game_id}/{route}/:
+    get:
+      operationId: birds_daylight_move_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_daylight_move_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/daylight/recruit/:
+    get:
+      operationId: birds_daylight_recruit_retrieve
+      description: Return initial step data.
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_daylight_recruit_create
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/daylight/recruit/{game_id}/{route}/:
+    get:
+      operationId: birds_daylight_recruit_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_daylight_recruit_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/player-info/{game_id}/:
+    get:
+      operationId: birds_player_info_retrieve
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/birds/setup/choose-leader/:
+    get:
+      operationId: birds_setup_choose_leader_retrieve
+      description: Return initial step data.
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_setup_choose_leader_create
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/setup/choose-leader/{game_id}/{route}/:
+    get:
+      operationId: birds_setup_choose_leader_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_setup_choose_leader_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/setup/confirm-completed-setup/:
+    get:
+      operationId: birds_setup_confirm_completed_setup_retrieve
+      description: Return initial step data.
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_setup_confirm_completed_setup_create
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/setup/confirm-completed-setup/{game_id}/{route}/:
+    get:
+      operationId: birds_setup_confirm_completed_setup_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_setup_confirm_completed_setup_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/setup/pick-corner/:
+    get:
+      operationId: birds_setup_pick_corner_retrieve
+      description: Return initial step data.
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_setup_pick_corner_create
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/setup/pick-corner/{game_id}/{route}/:
+    get:
+      operationId: birds_setup_pick_corner_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: birds_setup_pick_corner_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/turmoil/:
+    get:
+      operationId: birds_turmoil_retrieve
+      description: Return initial step data.
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: birds_turmoil_create
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/birds/turmoil/{game_id}/{route}/:
+    get:
+      operationId: birds_turmoil_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: birds_turmoil_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - birds
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/birdsong/place-wood/:
+    get:
+      operationId: cats_birdsong_place_wood_retrieve
+      description: Return initial step data.
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: cats_birdsong_place_wood_create
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/birdsong/place-wood/{game_id}/{route}/:
+    get:
+      operationId: cats_birdsong_place_wood_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: cats_birdsong_place_wood_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/daylight/actions/:
+    get:
+      operationId: cats_daylight_actions_retrieve
+      description: Return initial step data.
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: cats_daylight_actions_create
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/daylight/actions/{game_id}/{route}/:
+    get:
+      operationId: cats_daylight_actions_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: cats_daylight_actions_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/daylight/craft/:
+    get:
+      operationId: cats_daylight_craft_retrieve
+      description: Return initial step data.
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: cats_daylight_craft_create
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/daylight/craft/{game_id}/{route}/:
+    get:
+      operationId: cats_daylight_craft_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: cats_daylight_craft_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/evening/discard-cards/:
+    get:
+      operationId: cats_evening_discard_cards_retrieve
+      description: Return initial step data.
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: cats_evening_discard_cards_create
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/evening/discard-cards/{game_id}/{route}/:
+    get:
+      operationId: cats_evening_discard_cards_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: cats_evening_discard_cards_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/evening/draw-cards/:
+    get:
+      operationId: cats_evening_draw_cards_retrieve
+      description: Return initial step data.
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: cats_evening_draw_cards_create
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/evening/draw-cards/{game_id}/{route}/:
+    get:
+      operationId: cats_evening_draw_cards_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: cats_evening_draw_cards_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/field-hospital/:
+    get:
+      operationId: cats_field_hospital_retrieve
+      description: Return initial step data.
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: cats_field_hospital_create
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/field-hospital/{game_id}/{route}/:
+    get:
+      operationId: cats_field_hospital_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: cats_field_hospital_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/player-info/{game_id}/:
+    get:
+      operationId: cats_player_info_retrieve
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/cats/setup/confirm-completed-setup/:
+    get:
+      operationId: cats_setup_confirm_completed_setup_retrieve
+      description: Return initial step data.
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: cats_setup_confirm_completed_setup_create
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/setup/confirm-completed-setup/{game_id}/{route}/:
+    get:
+      operationId: cats_setup_confirm_completed_setup_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: cats_setup_confirm_completed_setup_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/setup/pick-corner/:
+    get:
+      operationId: cats_setup_pick_corner_retrieve
+      description: Return initial step data.
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: cats_setup_pick_corner_create
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/setup/pick-corner/{game_id}/{route}/:
+    get:
+      operationId: cats_setup_pick_corner_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: cats_setup_pick_corner_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/setup/place-initial-building/:
+    get:
+      operationId: cats_setup_place_initial_building_retrieve
+      description: Return initial step data.
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: cats_setup_place_initial_building_create
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/cats/setup/place-initial-building/{game_id}/{route}/:
+    get:
+      operationId: cats_setup_place_initial_building_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: cats_setup_place_initial_building_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - cats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/clearings/{game_id}/:
+    get:
+      operationId: clearings_list
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - clearings
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Clearing'
+          description: ''
+  /api/crafted-cards/{game_id}/{faction}/:
+    get:
+      operationId: crafted_cards_retrieve
+      parameters:
+      - in: path
+        name: faction
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - crafted-cards
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/crows/action/crafting/:
+    get:
+      operationId: crows_action_crafting_retrieve
+      description: Return initial step data.
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: crows_action_crafting_create
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/crafting/{game_id}/{route}/:
+    get:
+      operationId: crows_action_crafting_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: crows_action_crafting_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/daylight/:
+    get:
+      operationId: crows_action_daylight_retrieve
+      description: Return initial step data.
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: crows_action_daylight_create
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/daylight/{game_id}/{route}/:
+    get:
+      operationId: crows_action_daylight_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: crows_action_daylight_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/discard/:
+    get:
+      operationId: crows_action_discard_retrieve
+      description: Return initial step data.
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: crows_action_discard_create
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/discard/{game_id}/{route}/:
+    get:
+      operationId: crows_action_discard_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: crows_action_discard_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/exert/:
+    get:
+      operationId: crows_action_exert_retrieve
+      description: Return initial step data.
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: crows_action_exert_create
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/exert/{game_id}/{route}/:
+    get:
+      operationId: crows_action_exert_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: crows_action_exert_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/flipping/:
+    get:
+      operationId: crows_action_flipping_retrieve
+      description: Return initial step data.
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: crows_action_flipping_create
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/flipping/{game_id}/{route}/:
+    get:
+      operationId: crows_action_flipping_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: crows_action_flipping_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/manual-recruit/:
+    get:
+      operationId: crows_action_manual_recruit_retrieve
+      description: Return initial step data.
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: crows_action_manual_recruit_create
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/manual-recruit/{game_id}/{route}/:
+    get:
+      operationId: crows_action_manual_recruit_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: crows_action_manual_recruit_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/place-raid-warriors/:
+    get:
+      operationId: crows_action_place_raid_warriors_retrieve
+      description: Return initial step data.
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: crows_action_place_raid_warriors_create
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/place-raid-warriors/{game_id}/{route}/:
+    get:
+      operationId: crows_action_place_raid_warriors_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: crows_action_place_raid_warriors_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/recruiting/:
+    get:
+      operationId: crows_action_recruiting_retrieve
+      description: Return initial step data.
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: crows_action_recruiting_create
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/action/recruiting/{game_id}/{route}/:
+    get:
+      operationId: crows_action_recruiting_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: crows_action_recruiting_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/player-info/{game_id}/:
+    get:
+      operationId: crows_player_info_retrieve
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/crows/player-private-info/{game_id}/:
+    get:
+      operationId: crows_player_private_info_retrieve
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/crows/setup/confirm-completed-setup/:
+    get:
+      operationId: crows_setup_confirm_completed_setup_retrieve
+      description: Return initial step data.
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: crows_setup_confirm_completed_setup_create
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/setup/confirm-completed-setup/{game_id}/{route}/:
+    get:
+      operationId: crows_setup_confirm_completed_setup_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: crows_setup_confirm_completed_setup_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/setup/pick-clearing/:
+    get:
+      operationId: crows_setup_pick_clearing_retrieve
+      description: Return initial step data.
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: crows_setup_pick_clearing_create
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/crows/setup/pick-clearing/{game_id}/{route}/:
+    get:
+      operationId: crows_setup_pick_clearing_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: crows_setup_pick_clearing_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - crows
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/discard-pile/{game_id}/:
+    get:
+      operationId: discard_pile_list
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - discard-pile
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Card'
+          description: ''
+  /api/dominance-supply/{game_id}/:
+    get:
+      operationId: dominance_supply_list
+      description: Returns the dominance cards currently available in the supply.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - dominance-supply
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DominanceSupplyEntry'
+          description: ''
+  /api/game/{game_id}/session/:
+    get:
+      operationId: game_session_retrieve
+      description: provides detailed information about the game session
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - game
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameSession'
+          description: ''
+  /api/game/create/:
+    post:
+      operationId: game_create_create
+      tags:
+      - game
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/game/create-demo/:
+    post:
+      operationId: game_create_demo_create
+      description: |-
+        Creates a new demo game, adds user1, user2, user3, user4.
+        Assigns them Cats, Birds, WA, and Crows respectively, and starts the game.
+      tags:
+      - game
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/game/current-action/{game_id}/:
+    get:
+      operationId: game_current_action_retrieve
+      description: provides the route for the current action
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - game
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentAction'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/game/join/{game_id}/:
+    patch:
+      operationId: game_join_partial_update
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - game
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/game/pick-faction/{game_id}/:
+    patch:
+      operationId: game_pick_faction_partial_update
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - game
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/game/start/{game_id}/:
+    patch:
+      operationId: game_start_partial_update
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - game
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/game/undo/{game_id}/:
+    post:
+      operationId: game_undo_create
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - game
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UndoResponse'
+          description: ''
+  /api/games/active/:
+    get:
+      operationId: games_active_retrieve
+      tags:
+      - games
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/games/joinable/:
+    get:
+      operationId: games_joinable_retrieve
+      tags:
+      - games
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/outrage/:
+    get:
+      operationId: outrage_retrieve
+      description: Return initial step data.
+      tags:
+      - outrage
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: outrage_create
+      tags:
+      - outrage
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/outrage/{game_id}/{route}/:
+    get:
+      operationId: outrage_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - outrage
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: outrage_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - outrage
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/player-hand/{game_id}/:
+    get:
+      operationId: player_hand_list
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - player-hand
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Card'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/player/{game_id}/:
+    get:
+      operationId: player_retrieve
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - player
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/players/{game_id}/:
+    get:
+      operationId: players_list
+      description: provides information about all players in the game
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - players
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlayerPublic'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/token/:
+    post:
+      operationId: token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/token/refresh/:
+    post:
+      operationId: token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/turn-info/{game_id}/:
+    get:
+      operationId: turn_info_retrieve
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - turn-info
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameStatus'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/user/:
+    get:
+      operationId: user_retrieve
+      tags:
+      - user
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/wa/birdsong/revolt/:
+    get:
+      operationId: wa_birdsong_revolt_retrieve
+      description: Return initial step data.
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: wa_birdsong_revolt_create
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/wa/birdsong/revolt/{game_id}/{route}/:
+    get:
+      operationId: wa_birdsong_revolt_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: wa_birdsong_revolt_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/wa/birdsong/spread-sympathy/:
+    get:
+      operationId: wa_birdsong_spread_sympathy_retrieve
+      description: Return initial step data.
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: wa_birdsong_spread_sympathy_create
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/wa/birdsong/spread-sympathy/{game_id}/{route}/:
+    get:
+      operationId: wa_birdsong_spread_sympathy_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: wa_birdsong_spread_sympathy_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/wa/daylight/actions/:
+    get:
+      operationId: wa_daylight_actions_retrieve
+      description: Return initial step data.
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: wa_daylight_actions_create
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/wa/daylight/actions/{game_id}/{route}/:
+    get:
+      operationId: wa_daylight_actions_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: wa_daylight_actions_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/wa/evening/operations/:
+    get:
+      operationId: wa_evening_operations_retrieve
+      description: Return initial step data.
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: wa_evening_operations_create
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/wa/evening/operations/{game_id}/{route}/:
+    get:
+      operationId: wa_evening_operations_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: wa_evening_operations_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/wa/player-info/{game_id}/:
+    get:
+      operationId: wa_player_info_retrieve
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/wa/player-private-info/{game_id}/:
+    get:
+      operationId: wa_player_private_info_retrieve
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - wa
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    Card:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        card_name:
+          type: string
+          readOnly: true
+        suit:
+          type: object
+          properties:
+            value:
+              enum:
+              - r
+              - y
+              - o
+              - b
+              type: string
+              description: |-
+                * `r` - r
+                * `y` - y
+                * `o` - o
+                * `b` - b
+            label:
+              type: string
+              enum:
+              - Bird
+              - Fox
+              - Mouse
+              - Rabbit
+          required:
+          - value
+          - label
+        title:
+          type: string
+        text:
+          type: string
+        craftable:
+          type: boolean
+        cost:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                enum:
+                - r
+                - y
+                - o
+                - b
+                type: string
+                description: |-
+                  * `r` - r
+                  * `y` - y
+                  * `o` - o
+                  * `b` - b
+              label:
+                type: string
+                enum:
+                - Bird
+                - Fox
+                - Mouse
+                - Rabbit
+            required:
+            - value
+            - label
+        item:
+          type: object
+          properties:
+            value:
+              enum:
+              - '0'
+              - '1'
+              - '2'
+              - '3'
+              - '4'
+              - '5'
+              - '6'
+              type: string
+              description: |-
+                * `0` - 0
+                * `1` - 1
+                * `2` - 2
+                * `3` - 3
+                * `4` - 4
+                * `5` - 5
+                * `6` - 6
+            label:
+              type: string
+              enum:
+              - Bag
+              - Boots
+              - Coin
+              - Crossbow
+              - Hammer
+              - Sword
+              - Tea
+          required:
+          - value
+          - label
+          nullable: true
+        crafted_points:
+          type: integer
+        ambush:
+          type: boolean
+        dominance:
+          type: boolean
+      required:
+      - ambush
+      - card_name
+      - cost
+      - craftable
+      - crafted_points
+      - dominance
+      - id
+      - item
+      - suit
+      - text
+      - title
+    Clearing:
+      type: object
+      properties:
+        suit:
+          type: object
+          properties:
+            value:
+              enum:
+              - r
+              - y
+              - o
+              - b
+              type: string
+              description: |-
+                * `r` - r
+                * `y` - y
+                * `o` - o
+                * `b` - b
+            label:
+              type: string
+              enum:
+              - Bird
+              - Fox
+              - Mouse
+              - Rabbit
+          required:
+          - value
+          - label
+        clearing_number:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        connected_to:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+        water_connected_to:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+        ruins:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+      required:
+      - clearing_number
+      - connected_to
+      - ruins
+      - suit
+      - water_connected_to
+    CurrentAction:
+      type: object
+      properties:
+        route:
+          type: string
+      required:
+      - route
+    DominanceSupplyEntry:
+      type: object
+      properties:
+        card:
+          $ref: '#/components/schemas/Card'
+      required:
+      - card
+    FactionChoiceEntry:
+      type: object
+      properties:
+        faction:
+          type: object
+          properties:
+            value:
+              enum:
+              - ca
+              - bi
+              - wa
+              - cr
+              type: string
+              description: |-
+                * `ca` - ca
+                * `bi` - bi
+                * `wa` - wa
+                * `cr` - cr
+            label:
+              type: string
+              enum:
+              - Birds
+              - Cats
+              - Crows
+              - Woodland Alliance
+          required:
+          - value
+          - label
+        chosen:
+          type: boolean
+      required:
+      - faction
+    GameActionStep:
+      type: object
+      properties:
+        faction:
+          type: object
+          properties:
+            value:
+              enum:
+              - ca
+              - bi
+              - wa
+              - cr
+              type: string
+              description: |-
+                * `ca` - ca
+                * `bi` - bi
+                * `wa` - wa
+                * `cr` - cr
+            label:
+              type: string
+              enum:
+              - Birds
+              - Cats
+              - Crows
+              - Woodland Alliance
+          required:
+          - value
+          - label
+        name:
+          type: string
+        prompt:
+          type: string
+        endpoint:
+          type: string
+        payload_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/PayloadEntry'
+        accumulated_payload: {}
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/Option'
+      required:
+      - name
+    GameSession:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        owner_username:
+          type: string
+        player_count:
+          type: integer
+          readOnly: true
+        status:
+          type: object
+          properties:
+            value:
+              enum:
+              - '0'
+              - '1'
+              - '2'
+              - '3'
+              type: string
+              description: |-
+                * `0` - 0
+                * `1` - 1
+                * `2` - 2
+                * `3` - 3
+            label:
+              type: string
+              enum:
+              - Completed
+              - Not Started
+              - Setup Completed
+              - Started
+          required:
+          - value
+          - label
+        players:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlayerPublic'
+          readOnly: true
+        faction_choices:
+          type: array
+          items:
+            $ref: '#/components/schemas/FactionChoiceEntry'
+          readOnly: true
+      required:
+      - faction_choices
+      - id
+      - owner_username
+      - player_count
+      - players
+      - status
+    GameStatus:
+      type: object
+      description: |-
+        Serializer for information on the current game status
+        This includes the current turn information as well as any relevant events
+      properties:
+        game_status:
+          type: object
+          properties:
+            value:
+              enum:
+              - '0'
+              - '1'
+              - '2'
+              - '3'
+              type: string
+              description: |-
+                * `0` - 0
+                * `1` - 1
+                * `2` - 2
+                * `3` - 3
+            label:
+              type: string
+              enum:
+              - Completed
+              - Not Started
+              - Setup Completed
+              - Started
+          required:
+          - value
+          - label
+        setup_status:
+          type: object
+          properties:
+            value:
+              enum:
+              - INIT
+              - CAT
+              - BIRD
+              - WA
+              - VB
+              - CROW
+              - COMP
+              type: string
+              description: |-
+                * `INIT` - INIT
+                * `CAT` - CAT
+                * `BIRD` - BIRD
+                * `WA` - WA
+                * `VB` - VB
+                * `CROW` - CROW
+                * `COMP` - COMP
+            label:
+              type: string
+              enum:
+              - Birds Setup
+              - Cats Setup
+              - Completed
+              - Crows Setup
+              - Initial Setup
+              - Vagabond Setup
+              - Woodland Alliance Setup
+          required:
+          - value
+          - label
+        current_turn_player:
+          type: string
+      required:
+      - game_status
+    Option:
+      type: object
+      properties:
+        value:
+          type: string
+        label:
+          type: string
+      required:
+      - value
+    PayloadEntry:
+      type: object
+      properties:
+        type:
+          type: string
+        name:
+          type: string
+        value:
+          type: string
+          readOnly: true
+          nullable: true
+      required:
+      - name
+      - type
+      - value
+    PlayerPublic:
+      type: object
+      properties:
+        username:
+          type: string
+        faction:
+          type: object
+          properties:
+            value:
+              enum:
+              - ca
+              - bi
+              - wa
+              - cr
+              type: string
+              description: |-
+                * `ca` - ca
+                * `bi` - bi
+                * `wa` - wa
+                * `cr` - cr
+            label:
+              type: string
+              enum:
+              - Birds
+              - Cats
+              - Crows
+              - Woodland Alliance
+          required:
+          - value
+          - label
+        score:
+          type: integer
+        turn_order:
+          type: integer
+        card_count:
+          type: integer
+          readOnly: true
+        active_dominance:
+          type: string
+          readOnly: true
+      required:
+      - active_dominance
+      - card_count
+      - faction
+      - score
+      - turn_order
+      - username
+    TokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - password
+      - refresh
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    UndoResponse:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+      - status
+    ValidationError:
+      type: object
+      properties:
+        detail:
+          description: Error message or object.
+      required:
+      - detail
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

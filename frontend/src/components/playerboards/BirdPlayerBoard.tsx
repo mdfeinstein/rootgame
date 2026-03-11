@@ -4,14 +4,10 @@ import {
   Paper,
   Stack,
   Text,
-  Grid,
   Modal,
-  Badge,
   ThemeIcon,
   Tooltip,
   SimpleGrid,
-  Card,
-  Image,
   rem,
 } from "@mantine/core";
 import {
@@ -75,7 +71,7 @@ export default function BirdPlayerBoard({
     (b) =>
       b.faction === "Birds" &&
       b.buildingType === "roosts" &&
-      b.clearing_number !== null
+      b.clearing_number !== null,
   ).length;
 
   const leaders = publicInfo?.leaders ?? [];
@@ -158,10 +154,10 @@ export default function BirdPlayerBoard({
             {COLUMNS.map((col) => {
               const Icon = col.icon;
               const cardsInColumn = decree.filter(
-                (d: any) => d.column === col.code
+                (d: any) => d.column === col.code,
               );
               const viziersInColumn = viziers.filter(
-                (v: any) => v.column === col.code
+                (v: any) => v.column === col.code,
               );
               // Combine viziers (always first?) and cards
               const columnItems = [...viziersInColumn, ...cardsInColumn];

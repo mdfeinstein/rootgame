@@ -34,7 +34,7 @@ const CraftedCardBadge = ({
       style={{ display: "inline-block" }}
     >
       <div
-        onClick={(e) => {
+        onClick={() => {
           if (!isDisabled) {
             setModalOpen(true);
           }

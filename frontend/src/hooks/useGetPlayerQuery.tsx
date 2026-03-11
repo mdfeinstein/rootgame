@@ -1,5 +1,8 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { use } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+import type { components } from "../api/types";
+
+export type PlayerData = components["schemas"]["PlayerPublic"];
 
 const useGetPlayerQuery = (gameId: number, username: string) => {
   const {
@@ -9,7 +12,7 @@ const useGetPlayerQuery = (gameId: number, username: string) => {
     isSuccess,
   } = useQuery({
     queryKey: ["player", gameId, username],
-    queryFn: async (): Promise<{ faction_label: string }> => {
+    queryFn: async (): Promise<PlayerData> => {
       const response = await fetch(
         `${import.meta.env.VITE_DJANGO_URL}/api/player/${gameId}/`,
         {
@@ -17,7 +20,7 @@ const useGetPlayerQuery = (gameId: number, username: string) => {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       return response.json();
     },
