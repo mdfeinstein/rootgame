@@ -52,7 +52,7 @@ const PlayerIcon = ({
           {/* Score Badge */}
           <Group gap="xs">
             <CraftedCardBadge
-              gameId={gameId}
+              gameId={gameId as number}
               faction={faction.value as any}
               factionLabel={faction.label}
             />

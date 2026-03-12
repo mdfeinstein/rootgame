@@ -89,9 +89,20 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
     onSuccess: async (data) => {
       setError(null);
       if (data.name === "completed") {
-        // game state has changed. invalidate all queries
-        // will also cause a refetch of the current action
-        await queryClient.invalidateQueries();
+        const isWsAuthenticated = queryClient.getQueryData([
+          "ws-authenticated",
+          gameId?.toString(),
+        ]);
+
+        if (!isWsAuthenticated) {
+          // game state has changed. invalidate all queries if WS is down
+          // will also cause a refetch of the current action
+          await queryClient.invalidateQueries();
+        } else {
+          console.log(
+            "Action completed. Awaiting WebSocket 'update' instruction to refresh.",
+          );
+        }
         return;
       }
       //update actionInfo

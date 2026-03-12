@@ -40,9 +40,12 @@ export default function SvgBoard({
   height?: number;
 }) {
   const { gameId, isGameStarted } = useContext(GameContext);
-  const turnInfo = useTurnInfoQuery(gameId, isGameStarted);
-  const { data: clearingsData } = useClearingsQuery(gameId, isGameStarted);
-  const { privateInfo } = useCrowPlayerQuery(gameId, isGameStarted);
+  const turnInfo = useTurnInfoQuery(gameId as number, isGameStarted);
+  const { data: clearingsData } = useClearingsQuery(
+    gameId as number,
+    isGameStarted,
+  );
+  const { privateInfo } = useCrowPlayerQuery(gameId as number, isGameStarted);
 
   useEffect(() => {
     if (!turnInfo.data) return;
@@ -51,9 +54,17 @@ export default function SvgBoard({
 
   const factionList: Faction[] = ["Cats", "Birds", "WA", "Crows"];
   // create list of clearingProps
-  const { warriorTable } = useWarriorTable(gameId, factionList, isGameStarted);
+  const { warriorTable } = useWarriorTable(
+    gameId as number,
+    factionList,
+    isGameStarted,
+  );
 
-  const { tokenTable } = useTokenTable(gameId, factionList, isGameStarted);
+  const { tokenTable } = useTokenTable(
+    gameId as number,
+    factionList,
+    isGameStarted,
+  );
 
   const accumulatedTokens: Record<
     number,
@@ -85,7 +96,7 @@ export default function SvgBoard({
   }, [tokenTable]);
 
   const { buildingTable, isSuccess: isSuccessBuilding } = useBuildingTable(
-    gameId,
+    gameId as number,
     factionList,
     isGameStarted,
   );

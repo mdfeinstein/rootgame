@@ -14,14 +14,14 @@ export default function DevSignIn() {
       const currentPlayer = session.players.find(
         (p: any) => p.username.toLowerCase() === username.toLowerCase(),
       );
-      if (currentPlayer?.faction) {
+      if (currentPlayer?.faction?.value) {
         const factionMap: Record<string, string> = {
           ca: "Cats",
           bi: "Birds",
           wa: "WA",
           cr: "Crows",
         };
-        setActiveButton(factionMap[currentPlayer.faction] || null);
+        setActiveButton(factionMap[currentPlayer.faction.value] || null);
       } else {
         setActiveButton(null);
       }
@@ -30,7 +30,7 @@ export default function DevSignIn() {
 
   const signInByFaction = (factionCode: string, label: string) => {
     const players = session?.players || [];
-    const player = players.find((p: any) => p.faction === factionCode);
+    const player = players.find((p: any) => p.faction?.value === factionCode);
 
     if (player) {
       signIn.mutate({ username: player.username, password: "password" });

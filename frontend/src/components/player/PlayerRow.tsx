@@ -9,7 +9,7 @@ import { UserContext } from "../../contexts/UserProvider";
 
 const PlayerRow = () => {
   const { gameId, isGameStarted } = useContext(GameContext);
-  const { players } = useGetPlayersInfoQuery(gameId, isGameStarted);
+  const { players } = useGetPlayersInfoQuery(gameId as number, isGameStarted);
   const sortedPlayers = [...(players || [])].sort(
     (a, b) => a.turn_order - b.turn_order,
   );

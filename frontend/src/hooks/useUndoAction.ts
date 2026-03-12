@@ -22,8 +22,19 @@ export const useUndoAction = (gameId: number) => {
       return response.json();
     },
     onSuccess: () => {
-      // Invalidate all queries to refresh state since we traveled back in time
-      queryClient.invalidateQueries();
+      const isWsAuthenticated = queryClient.getQueryData([
+        "ws-authenticated",
+        gameId?.toString(),
+      ]);
+
+      if (!isWsAuthenticated) {
+        // Invalidate all queries to refresh state since we traveled back in time
+        queryClient.invalidateQueries();
+      } else {
+        console.log(
+          "Undo completed. Awaiting WebSocket 'update' instruction to refresh.",
+        );
+      }
     },
     onError: (error) => {
       console.error("Undo failed:", error);
