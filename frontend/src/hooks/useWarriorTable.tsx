@@ -1,5 +1,6 @@
 import { useQueries } from "@tanstack/react-query";
 import type { Faction } from "../data/frontend_types";
+import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
 
 export type warriorTableType = {
   clearing_number: number | null;
@@ -18,7 +19,6 @@ const tabulateWarriors = (faction: Faction, data: any) => {
   });
 };
 
-const apiUrl = import.meta.env.VITE_API_URL;
 const useWarriorTable = (
   gameId: number,
   factions: Faction[],
@@ -26,15 +26,8 @@ const useWarriorTable = (
 ) => {
   const results = useQueries({
     queries: factions.map((faction) => ({
-      queryKey: [`public-${faction}`, gameId],
-      queryFn: async () => {
-        const response = await fetch(
-          apiUrl + `/${faction.toLowerCase()}/player-info/${gameId}/`,
-        );
-        return response.json();
-      },
+      ...getFactionPlayerInfoQueryOptions(gameId, faction, enabled),
       select: (data) => tabulateWarriors(faction, data),
-      enabled: !!gameId && enabled,
     })),
   });
 

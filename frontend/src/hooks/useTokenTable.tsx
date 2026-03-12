@@ -1,5 +1,6 @@
 import { useQueries } from "@tanstack/react-query";
 import type { Faction } from "../data/frontend_types";
+import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
 
 export type TokenTableType = {
   faction: Faction;
@@ -34,7 +35,6 @@ const tabulateTokens = (faction: Faction, data: any) => {
   return tokenTable;
 };
 
-const apiUrl = import.meta.env.VITE_API_URL;
 const useTokenTable = (
   gameId: number,
   factions: Faction[],
@@ -42,15 +42,8 @@ const useTokenTable = (
 ) => {
   const results = useQueries({
     queries: factions.map((faction) => ({
-      queryKey: [`public-${faction}`, gameId, "tokens"],
-      queryFn: async () => {
-        const response = await fetch(
-          apiUrl + `/${faction.toLowerCase()}/player-info/${gameId}/`,
-        );
-        return response.json();
-      },
+      ...getFactionPlayerInfoQueryOptions(gameId, faction, enabled),
       select: (data) => tabulateTokens(faction, data),
-      enabled: !!gameId && enabled,
     })),
   });
 

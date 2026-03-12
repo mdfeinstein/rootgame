@@ -212,7 +212,7 @@ export default function SvgBoard({
                     faction: faction,
                     count:
                       warriorTable?.filter(
-                        (entry) =>
+                        (entry: any) =>
                           entry.faction === faction &&
                           entry.clearing_number === clearingProp.clearingNumber,
                       ).length ?? 0,

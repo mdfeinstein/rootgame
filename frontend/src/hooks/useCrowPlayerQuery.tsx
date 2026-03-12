@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
 import { useContext } from "react";
 import { PlayerContext } from "../contexts/PlayerProvider";
 
@@ -40,10 +41,7 @@ export const useCrowPlayerQuery = (gameId: number, enabled: boolean = true) => {
     isError: isPublicError,
     isSuccess: isPublicSuccess,
   } = useQuery<CrowPlayerInfo>({
-    queryKey: ["crowsPublicInfo", gameId],
-    queryFn: () =>
-      fetch(apiUrl + `/crows/player-info/${gameId}/`).then((r) => r.json()),
-    enabled: !!gameId && enabled,
+    ...getFactionPlayerInfoQueryOptions(gameId, "Crows", enabled),
   });
 
   const { faction } = useContext(PlayerContext);

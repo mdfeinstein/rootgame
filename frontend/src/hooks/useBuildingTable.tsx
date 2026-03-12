@@ -1,6 +1,7 @@
 import { useQueries } from "@tanstack/react-query";
 import type { BuildingType } from "../components/board/BuildingSlot";
 import type { Faction } from "../data/frontend_types";
+import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
 
 export type BuildingTableType = {
   clearing_number: number | null;
@@ -35,7 +36,6 @@ const tabulateBuildings = (faction: Faction, data: any) => {
   return buildingTable;
 };
 
-const apiUrl = import.meta.env.VITE_API_URL;
 const useBuildingTable = (
   gameId: number,
   factions: string[],
@@ -43,15 +43,8 @@ const useBuildingTable = (
 ) => {
   const results = useQueries({
     queries: factions.map((faction) => ({
-      queryKey: [`public-${faction}`, gameId, "buildings"],
-      queryFn: async () => {
-        const response = await fetch(
-          apiUrl + `/${faction.toLowerCase()}/player-info/${gameId}/`,
-        );
-        return response.json();
-      },
+      ...getFactionPlayerInfoQueryOptions(gameId, faction as Faction, enabled),
       select: (data) => tabulateBuildings(faction as Faction, data),
-      enabled: !!gameId && enabled,
     })),
   });
 

@@ -1,17 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
+import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
 
-const apiUrl = import.meta.env.VITE_API_URL;
 export const useBirdPlayerQuery = (gameId: number) => {
   const {
     data: publicInfo,
     isError,
     isLoading,
     isSuccess,
-  } = useQuery({
-    queryKey: ["birdsPublicInfo"],
-    queryFn: () =>
-      fetch(apiUrl + `/birds/player-info/${gameId}/`).then((r) => r.json()),
-  });
+  } = useQuery(getFactionPlayerInfoQueryOptions(gameId, "Birds"));
 
   return { publicInfo, isLoading, isError, isSuccess };
 };

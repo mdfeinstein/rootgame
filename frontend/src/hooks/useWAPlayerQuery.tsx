@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
 import { PlayerContext } from "../contexts/PlayerProvider";
 import { useContext } from "react";
 
@@ -9,11 +10,7 @@ const useWAPlayerQuery = (gameId: number) => {
     isLoading,
     isError,
     isSuccess,
-  } = useQuery({
-    queryKey: ["waPublicInfo"],
-    queryFn: () =>
-      fetch(apiUrl + `/wa/player-info/${gameId}/`).then((r) => r.json()),
-  });
+  } = useQuery(getFactionPlayerInfoQueryOptions(gameId, "WA"));
   const { faction } = useContext(PlayerContext);
   const {
     data: privateInfo,
