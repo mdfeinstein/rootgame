@@ -1,12 +1,30 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext } from "react";
+import type { UseMutationResult } from "@tanstack/react-query";
+
+import type { components } from "../api/types";
+
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
-const UserContext = createContext<any>({});
+
+export type LoginCredentials = Omit<
+  components["schemas"]["TokenObtainPair"],
+  "access" | "refresh"
+>;
+
+export interface UserContextType {
+  username: string | null | undefined;
+  signInMutation: UseMutationResult<any, Error, LoginCredentials>;
+  signOut: () => void;
+  isLoading: boolean;
+  isFetched: boolean;
+}
+
+const UserContext = createContext<UserContextType>({} as UserContextType);
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
   const signIn = useMutation({
-    mutationFn: async (loginData: { username: string; password: string }) => {
+    mutationFn: async (loginData: LoginCredentials) => {
       const response = await fetch(`${djangoUrl}/api/token/`, {
         method: "POST",
         // credentials: "include",

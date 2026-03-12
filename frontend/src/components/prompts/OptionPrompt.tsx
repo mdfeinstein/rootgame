@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { GameActionContext } from "../../contexts/GameActionContext";
+import { GameActionContext } from "../../contexts/GameActionProvider";
 import useGameActionQuery from "../../hooks/useGameActionQuery";
 import { GameContext } from "../../contexts/GameProvider";
 import type { Option } from "../../hooks/useGameActionQuery";

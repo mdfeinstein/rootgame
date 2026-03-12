@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { GameContext } from "../../contexts/GameProvider";
-import { GameActionContext } from "../../contexts/GameActionContext";
+import { GameActionContext } from "../../contexts/GameActionProvider";
 import useGameActionQuery from "../../hooks/useGameActionQuery";
 
 const NumberPrompt = () => {

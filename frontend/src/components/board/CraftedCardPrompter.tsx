@@ -4,7 +4,7 @@ import { UserContext } from "../../contexts/UserProvider";
 import useCraftedCardsQuery from "../../hooks/useCraftedCardsQuery";
 import useGetPlayersInfoQuery from "../../hooks/useGetPlayersInfoQuery";
 import { Button, Group, Stack, Text, Paper, rem } from "@mantine/core";
-import { GameActionContext } from "../../contexts/GameActionContext";
+import { GameActionContext } from "../../contexts/GameActionProvider";
 
 const CraftedCardPrompter = () => {
   const { gameId } = useContext(GameContext);

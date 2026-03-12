@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import type { CardType } from "../../hooks/useGetPlayerHandQuery";
-import { GameActionContext } from "../../contexts/GameActionContext";
+import { GameActionContext } from "../../contexts/GameActionProvider";
 import { GameContext } from "../../contexts/GameProvider";
 import useGetPlayersInfoQuery from "../../hooks/useGetPlayersInfoQuery";
 import { UserContext } from "../../contexts/UserProvider";

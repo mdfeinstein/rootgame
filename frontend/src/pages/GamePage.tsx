@@ -1,5 +1,5 @@
 import SvgBoard from "../components/board/Board";
-import { GameActionProvider } from "../contexts/GameActionContext";
+import { GameActionProvider } from "../contexts/GameActionProvider";
 import Prompter from "../components/board/Prompter";
 import CraftedCardPrompter from "../components/board/CraftedCardPrompter";
 import DevSignIn from "../components/DevSignIn";

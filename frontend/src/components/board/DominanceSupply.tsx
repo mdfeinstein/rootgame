@@ -2,7 +2,7 @@ import { ActionIcon, Group, Paper, Text, Tooltip, Stack } from "@mantine/core";
 import { useContext } from "react";
 import { useDominanceSupplyQuery } from "../../hooks/useDominanceSupplyQuery";
 import { GameContext } from "../../contexts/GameProvider";
-import { GameActionContext } from "../../contexts/GameActionContext";
+import { GameActionContext } from "../../contexts/GameActionProvider";
 import { SUIT_CONFIG } from "../../data/suitConfig";
 import type { SuitValue } from "../../data/suitConfig";
 import type { CardType } from "../../hooks/useGetPlayerHandQuery";

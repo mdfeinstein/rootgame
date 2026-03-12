@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { GameActionContext } from "../../contexts/GameActionContext";
+import { GameActionContext } from "../../contexts/GameActionProvider";
 
 type ClearingContextType = {
   cx: number;

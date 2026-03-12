@@ -1,4 +1,4 @@
-import { GameActionContext } from "../../contexts/GameActionContext";
+import { GameActionContext } from "../../contexts/GameActionProvider";
 import { useContext } from "react";
 import OptionPrompt from "../prompts/OptionPrompt";
 import NumberPrompt from "../prompts/NumberPrompt";

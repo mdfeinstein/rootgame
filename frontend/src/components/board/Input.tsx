@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { GameActionContext } from "../../contexts/GameActionContext";
+import { GameActionContext } from "../../contexts/GameActionProvider";
 
 export default function Input() {
   const { submitPayloadCallback } = useContext(GameActionContext);

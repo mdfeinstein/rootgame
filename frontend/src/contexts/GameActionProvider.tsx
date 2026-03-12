@@ -2,6 +2,10 @@ import { createContext, useContext } from "react";
 import useGameActionQuery from "../hooks/useGameActionQuery";
 import { GameContext } from "./GameProvider";
 
+import type { components } from "../api/types";
+
+export type FactionObj = components["schemas"]["PlayerPublic"]["faction"];
+
 // components when clicked may pass any or all of this information.
 // the callback will use the relevant data to submit to the server
 export type SubmitPayload = {
@@ -9,9 +13,22 @@ export type SubmitPayload = {
   building_type?: string;
   piece_type?: string;
   leader?: string;
+  card?: string;
+  number?: number;
 };
 
-const GameActionContext = createContext<any>({});
+export interface GameActionContextType {
+  faction: FactionObj | undefined;
+  actionPrompt: string | undefined;
+  error: string | null;
+  submitPayloadCallback: (submitPayload: SubmitPayload) => void;
+  cancelProcess: () => Promise<void>;
+  startActionOverride: (route: string) => void;
+}
+
+const GameActionContext = createContext<GameActionContextType>(
+  {} as GameActionContextType,
+);
 
 const GameActionProvider = ({ children }: { children: React.ReactNode }) => {
   const { gameId, isGameStarted } = useContext(GameContext);
