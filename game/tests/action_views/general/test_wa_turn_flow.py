@@ -50,7 +50,9 @@ class WATurnFlowTestCase(TestCase):
         # 1. Birdsong - Revolt Step
         self.wa_client.get_action()
         # Initial action should be WA_REVOLT
-        self.assertEqual(self.wa_client.base_route, "/api/wa/birdsong/revolt/")
+        self.assertEqual(
+            self.wa_client.base_route, "/api/woodland-alliance/birdsong/revolt/"
+        )
         # End revolt step. Depending on supporters, it might be 'clearing_number' or 'confirm'
         if "clearing_number" in [
             d["type"] for d in self.wa_client.step["payload_details"]
@@ -61,7 +63,10 @@ class WATurnFlowTestCase(TestCase):
 
         # 2. Birdsong - Spread Sympathy Step
         # After completing revolt, it should move to WA_SPREAD_SYMPATHY
-        self.assertEqual(self.wa_client.base_route, "/api/wa/birdsong/spread-sympathy/")
+        self.assertEqual(
+            self.wa_client.base_route,
+            "/api/woodland-alliance/birdsong/spread-sympathy/",
+        )
         # End spread sympathy step
         if "clearing_number" in [
             d["type"] for d in self.wa_client.step["payload_details"]
@@ -72,13 +77,17 @@ class WATurnFlowTestCase(TestCase):
 
         # 3. Daylight - Actions Step
         # After completing spread sympathy, it should move to WA_DAYLIGHT_ACTIONS
-        self.assertEqual(self.wa_client.base_route, "/api/wa/daylight/actions/")
+        self.assertEqual(
+            self.wa_client.base_route, "/api/woodland-alliance/daylight/actions/"
+        )
         # End daylight actions
         self.wa_client.submit_action({"action_type": ""})
 
         # 4. Evening - Military Operations Step
         # After completing daylight actions, it should move to WA_EVENING (Military Operations)
-        self.assertEqual(self.wa_client.base_route, "/api/wa/evening/operations/")
+        self.assertEqual(
+            self.wa_client.base_route, "/api/woodland-alliance/evening/operations/"
+        )
         # End operations
         if "action_type" in [d["type"] for d in self.wa_client.step["payload_details"]]:
             self.wa_client.submit_action({"action_type": ""})
@@ -122,7 +131,9 @@ class WATurnFlowTestCase(TestCase):
 
         # After skip, it should move to REVOLT
         self.wa_client.get_action()
-        self.assertEqual(self.wa_client.base_route, "/api/wa/birdsong/revolt/")
+        self.assertEqual(
+            self.wa_client.base_route, "/api/woodland-alliance/birdsong/revolt/"
+        )
 
     def test_wa_charm_offensive_flow(self):
         """
@@ -148,7 +159,9 @@ class WATurnFlowTestCase(TestCase):
 
         # End daylight actions
         self.wa_client.get_action()
-        self.assertEqual(self.wa_client.base_route, "/api/wa/daylight/actions/")
+        self.assertEqual(
+            self.wa_client.base_route, "/api/woodland-alliance/daylight/actions/"
+        )
         self.wa_client.submit_action({"action_type": ""})
 
         # After daylight actions, it moves to Daylight COMPLETED, which triggers check_charm_offensive
@@ -160,7 +173,9 @@ class WATurnFlowTestCase(TestCase):
 
         # After skip, turn should move to Evening military operations
         self.wa_client.get_action()
-        self.assertEqual(self.wa_client.base_route, "/api/wa/evening/operations/")
+        self.assertEqual(
+            self.wa_client.base_route, "/api/woodland-alliance/evening/operations/"
+        )
 
     def test_wa_informants_flow(self):
         """
@@ -186,7 +201,9 @@ class WATurnFlowTestCase(TestCase):
 
         # End military operations
         self.wa_client.get_action()
-        self.assertEqual(self.wa_client.base_route, "/api/wa/evening/operations/")
+        self.assertEqual(
+            self.wa_client.base_route, "/api/woodland-alliance/evening/operations/"
+        )
         if "action_type" in [d["type"] for d in self.wa_client.step["payload_details"]]:
             self.wa_client.submit_action({"action_type": ""})
         else:
@@ -238,4 +255,6 @@ class WATurnFlowTestCase(TestCase):
 
         # After skip, it should move to Daylight ACTIONS
         self.wa_client.get_action()
-        self.assertEqual(self.wa_client.base_route, "/api/wa/daylight/actions/")
+        self.assertEqual(
+            self.wa_client.base_route, "/api/woodland-alliance/daylight/actions/"
+        )

@@ -4,6 +4,7 @@ import { GameContext } from "../../contexts/GameProvider";
 import type { Player } from "../../hooks/useGetPlayersInfoQuery";
 import { useContext } from "react";
 import CraftedCardBadge from "../cards/CraftedCardBadge";
+import { type FactionLabel, labelToRoute } from "../../utils/factionUtils";
 import { FACTION_CONFIG } from "../../data/factionConfig";
 import type { FactionValue } from "../../data/factionConfig";
 import { SUIT_CONFIG } from "../../data/suitConfig";
@@ -21,7 +22,8 @@ const PlayerIcon = ({
   const { faction, username, score } = player;
   const { gameId } = useContext(GameContext);
 
-  const factionConfig = FACTION_CONFIG[faction.value as FactionValue];
+  const route = labelToRoute(faction.label as FactionLabel) as FactionValue;
+  const factionConfig = FACTION_CONFIG[route];
   const color = factionConfig?.color || "gray.5";
   const BoardComponent = factionConfig?.boardComponent;
   const hasBoard = !!BoardComponent;
@@ -53,7 +55,7 @@ const PlayerIcon = ({
           <Group gap="xs">
             <CraftedCardBadge
               gameId={gameId as number}
-              faction={faction.value as any}
+              faction={labelToRoute(faction.label as FactionLabel) as any}
               factionLabel={faction.label}
             />
             {player.active_dominance ? (

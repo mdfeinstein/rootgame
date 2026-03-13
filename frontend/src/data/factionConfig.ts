@@ -4,50 +4,25 @@ import WaPlayerBoard from "../components/playerboards/wa/WaPlayerBoard";
 import CrowsPlayerBoard from "../components/playerboards/crows/CrowsPlayerBoard";
 
 export const FACTION_CONFIG = {
-  Cats: {
+  cats: {
     value: "Cats",
     color: "orange.5",
     abbreviation: "CA",
     boardComponent: CatPlayerBoard,
   },
-  Birds: {
+  birds: {
     value: "Birds",
     color: "blue.5",
     abbreviation: "BI",
     boardComponent: BirdPlayerBoard,
   },
-  WoodlandAlliance: {
-    value: "WoodlandAlliance",
+  "woodland-alliance": {
+    value: "Woodland Alliance",
     color: "green.3",
     abbreviation: "WA",
     boardComponent: WaPlayerBoard,
   },
-  Crows: {
-    value: "Crows",
-    color: "indigo.6",
-    abbreviation: "CR",
-    boardComponent: CrowsPlayerBoard,
-  },
-  // Backward compatibility keys (if backend still uses abbreviations)
-  ca: {
-    value: "Cats",
-    color: "orange.5",
-    abbreviation: "CA",
-    boardComponent: CatPlayerBoard,
-  },
-  bi: {
-    value: "Birds",
-    color: "blue.5",
-    abbreviation: "BI",
-    boardComponent: BirdPlayerBoard,
-  },
-  wa: {
-    value: "WoodlandAlliance",
-    color: "green.3",
-    abbreviation: "WA",
-    boardComponent: WaPlayerBoard,
-  },
-  cr: {
+  crows: {
     value: "Crows",
     color: "indigo.6",
     abbreviation: "CR",

@@ -1,16 +1,17 @@
 import { useQueries } from "@tanstack/react-query";
 import type { BuildingType } from "../components/board/BuildingSlot";
-import type { Faction } from "../data/frontend_types";
+import { type FactionLabel, labelToRoute } from "../utils/factionUtils";
 import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
+import { type FactionValue } from "../utils/factionUtils";
 
 export type BuildingTableType = {
   clearing_number: number | null;
   building_slot: number | null;
-  faction: Faction;
+  faction: FactionLabel;
   buildingType: BuildingType;
 };
 
-const tabulateBuildings = (faction: Faction, data: any) => {
+const tabulateBuildings = (faction: FactionLabel, data: any) => {
   type BuildingItem = {
     player_name: string;
     clearing_number: number;
@@ -38,13 +39,17 @@ const tabulateBuildings = (faction: Faction, data: any) => {
 
 const useBuildingTable = (
   gameId: number,
-  factions: string[],
+  factions: FactionLabel[],
   enabled: boolean = true,
 ) => {
   const results = useQueries({
     queries: factions.map((faction) => ({
-      ...getFactionPlayerInfoQueryOptions(gameId, faction as Faction, enabled),
-      select: (data) => tabulateBuildings(faction as Faction, data),
+      ...getFactionPlayerInfoQueryOptions(
+        gameId,
+        labelToRoute(faction) as FactionValue,
+        enabled,
+      ),
+      select: (data: any) => tabulateBuildings(faction, data),
     })),
   });
 

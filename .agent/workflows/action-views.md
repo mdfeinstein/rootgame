@@ -16,6 +16,7 @@ Structure:
 - If the game state is interrupted by a pending `Event` model, the view's get and post methods must resolve the event before allowing standard turn actions.
 - generate_step and generate_completed_step methods provide interface for generating correct step structure.
 - transaction functions that effect the game state change should use atomic_game_action (game/decorators/transaction_decorator)
+- **Schema Tagging**: Always use `@extend_schema` to document the inputs and outputs of the view. This allows the frontend to be fully type-safe.
 
 Errors:
 transactions should be called in try except blocks that raise the error as ValidationError (rest_framework)
@@ -24,8 +25,9 @@ payload_details:
 
 - clearings are communicated with clearing_number
 - cards are communicated with their name and looked up in CardsEP textchoice
-- factions/players are communicated via the faction name and looked up in Faction textchoice
-- in geenral, primary keys are not used in action views.
+- factions/players are communicated via the faction name and looked up in Faction textchoice.
+- **Route Naming**: All faction-specific endpoints must use the kebab-case version of the faction label (e.g., `/api/woodland-alliance/.../`).
+- in general, primary keys are not used in action views. Communication uses descriptive labels/names.
 
 Inspect examples:
 game\views\action_views\battle.py

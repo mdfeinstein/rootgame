@@ -3,10 +3,10 @@ import { ClearingContext } from "./Clearing";
 import { Tooltip } from "@mantine/core";
 
 import { factionToColor } from "./WarriorTroop";
-import type { Faction } from "../../data/frontend_types";
+import { type FactionLabel } from "../../utils/factionUtils";
 
 export type TokenInfo = {
-  faction: Faction;
+  faction: FactionLabel;
   tokenType: string;
   count: number;
 };

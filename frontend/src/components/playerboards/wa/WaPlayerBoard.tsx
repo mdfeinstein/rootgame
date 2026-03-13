@@ -2,6 +2,7 @@ import { Grid, Modal, Paper, Stack } from "@mantine/core";
 import { useContext } from "react";
 import { GameContext } from "../../../contexts/GameProvider";
 import { PlayerContext } from "../../../contexts/PlayerProvider";
+import { type FactionLabel } from "../../../utils/factionUtils";
 import useTokenTable from "../../../hooks/useTokenTable";
 import useWAPlayerQuery from "../../../hooks/useWAPlayerQuery";
 import WaBasesAndOfficers from "./WaBasesAndOfficers";
@@ -17,11 +18,13 @@ export default function WaPlayerBoard({ isOpen, onClose }: WaPlayerBoardProps) {
   const { gameId } = useContext(GameContext);
   const { faction } = useContext(PlayerContext);
   const { publicInfo, privateInfo } = useWAPlayerQuery(gameId);
-  const { tokenTable } = useTokenTable(gameId, ["WA"]);
+  const { tokenTable } = useTokenTable(gameId, [
+    "Woodland Alliance" as FactionLabel,
+  ]);
 
-  const playerIsWA = faction === "WA";
+  const playerIsWA = faction === "Woodland Alliance";
   const tokensOnMap = tokenTable.filter(
-    (t) => t.faction === "WA" && t.clearing_number !== null,
+    (t) => t.faction === "Woodland Alliance" && t.clearing_number !== null,
   ).length;
 
   const supporterCount = publicInfo?.supporter_count ?? 0;

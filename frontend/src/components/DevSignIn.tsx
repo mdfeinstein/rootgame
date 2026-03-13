@@ -18,7 +18,7 @@ export default function DevSignIn() {
         const factionMap: Record<string, string> = {
           ca: "Cats",
           bi: "Birds",
-          wa: "WA",
+          wa: "Woodland Alliance",
           cr: "Crows",
         };
         setActiveButton(factionMap[currentPlayer.faction.value] || null);
@@ -66,9 +66,9 @@ export default function DevSignIn() {
         Birds
       </button>
       <button
-        onClick={() => signInByFaction("wa", "WA")}
+        onClick={() => signInByFaction("wa", "Woodland Alliance")}
         style={{
-          background: activeButton === "WA" ? "green" : "white",
+          background: activeButton === "Woodland Alliance" ? "green" : "white",
         }}
       >
         WA

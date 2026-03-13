@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { gameKeys } from "../api/queryKeys";
 
 const useGameWebSocket = (gameId: string | undefined) => {
   const queryClient = useQueryClient();
@@ -46,19 +47,18 @@ const useGameWebSocket = (gameId: string | undefined) => {
         const data = JSON.parse(event.data);
         if (data.type === "authenticated") {
           console.log("WebSocket authenticated");
-          queryClient.setQueryData(["ws-authenticated", gameId], true);
+          queryClient.setQueryData(gameKeys.wsAuth(gameId), true);
         } else if (data.message === "update") {
-          console.log("Game update received, invalidating queries");
           // Invalidate all queries related to the game
-          // This might be too broad, can be refined to specific keys
-          // For now, let's invalidate everything to be safe and ensure freshness
-          queryClient.invalidateQueries();
+          queryClient.invalidateQueries({
+            queryKey: gameKeys.gameState(Number(gameId)),
+          });
         }
       };
 
       socket.onclose = () => {
         console.log("WebSocket disconnected");
-        queryClient.setQueryData(["ws-authenticated", gameId], false);
+        queryClient.setQueryData(gameKeys.wsAuth(gameId), false);
         // Reconnect logic could go here
       };
 

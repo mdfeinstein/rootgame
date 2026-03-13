@@ -20,7 +20,7 @@ import { TokenSlot } from "./TokenSlot";
 import useWarriorTable from "../../hooks/useWarriorTable";
 import useTokenTable from "../../hooks/useTokenTable";
 import useBuildingTable from "../../hooks/useBuildingTable";
-import type { Faction } from "../../data/frontend_types";
+import { type FactionLabel } from "../../utils/factionUtils";
 import { useTurnInfoQuery } from "../../hooks/useTurnInfoQuery";
 import { GameContext } from "../../contexts/GameProvider";
 import { Paper } from "@mantine/core";
@@ -52,7 +52,12 @@ export default function SvgBoard({
     console.log(turnInfo.data);
   }, [turnInfo.data]);
 
-  const factionList: Faction[] = ["Cats", "Birds", "WA", "Crows"];
+  const factionList: FactionLabel[] = [
+    "Cats",
+    "Birds",
+    "Woodland Alliance",
+    "Crows",
+  ];
   // create list of clearingProps
   const { warriorTable } = useWarriorTable(
     gameId as number,
@@ -68,11 +73,11 @@ export default function SvgBoard({
 
   const accumulatedTokens: Record<
     number,
-    { faction: Faction; tokenType: string; count: number }[]
+    { faction: FactionLabel; tokenType: string; count: number }[]
   > = useMemo(() => {
     const map: Record<
       number,
-      { faction: Faction; tokenType: string; count: number }[]
+      { faction: FactionLabel; tokenType: string; count: number }[]
     > = {};
     for (const token of tokenTable) {
       if (!token.clearing_number) continue;
@@ -84,7 +89,7 @@ export default function SvgBoard({
       );
       if (sameTokenTypeIdx === -1) {
         map[token.clearing_number].push({
-          faction: token.faction,
+          faction: token.faction as FactionLabel,
           tokenType: token.tokenType,
           count: 1,
         });
@@ -121,7 +126,7 @@ export default function SvgBoard({
       }
       return {
         buildingType: b.buildingType,
-        faction: b.faction,
+        faction: b.faction as FactionLabel,
       };
     };
   }, [buildingTable, isSuccessBuilding, clearingsData]);
@@ -215,7 +220,7 @@ export default function SvgBoard({
                   )}
                 ></BuildingSlot>
               ))}
-              {factionList?.map((faction, i) => (
+              {factionList?.map((faction: FactionLabel, i) => (
                 <WarriorSlot
                   key={`w-${i}`}
                   {...warriorSlotMap[clearingProp.clearingNumber][i]}
@@ -223,7 +228,7 @@ export default function SvgBoard({
                     faction: faction,
                     count:
                       warriorTable?.filter(
-                        (entry: any) =>
+                        (entry) =>
                           entry.faction === faction &&
                           entry.clearing_number === clearingProp.clearingNumber,
                       ).length ?? 0,

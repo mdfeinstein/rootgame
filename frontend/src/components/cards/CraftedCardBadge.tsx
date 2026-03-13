@@ -3,10 +3,11 @@ import { IconCards } from "@tabler/icons-react";
 import { useState } from "react";
 import useCraftedCardsQuery from "../../hooks/useCraftedCardsQuery";
 import CraftedCardModal from "./CraftedCardModal";
+import { type FactionValue } from "../../api/queryKeys";
 
 interface CraftedCardBadgeProps {
   gameId: number;
-  faction: string;
+  faction: FactionValue;
   factionLabel: string;
 }
 

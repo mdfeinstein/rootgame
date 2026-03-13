@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import type { components } from "../api/types";
+import { gameKeys } from "../api/queryKeys";
 
 export type Player = components["schemas"]["PlayerPublic"];
 
@@ -10,7 +11,7 @@ const useGetPlayersInfoQuery = (gameId: number, enabled: boolean = true) => {
     isError,
     isSuccess,
   } = useQuery({
-    queryKey: ["players", gameId],
+    queryKey: gameKeys.players(gameId),
     queryFn: async (): Promise<Player[]> => {
       const response = await fetch(
         `${import.meta.env.VITE_DJANGO_URL}/api/players/${gameId}/`,

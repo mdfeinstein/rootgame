@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
 
 import type { components } from "../api/types";
+import { gameKeys } from "../api/queryKeys";
 
 export type FactionChoice = components["schemas"]["FactionChoiceEntry"];
 export type PlayerInfo = components["schemas"]["PlayerPublic"];
@@ -27,7 +28,7 @@ const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
 
 export const useActiveGames = () => {
   return useQuery<GameListItem[]>({
-    queryKey: ["activeGames"],
+    queryKey: gameKeys.gameList("active"),
     queryFn: async () => {
       const resp = await fetchWithAuth(`${djangoUrl}/api/games/active/`);
       return resp.json();
@@ -37,7 +38,7 @@ export const useActiveGames = () => {
 
 export const useJoinableGames = () => {
   return useQuery<GameListItem[]>({
-    queryKey: ["joinableGames"],
+    queryKey: gameKeys.gameList("joinable"),
     queryFn: async () => {
       const resp = await fetchWithAuth(`${djangoUrl}/api/games/joinable/`);
       return resp.json();
@@ -59,8 +60,7 @@ export const useCreateGame = () => {
       return resp.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["activeGames"] });
-      queryClient.invalidateQueries({ queryKey: ["joinableGames"] });
+      queryClient.invalidateQueries({ queryKey: gameKeys.gameLists() });
     },
   });
 };
@@ -79,15 +79,14 @@ export const useJoinGame = () => {
       return resp.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["activeGames"] });
-      queryClient.invalidateQueries({ queryKey: ["joinableGames"] });
+      queryClient.invalidateQueries({ queryKey: gameKeys.gameLists() });
     },
   });
 };
 
 export const useGameSession = (gameId: number | null) => {
   return useQuery<GameListItem>({
-    queryKey: ["gameSession", gameId],
+    queryKey: gameKeys.session(gameId as number),
     queryFn: async () => {
       const resp = await fetchWithAuth(
         `${djangoUrl}/api/game/${gameId}/session/`,
@@ -112,7 +111,7 @@ export const useStartGame = () => {
       return resp.json();
     },
     onSuccess: (_, gameId) => {
-      queryClient.invalidateQueries({ queryKey: ["gameSession", gameId] });
+      queryClient.invalidateQueries({ queryKey: gameKeys.session(gameId) });
     },
   });
 };
@@ -132,7 +131,7 @@ export const usePickFaction = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["gameSession", variables.gameId],
+        queryKey: gameKeys.session(variables.gameId),
       });
     },
   });

@@ -9,13 +9,15 @@ After the backend is prepared, you must connect the new faction to the React fro
 1. **Player Board**:
    - Navigate to `frontend/src/components/playerboards/`.
    - Create a specific `[Faction]PlayerBoard.tsx`.
-   - This board must connect to the `useGameActionQuery` Zustand hook to render the faction's active state. If the faction has private state, create and hook up a `use[Faction]PlayerQuery` hook.
-   - **CRITICAL**: Update `FactionStubToFactionMap` inside `frontend/src/contexts/PlayerProvider.tsx` so the app correctly resolves the faction name abbreviation.
+   - This board must connect to the `useGameActionQuery` hook to render the faction's active state.
+   - For private state, create a `use[Faction]PlayerQuery` hook tagged with types from `frontend/src/api/types.ts`.
+   - **CRITICAL**: The `PlayerProvider` now resolves faction names directly from the schema provided in the `/player/` info response. Ensure the backend serializer returns the correct `FactionLabel`.
 2. **Prompts and UI State**:
-   - For complex queries (e.g., choosing a specific number of items, selecting clearings), you must use or build Prompt components in `frontend/src/components/prompts/`.
-   - Ensure these prompts hook into the active action fetched by `get_current_action` (from backend) so the correct player sees the prompt while others see a waiting screen.
+   - For complex queries (e.g., choosing a specific number of items, selecting clearings), use or build Prompt components in `frontend/src/components/prompts/`.
+   - Ensure these prompts hook into the active action fetched by `get_current_action`.
 3. **Board Elements**:
-   - Add map rendering logic in `frontend/src/components/board/`. The `Clearing` or `Token` components must know how to render the new faction's SVGs/Icons physically on the screen.
-   - **Tip**: If tokens represent hidden information that the controlling player should see, wrap the SVG `<g>` elements in a Mantine `<Tooltip openDelay={0}>` component to display the secret type on hover.
+   - Add map rendering logic in `frontend/src/components/board/`.
+   - Use `factionToColor` in `WarriorTroop.tsx` for visual consistency.
 4. **Triggering the API**:
-   - Wrap interactive buttons on the Player Board in the standard `useAction` hook (or equivalent abstraction). Ensure these requests map exactly to the DRF API Views created in your `faction_views.md` workflow.
+   - Wrap interactive buttons on the Player Board in the standard action hooks.
+   - **Naming Convention**: Faction routes must be in kebab-case. Use `labelToRoute(faction.label)` (e.g. `woodland-alliance` for "Woodland Alliance") when constructing query keys or URL strings.

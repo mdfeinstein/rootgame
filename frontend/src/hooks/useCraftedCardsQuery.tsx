@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { gameKeys, type FactionValue } from "../api/queryKeys";
 import type { CardType } from "./useGetPlayerHandQuery";
 
 export type CraftedCardData = {
@@ -10,17 +11,38 @@ export type CraftedCardData = {
 
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
 
-const useCraftedCardsQuery = (gameId: number, faction: string) => {
+const useCraftedCardsQuery = (
+  gameId: number,
+  faction: FactionValue | undefined,
+) => {
   const {
     data: craftedCards,
     isLoading,
     isError,
     isSuccess,
   } = useQuery({
-    queryKey: ["crafted-cards", gameId, faction],
+    queryKey: gameKeys.craftedCards(gameId, faction as FactionValue),
     queryFn: async (): Promise<CraftedCardData[]> => {
+      // Safety mapping: ensure we use the standardized route name even if a stub is passed
+      const routeSegments: Record<string, string> = {
+        wa: "woodland-alliance",
+        ca: "cats",
+        bi: "birds",
+        cr: "crows",
+      };
+      const route =
+        faction && routeSegments[faction.toLowerCase()]
+          ? routeSegments[faction.toLowerCase()]
+          : faction;
+
+      if (faction && faction.toLowerCase() in routeSegments) {
+        console.warn(
+          `[useCraftedCardsQuery] Received short faction code "${faction}". Standardizing to "${route}". Please update caller.`,
+        );
+      }
+
       const response = await fetch(
-        `${djangoUrl}/api/crafted-cards/${gameId}/${faction}/`,
+        `${djangoUrl}/api/crafted-cards/${gameId}/${route}/`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

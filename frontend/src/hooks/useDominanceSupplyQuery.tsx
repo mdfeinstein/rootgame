@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { gameKeys } from "../api/queryKeys";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -7,7 +8,7 @@ export const useDominanceSupplyQuery = (
   enabled: boolean = true,
 ) => {
   const result = useQuery({
-    queryKey: ["dominance-supply", gameId],
+    queryKey: gameKeys.dominanceSupply(gameId),
     queryFn: async () => {
       const response = await fetch(apiUrl + `/dominance-supply/${gameId}/`);
       return response.json();

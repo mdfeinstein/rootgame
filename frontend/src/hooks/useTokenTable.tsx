@@ -1,14 +1,15 @@
 import { useQueries } from "@tanstack/react-query";
-import type { Faction } from "../data/frontend_types";
+import { type FactionLabel, labelToRoute } from "../utils/factionUtils";
 import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
+import { type FactionValue } from "../utils/factionUtils";
 
 export type TokenTableType = {
-  faction: Faction;
+  faction: FactionLabel;
   tokenType: string;
   clearing_number: number | null;
 };
 
-const tabulateTokens = (faction: Faction, data: any) => {
+const tabulateTokens = (faction: FactionLabel, data: any) => {
   const tokenTable: TokenTableType[] = [];
   // if (!("tokens" in data)) {
   //   return tokenTable;
@@ -37,13 +38,17 @@ const tabulateTokens = (faction: Faction, data: any) => {
 
 const useTokenTable = (
   gameId: number,
-  factions: Faction[],
+  factions: FactionLabel[],
   enabled: boolean = true,
 ) => {
   const results = useQueries({
     queries: factions.map((faction) => ({
-      ...getFactionPlayerInfoQueryOptions(gameId, faction, enabled),
-      select: (data) => tabulateTokens(faction, data),
+      ...getFactionPlayerInfoQueryOptions(
+        gameId,
+        labelToRoute(faction) as FactionValue,
+        enabled,
+      ),
+      select: (data: any) => tabulateTokens(faction, data),
     })),
   });
 

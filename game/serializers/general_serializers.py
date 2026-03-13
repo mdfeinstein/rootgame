@@ -7,6 +7,7 @@ from game.models.birds.turn import BirdTurn
 from game.models.cats.setup import CatsSimpleSetup
 from game.models.cats.turn import CatTurn
 from game.models.events.setup import GameSimpleSetup
+from game.queries.cards.active_effects import can_use_card, is_used
 from game.models.game_models import (
     Building,
     BuildingSlot,

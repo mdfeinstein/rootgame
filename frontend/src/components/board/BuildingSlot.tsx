@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { ClearingContext } from "./Clearing";
 import { factionToColor } from "./WarriorTroop";
-import type { Faction } from "../../data/frontend_types";
+import { type FactionLabel } from "../../utils/factionUtils";
 
 export type BuildingType =
   | "roosts"
@@ -13,7 +13,7 @@ export type BuildingType =
 
 export type BuildingInfo = {
   buildingType: BuildingType;
-  faction: Faction;
+  faction: FactionLabel;
 };
 
 export const BuildingSlot = ({

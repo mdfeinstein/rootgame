@@ -7,7 +7,7 @@ export const useBirdPlayerQuery = (gameId: number) => {
     isError,
     isLoading,
     isSuccess,
-  } = useQuery(getFactionPlayerInfoQueryOptions(gameId, "Birds"));
+  } = useQuery(getFactionPlayerInfoQueryOptions(gameId, "birds"));
 
   return { publicInfo, isLoading, isError, isSuccess };
 };

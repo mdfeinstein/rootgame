@@ -1,12 +1,14 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from drf_spectacular.utils import extend_schema
 
 from game.models.game_models import Faction, Game, Player
 from game.models.crows.exposure import ExposureRevealedCards
 from game.serializers.crows_serializers import CrowsSerializer, CrowsPrivateSerializer
 
 
+@extend_schema(responses={200: CrowsSerializer})
 @api_view(["GET"])
 def get_crows_player_public(request, game_id: int):
     try:
@@ -27,6 +29,7 @@ def get_crows_player_public(request, game_id: int):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(responses={200: CrowsPrivateSerializer})
 @api_view(["GET"])
 def get_crows_player_private(request, game_id: int):
     try:
@@ -43,36 +46,36 @@ def get_crows_player_private(request, game_id: int):
             {"message": "Player does not exist in this game"},
             status=status.HTTP_404_NOT_FOUND,
         )
-        
+
     if crows_player.faction != Faction.CROWS:
         return Response(
             {"message": "Requesting player is not the Crows player"},
             status=status.HTTP_401_UNAUTHORIZED,
         )
-        
+
     revealed_card_entries = ExposureRevealedCards.objects.filter(player=crows_player)
     cards = [entry.card for entry in revealed_card_entries]
-    
+
     # We populate tokens explicitly unmasked via the dict below
-    
+
     # Since we need to combine from_player tokens with the cards query,
     # let's map it into the context or directly add it.
     # We can serialize the base instance from_player, and then manually attach the serialized cards,
     # OR better, pass it into the from_player method. Let's update `from_player` to take cards if needed,
     # But CrowsPrivateSerializer doesn't have a from_player taking cards right now. Let's just modify the dict data before Response.
-    
+
     # Let's fix this cleanly. CrowsPrivateSerializer already has `exposure_revealed_cards = CardSerializer(many=True)`
     # Thus we can just instantiate it with the keys it expects:
     from game.models.crows.tokens import PlotToken
-    
+
     reserve = PlotToken.objects.filter(player=crows_player, clearing__isnull=True)
     board = PlotToken.objects.filter(player=crows_player, clearing__isnull=False)
-    
+
     instance = {
         "reserve_plots": reserve,
         "facedown_plots": board.filter(is_facedown=True),
-        "exposure_revealed_cards": cards
+        "exposure_revealed_cards": cards,
     }
-    
+
     serializer = CrowsPrivateSerializer(instance=instance)
     return Response(serializer.data, status=status.HTTP_200_OK)

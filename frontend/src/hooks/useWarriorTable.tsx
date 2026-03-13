@@ -1,10 +1,11 @@
 import { useQueries } from "@tanstack/react-query";
-import type { Faction } from "../data/frontend_types";
+import { type FactionLabel, labelToRoute } from "../utils/factionUtils";
 import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
+import { type FactionValue } from "../utils/factionUtils";
 
 export type warriorTableType = {
   clearing_number: number | null;
-  faction: Faction;
+  faction: FactionLabel;
 };
 
 type WarriorType = {
@@ -12,7 +13,7 @@ type WarriorType = {
   clearing_number: number | null;
 };
 
-const tabulateWarriors = (faction: Faction, data: any) => {
+const tabulateWarriors = (faction: FactionLabel, data: any) => {
   const warriors: WarriorType[] = data.warriors ?? [];
   return warriors.map((warrior: WarriorType): warriorTableType => {
     return { clearing_number: warrior.clearing_number ?? null, faction };
@@ -21,13 +22,17 @@ const tabulateWarriors = (faction: Faction, data: any) => {
 
 const useWarriorTable = (
   gameId: number,
-  factions: Faction[],
+  factions: FactionLabel[],
   enabled: boolean = true,
 ) => {
   const results = useQueries({
     queries: factions.map((faction) => ({
-      ...getFactionPlayerInfoQueryOptions(gameId, faction, enabled),
-      select: (data) => tabulateWarriors(faction, data),
+      ...getFactionPlayerInfoQueryOptions(
+        gameId,
+        labelToRoute(faction) as FactionValue,
+        enabled,
+      ),
+      select: (data: any) => tabulateWarriors(faction, data),
     })),
   });
 

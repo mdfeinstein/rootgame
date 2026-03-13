@@ -5,6 +5,11 @@ import useCraftedCardsQuery from "../../hooks/useCraftedCardsQuery";
 import useGetPlayersInfoQuery from "../../hooks/useGetPlayersInfoQuery";
 import { Button, Group, Stack, Text, Paper, rem } from "@mantine/core";
 import { GameActionContext } from "../../contexts/GameActionProvider";
+import {
+  type FactionValue,
+  type FactionLabel,
+  labelToRoute,
+} from "../../utils/factionUtils";
 
 const CraftedCardPrompter = () => {
   const { gameId } = useContext(GameContext);
@@ -13,10 +18,14 @@ const CraftedCardPrompter = () => {
   const { startActionOverride } = useContext(GameActionContext);
 
   const userPlayer = players?.find((p) => p.username === username);
-  const factionStub = userPlayer?.faction.value || "";
+  const factionLabel = userPlayer?.faction.label;
 
-  const { craftedCards } = useCraftedCardsQuery(gameId, factionStub);
-  const usableCards = craftedCards?.filter((c) => c.can_be_used) || [];
+  const factionRouteValue = factionLabel
+    ? (labelToRoute(factionLabel as FactionLabel) as FactionValue)
+    : undefined;
+
+  const { craftedCards } = useCraftedCardsQuery(gameId, factionRouteValue);
+  const usableCards = craftedCards?.filter((c: any) => c.can_be_used) || [];
 
   if (usableCards.length === 0) return null;
 
@@ -39,7 +48,7 @@ const CraftedCardPrompter = () => {
           Usable Crafted Cards
         </Text>
         <Group>
-          {usableCards.map((crafted, i) => (
+          {usableCards.map((crafted, i: number) => (
             <Button
               key={i}
               variant="light"

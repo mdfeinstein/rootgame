@@ -1,11 +1,13 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from drf_spectacular.utils import extend_schema
 
 from game.models.game_models import Faction, Game, Player
 from game.serializers.cat_serializers import CatSerializer
 
 
+@extend_schema(responses={200: CatSerializer})
 @api_view(["GET"])
 def get_cat_player_public(request, game_id: int):
     # grab game

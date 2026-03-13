@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
 
-import type { Faction } from "../data/frontend_types";
+import { type FactionLabel } from "../utils/factionUtils";
 
 export type tokensTableType = {
-  faction: Faction;
+  faction: FactionLabel;
   tokenType: string;
   clearing_number: number;
 };
@@ -15,7 +15,7 @@ export const useCatPlayerQuery = (gameId: number) => {
     isLoading,
     isError,
     isSuccess,
-  } = useQuery(getFactionPlayerInfoQueryOptions(gameId, "Cats"));
+  } = useQuery(getFactionPlayerInfoQueryOptions(gameId, "cats"));
 
   return { publicInfo, isLoading, isError, isSuccess };
 };

@@ -19,3 +19,8 @@ Serializers translate the faction's Django models into JSON format so the fronte
 7. **Private State (Hidden Info)**:
    - If the faction has hidden components (like facedown tokens or unrevealed cards), create a `[Faction]PrivateSerializer` in `game/serializers/[faction]_serializers.py`.
    - Build a matching private API view (e.g., `get_[faction]_player_private`) inside `game/views/gamestate_views/[faction].py` and register it in `game/urls.py`.
+8. **Schema Tagging (CRITICAL)**:
+    - Use `@extend_schema` and `@extend_schema_view` from `drf_spectacular.utils` to document all views and serializers.
+    - Explicitly tag the `responses` for all methods so `openapi-typescript` generates correct interfaces in `frontend/src/api/types.ts`.
+    - Correct schema tagging ensures the frontend can use `components["schemas"]["[YourModel]"]` without manual type definitions.
+    - If a field is a ChoiceField (like faction), ensure the label and value are both clear in the schema.

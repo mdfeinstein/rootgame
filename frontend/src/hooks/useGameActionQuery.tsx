@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import type { components } from "../api/types";
+import { gameKeys } from "../api/queryKeys";
 
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
 
@@ -17,7 +18,7 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
     isError: actionRouteIsError,
     isSuccess: actionRouteIsSuccess,
   } = useQuery({
-    queryKey: ["current-action", gameId],
+    queryKey: gameKeys.currentAction(gameId),
     queryFn: async (): Promise<RouteData> => {
       const response = await fetch(
         djangoUrl + `/api/game/current-action/${gameId}/`,
@@ -39,7 +40,7 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
     isError: actionInfoIsError,
     isSuccess: actionInfoIsSuccess,
   } = useQuery({
-    queryKey: ["current-action-info", gameId, actionRoute?.route ?? null],
+    queryKey: gameKeys.currentActionInfo(gameId, actionRoute?.route ?? null),
     queryFn: async (): Promise<GameActionStep> => {
       const response = await fetch(
         `${djangoUrl}${actionRoute?.route}?game_id=${gameId}`,
@@ -89,10 +90,9 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
     onSuccess: async (data) => {
       setError(null);
       if (data.name === "completed") {
-        const isWsAuthenticated = queryClient.getQueryData([
-          "ws-authenticated",
-          gameId?.toString(),
-        ]);
+        const isWsAuthenticated = queryClient.getQueryData(
+          gameKeys.wsAuth(gameId?.toString() || ""),
+        );
 
         if (!isWsAuthenticated) {
           // game state has changed. invalidate all queries if WS is down
@@ -107,7 +107,7 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
       }
       //update actionInfo
       queryClient.setQueryData(
-        ["current-action-info", gameId, actionRoute?.route ?? null],
+        gameKeys.currentActionInfo(gameId, actionRoute?.route ?? null),
         data,
       );
       console.log("success", data);
@@ -120,15 +120,15 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
 
   const cancelProcess = async () => {
     await queryClient.invalidateQueries({
-      queryKey: ["current-action", gameId],
+      queryKey: gameKeys.currentAction(gameId),
     });
     await queryClient.invalidateQueries({
-      queryKey: ["current-action-info", gameId],
+      queryKey: gameKeys.currentActionInfos(gameId),
     });
   };
 
   const startActionOverride = (route: string) => {
-    queryClient.setQueryData(["current-action", gameId], { route });
+    queryClient.setQueryData(gameKeys.currentAction(gameId), { route });
   };
 
   return {

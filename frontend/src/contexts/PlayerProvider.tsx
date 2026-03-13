@@ -1,18 +1,13 @@
 import { createContext, useContext } from "react";
 import { GameContext } from "./GameProvider";
-import { type Faction } from "../data/frontend_types";
+import { type FactionLabel } from "../utils/factionUtils";
 import { useQuery } from "@tanstack/react-query";
 
-type FactionStub = "ca" | "bi" | "wa" | "cr";
+import type { components } from "../api/types";
 
-const FactionStubToFaction: Record<FactionStub, Faction> = {
-  ca: "Cats",
-  bi: "Birds",
-  wa: "WA",
-  cr: "Crows",
-};
+export type PlayerPublic = components["schemas"]["PlayerPublic"];
 
-const PlayerContext = createContext<{ faction: Faction | null }>({
+const PlayerContext = createContext<{ faction: FactionLabel | null }>({
   faction: null,
 });
 
@@ -22,7 +17,7 @@ const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
 
   const { data } = useQuery({
     queryKey: ["playerInfo", gameId],
-    queryFn: async () => {
+    queryFn: async (): Promise<PlayerPublic | null> => {
       if (!gameId) return null;
       const res = await fetch(`${apiUrl}/player/${gameId}/`, {
         headers: {
@@ -38,7 +33,7 @@ const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     enabled: !!gameId,
   });
 
-  const faction = FactionStubToFaction[data?.faction as FactionStub] || null;
+  const faction = data?.faction?.label || null;
 
   return (
     <PlayerContext.Provider value={{ faction }}>

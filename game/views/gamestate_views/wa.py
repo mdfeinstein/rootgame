@@ -4,11 +4,13 @@ from game.serializers.general_serializers import CardSerializer
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from drf_spectacular.utils import extend_schema
 
 from game.models.game_models import Faction, Game, Player
 from game.serializers.wa_serializers import WASerializer
 
 
+@extend_schema(responses={200: WASerializer})
 @api_view(["GET"])
 def get_wa_player_public(request, game_id: int):
     # grab game
@@ -29,6 +31,8 @@ def get_wa_player_public(request, game_id: int):
     serializer = WASerializer.from_player(wa_player)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+@extend_schema(responses={200: WAPrivateSerializer})
 @api_view(["GET"])
 def get_wa_player_private(request, game_id: int):
     # grab game
@@ -40,7 +44,7 @@ def get_wa_player_private(request, game_id: int):
         )
 
     try:
-        wa_player = Player.objects.get(game=game, user = request.user)
+        wa_player = Player.objects.get(game=game, user=request.user)
     except Player.DoesNotExist:
         return Response(
             {"message": "player does not exist in this game"},

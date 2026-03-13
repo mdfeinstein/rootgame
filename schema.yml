@@ -1702,7 +1702,11 @@ paths:
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bird'
+          description: ''
   /api/birds/setup/choose-leader/:
     get:
       operationId: birds_setup_choose_leader_retrieve
@@ -2619,7 +2623,11 @@ paths:
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cat'
+          description: ''
   /api/cats/setup/confirm-completed-setup/:
     get:
       operationId: cats_setup_confirm_completed_setup_retrieve
@@ -3675,7 +3683,11 @@ paths:
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Crows'
+          description: ''
   /api/crows/player-private-info/{game_id}/:
     get:
       operationId: crows_player_private_info_retrieve
@@ -3692,7 +3704,11 @@ paths:
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrowsPrivate'
+          description: ''
   /api/crows/setup/confirm-completed-setup/:
     get:
       operationId: crows_setup_confirm_completed_setup_retrieve
@@ -4709,7 +4725,11 @@ paths:
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WA'
+          description: ''
   /api/wa/player-private-info/{game_id}/:
     get:
       operationId: wa_player_private_info_retrieve
@@ -4726,9 +4746,97 @@ paths:
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WAPrivate'
+          description: ''
 components:
   schemas:
+    Bird:
+      type: object
+      description: Serializer to provide all (public) information about birds
+      properties:
+        player:
+          $ref: '#/components/schemas/PlayerPublic'
+        buildings:
+          $ref: '#/components/schemas/BirdBuilding'
+        warriors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Warrior'
+        leaders:
+          type: array
+          items:
+            $ref: '#/components/schemas/BirdLeader'
+        decree:
+          type: array
+          items:
+            $ref: '#/components/schemas/BirdDecreeEntry'
+        viziers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vizier'
+      required:
+      - buildings
+      - decree
+      - leaders
+      - player
+      - viziers
+      - warriors
+    BirdBuilding:
+      type: object
+      description: Serializer for bird buildings. collects lists of all buildings
+      properties:
+        roosts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Roost'
+      required:
+      - roosts
+    BirdDecreeEntry:
+      type: object
+      properties:
+        column:
+          $ref: '#/components/schemas/ColumnEnum'
+        fulfilled:
+          type: boolean
+        card:
+          $ref: '#/components/schemas/Card'
+      required:
+      - card
+      - column
+    BirdLeader:
+      type: object
+      properties:
+        leader:
+          $ref: '#/components/schemas/LeaderEnum'
+        leader_display:
+          type: string
+        available:
+          type: boolean
+        active:
+          type: boolean
+      required:
+      - leader
+      - leader_display
+    Building:
+      type: object
+      properties:
+        player_name:
+          type: string
+        clearing_number:
+          type: integer
+          nullable: true
+          readOnly: true
+        building_slot_number:
+          type: integer
+          nullable: true
+          readOnly: true
+      required:
+      - building_slot_number
+      - clearing_number
+      - player_name
     Card:
       type: object
       properties:
@@ -4849,6 +4957,60 @@ components:
       - suit
       - text
       - title
+    Cat:
+      type: object
+      description: Serializer to provide all (public) information about cats
+      properties:
+        player:
+          $ref: '#/components/schemas/PlayerPublic'
+        tokens:
+          $ref: '#/components/schemas/CatToken'
+        buildings:
+          $ref: '#/components/schemas/CatBuilding'
+        warriors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Warrior'
+      required:
+      - buildings
+      - player
+      - tokens
+      - warriors
+    CatBuilding:
+      type: object
+      description: Serializer for cat buildings. collects lists of all buildings
+      properties:
+        workshops:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkShop'
+        recruiters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recruiter'
+        sawmills:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sawmill'
+      required:
+      - recruiters
+      - sawmills
+      - workshops
+    CatToken:
+      type: object
+      description: Serializer for cat tokens. collects lists of all tokens
+      properties:
+        keep:
+          type: array
+          items:
+            $ref: '#/components/schemas/NestedToken'
+        wood:
+          type: array
+          items:
+            $ref: '#/components/schemas/NestedToken'
+      required:
+      - keep
+      - wood
     Clearing:
       type: object
       properties:
@@ -4903,6 +5065,57 @@ components:
       - ruins
       - suit
       - water_connected_to
+    ColumnEnum:
+      enum:
+      - R
+      - M
+      - B
+      - U
+      type: string
+      description: |-
+        * `R` - Recruit
+        * `M` - Move
+        * `B` - Battle
+        * `U` - Build
+    Crows:
+      type: object
+      description: Serializer to provide all (public) information about crows
+      properties:
+        player:
+          $ref: '#/components/schemas/PlayerPublic'
+        warriors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Warrior'
+        reserve_plots_count:
+          type: integer
+          readOnly: true
+        exposure_guessed_plots:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExposureGuessedPlot'
+      required:
+      - exposure_guessed_plots
+      - player
+      - reserve_plots_count
+      - warriors
+    CrowsPrivate:
+      type: object
+      properties:
+        reserve_plots:
+          type: string
+          readOnly: true
+        facedown_plots:
+          type: string
+          readOnly: true
+        exposure_revealed_cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
+      required:
+      - exposure_revealed_cards
+      - facedown_plots
+      - reserve_plots
     CurrentAction:
       type: object
       properties:
@@ -4917,6 +5130,24 @@ components:
           $ref: '#/components/schemas/Card'
       required:
       - card
+    ExposureGuessedPlot:
+      type: object
+      properties:
+        clearing_number:
+          type: integer
+        guessed_plot_type:
+          $ref: '#/components/schemas/GuessedPlotTypeEnum'
+        faction:
+          type: string
+        turn_number:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+      required:
+      - clearing_number
+      - faction
+      - guessed_plot_type
     FactionChoiceEntry:
       type: object
       properties:
@@ -5116,6 +5347,37 @@ components:
           type: string
       required:
       - game_status
+    GuessedPlotTypeEnum:
+      enum:
+      - bomb
+      - snare
+      - extortion
+      - raid
+      type: string
+      description: |-
+        * `bomb` - Bomb
+        * `snare` - Snare
+        * `extortion` - Extortion
+        * `raid` - Raid
+    LeaderEnum:
+      enum:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+      type: string
+      description: |-
+        * `0` - Builder
+        * `1` - Charismatic
+        * `2` - Commander
+        * `3` - Despot
+    NestedToken:
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/Token'
+      required:
+      - token
     Option:
       type: object
       properties:
@@ -5187,6 +5449,46 @@ components:
       - score
       - turn_order
       - username
+    Recruiter:
+      type: object
+      properties:
+        building:
+          $ref: '#/components/schemas/Building'
+        used:
+          type: boolean
+      required:
+      - building
+    Roost:
+      type: object
+      properties:
+        building:
+          $ref: '#/components/schemas/Building'
+        crafted_with:
+          type: boolean
+      required:
+      - building
+      - crafted_with
+    Sawmill:
+      type: object
+      properties:
+        building:
+          $ref: '#/components/schemas/Building'
+        used:
+          type: boolean
+      required:
+      - building
+    Token:
+      type: object
+      properties:
+        player_name:
+          type: string
+        clearing_number:
+          type: integer
+          nullable: true
+          readOnly: true
+      required:
+      - clearing_number
+      - player_name
     TokenObtainPair:
       type: object
       properties:
@@ -5233,6 +5535,114 @@ components:
           description: Error message or object.
       required:
       - detail
+    Vizier:
+      type: object
+      properties:
+        column:
+          $ref: '#/components/schemas/ColumnEnum'
+        fulfilled:
+          type: boolean
+      required:
+      - column
+    WA:
+      type: object
+      description: Serializer to provide all (public) information about wa
+      properties:
+        player:
+          $ref: '#/components/schemas/PlayerPublic'
+        tokens:
+          $ref: '#/components/schemas/WAToken'
+        buildings:
+          $ref: '#/components/schemas/WABuilding'
+        warriors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Warrior'
+        supporter_count:
+          type: integer
+          readOnly: true
+        officer_count:
+          type: integer
+          readOnly: true
+      required:
+      - buildings
+      - officer_count
+      - player
+      - supporter_count
+      - tokens
+      - warriors
+    WABase:
+      type: object
+      properties:
+        building:
+          allOf:
+          - $ref: '#/components/schemas/Building'
+          readOnly: true
+        suit:
+          type: string
+          readOnly: true
+      required:
+      - building
+      - suit
+    WABuilding:
+      type: object
+      properties:
+        base:
+          type: array
+          items:
+            $ref: '#/components/schemas/WABase'
+      required:
+      - base
+    WAPrivate:
+      type: object
+      properties:
+        supporter_cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
+      required:
+      - supporter_cards
+    WASympathy:
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/Token'
+        crafted_with:
+          type: boolean
+          readOnly: true
+      required:
+      - crafted_with
+      - token
+    WAToken:
+      type: object
+      properties:
+        sympathy:
+          type: array
+          items:
+            $ref: '#/components/schemas/WASympathy'
+      required:
+      - sympathy
+    Warrior:
+      type: object
+      properties:
+        player_name:
+          type: string
+        clearing_number:
+          type: integer
+          nullable: true
+          readOnly: true
+      required:
+      - clearing_number
+      - player_name
+    WorkShop:
+      type: object
+      properties:
+        building:
+          $ref: '#/components/schemas/Building'
+        crafted_with:
+          type: boolean
+      required:
+      - building
   securitySchemes:
     jwtAuth:
       type: http

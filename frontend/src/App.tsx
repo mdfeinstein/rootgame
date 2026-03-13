@@ -12,6 +12,7 @@ import LoginPage from "./pages/Login";
 import LobbyPage from "./pages/Lobby";
 import GamePage from "./pages/GamePage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import GlobalCursor from "./components/utility/GlobalCursor";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <MantineProvider>
+      <GlobalCursor />
       <UserProvider>
         <GameProvider>
           <RouterProvider router={router} />

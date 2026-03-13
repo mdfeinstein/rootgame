@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { gameKeys } from "../api/queryKeys";
 
 const djangoUrl = import.meta.env.VITE_DJANGO_URL;
 
@@ -22,14 +23,13 @@ export const useUndoAction = (gameId: number) => {
       return response.json();
     },
     onSuccess: () => {
-      const isWsAuthenticated = queryClient.getQueryData([
-        "ws-authenticated",
-        gameId?.toString(),
-      ]);
+      const isWsAuthenticated = queryClient.getQueryData(
+        gameKeys.wsAuth(gameId?.toString() || ""),
+      );
 
       if (!isWsAuthenticated) {
-        // Invalidate all queries to refresh state since we traveled back in time
-        queryClient.invalidateQueries();
+        // Invalidate all queries for this game since we traveled back in time
+        queryClient.invalidateQueries({ queryKey: gameKeys.gameState(gameId) });
       } else {
         console.log(
           "Undo completed. Awaiting WebSocket 'update' instruction to refresh.",

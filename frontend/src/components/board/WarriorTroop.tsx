@@ -1,9 +1,10 @@
 import EquilateralTriangle from "../EquilateralTriangle";
+import { type FactionLabel } from "../../utils/factionUtils";
 
-export const factionToColor: Record<string, string> = {
+export const factionToColor: Record<FactionLabel, string> = {
   Cats: "orange",
   Birds: "blue",
-  WA: "green",
+  "Woodland Alliance": "green",
   Crows: "indigo",
 };
 
@@ -18,7 +19,7 @@ export const WarriorTroop = ({
   y: number;
   size: number;
   count: number;
-  faction: string;
+  faction: FactionLabel;
 }) => {
   const color = factionToColor[faction];
   return (

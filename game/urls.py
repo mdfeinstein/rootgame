@@ -30,7 +30,7 @@ from game.views.action_views.crows.birdsong import (
     CrowsCraftingView,
     CrowsFlippingView,
     CrowsRecruitingView,
-    CrowsManualRecruitView
+    CrowsManualRecruitView,
 )
 from game.views.action_views.crows.daylight import CrowsDaylightActionsView
 from game.views.action_views.crows.evening import CrowsExertView, CrowsDiscardingView
@@ -104,8 +104,11 @@ urlpatterns = [
     path("api/player/<int:game_id>/", get_player_info, name="player"),
     path("api/players/<int:game_id>/", get_players, name="players"),
     path("api/cats/player-info/<int:game_id>/", get_cat_player_public),
-    path("api/wa/player-info/<int:game_id>/", get_wa_player_public),
-    path("api/wa/player-private-info/<int:game_id>/", get_wa_player_private),
+    path("api/woodland-alliance/player-info/<int:game_id>/", get_wa_player_public),
+    path(
+        "api/woodland-alliance/player-private-info/<int:game_id>/",
+        get_wa_player_private,
+    ),
     path("api/crows/player-info/<int:game_id>/", get_crows_player_public),
     path("api/crows/player-private-info/<int:game_id>/", get_crows_player_private),
     path("api/birds/player-info/<int:game_id>/", get_bird_player_public),
@@ -181,7 +184,6 @@ register_action(
     "api/birds/setup/confirm-completed-setup/",
     urlpatterns,
 )
-
 
 
 # Crows setup
@@ -272,18 +274,26 @@ register_action(
     "api/birds/daylight/building/",
     urlpatterns,
 )
-register_action("wa-revolt", RevoltView, "api/wa/birdsong/revolt/", urlpatterns)
+register_action(
+    "wa-revolt", RevoltView, "api/woodland-alliance/birdsong/revolt/", urlpatterns
+)
 register_action(
     "wa-spread-sympathy",
     SpreadSympathyView,
-    "api/wa/birdsong/spread-sympathy/",
+    "api/woodland-alliance/birdsong/spread-sympathy/",
     urlpatterns,
 )
 register_action(
-    "wa-daylight", WADaylightActionsView, "api/wa/daylight/actions/", urlpatterns
+    "wa-daylight",
+    WADaylightActionsView,
+    "api/woodland-alliance/daylight/actions/",
+    urlpatterns,
 )
 register_action(
-    "wa-operations", WAOperationsView, "api/wa/evening/operations/", urlpatterns
+    "wa-operations",
+    WAOperationsView,
+    "api/woodland-alliance/evening/operations/",
+    urlpatterns,
 )
 register_action(
     "battle",
@@ -319,6 +329,7 @@ register_action(
 )
 
 from game.views.action_views.crows.raid import CrowsPlaceRaidWarriorsView
+
 register_action(
     "crows-place-raid-warriors",
     CrowsPlaceRaidWarriorsView,

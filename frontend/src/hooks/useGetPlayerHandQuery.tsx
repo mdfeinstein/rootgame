@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type { components } from "../api/types";
+import { gameKeys } from "../api/queryKeys";
 
 export type CardType = components["schemas"]["Card"];
 // use the token for authentication
@@ -18,7 +19,7 @@ const useGetPlayerHandQuery = (
     isError,
     isSuccess,
   } = useQuery({
-    queryKey: ["player-hand", gameId, username],
+    queryKey: gameKeys.playerHand(gameId, username),
     queryFn: async (): Promise<CardType[]> => {
       const response = await fetch(`${djangoUrl}/api/player-hand/${gameId}/`, {
         headers: {
