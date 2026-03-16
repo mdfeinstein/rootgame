@@ -33,7 +33,7 @@ export type CrowPrivateInfo = {
   exposure_revealed_cards: any[];
 };
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL || "/api";
 
 export const useCrowPlayerQuery = (gameId: number, enabled: boolean = true) => {
   const {

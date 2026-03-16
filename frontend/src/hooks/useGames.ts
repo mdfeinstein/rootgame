@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-const djangoUrl = import.meta.env.VITE_DJANGO_URL;
+const djangoUrl = import.meta.env.VITE_DJANGO_URL || "";
 
 import type { components } from "../api/types";
 import { gameKeys } from "../api/queryKeys";

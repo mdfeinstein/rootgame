@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { gameKeys } from "../api/queryKeys";
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL || "/api";
 
 import type { components } from "../api/types";
 

@@ -2,7 +2,7 @@ import type { UseQueryOptions } from "@tanstack/react-query";
 import { gameKeys } from "../api/queryKeys";
 import { type FactionValue } from "../utils/factionUtils";
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL || "/api";
 
 export const getFactionPlayerInfoQueryOptions = (
   gameId: number,

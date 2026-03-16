@@ -1,0 +1,21 @@
+# Python / Django
+.venv/
+env/
+venv/
+__pycache__/
+*.pyc
+*.sqlite3
+.DS_Store
+
+# Node / React
+frontend/node_modules/
+frontend/dist/
+
+# Environment Variables
+.env
+.env.*
+!.env.prod
+
+# Git
+.git/
+.gitignore

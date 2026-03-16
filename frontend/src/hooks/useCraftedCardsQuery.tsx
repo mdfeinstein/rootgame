@@ -9,7 +9,7 @@ export type CraftedCardData = {
   action_endpoint: string | null;
 };
 
-const djangoUrl = import.meta.env.VITE_DJANGO_URL;
+const djangoUrl = import.meta.env.VITE_DJANGO_URL || "";
 
 const useCraftedCardsQuery = (
   gameId: number,

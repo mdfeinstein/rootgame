@@ -11,7 +11,7 @@ import { IconBolt } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
-const djangoUrl = import.meta.env.VITE_DJANGO_URL;
+const djangoUrl = import.meta.env.VITE_DJANGO_URL || "";
 
 const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
   const token = localStorage.getItem("accessToken");

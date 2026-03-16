@@ -14,7 +14,7 @@ const useGetPlayersInfoQuery = (gameId: number, enabled: boolean = true) => {
     queryKey: gameKeys.players(gameId),
     queryFn: async (): Promise<Player[]> => {
       const response = await fetch(
-        `${import.meta.env.VITE_DJANGO_URL}/api/players/${gameId}/`,
+        `${import.meta.env.VITE_DJANGO_URL || ""}/api/players/${gameId}/`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

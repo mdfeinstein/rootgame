@@ -4,7 +4,7 @@ import { gameKeys } from "../api/queryKeys";
 
 type GameStatus = components["schemas"]["GameStatus"];
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL || "/api";
 
 export const useTurnInfoQuery = (gameId: number, enabled: boolean = true) => {
   const result = useQuery({

@@ -6,7 +6,7 @@ import { gameKeys } from "../api/queryKeys";
 
 export type CardType = components["schemas"]["Card"];
 // use the token for authentication
-const djangoUrl = import.meta.env.VITE_DJANGO_URL;
+const djangoUrl = import.meta.env.VITE_DJANGO_URL || "";
 
 const useGetPlayerHandQuery = (
   gameId: number,

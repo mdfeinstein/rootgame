@@ -4,7 +4,7 @@ import type { UseMutationResult } from "@tanstack/react-query";
 
 import type { components } from "../api/types";
 
-const djangoUrl = import.meta.env.VITE_DJANGO_URL;
+const djangoUrl = import.meta.env.VITE_DJANGO_URL || "";
 
 export type LoginCredentials = Omit<
   components["schemas"]["TokenObtainPair"],

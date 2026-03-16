@@ -4,7 +4,7 @@ import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
 import { PlayerContext } from "../contexts/PlayerProvider";
 import { useContext } from "react";
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL || "/api";
 const useWAPlayerQuery = (gameId: number) => {
   const {
     data: publicInfo,

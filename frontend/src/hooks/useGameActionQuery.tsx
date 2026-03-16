@@ -3,7 +3,7 @@ import { useState } from "react";
 import type { components } from "../api/types";
 import { gameKeys } from "../api/queryKeys";
 
-const djangoUrl = import.meta.env.VITE_DJANGO_URL;
+const djangoUrl = import.meta.env.VITE_DJANGO_URL || "";
 
 export type RouteData = components["schemas"]["CurrentAction"];
 export type GameActionStep = components["schemas"]["GameActionStep"];

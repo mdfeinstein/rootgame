@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { gameKeys } from "../api/queryKeys";
 
-const djangoUrl = import.meta.env.VITE_DJANGO_URL;
+const djangoUrl = import.meta.env.VITE_DJANGO_URL || "";
 
 export const useUndoAction = (gameId: number) => {
   const queryClient = useQueryClient();

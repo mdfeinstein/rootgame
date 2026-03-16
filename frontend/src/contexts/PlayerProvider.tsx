@@ -13,7 +13,7 @@ const PlayerContext = createContext<{ faction: FactionLabel | null }>({
 
 const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
   const { gameId } = useContext(GameContext);
-  const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl = import.meta.env.VITE_API_URL || "/api";
 
   const { data } = useQuery({
     queryKey: ["playerInfo", gameId],
