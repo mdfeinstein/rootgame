@@ -78,7 +78,8 @@ from game.views.action_views.setup.cats import (
     CatsPlaceBuildingView,
 )
 
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -462,4 +463,8 @@ register_action(
     ActivateDominanceView,
     "api/action/dominance/activate/",
     urlpatterns,
+)
+
+urlpatterns.append(
+    re_path(r"^.*$", TemplateView.as_view(template_name="index.html"), name="index")
 )
