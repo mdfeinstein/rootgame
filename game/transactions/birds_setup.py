@@ -121,8 +121,8 @@ def confirm_completed_setup(player: Player):
     setup.step = BirdsSimpleSetup.Steps.COMPLETED
     setup.save()
     # move to next step in general setup (next player, perhaps)
-    next_player_setup(player.game)
     create_birds_turn(player)
+    next_player_setup(player.game)
 
 
 @transaction.atomic

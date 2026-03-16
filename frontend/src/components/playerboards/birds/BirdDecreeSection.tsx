@@ -1,6 +1,10 @@
 import { Box, SimpleGrid, Text } from "@mantine/core";
 import { IconHome2, IconPlus, IconShoe, IconSwords } from "@tabler/icons-react";
 import BirdDecreeColumn from "./BirdDecreeColumn";
+import type { components } from "../../../api/types";
+
+type DecreeEntry = components["schemas"]["BirdDecreeEntry"];
+type Vizier = components["schemas"]["Vizier"];
 
 export const COLUMNS = [
   { label: "Recruit", code: "R", icon: IconPlus, color: "green" },
@@ -18,8 +22,8 @@ export const columnHelperTextMapper: Record<string, string> = {
 };
 
 interface BirdDecreeSectionProps {
-  decree: any[];
-  viziers: any[];
+  decree: DecreeEntry[];
+  viziers: Vizier[];
 }
 
 export default function BirdDecreeSection({
@@ -34,10 +38,10 @@ export default function BirdDecreeSection({
       <SimpleGrid cols={4} spacing="md">
         {COLUMNS.map((col) => {
           const cardsInColumn = decree.filter(
-            (d: any) => d.column === col.code,
+            (d: DecreeEntry) => d.column === col.code,
           );
           const viziersInColumn = viziers.filter(
-            (v: any) => v.column === col.code,
+            (v: Vizier) => v.column === col.code,
           );
           const columnItems = [...viziersInColumn, ...cardsInColumn];
 

@@ -10,6 +10,11 @@ import {
 import { IconCheckbox, IconSquare } from "@tabler/icons-react";
 import { SUIT_CONFIG } from "../../../data/suitConfig";
 import type { SuitValue } from "../../../data/suitConfig";
+import type { components } from "../../../api/types";
+
+type DecreeEntry = components["schemas"]["BirdDecreeEntry"];
+type Vizier = components["schemas"]["Vizier"];
+type DecreeItem = DecreeEntry | Vizier;
 
 interface BirdDecreeColumnProps {
   col: {
@@ -19,7 +24,7 @@ interface BirdDecreeColumnProps {
     color: string;
   };
   columnHelperText: string;
-  columnItems: any[];
+  columnItems: DecreeItem[];
 }
 
 export default function BirdDecreeColumn({
@@ -66,14 +71,19 @@ export default function BirdDecreeColumn({
             Empty
           </Text>
         )}
-        {columnItems.map((item: any, i: number) => {
-          const isVizier = !item.card;
+        {columnItems.map((item: DecreeItem, i: number) => {
+          const isVizier = !("card" in item);
           const cardData = isVizier
             ? { title: "Vizier", suit: "b" }
             : item.card;
 
+          // Handle suit which might be an object {value, label} from schema or string
+          const suitValue = typeof cardData.suit === "string" 
+            ? cardData.suit 
+            : cardData.suit.value;
+
           const suitConfig =
-            SUIT_CONFIG[cardData.suit as SuitValue] || SUIT_CONFIG["b"];
+            SUIT_CONFIG[suitValue as SuitValue] || SUIT_CONFIG["b"];
           const SuitIcon = suitConfig.icon;
           const StatusIcon = item.fulfilled ? IconCheckbox : IconSquare;
 

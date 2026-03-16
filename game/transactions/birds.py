@@ -89,7 +89,6 @@ def add_card_to_decree(player: Player, card: CardsEP, column: DecreeEntry.Column
             "Two cards already added to decree. We should have already moved to next step"
         )
 
-
     # check if bird card. if so, check that we haven't already added a bird card to decree
     if card.value.suit == Suit.WILD:
         if birdsong.bird_card_added_to_decree:
@@ -479,7 +478,7 @@ def begin_evening(player: Player):
     assert evening.step == BirdEvening.BirdEveningSteps.DISCARDING
     if get_player_hand_size(player) <= 5:
         evening.step = next_choice(BirdEvening.BirdEveningSteps, evening.step)
-        
+
     evening.save()
     if evening.step == BirdEvening.BirdEveningSteps.COMPLETED:
         end_birds_turn(player)
@@ -535,15 +534,16 @@ def recruit_turmoil_check(player: Player):
     # otherwise, do turmoil checks
     if warrior_count_in_supply(player) == 0 and recruit_decrees_remaining != 0:
         turmoil(player)
+        print("turmoiled because no warriors in supply")
         return
     # if no remaining recruit decrees are possible, turmoil
     # if wild in recruit (and sitll a roost), then more to do this phase, exit out
     if (
-        recruit_cards.filter(card__suit=Suit.WILD).exists()
-        or viziers.exists()
-        and BirdRoost.objects.filter(player=player, building_slot__isnull=False).count()
-        == 0
-    ):
+        recruit_cards.filter(card__suit=Suit.WILD).exists() or viziers.exists()
+    ) and BirdRoost.objects.filter(
+        player=player, building_slot__isnull=False
+    ).count() != 0:
+        print("no turmoil: wild card or vizier")
         return
     # if no overlap between suits of decrees and roost, turmoil
     recruit_suits = set([decree_entry.card.suit for decree_entry in recruit_cards])
@@ -558,6 +558,7 @@ def recruit_turmoil_check(player: Player):
     )
     if len(recruit_suits.intersection(roost_suits)) == 0:
         turmoil(player)
+        print("turmoiled because no overlap between suits of decrees and roost")
 
 
 @transaction.atomic
@@ -670,6 +671,7 @@ def battle_turmoil_check(player: Player):
     # if we get here, no legal battles. turmoil
     turmoil(player)
 
+
 @transaction.atomic
 def build_turmoil_check(player: Player):
     """
@@ -695,9 +697,7 @@ def build_turmoil_check(player: Player):
         return
     # otherwise, do turmoil checks
     # turmoil if no roosts left in supply
-    if not BirdRoost.objects.filter(
-        player=player, building_slot__isnull=True
-    ).exists():
+    if not BirdRoost.objects.filter(player=player, building_slot__isnull=True).exists():
         turmoil(player)
         return
 
