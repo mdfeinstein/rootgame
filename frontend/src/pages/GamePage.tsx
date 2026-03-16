@@ -38,7 +38,8 @@ import useGameWebSocket from "../hooks/useGameWebSocket";
 
 const GamePage = () => {
   const { gameId: urlGameId } = useParams<{ gameId: string }>();
-  const { setGameId, session, isGameStarted } = useContext(GameContext);
+  const { setGameId, session } = useContext(GameContext);
+  const isGameStarted = session?.status?.label !== "Not Started" && !!session;
   const { username } = useContext(UserContext);
   const navigate = useNavigate();
   const startGameMutation = useStartGame();

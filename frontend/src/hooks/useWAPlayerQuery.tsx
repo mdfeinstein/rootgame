@@ -5,13 +5,15 @@ import { PlayerContext } from "../contexts/PlayerProvider";
 import { useContext } from "react";
 
 const apiUrl = import.meta.env.VITE_API_URL || "/api";
-const useWAPlayerQuery = (gameId: number) => {
+const useWAPlayerQuery = (gameId: number, enabled: boolean = true) => {
   const {
     data: publicInfo,
     isLoading,
     isError,
     isSuccess,
-  } = useQuery(getFactionPlayerInfoQueryOptions(gameId, "woodland-alliance"));
+  } = useQuery(
+    getFactionPlayerInfoQueryOptions(gameId, "woodland-alliance", enabled),
+  );
   const { faction } = useContext(PlayerContext);
   const {
     data: privateInfo,
@@ -32,7 +34,7 @@ const useWAPlayerQuery = (gameId: number) => {
       );
       return response.json();
     },
-    enabled: faction === "Woodland Alliance",
+    enabled: enabled && faction === "Woodland Alliance",
   });
   return {
     publicInfo,

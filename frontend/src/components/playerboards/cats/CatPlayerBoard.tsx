@@ -2,6 +2,7 @@ import { Group, Modal, Paper, Stack, Text } from "@mantine/core";
 import { useContext } from "react";
 import { GameContext } from "../../../contexts/GameProvider";
 import useBuildingTable from "../../../hooks/useBuildingTable";
+import useCatPlayerQuery from "../../../hooks/useCatPlayerQuery";
 import CatBuildingTracks from "./CatBuildingTracks";
 
 interface CatPlayerBoardProps {
@@ -14,7 +15,8 @@ export default function CatPlayerBoard({
   onClose,
 }: CatPlayerBoardProps) {
   const { gameId } = useContext(GameContext);
-  const { buildingTable } = useBuildingTable(gameId, ["Cats"]);
+  useCatPlayerQuery(gameId, isOpen);
+  const { buildingTable } = useBuildingTable(gameId, ["Cats"], isOpen);
   const catBuildingsOnBoard = buildingTable.filter(
     (b) => b.faction === "Cats" && b.clearing_number === null,
   );

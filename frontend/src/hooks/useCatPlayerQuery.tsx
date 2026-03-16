@@ -9,13 +9,13 @@ export type tokensTableType = {
   clearing_number: number;
 };
 
-export const useCatPlayerQuery = (gameId: number) => {
+export const useCatPlayerQuery = (gameId: number, enabled: boolean = true) => {
   const {
     data: publicInfo,
     isLoading,
     isError,
     isSuccess,
-  } = useQuery(getFactionPlayerInfoQueryOptions(gameId, "cats"));
+  } = useQuery(getFactionPlayerInfoQueryOptions(gameId, "cats", enabled));
 
   return { publicInfo, isLoading, isError, isSuccess };
 };

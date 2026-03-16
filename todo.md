@@ -2,9 +2,9 @@
 
 Game Lobby:
 
-- [ ] Reduce Unnessecary API calls
-  - [ ] During setup: calls to turn-info
-  - [ ] Fewer than all factions: calls to player-info for factions not in game
+- [x] Reduce Unnessecary API calls
+  - [x] During setup: calls to turn-info
+  - [x] Fewer than all factions: calls to player-info for factions not in game
 
 - [ ] More instructions for the player
   - [ ] actions prompts: tooltips on the option buttons providing relevant info

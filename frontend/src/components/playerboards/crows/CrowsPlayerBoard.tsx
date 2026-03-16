@@ -16,7 +16,7 @@ export default function CrowsPlayerBoard({
   onClose,
 }: CrowsPlayerBoardProps) {
   const { gameId } = useContext(GameContext);
-  const { publicInfo, privateInfo } = useCrowPlayerQuery(gameId);
+  const { publicInfo, privateInfo } = useCrowPlayerQuery(gameId, isOpen);
 
   if (!publicInfo) return null;
 

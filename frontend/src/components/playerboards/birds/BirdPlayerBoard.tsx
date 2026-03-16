@@ -17,9 +17,8 @@ export default function BirdPlayerBoard({
   onClose,
 }: BirdPlayerBoardProps) {
   const { gameId } = useContext(GameContext);
-  const { publicInfo } = useBirdPlayerQuery(gameId);
-
-  const { buildingTable } = useBuildingTable(gameId, ["Birds"]);
+  const { publicInfo } = useBirdPlayerQuery(gameId, isOpen);
+  const { buildingTable } = useBuildingTable(gameId, ["Birds"], isOpen);
   const roostsOnMap = buildingTable.filter(
     (b) =>
       b.faction === "Birds" &&

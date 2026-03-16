@@ -39,26 +39,33 @@ export default function SvgBoard({
   width?: number;
   height?: number;
 }) {
-  const { gameId, isGameStarted } = useContext(GameContext);
-  const turnInfo = useTurnInfoQuery(gameId as number, isGameStarted);
+  const { gameId, session } = useContext(GameContext);
+  const isGameStarted = session?.status?.label !== "Not Started" && !!session;
+  const isTurnTrackingActive = session?.status?.label === "Setup Completed";
+
+  const factionList: FactionLabel[] = useMemo(() => {
+    if (!session?.players) return [];
+    return session.players.map(
+      (p) => p.faction.label as FactionLabel,
+    ) as FactionLabel[];
+  }, [session?.players]);
+
+  const turnInfo = useTurnInfoQuery(gameId as number, isTurnTrackingActive);
   const { data: clearingsData } = useClearingsQuery(
     gameId as number,
     isGameStarted,
   );
-  const { privateInfo } = useCrowPlayerQuery(gameId as number, isGameStarted);
+  const isCrowsInGame = factionList.includes("Crows");
+  const { privateInfo } = useCrowPlayerQuery(
+    gameId as number,
+    isGameStarted && isCrowsInGame,
+  );
 
   useEffect(() => {
     if (!turnInfo.data) return;
     console.log(turnInfo.data);
   }, [turnInfo.data]);
 
-  const factionList: FactionLabel[] = [
-    "Cats",
-    "Birds",
-    "Woodland Alliance",
-    "Crows",
-  ];
-  // create list of clearingProps
   const { warriorTable } = useWarriorTable(
     gameId as number,
     factionList,

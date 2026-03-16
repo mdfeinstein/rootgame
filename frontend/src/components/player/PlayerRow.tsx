@@ -8,7 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserProvider";
 
 const PlayerRow = () => {
-  const { gameId, isGameStarted } = useContext(GameContext);
+  const { gameId, session } = useContext(GameContext);
+  const isGameStarted = session?.status?.label !== "Not Started" && !!session;
   const { players } = useGetPlayersInfoQuery(gameId as number, isGameStarted);
   const sortedPlayers = [...(players || [])].sort(
     (a, b) => a.turn_order - b.turn_order,

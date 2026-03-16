@@ -17,10 +17,12 @@ interface WaPlayerBoardProps {
 export default function WaPlayerBoard({ isOpen, onClose }: WaPlayerBoardProps) {
   const { gameId } = useContext(GameContext);
   const { faction } = useContext(PlayerContext);
-  const { publicInfo, privateInfo } = useWAPlayerQuery(gameId);
-  const { tokenTable } = useTokenTable(gameId, [
-    "Woodland Alliance" as FactionLabel,
-  ]);
+  const { publicInfo, privateInfo } = useWAPlayerQuery(gameId, isOpen);
+  const { tokenTable } = useTokenTable(
+    gameId,
+    ["Woodland Alliance" as FactionLabel],
+    isOpen,
+  );
 
   const playerIsWA = faction === "Woodland Alliance";
   const tokensOnMap = tokenTable.filter(
