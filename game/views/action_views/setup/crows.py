@@ -15,12 +15,12 @@ class CrowsPickClearingView(GameActionView):
     action_name = "CROWS_PICK_CLEARING"
     faction = Faction.CROWS
     faction_string = Faction.CROWS.label
-    
+
     def get(self, request, *args, **kwargs):
         game_id = kwargs.get("game_id") or request.query_params.get("game_id")
         player = self.player(request, game_id)
         setup = CrowsSimpleSetup.objects.get(player=player)
-        
+
         prompt = "Place a warrior in a Fox, Rabbit, and Mouse clearing (one each)."
         if setup.fox_placed and setup.rabbit_placed:
             prompt = "Place a warrior in a Mouse clearing."
@@ -40,7 +40,7 @@ class CrowsPickClearingView(GameActionView):
             prompt=prompt,
             endpoint="clearing",
             payload_details=[{"type": "clearing_number", "name": "clearing_number"}],
-            faction=Faction.CROWS
+            faction=Faction.CROWS,
         )
 
     def route_post(self, request, game_id: int, route: str):
@@ -56,12 +56,12 @@ class CrowsPickClearingView(GameActionView):
             clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
         except Clearing.DoesNotExist as e:
             raise ValidationError({"detail": str(e)})
-            
+
         try:
             atomic_game_action(place_initial_warrior)(player, clearing)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
-            
+
         return self.generate_completed_step()
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):

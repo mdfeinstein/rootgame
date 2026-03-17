@@ -10,28 +10,37 @@ from game.queries.current_action.events import get_current_event
 from game.transactions.battle import use_partisans, skip_partisans
 from game.decorators.transaction_decorator import atomic_game_action
 
+
 class PartisansView(GameActionView):
     def get(self, request, *args, **kwargs):
         game_id = kwargs.get("game_id") or request.query_params.get("game_id")
         player = self.player(request, game_id)
-        
+
         event_entry = self.get_event(game_id)
-            
+
         clearing_suit = event_entry.battle.clearing.suit
         suit_name = Suit(clearing_suit).label
-        
+
         options = [
-            {"value": "use", "label": "Use Partisans"},
-            {"value": "skip", "label": "Skip"}
+            {
+                "value": "use",
+                "label": "Use Partisans",
+                "info": f"Deal an extra hit in this battle. COST: Discard all cards in your hand except {suit_name} cards.",
+            },
+            {
+                "value": "skip",
+                "label": "Skip",
+                "info": "Do not use Partisans in this battle.",
+            },
         ]
-        
+
         return self.generate_step(
             name="use-or-skip",
             prompt=f"Do you want to use Partisans to deal an extra hit? (You will discard all cards except {suit_name} cards)",
             endpoint="use-or-skip",
             payload_details=[{"type": "choice", "name": "selection"}],
             options=options,
-            faction=Faction(player.faction)
+            faction=Faction(player.faction),
         )
 
     def route_post(self, request, game_id: int, route: str, *args, **kwargs):
@@ -46,18 +55,26 @@ class PartisansView(GameActionView):
     def post_use_or_skip(self, request, game_id):
         player = self.player(request, game_id)
         choice = request.data["selection"]
-        
+
         event_entry = self.get_event(game_id)
 
         match choice:
             case "skip":
                 try:
-                    atomic_game_action(skip_partisans)(event_entry.battle.clearing.game, event_entry.battle, event_entry)
+                    atomic_game_action(skip_partisans)(
+                        event_entry.battle.clearing.game,
+                        event_entry.battle,
+                        event_entry,
+                    )
                 except ValueError as e:
                     raise ValidationError({"detail": str(e)})
             case "use":
                 try:
-                    atomic_game_action(use_partisans)(event_entry.battle.clearing.game, event_entry.battle, event_entry)
+                    atomic_game_action(use_partisans)(
+                        event_entry.battle.clearing.game,
+                        event_entry.battle,
+                        event_entry,
+                    )
                 except ValueError as e:
                     raise ValidationError({"detail": str(e)})
             case _:
@@ -69,17 +86,17 @@ class PartisansView(GameActionView):
         try:
             return PartisansEvent.objects.get(event=event)
         except PartisansEvent.DoesNotExist:
-             raise ValidationError({"detail": "Current Event not Partisans"})
+            raise ValidationError({"detail": "Current Event not Partisans"})
 
     def player(self, request, game_id: int) -> Player:
         event_entry = self.get_event(game_id)
         return event_entry.crafted_card_entry.player
-    
+
     def validate_timing(self, request, game_id: int, route: str, *args, **kwargs):
         event = get_current_event(self.game(game_id))
         if not event or event.type != EventType.PARTISANS:
             raise ValidationError({"detail": "Current Event not Partisans"})
-    
+
     def validate_player(self, request, game_id: int, route: str, *args, **kwargs):
         player = self.player(request, game_id)
         if player != self.player_by_request(request, game_id):

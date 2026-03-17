@@ -38,7 +38,7 @@ class RevoltView(GameActionView):
                 "payload_details": [
                     {"type": "clearing_number", "name": "clearing_number"}
                 ],
-                "options": [{"value": "", "label": "Done Revolting"}],
+                "options": [{"value": "", "label": "Done Revolting", "info": "Finish the revolt phase."}],
             }
         else:
             self.first_step = {
@@ -47,7 +47,7 @@ class RevoltView(GameActionView):
                 "prompt": "No clearings to revolt in. confirm to end revolt step.",
                 "endpoint": "end",
                 "payload_details": [{"type": "confirm", "name": "confirm"}],
-                "options": [{"value": True, "label": "Done Revolting"}],
+                "options": [{"value": True, "label": "Done Revolting", "info": "Confirm to end the revolt phase."}],
             }
         return super().get(request)
 
@@ -120,7 +120,7 @@ class SpreadSympathyView(GameActionView):
                 "payload_details": [
                     {"type": "clearing_number", "name": "clearing_number"}
                 ],
-                "options": [{"value": "", "label": "Done Spreading Sympathy"}],
+                "options": [{"value": "", "label": "Done Spreading Sympathy", "info": "Finish spreading sympathy for this turn."}],
             }
         else:
             self.first_step = {
@@ -129,7 +129,7 @@ class SpreadSympathyView(GameActionView):
                 "prompt": "No clearings to spread sympathy in. confirm to end spread sympathy step.",
                 "endpoint": "end",
                 "payload_details": [{"type": "confirm", "name": "confirm"}],
-                "options": [{"value": True, "label": "Confirm"}],
+                "options": [{"value": True, "label": "Confirm", "info": "Confirm to end the spread sympathy phase."}],
             }
         return super().get(request)
 

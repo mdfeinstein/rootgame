@@ -79,7 +79,16 @@ class BirdsChooseLeaderInitialView(GameActionView):
         "endpoint": "leader",
         "payload_details": [{"type": "leader", "name": "leader"}],
         "options": [
-            {"label": leader.label, "value": leader.name}
+            {
+                "label": leader.label,
+                "value": leader.name,
+                "info": {
+                    BirdLeader.BirdLeaders.BUILDER: "Viziers: Recruit and Move.",
+                    BirdLeader.BirdLeaders.CHARISMATIC: "Viziers: Recruit and Battle.",
+                    BirdLeader.BirdLeaders.COMMANDER: "Viziers: Move and Battle.",
+                    BirdLeader.BirdLeaders.DESPOT: "Viziers: Move and Build.",
+                }.get(leader),
+            }
             for leader in BirdLeader.BirdLeaders
         ],
     }

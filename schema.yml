@@ -4357,12 +4357,12 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/wa/birdsong/revolt/:
+  /api/woodland-alliance/birdsong/revolt/:
     get:
-      operationId: wa_birdsong_revolt_retrieve
+      operationId: woodland_alliance_birdsong_revolt_retrieve
       description: Return initial step data.
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4370,9 +4370,9 @@ paths:
         '200':
           description: No response body
     post:
-      operationId: wa_birdsong_revolt_create
+      operationId: woodland_alliance_birdsong_revolt_create
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4389,9 +4389,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationError'
           description: ''
-  /api/wa/birdsong/revolt/{game_id}/{route}/:
+  /api/woodland-alliance/birdsong/revolt/{game_id}/{route}/:
     get:
-      operationId: wa_birdsong_revolt_retrieve_2
+      operationId: woodland_alliance_birdsong_revolt_retrieve_2
       description: Return initial step data.
       parameters:
       - in: path
@@ -4405,7 +4405,7 @@ paths:
           type: string
         required: true
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4413,7 +4413,7 @@ paths:
         '200':
           description: No response body
     post:
-      operationId: wa_birdsong_revolt_create_2
+      operationId: woodland_alliance_birdsong_revolt_create_2
       parameters:
       - in: path
         name: game_id
@@ -4426,7 +4426,7 @@ paths:
           type: string
         required: true
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4443,12 +4443,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationError'
           description: ''
-  /api/wa/birdsong/spread-sympathy/:
+  /api/woodland-alliance/birdsong/spread-sympathy/:
     get:
-      operationId: wa_birdsong_spread_sympathy_retrieve
+      operationId: woodland_alliance_birdsong_spread_sympathy_retrieve
       description: Return initial step data.
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4456,9 +4456,9 @@ paths:
         '200':
           description: No response body
     post:
-      operationId: wa_birdsong_spread_sympathy_create
+      operationId: woodland_alliance_birdsong_spread_sympathy_create
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4475,9 +4475,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationError'
           description: ''
-  /api/wa/birdsong/spread-sympathy/{game_id}/{route}/:
+  /api/woodland-alliance/birdsong/spread-sympathy/{game_id}/{route}/:
     get:
-      operationId: wa_birdsong_spread_sympathy_retrieve_2
+      operationId: woodland_alliance_birdsong_spread_sympathy_retrieve_2
       description: Return initial step data.
       parameters:
       - in: path
@@ -4491,7 +4491,7 @@ paths:
           type: string
         required: true
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4499,7 +4499,7 @@ paths:
         '200':
           description: No response body
     post:
-      operationId: wa_birdsong_spread_sympathy_create_2
+      operationId: woodland_alliance_birdsong_spread_sympathy_create_2
       parameters:
       - in: path
         name: game_id
@@ -4512,7 +4512,7 @@ paths:
           type: string
         required: true
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4529,12 +4529,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationError'
           description: ''
-  /api/wa/daylight/actions/:
+  /api/woodland-alliance/daylight/actions/:
     get:
-      operationId: wa_daylight_actions_retrieve
+      operationId: woodland_alliance_daylight_actions_retrieve
       description: Return initial step data.
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4546,9 +4546,9 @@ paths:
                 $ref: '#/components/schemas/GameActionStep'
           description: ''
     post:
-      operationId: wa_daylight_actions_create
+      operationId: woodland_alliance_daylight_actions_create
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4565,9 +4565,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationError'
           description: ''
-  /api/wa/daylight/actions/{game_id}/{route}/:
+  /api/woodland-alliance/daylight/actions/{game_id}/{route}/:
     get:
-      operationId: wa_daylight_actions_retrieve_2
+      operationId: woodland_alliance_daylight_actions_retrieve_2
       description: Return initial step data.
       parameters:
       - in: path
@@ -4581,7 +4581,7 @@ paths:
           type: string
         required: true
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4593,7 +4593,7 @@ paths:
                 $ref: '#/components/schemas/GameActionStep'
           description: ''
     post:
-      operationId: wa_daylight_actions_create_2
+      operationId: woodland_alliance_daylight_actions_create_2
       parameters:
       - in: path
         name: game_id
@@ -4606,7 +4606,7 @@ paths:
           type: string
         required: true
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4623,12 +4623,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationError'
           description: ''
-  /api/wa/evening/operations/:
+  /api/woodland-alliance/evening/operations/:
     get:
-      operationId: wa_evening_operations_retrieve
+      operationId: woodland_alliance_evening_operations_retrieve
       description: Return initial step data.
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4636,9 +4636,9 @@ paths:
         '200':
           description: No response body
     post:
-      operationId: wa_evening_operations_create
+      operationId: woodland_alliance_evening_operations_create
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4655,9 +4655,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationError'
           description: ''
-  /api/wa/evening/operations/{game_id}/{route}/:
+  /api/woodland-alliance/evening/operations/{game_id}/{route}/:
     get:
-      operationId: wa_evening_operations_retrieve_2
+      operationId: woodland_alliance_evening_operations_retrieve_2
       description: Return initial step data.
       parameters:
       - in: path
@@ -4671,7 +4671,7 @@ paths:
           type: string
         required: true
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4679,7 +4679,7 @@ paths:
         '200':
           description: No response body
     post:
-      operationId: wa_evening_operations_create_2
+      operationId: woodland_alliance_evening_operations_create_2
       parameters:
       - in: path
         name: game_id
@@ -4692,7 +4692,7 @@ paths:
           type: string
         required: true
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4709,9 +4709,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationError'
           description: ''
-  /api/wa/player-info/{game_id}/:
+  /api/woodland-alliance/player-info/{game_id}/:
     get:
-      operationId: wa_player_info_retrieve
+      operationId: woodland_alliance_player_info_retrieve
       parameters:
       - in: path
         name: game_id
@@ -4719,7 +4719,7 @@ paths:
           type: integer
         required: true
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -4730,9 +4730,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/WA'
           description: ''
-  /api/wa/player-private-info/{game_id}/:
+  /api/woodland-alliance/player-private-info/{game_id}/:
     get:
-      operationId: wa_player_private_info_retrieve
+      operationId: woodland_alliance_player_private_info_retrieve
       parameters:
       - in: path
         name: game_id
@@ -4740,7 +4740,7 @@ paths:
           type: integer
         required: true
       tags:
-      - wa
+      - woodland-alliance
       security:
       - jwtAuth: []
       - {}
@@ -5385,6 +5385,9 @@ components:
           type: string
         label:
           type: string
+        info:
+          type: string
+          nullable: true
       required:
       - value
     PayloadEntry:

@@ -36,10 +36,22 @@ class WADaylightActionsView(GameActionView):
         "endpoint": "action",
         "payload_details": [{"type": "action_type", "name": "action"}],
         "options": [
-            {"value": "craft", "label": "Craft"},
-            {"value": "mobilize", "label": "Mobilize"},
-            {"value": "train", "label": "Train"},
-            {"value": "", "label": "Done"},
+            {
+                "value": "craft",
+                "label": "Craft",
+                "info": "Craft a card using sympathy tokens.",
+            },
+            {
+                "value": "mobilize",
+                "label": "Mobilize",
+                "info": "Add a card from hand to your supporters stack.",
+            },
+            {
+                "value": "train",
+                "label": "Train",
+                "info": "Spend a card matching a base to gain an officer.",
+            },
+            {"value": "", "label": "Done", "info": "Finish daylight actions."},
         ],
     }
 

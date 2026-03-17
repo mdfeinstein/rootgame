@@ -139,6 +139,7 @@ class ActivateDominanceView(GameActionView):
                     {
                         "value": entry.card.card_type,
                         "label": entry.card.title,
+                        "info": f"Activate {entry.card.title} Dominance. You will no longer gain points and must fulfill this card's condition to win. Requires 10+ VPs.",
                     }
                 )
 

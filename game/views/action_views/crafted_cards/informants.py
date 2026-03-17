@@ -19,8 +19,8 @@ class InformantsView(GameActionView):
         event_entry = self.get_event(game_id)
             
         options = [
-            {"value": "use", "label": "Use Informants"},
-            {"value": "skip", "label": "Skip"}
+            {"value": "use", "label": "Use Informants", "info": "In Birdsong, if you have no Ambush cards, you may discard this card to take an Ambush card from the discard pile."},
+            {"value": "skip", "label": "Skip", "info": "Do not use Informants this turn."}
         ]
         
         return self.generate_step(
@@ -69,7 +69,8 @@ class InformantsView(GameActionView):
             if card_data.ambush and card_type not in seen_cards:
                 options.append({
                     "value": card_type,
-                    "label": f"{card_data.title} ({card_data.suit.name})"
+                    "label": f"{card_data.title} ({card_data.suit.name})",
+                    "info": f"Take the {card_data.title} card from the discard pile."
                 })
                 seen_cards.add(card_type)
         

@@ -1882,7 +1882,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/wa/birdsong/revolt/": {
+    "/api/woodland-alliance/birdsong/revolt/": {
         parameters: {
             query?: never;
             header?: never;
@@ -1890,16 +1890,16 @@ export interface paths {
             cookie?: never;
         };
         /** @description Return initial step data. */
-        get: operations["wa_birdsong_revolt_retrieve"];
+        get: operations["woodland_alliance_birdsong_revolt_retrieve"];
         put?: never;
-        post: operations["wa_birdsong_revolt_create"];
+        post: operations["woodland_alliance_birdsong_revolt_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/wa/birdsong/revolt/{game_id}/{route}/": {
+    "/api/woodland-alliance/birdsong/revolt/{game_id}/{route}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -1907,16 +1907,16 @@ export interface paths {
             cookie?: never;
         };
         /** @description Return initial step data. */
-        get: operations["wa_birdsong_revolt_retrieve_2"];
+        get: operations["woodland_alliance_birdsong_revolt_retrieve_2"];
         put?: never;
-        post: operations["wa_birdsong_revolt_create_2"];
+        post: operations["woodland_alliance_birdsong_revolt_create_2"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/wa/birdsong/spread-sympathy/": {
+    "/api/woodland-alliance/birdsong/spread-sympathy/": {
         parameters: {
             query?: never;
             header?: never;
@@ -1924,16 +1924,16 @@ export interface paths {
             cookie?: never;
         };
         /** @description Return initial step data. */
-        get: operations["wa_birdsong_spread_sympathy_retrieve"];
+        get: operations["woodland_alliance_birdsong_spread_sympathy_retrieve"];
         put?: never;
-        post: operations["wa_birdsong_spread_sympathy_create"];
+        post: operations["woodland_alliance_birdsong_spread_sympathy_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/wa/birdsong/spread-sympathy/{game_id}/{route}/": {
+    "/api/woodland-alliance/birdsong/spread-sympathy/{game_id}/{route}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -1941,16 +1941,16 @@ export interface paths {
             cookie?: never;
         };
         /** @description Return initial step data. */
-        get: operations["wa_birdsong_spread_sympathy_retrieve_2"];
+        get: operations["woodland_alliance_birdsong_spread_sympathy_retrieve_2"];
         put?: never;
-        post: operations["wa_birdsong_spread_sympathy_create_2"];
+        post: operations["woodland_alliance_birdsong_spread_sympathy_create_2"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/wa/daylight/actions/": {
+    "/api/woodland-alliance/daylight/actions/": {
         parameters: {
             query?: never;
             header?: never;
@@ -1958,16 +1958,16 @@ export interface paths {
             cookie?: never;
         };
         /** @description Return initial step data. */
-        get: operations["wa_daylight_actions_retrieve"];
+        get: operations["woodland_alliance_daylight_actions_retrieve"];
         put?: never;
-        post: operations["wa_daylight_actions_create"];
+        post: operations["woodland_alliance_daylight_actions_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/wa/daylight/actions/{game_id}/{route}/": {
+    "/api/woodland-alliance/daylight/actions/{game_id}/{route}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -1975,16 +1975,16 @@ export interface paths {
             cookie?: never;
         };
         /** @description Return initial step data. */
-        get: operations["wa_daylight_actions_retrieve_2"];
+        get: operations["woodland_alliance_daylight_actions_retrieve_2"];
         put?: never;
-        post: operations["wa_daylight_actions_create_2"];
+        post: operations["woodland_alliance_daylight_actions_create_2"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/wa/evening/operations/": {
+    "/api/woodland-alliance/evening/operations/": {
         parameters: {
             query?: never;
             header?: never;
@@ -1992,16 +1992,16 @@ export interface paths {
             cookie?: never;
         };
         /** @description Return initial step data. */
-        get: operations["wa_evening_operations_retrieve"];
+        get: operations["woodland_alliance_evening_operations_retrieve"];
         put?: never;
-        post: operations["wa_evening_operations_create"];
+        post: operations["woodland_alliance_evening_operations_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/wa/evening/operations/{game_id}/{route}/": {
+    "/api/woodland-alliance/evening/operations/{game_id}/{route}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -2009,23 +2009,23 @@ export interface paths {
             cookie?: never;
         };
         /** @description Return initial step data. */
-        get: operations["wa_evening_operations_retrieve_2"];
+        get: operations["woodland_alliance_evening_operations_retrieve_2"];
         put?: never;
-        post: operations["wa_evening_operations_create_2"];
+        post: operations["woodland_alliance_evening_operations_create_2"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/wa/player-info/{game_id}/": {
+    "/api/woodland-alliance/player-info/{game_id}/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["wa_player_info_retrieve"];
+        get: operations["woodland_alliance_player_info_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2034,14 +2034,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/wa/player-private-info/{game_id}/": {
+    "/api/woodland-alliance/player-private-info/{game_id}/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["wa_player_private_info_retrieve"];
+        get: operations["woodland_alliance_player_private_info_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2312,6 +2312,7 @@ export interface components {
         Option: {
             value: string;
             label?: string;
+            info?: string | null;
         };
         PayloadEntry: {
             type: string;
@@ -7127,7 +7128,7 @@ export interface operations {
             };
         };
     };
-    wa_birdsong_revolt_retrieve: {
+    woodland_alliance_birdsong_revolt_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -7145,7 +7146,7 @@ export interface operations {
             };
         };
     };
-    wa_birdsong_revolt_create: {
+    woodland_alliance_birdsong_revolt_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -7172,103 +7173,7 @@ export interface operations {
             };
         };
     };
-    wa_birdsong_revolt_retrieve_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                game_id: number;
-                route: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    wa_birdsong_revolt_create_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                game_id: number;
-                route: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationError"];
-                };
-            };
-        };
-    };
-    wa_birdsong_spread_sympathy_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    wa_birdsong_spread_sympathy_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationError"];
-                };
-            };
-        };
-    };
-    wa_birdsong_spread_sympathy_retrieve_2: {
+    woodland_alliance_birdsong_revolt_retrieve_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -7289,7 +7194,7 @@ export interface operations {
             };
         };
     };
-    wa_birdsong_spread_sympathy_create_2: {
+    woodland_alliance_birdsong_revolt_create_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -7319,105 +7224,7 @@ export interface operations {
             };
         };
     };
-    wa_daylight_actions_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-        };
-    };
-    wa_daylight_actions_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationError"];
-                };
-            };
-        };
-    };
-    wa_daylight_actions_retrieve_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                game_id: number;
-                route: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-        };
-    };
-    wa_daylight_actions_create_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                game_id: number;
-                route: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationError"];
-                };
-            };
-        };
-    };
-    wa_evening_operations_retrieve: {
+    woodland_alliance_birdsong_spread_sympathy_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -7435,7 +7242,7 @@ export interface operations {
             };
         };
     };
-    wa_evening_operations_create: {
+    woodland_alliance_birdsong_spread_sympathy_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -7462,7 +7269,7 @@ export interface operations {
             };
         };
     };
-    wa_evening_operations_retrieve_2: {
+    woodland_alliance_birdsong_spread_sympathy_retrieve_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -7483,7 +7290,7 @@ export interface operations {
             };
         };
     };
-    wa_evening_operations_create_2: {
+    woodland_alliance_birdsong_spread_sympathy_create_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -7513,7 +7320,201 @@ export interface operations {
             };
         };
     };
-    wa_player_info_retrieve: {
+    woodland_alliance_daylight_actions_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    woodland_alliance_daylight_actions_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    woodland_alliance_daylight_actions_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    woodland_alliance_daylight_actions_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    woodland_alliance_evening_operations_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    woodland_alliance_evening_operations_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    woodland_alliance_evening_operations_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    woodland_alliance_evening_operations_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    woodland_alliance_player_info_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -7534,7 +7535,7 @@ export interface operations {
             };
         };
     };
-    wa_player_private_info_retrieve: {
+    woodland_alliance_player_private_info_retrieve: {
         parameters: {
             query?: never;
             header?: never;

@@ -22,6 +22,8 @@ from rest_framework.exceptions import ValidationError
 
 
 from game.decorators.transaction_decorator import atomic_game_action
+
+
 class WAOperationsView(GameActionView):
     action_name = "WA_EVENING"
     faction = Faction.WOODLAND_ALLIANCE
@@ -32,11 +34,27 @@ class WAOperationsView(GameActionView):
         "endpoint": "operation",
         "payload_details": [{"type": "action_type", "name": "operation"}],
         "options": [
-            {"value": "recruit", "label": "Recruit"},
-            {"value": "move", "label": "Move"},
-            {"value": "battle", "label": "Battle"},
-            {"value": "organize", "label": "Organize"},
-            {"value": "", "label": "Done"},
+            {
+                "value": "recruit",
+                "label": "Recruit",
+                "info": "Place a warrior at any base.",
+            },
+            {
+                "value": "move",
+                "label": "Move",
+                "info": "Move warriors from a clearing to an adjacent clearing.",
+            },
+            {
+                "value": "battle",
+                "label": "Battle",
+                "info": "Initiate combat in a clearing.",
+            },
+            {
+                "value": "organize",
+                "label": "Organize",
+                "info": "Remove a warrior from a clearing with no sympathy to place a sympathy token.",
+            },
+            {"value": "", "label": "Done", "info": "Finish military operations."},
         ],
     }
 
@@ -63,11 +81,27 @@ class WAOperationsView(GameActionView):
             "endpoint": "operation",
             "payload_details": [{"type": "action_type", "name": "operation"}],
             "options": [
-                {"value": "recruit", "label": "Recruit"},
-                {"value": "move", "label": "Move"},
-                {"value": "battle", "label": "Battle"},
-                {"value": "organize", "label": "Organize"},
-                {"value": "", "label": "Done"},
+                {
+                    "value": "recruit",
+                    "label": "Recruit",
+                    "info": "Place a warrior at any base.",
+                },
+                {
+                    "value": "move",
+                    "label": "Move",
+                    "info": "Move warriors from a clearing with a base.",
+                },
+                {
+                    "value": "battle",
+                    "label": "Battle",
+                    "info": "Initiate combat in a clearing with a base.",
+                },
+                {
+                    "value": "organize",
+                    "label": "Organize",
+                    "info": "Remove a warrior from a clearing with no sympathy to place a sympathy token.",
+                },
+                {"value": "", "label": "Done", "info": "Finish military operations."},
             ],
         }
 
@@ -104,7 +138,9 @@ class WAOperationsView(GameActionView):
         match operation:
             case "":
                 try:
-                    atomic_game_action(end_evening_operations)(self.player(request, game_id))
+                    atomic_game_action(end_evening_operations)(
+                        self.player(request, game_id)
+                    )
                 except ValueError as e:
                     raise ValidationError({"detail": str(e)})
                 return self.generate_completed_step()
@@ -238,7 +274,9 @@ class WAOperationsView(GameActionView):
         except Clearing.DoesNotExist:
             raise ValidationError("Clearing does not exist")
         try:
-            atomic_game_action(operation_move)(player, origin_clearing, destination_clearing, count)
+            atomic_game_action(operation_move)(
+                player, origin_clearing, destination_clearing, count
+            )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()
@@ -261,7 +299,12 @@ class WAOperationsView(GameActionView):
         accumulated_payload = {"clearing_number": clearing_number}
         factions = [Faction(player.faction) for player in opposing_players]
         options = [
-            {"value": faction.name, "label": faction.label} for faction in factions
+            {
+                "value": faction.name,
+                "label": faction.label,
+                "info": f"Initiate battle against the {faction.label}.",
+            }
+            for faction in factions
         ]
         return self.generate_step(
             "defender",
@@ -317,7 +360,9 @@ class WAOperationsView(GameActionView):
         confirmation = bool(request.data["confirm"])
         if confirmation:
             try:
-                atomic_game_action(end_evening_operations)(self.player(request, game_id))
+                atomic_game_action(end_evening_operations)(
+                    self.player(request, game_id)
+                )
             except ValueError as e:
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()

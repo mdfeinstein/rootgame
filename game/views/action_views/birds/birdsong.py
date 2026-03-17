@@ -99,7 +99,11 @@ class AddToDecreeView(GameActionView):
                 {"type": "card", "name": "card_to_add"},
             ],
             options=[
-                {"value": "", "label": "Done"},
+                {
+                    "value": "",
+                    "label": "Done",
+                    "info": "Finish adding cards to the decree.",
+                },
             ],
         )
 
@@ -139,8 +143,18 @@ class AddToDecreeView(GameActionView):
             validate_card_to_decree(self.player(request, game_id), card)
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
+        decree_info = {
+            DecreeEntry.Column.RECRUIT: "Place warriors in a matching clearing with a roost.",
+            DecreeEntry.Column.MOVE: "Move warriors from a matching clearing.",
+            DecreeEntry.Column.BATTLE: "Initiate combat in a matching clearing.",
+            DecreeEntry.Column.BUILD: "Place a roost in a matching clearing you rule with no roost.",
+        }
         options = [
-            {"value": column.name, "label": column.label}
+            {
+                "value": column.name,
+                "label": column.label,
+                "info": decree_info.get(column),
+            }
             for column in DecreeEntry.Column
         ]
         return self.generate_step(

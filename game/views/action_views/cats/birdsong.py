@@ -80,7 +80,13 @@ class CatPlaceWoodView(GameActionView):
                 prompt="Confirm to place all wood",
                 endpoint="confirm_all",
                 payload_details=[{"type": "confirm", "name": "confirm"}],
-                options=[{"value": True, "label": "Confirm"}],
+                options=[
+                    {
+                        "value": True,
+                        "label": "Confirm",
+                        "info": "Place one wood token at each sawmill.",
+                    }
+                ],
             ).data
         else:
             step = self.generate_step(

@@ -22,10 +22,17 @@ class TurmoilView(GameActionView):
         leader_labels = [
             BirdLeader.BirdLeaders(leader.leader).label for leader in available_leaders
         ]
+        leader_info = {
+            BirdLeader.BirdLeaders.BUILDER: "Viziers: Recruit and Move.",
+            BirdLeader.BirdLeaders.CHARISMATIC: "Viziers: Recruit and Battle.",
+            BirdLeader.BirdLeaders.COMMANDER: "Viziers: Move and Battle.",
+            BirdLeader.BirdLeaders.DESPOT: "Viziers: Move and Build.",
+        }
         options = [
             {
                 "value": BirdLeader.BirdLeaders(leader.leader).name,
                 "label": BirdLeader.BirdLeaders(leader.leader).label,
+                "info": leader_info.get(BirdLeader.BirdLeaders(leader.leader)),
             }
             for leader in available_leaders
         ]

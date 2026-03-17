@@ -7,11 +7,16 @@ from game.models.crows.tokens import PlotToken
 from game.models.crows.turn import CrowEvening
 from game.queries.crows.turn import validate_step, validate_phase
 from game.queries.general import get_player_hand_size, get_enemy_factions_in_clearing
-from game.transactions.crows.evening import do_exert_action, discard_card, check_discard_step
+from game.transactions.crows.evening import (
+    do_exert_action,
+    discard_card,
+    check_discard_step,
+)
 from game.transactions.crows.turn import next_step
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.decorators.transaction_decorator import atomic_game_action
 from game.views.action_views.general import GameActionView
+
 
 class CrowsExertView(GameActionView):
     action_name = "CROWS_EXERT"
@@ -26,11 +31,27 @@ class CrowsExertView(GameActionView):
             "endpoint": "action",
             "payload_details": [{"type": "action_type", "name": "action"}],
             "options": [
-                {"value": "plot", "label": "Exert: Plot"},
-                {"value": "trick", "label": "Exert: Trick"},
-                {"value": "move", "label": "Exert: Move"},
-                {"value": "battle", "label": "Exert: Battle"},
-                {"value": "skip", "label": "Skip Exerting"},
+                {
+                    "value": "plot",
+                    "label": "Exert: Plot",
+                    "info": "Place a facedown plot token by removing one warrior from this clearing, plus one warrior for each plot token placed this turn.",
+                },
+                {
+                    "value": "trick",
+                    "label": "Exert: Trick",
+                    "info": "Swap two plot tokens, either both face up or face down.",
+                },
+                {"value": "move", "label": "Exert: Move", "info": "Move warriors."},
+                {
+                    "value": "battle",
+                    "label": "Exert: Battle",
+                    "info": "Initiate combat.",
+                },
+                {
+                    "value": "skip",
+                    "label": "Skip Exerting",
+                    "info": "Do not exert this turn. You will draw cards normally.",
+                },
             ],
         }
 
@@ -108,23 +129,29 @@ class CrowsExertView(GameActionView):
                 raise ValidationError("Invalid action type")
 
     # Reusing Daylight styles but calling do_exert_action
-    
+
     # PLOT
     def post_plot_clearing(self, request, game_id: int):
         clearing_number = int(request.data["clearing_number"])
         return self.generate_step(
-            "plot_type", "Select plot type to place.", "plot-type",
+            "plot_type",
+            "Select plot type to place.",
+            "plot-type",
             [{"type": "plot_type", "name": "plot_type"}],
-            {"clearing_number": clearing_number}
+            {"clearing_number": clearing_number},
         )
 
     def post_plot_type(self, request, game_id: int):
         player = self.player(request, game_id)
         clearing_num = request.data["clearing_number"]
         plot_type = request.data["plot_type"]
-        clearing = Clearing.objects.get(game=self.game(game_id), clearing_number=clearing_num)
+        clearing = Clearing.objects.get(
+            game=self.game(game_id), clearing_number=clearing_num
+        )
         try:
-            atomic_game_action(do_exert_action)(player, "plot", clearing=clearing, plot_type=plot_type)
+            atomic_game_action(do_exert_action)(
+                player, "plot", clearing=clearing, plot_type=plot_type
+            )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()
@@ -133,9 +160,11 @@ class CrowsExertView(GameActionView):
     def post_trick_1(self, request, game_id: int):
         clearing_number = int(request.data["clearing_number"])
         return self.generate_step(
-            "trick_2", "Select second plot token to trick.", "trick-2",
+            "trick_2",
+            "Select second plot token to trick.",
+            "trick-2",
             [{"type": "clearing_number", "name": "clearing_number"}],
-            {"plot1_clearing": clearing_number}
+            {"plot1_clearing": clearing_number},
         )
 
     def post_trick_2(self, request, game_id: int):
@@ -143,8 +172,12 @@ class CrowsExertView(GameActionView):
         p1_clearing_num = request.data["plot1_clearing"]
         p2_clearing_num = int(request.data["clearing_number"])
         try:
-            p1 = PlotToken.objects.get(player=player, clearing__clearing_number=p1_clearing_num)
-            p2 = PlotToken.objects.get(player=player, clearing__clearing_number=p2_clearing_num)
+            p1 = PlotToken.objects.get(
+                player=player, clearing__clearing_number=p1_clearing_num
+            )
+            p2 = PlotToken.objects.get(
+                player=player, clearing__clearing_number=p2_clearing_num
+            )
             atomic_game_action(do_exert_action)(player, "trick", plot1=p1, plot2=p2)
         except (PlotToken.DoesNotExist, ValueError) as e:
             raise ValidationError({"detail": str(e)})
@@ -154,18 +187,22 @@ class CrowsExertView(GameActionView):
     def post_move_origin(self, request, game_id: int):
         clearing_number = int(request.data["clearing_number"])
         return self.generate_step(
-            "move_destination", "Select destination clearing.", "move-destination",
+            "move_destination",
+            "Select destination clearing.",
+            "move-destination",
             [{"type": "clearing_number", "name": "clearing_number"}],
-            {"origin_clearing": clearing_number}
+            {"origin_clearing": clearing_number},
         )
 
     def post_move_destination(self, request, game_id: int):
         origin_num = request.data["origin_clearing"]
         dest_num = int(request.data["clearing_number"])
         return self.generate_step(
-            "move_count", "Select number of warriors to move.", "move-count",
+            "move_count",
+            "Select number of warriors to move.",
+            "move-count",
             [{"type": "number", "name": "count"}],
-            {"origin_clearing": origin_num, "destination_clearing": dest_num}
+            {"origin_clearing": origin_num, "destination_clearing": dest_num},
         )
 
     def post_move_count(self, request, game_id: int):
@@ -177,7 +214,9 @@ class CrowsExertView(GameActionView):
         origin = Clearing.objects.get(game=game, clearing_number=origin_num)
         dest = Clearing.objects.get(game=game, clearing_number=dest_num)
         try:
-            atomic_game_action(do_exert_action)(player, "move", origin=origin, destination=dest, count=count)
+            atomic_game_action(do_exert_action)(
+                player, "move", origin=origin, destination=dest, count=count
+            )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()
@@ -186,23 +225,38 @@ class CrowsExertView(GameActionView):
     def post_battle_clearing(self, request, game_id: int):
         player = self.player(request, game_id)
         clearing_number = int(request.data["clearing_number"])
-        clearing = Clearing.objects.get(game=self.game(game_id), clearing_number=clearing_number)
+        clearing = Clearing.objects.get(
+            game=self.game(game_id), clearing_number=clearing_number
+        )
         enemy_factions = get_enemy_factions_in_clearing(player, clearing)
-        options = [{"value": f.name, "label": f.label} for f in enemy_factions]
+        options = [
+            {
+                "value": f.name,
+                "label": f.label,
+                "info": f"Initiate battle against the {f.label}.",
+            }
+            for f in enemy_factions
+        ]
         return self.generate_step(
-            "battle_faction", "Select faction to battle.", "battle-faction",
+            "battle_faction",
+            "Select faction to battle.",
+            "battle-faction",
             [{"type": "faction", "name": "defender_faction"}],
             {"clearing_number": clearing_number},
-            options=options
+            options=options,
         )
 
     def post_battle_faction(self, request, game_id: int):
         player = self.player(request, game_id)
         clearing_num = request.data["clearing_number"]
         defender_faction = request.data["defender_faction"]
-        clearing = Clearing.objects.get(game=self.game(game_id), clearing_number=clearing_num)
+        clearing = Clearing.objects.get(
+            game=self.game(game_id), clearing_number=clearing_num
+        )
         try:
-            atomic_game_action(do_exert_action)(player, "battle", defender_faction=defender_faction, clearing=clearing)
+            atomic_game_action(do_exert_action)(
+                player, "battle", defender_faction=defender_faction, clearing=clearing
+            )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()
@@ -255,7 +309,7 @@ class CrowsDiscardingView(GameActionView):
         discard_count = get_player_hand_size(player) - 5
         if discard_count <= 0:
             return self.generate_completed_step()
-            
+
         return self.generate_step(
             "discard_card",
             f"Select card to discard. Cards to discard: {discard_count}",

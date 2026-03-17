@@ -105,9 +105,21 @@ class CatsPlaceBuildingView(GameActionView):
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         options = [
-            {"value": "RECRUITER", "label": "Recruiter"},
-            {"value": "WORKSHOP", "label": "Workshop"},
-            {"value": "SAWMILL", "label": "Sawmill"},
+            {
+                "value": "RECRUITER",
+                "label": "Recruiter",
+                "info": "Allows you to recruit more warriors.",
+            },
+            {
+                "value": "WORKSHOP",
+                "label": "Workshop",
+                "info": "Allows you to craft cards.",
+            },
+            {
+                "value": "SAWMILL",
+                "label": "Sawmill",
+                "info": "Produces wood for building.",
+            },
         ]
         # serialize the next step
         return self.generate_step(

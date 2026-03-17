@@ -10,11 +10,12 @@ from game.transactions.crafted_cards.false_orders import use_false_orders
 from game.queries.general import get_enemy_factions_in_clearing, get_adjacent_clearings
 from game.decorators.transaction_decorator import atomic_game_action
 
+
 class FalseOrdersView(GameActionView):
     def get(self, request, *args, **kwargs):
         game_id = kwargs.get("game_id") or request.query_params.get("game_id")
         player = self.player(request, game_id)
-        
+
         try:
             validate_player_has_crafted_card(player, CardsEP.FALSE_ORDERS)
         except ValueError as e:
@@ -26,20 +27,28 @@ class FalseOrdersView(GameActionView):
         for clearing in all_clearings:
             enemies = get_enemy_factions_in_clearing(player, clearing)
             if enemies:
-                valid_clearings.append({
-                    "value": str(clearing.clearing_number),
-                    "label": f"Clearing {clearing.clearing_number} ({clearing.get_suit_display()})"
-                })
-        
-        valid_clearings.append({"value": "skip", "label": "Skip"})
-        
+                valid_clearings.append(
+                    {
+                        "value": str(clearing.clearing_number),
+                        "label": f"Clearing {clearing.clearing_number} ({clearing.get_suit_display()})",
+                    }
+                )
+
+        valid_clearings.append(
+            {
+                "value": "skip",
+                "label": "Skip",
+                "info": "Do not use False Orders this turn.",
+            }
+        )
+
         return self.generate_step(
             name="pick_origin",
             prompt="Pick a clearing to move enemy warriors from",
             endpoint="pick_origin",
             payload_details=[{"type": "select", "name": "origin_number"}],
             options=valid_clearings,
-            faction=Faction(player.faction)
+            faction=Faction(player.faction),
         )
 
     def route_post(self, request, game_id: int, route: str, *args, **kwargs):
@@ -56,21 +65,26 @@ class FalseOrdersView(GameActionView):
     def post_pick_origin(self, request, game_id):
         player = self.player(request, game_id)
         origin_value = request.data["origin_number"]
-        
+
         if origin_value == "skip":
             return self.generate_completed_step()
-            
+
         origin_number = int(origin_value)
-        origin = get_object_or_404(Clearing, game=self.game(game_id), clearing_number=origin_number)
-        
+        origin = get_object_or_404(
+            Clearing, game=self.game(game_id), clearing_number=origin_number
+        )
+
         enemies = get_enemy_factions_in_clearing(player, origin)
         options = []
         for enemy_faction in enemies:
-            options.append({
-                "value": enemy_faction.value,
-                "label": enemy_faction.label
-            })
-            
+            options.append(
+                {
+                    "value": enemy_faction.value,
+                    "label": enemy_faction.label,
+                    "info": f"Move all {enemy_faction.label} warriors from this clearing.",
+                }
+            )
+
         return self.generate_step(
             name="pick_faction",
             prompt="Pick an enemy faction to move",
@@ -78,22 +92,27 @@ class FalseOrdersView(GameActionView):
             payload_details=[{"type": "faction", "name": "target_faction"}],
             accumulated_payload={"origin_number": origin_number},
             options=options,
-            faction=Faction(player.faction)
+            faction=Faction(player.faction),
         )
 
     def post_pick_faction(self, request, game_id):
         player = self.player(request, game_id)
         origin_number = int(request.data["origin_number"])
-        origin = get_object_or_404(Clearing, game=self.game(game_id), clearing_number=origin_number)
-        
+        origin = get_object_or_404(
+            Clearing, game=self.game(game_id), clearing_number=origin_number
+        )
+
         adjacent_clearings = get_adjacent_clearings(player, origin)
         options = []
         for adj in adjacent_clearings:
-            options.append({
-                "value": str(adj.clearing_number),
-                "label": f"Clearing {adj.clearing_number} ({adj.get_suit_display()})"
-            })
-            
+            options.append(
+                {
+                    "value": str(adj.clearing_number),
+                    "label": f"Clearing {adj.clearing_number} ({adj.get_suit_display()})",
+                    "info": f"Move the enemy warriors to clearing {adj.clearing_number}.",
+                }
+            )
+
         return self.generate_step(
             name="pick_destination",
             prompt="Pick a destination clearing",
@@ -101,10 +120,10 @@ class FalseOrdersView(GameActionView):
             payload_details=[{"type": "clearing_number", "name": "destination_number"}],
             accumulated_payload={
                 "origin_number": origin_number,
-                "target_faction": request.data["target_faction"]
+                "target_faction": request.data["target_faction"],
             },
             options=options,
-            faction=Faction(player.faction)
+            faction=Faction(player.faction),
         )
 
     def post_pick_destination(self, request, game_id):
@@ -112,21 +131,24 @@ class FalseOrdersView(GameActionView):
         origin_number = int(request.data["origin_number"])
         target_faction_code = request.data["target_faction"]
         destination_number = int(request.data["destination_number"])
-        
-        origin = get_object_or_404(Clearing, game=self.game(game_id), clearing_number=origin_number)
-        destination = get_object_or_404(Clearing, game=self.game(game_id), clearing_number=destination_number)
+
+        origin = get_object_or_404(
+            Clearing, game=self.game(game_id), clearing_number=origin_number
+        )
+        destination = get_object_or_404(
+            Clearing, game=self.game(game_id), clearing_number=destination_number
+        )
         target_player = Player.objects.get(game_id=game_id, faction=target_faction_code)
-        
-        crafted_card_entry = validate_player_has_crafted_card(player, CardsEP.FALSE_ORDERS)
-        
+
+        crafted_card_entry = validate_player_has_crafted_card(
+            player, CardsEP.FALSE_ORDERS
+        )
+
         try:
             atomic_game_action(use_false_orders)(
-                crafted_card_entry,
-                target_player,
-                origin,
-                destination
+                crafted_card_entry, target_player, origin, destination
             )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
-            
+
         return self.generate_completed_step()

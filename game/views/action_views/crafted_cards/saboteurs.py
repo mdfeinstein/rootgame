@@ -32,7 +32,8 @@ class SaboteursView(GameActionView):
             })
         options.append({
             "value": "skip",
-            "label": "Skip"
+            "label": "Skip",
+            "info": "Do not sabotage any faction this turn."
         })
             
         return self.generate_step(

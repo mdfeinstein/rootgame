@@ -32,7 +32,7 @@ class FieldHospitalView(GameActionView):
                 {"type": "card", "name": "card"},
             ],
             "options": [
-                {"value": "", "label": "Decline"},
+                {"value": "", "label": "Decline", "info": "Let these warriors be removed from the board."},
             ],
         }
         return super().get(request)

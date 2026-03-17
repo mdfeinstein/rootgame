@@ -35,7 +35,11 @@ class CrowsCraftingView(GameActionView):
         "endpoint": "card",
         "payload_details": [{"type": "card", "name": "card_to_craft"}],
         "options": [
-            {"value": "", "label": "Done Crafting"},
+            {
+                "value": "",
+                "label": "Done Crafting",
+                "info": "Finish crafting cards this turn.",
+            },
         ],
     }
 
@@ -137,7 +141,11 @@ class CrowsFlippingView(GameActionView):
         "endpoint": "clearing",
         "payload_details": [{"type": "clearing_number", "name": "plot_clearing"}],
         "options": [
-            {"value": "", "label": "Done Flipping"},
+            {
+                "value": "",
+                "label": "Done Flipping",
+                "info": "Finish flipping plot tokens face-up.",
+            },
         ],
     }
 

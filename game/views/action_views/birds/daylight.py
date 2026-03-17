@@ -45,7 +45,7 @@ class BirdCraftingView(GameActionView):
         "endpoint": "card",
         "payload_details": [{"type": "card", "name": "card_to_craft"}],
         "options": [
-            {"value": "", "label": "Done Crafting"},
+            {"value": "", "label": "Done Crafting", "info": "Finish crafting cards and proceed to recruit actions."},
         ],
     }
 
@@ -325,7 +325,10 @@ class BirdBattleView(GameActionView):
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         enemy_factions = get_enemy_factions_in_clearing(player, clearing)
-        options = [{"value": faction.name, "label": faction.label} for faction in enemy_factions]
+        options = [
+            {"value": faction.name, "label": faction.label, "info": f"Initiate battle against {faction.label}."}
+            for faction in enemy_factions
+        ]
         return self.generate_step(
             "faction",
             f"Select faction to battle.",

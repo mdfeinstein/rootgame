@@ -330,6 +330,7 @@ class PayloadEntry(serializers.Serializer):
 class OptionSerializer(serializers.Serializer):
     value = serializers.CharField()
     label = serializers.CharField(required=False)
+    info = serializers.CharField(required=False, allow_null=True)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

@@ -3,7 +3,7 @@ import { GameActionContext } from "../../contexts/GameActionProvider";
 import useGameActionQuery from "../../hooks/useGameActionQuery";
 import { GameContext } from "../../contexts/GameProvider";
 import type { Option } from "../../hooks/useGameActionQuery";
-import { Button, Group } from "@mantine/core";
+import { Button, Group, Tooltip } from "@mantine/core";
 
 const factionColorMap = {
   Cats: "orange",
@@ -30,21 +30,31 @@ const OptionPrompt = () => {
   return (
     <Group>
       {options?.map((option, i) => (
-        <Button
+        <Tooltip
           key={i}
-          onClick={() => onSelect(option)}
-          bg={factionColorMap[faction as keyof typeof factionColorMap]}
-          styles={{
-            root: {
-              "&:hover": {
-                border: "2px solid gold",
-                backgroundColor: "black",
-              },
-            },
-          }}
+          label={option.info}
+          disabled={!option.info}
+          position="top"
+          withArrow
+          multiline
+          w={220}
+          openDelay={500}
         >
-          {option.label}
-        </Button>
+          <Button
+            onClick={() => onSelect(option)}
+            bg={factionColorMap[faction as keyof typeof factionColorMap]}
+            styles={{
+              root: {
+                "&:hover": {
+                  border: "2px solid gold",
+                  backgroundColor: "black",
+                },
+              },
+            }}
+          >
+            {option.label}
+          </Button>
+        </Tooltip>
       ))}
     </Group>
   );

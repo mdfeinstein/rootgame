@@ -74,7 +74,11 @@ class CatCraftStepView(GameActionView):
         "endpoint": "card",
         "payload_details": [{"type": "card", "name": "card_to_craft"}],
         "options": [
-            {"value": "", "label": "Done Crafting"},
+            {
+                "value": "",
+                "label": "Done Crafting",
+                "info": "Finish crafting cards and proceed to daylight actions.",
+            },
         ],
     }
 
@@ -242,21 +246,47 @@ class CatActionsView(GameActionView):
     faction_string = Faction.CATS.label
     faction = Faction.CATS
 
+    action_options = [
+        {
+            "value": "march",
+            "label": "March",
+            "info": "Perform two move actions, one after the other.",
+        },
+        {
+            "value": "battle",
+            "label": "Battle",
+            "info": "Initiate combat with an enemy in a clearing.",
+        },
+        {
+            "value": "build",
+            "label": "Build",
+            "info": "Place a building in a clearing you rule, consuming wood connected to this clearing thru rule.",
+        },
+        {
+            "value": "recruit",
+            "label": "Recruit",
+            "info": "Place a warrior at all recruiter stations.",
+        },
+        {
+            "value": "overwork",
+            "label": "Overwork",
+            "info": "Discard a card to produce wood at a matching sawmill.",
+        },
+        {
+            "value": "birds-for-hire",
+            "label": "Birds For Hire",
+            "info": "Spend a bird card to gain an extra action.",
+        },
+        {"value": "", "label": "Done", "info": "Finish daylight actions."},
+    ]
+
     first_step = {
         "faction": faction_string,
         "name": "select_action",
         "prompt": "Select action: march, battle, build, overwork, or birds-for-hire. Or, choose nothing to end action step.",
         "endpoint": "action",
         "payload_details": [{"type": "action_type", "name": "action"}],
-        "options": [
-            {"value": "march", "label": "March"},
-            {"value": "battle", "label": "Battle"},
-            {"value": "build", "label": "Build"},
-            {"value": "recruit", "label": "Recruit"},
-            {"value": "overwork", "label": "Overwork"},
-            {"value": "birds-for-hire", "label": "Birds For Hire"},
-            {"value": "", "label": "Done"},
-        ],
+        "options": action_options,
     }
 
     def get(self, request):
@@ -283,15 +313,7 @@ class CatActionsView(GameActionView):
                 + f" Actions remaining: {daylight.actions_left}",
                 "endpoint": "action",
                 "payload_details": [{"type": "action_type", "name": "action"}],
-                "options": [
-                    {"value": "march", "label": "March"},
-                    {"value": "battle", "label": "Battle"},
-                    {"value": "build", "label": "Build"},
-                    {"value": "recruit", "label": "Recruit"},
-                    {"value": "overwork", "label": "Overwork"},
-                    {"value": "birds-for-hire", "label": "Birds For Hire"},
-                    {"value": "", "label": "Done"},
-                ],
+                "options": self.action_options,
             }
         self.first_step = step
         return super().get(request)
@@ -374,9 +396,21 @@ class CatActionsView(GameActionView):
                         {"type": "building_type", "name": "building_type"}
                     ],
                     "options": [
-                        {"value": "sawmill", "label": "Sawmill"},
-                        {"value": "workshop", "label": "Workshop"},
-                        {"value": "recruiter", "label": "Recruiter"},
+                        {
+                            "value": "sawmill",
+                            "label": "Sawmill",
+                            "info": "Generates wood during Birdsong.",
+                        },
+                        {
+                            "value": "workshop",
+                            "label": "Workshop",
+                            "info": "Used for crafting cards.",
+                        },
+                        {
+                            "value": "recruiter",
+                            "label": "Recruiter",
+                            "info": "Used for recruiting warriors.",
+                        },
                     ],
                 }
             case "overwork":
@@ -402,7 +436,13 @@ class CatActionsView(GameActionView):
                         "prompt": f"Confirm to recruit {to_recruit} warriors",
                         "endpoint": "recruit-all",
                         "payload_details": [{"type": "confirm", "name": "confirm"}],
-                        "options": [{"value": "confirm", "label": "Confirm"}],
+                        "options": [
+                            {
+                                "value": "confirm",
+                                "label": "Confirm",
+                                "info": f"Recruit {to_recruit} warriors into your recruiter clearings.",
+                            }
+                        ],
                     }
                 else:
                     troops = troops_in_reserve(self.player(request, game_id))

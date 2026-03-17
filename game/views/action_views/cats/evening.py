@@ -28,7 +28,11 @@ class CatsDrawCardsView(GameActionView):
         "endpoint": "evening-draw-cards",
         "payload_details": [{"type": "confirm", "name": "confirm"}],
         "options": [
-            {"value": "confirm", "label": "Confirm"},
+            {
+                "value": "confirm",
+                "label": "Confirm",
+                "info": "Draw cards based on the number of recruiters on the board.",
+            },
         ],
     }
 
@@ -92,7 +96,9 @@ class CatsDiscardCardsView(GameActionView):
             raise ValidationError("No card selected")
 
         try:
-            atomic_game_action(cat_discard_card)(self.player(request, game_id), card_to_discard)
+            atomic_game_action(cat_discard_card)(
+                self.player(request, game_id), card_to_discard
+            )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         cards_left_to_discard = get_player_hand_size(self.player(request, game_id)) - 5
