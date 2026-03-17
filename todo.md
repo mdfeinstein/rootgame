@@ -9,11 +9,11 @@ Game Lobby:
 - [x] More instructions for the player
   - [x] actions prompts: tooltips on the option buttons providing relevant info
   - [x] Playerboards: as much info as actual playerbaords. use tooltips to conserve space
-  - [ ] tooltips for board components.
+  - [x] tooltips for board components.
 
 - [ ] Appearance
   - [ ] icons for warriors, tokens, buildings
-  - [ ] better way to display token counts for wood
+  - [x] better way to display token counts for wood
 
 - [ ] Game Log
 - [ ] Custom Errors

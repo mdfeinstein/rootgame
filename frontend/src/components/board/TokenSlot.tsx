@@ -55,9 +55,27 @@ export const TokenSlot = ({
         {text}
       </text>
       {countText && (
-        <text x={absX} y={absY + absSize} textAnchor="middle" stroke="white">
-          {countText}
-        </text>
+        <g>
+          <circle
+            cx={absX + absSize * 0.85}
+            cy={absY + absSize * 0.15}
+            r={absSize * 0.3}
+            fill="white"
+            stroke={color}
+            strokeWidth={1}
+          />
+          <text
+            x={absX + absSize * 0.85}
+            y={absY + absSize * 0.15}
+            textAnchor="middle"
+            dominantBaseline="central"
+            fill="black"
+            fontSize={absSize * 0.4}
+            fontWeight="bold"
+          >
+            {countText}
+          </text>
+        </g>
       )}
     </>
   );

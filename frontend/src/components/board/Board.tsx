@@ -142,13 +142,14 @@ export default function SvgBoard({
     return defaultPositions.map((pos, i) => {
       const clearingNumber = i + 1;
       const suit = suitMap[clearingNumber];
+      const suitLabel = suit.charAt(0).toUpperCase() + suit.slice(1);
       return {
         clearingNumber,
         suit,
         circleProps: {
           cx: pos.x * width,
           cy: pos.y * height,
-          r: height * 0.08,
+          r: height * 0.09,
         },
       };
     });
@@ -192,7 +193,7 @@ export default function SvgBoard({
       style={{ width: "100%", height: "100%", boxSizing: "border-box" }}
     >
       <svg
-        viewBox={`0 80 ${width} ${height - 130}`}
+        viewBox={`${width * 0.15} ${height * 0.1} ${width * 0.7} ${height * 0.85}`}
         style={{ width: "100%", height: "100%", display: "block" }}
       >
         <defs>
@@ -215,34 +216,60 @@ export default function SvgBoard({
               />
             );
           })}
-          {clearingProps.map((clearingProp, i) => (
-            <Clearing key={i} {...clearingProp}>
-              {buildingSlotMap[clearingProp.clearingNumber]?.map((s, i) => (
-                <BuildingSlot
-                  key={`b-${i}`}
-                  {...s}
-                  buildingInfo={buildingInfoByClearingAndSlot(
-                    clearingProp.clearingNumber,
-                    i,
-                  )}
-                ></BuildingSlot>
-              ))}
-              {factionList?.map((faction: FactionLabel, i) => (
-                <WarriorSlot
-                  key={`w-${i}`}
-                  {...warriorSlotMap[clearingProp.clearingNumber][i]}
-                  warriorInfo={{
-                    faction: faction,
-                    count:
-                      warriorTable?.filter(
-                        (entry) =>
-                          entry.faction === faction &&
-                          entry.clearing_number === clearingProp.clearingNumber,
-                      ).length ?? 0,
-                  }}
-                />
-              ))}
-              {accumulatedTokens[clearingProp.clearingNumber]?.map((t, i) => {
+          {clearingProps.map((clearingProp, idx) => (
+            <Clearing key={idx} {...clearingProp}>
+              {buildingSlotMap[clearingProp.clearingNumber]?.map((s, idx) => {
+                const info = buildingInfoByClearingAndSlot(
+                  clearingProp.clearingNumber,
+                  idx,
+                );
+                let tooltip = undefined;
+                if (info) {
+                  // Special case for types that don't just end in 's' or singularizing logic
+                  const formattedType =
+                    info.buildingType === "base"
+                      ? "Base"
+                      : info.buildingType === "ruin"
+                        ? "Ruin"
+                        : info.buildingType.charAt(0).toUpperCase() +
+                          info.buildingType.slice(1).replace(/s$/, "");
+
+                  tooltip =
+                    info.buildingType === "ruin"
+                      ? "Ruin"
+                      : `${info.faction} ${formattedType}`;
+                }
+                return (
+                  <BuildingSlot
+                    key={`b-${idx}`}
+                    {...s}
+                    buildingInfo={info}
+                    tooltip={tooltip}
+                  />
+                );
+              })}
+              {factionList?.map((faction: FactionLabel, idx) => {
+                const count =
+                  warriorTable?.filter(
+                    (entry) =>
+                      entry.faction === faction &&
+                      entry.clearing_number === clearingProp.clearingNumber,
+                  ).length ?? 0;
+                return (
+                  <WarriorSlot
+                    key={`w-${idx}`}
+                    {...warriorSlotMap[clearingProp.clearingNumber][idx]}
+                    warriorInfo={{
+                      faction: faction,
+                      count: count,
+                    }}
+                    tooltip={
+                      count > 0 ? `${faction} Warriors (${count})` : undefined
+                    }
+                  />
+                );
+              })}
+              {accumulatedTokens[clearingProp.clearingNumber]?.map((t, idx) => {
                 let tooltip = undefined;
                 if (t.faction === "Crows" && t.tokenType === "?") {
                   const privatePlot = privateInfo?.facedown_plots?.find(
@@ -251,15 +278,22 @@ export default function SvgBoard({
                       p.is_facedown,
                   );
                   if (privatePlot) {
-                    tooltip =
+                    tooltip = `Facedown Plot: ${
                       privatePlot.plot_type.charAt(0).toUpperCase() +
-                      privatePlot.plot_type.slice(1);
+                      privatePlot.plot_type.slice(1)
+                    }`;
+                  } else {
+                    tooltip = "Facedown Plot";
                   }
+                } else {
+                  const tokenLabel =
+                    t.tokenType.charAt(0).toUpperCase() + t.tokenType.slice(1);
+                  tooltip = `${t.faction} ${tokenLabel}${t.count > 1 ? ` (${t.count})` : ""}`;
                 }
                 return (
                   <TokenSlot
-                    key={`t-${i}`}
-                    {...tokenSlotMap[clearingProp.clearingNumber][i]}
+                    key={`t-${idx}`}
+                    {...tokenSlotMap[clearingProp.clearingNumber][idx]}
                     tokenInfo={{
                       faction: t.faction,
                       tokenType: t.tokenType,

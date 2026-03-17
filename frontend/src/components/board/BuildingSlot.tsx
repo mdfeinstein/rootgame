@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { ClearingContext } from "./Clearing";
 import { factionToColor } from "./WarriorTroop";
 import { type FactionLabel } from "../../utils/factionUtils";
+import { Tooltip } from "@mantine/core";
 
 export type BuildingType =
   | "roosts"
@@ -21,11 +22,13 @@ export const BuildingSlot = ({
   y,
   size,
   buildingInfo = null,
+  tooltip,
 }: {
   x: number;
   y: number;
   size: number;
   buildingInfo: BuildingInfo | null;
+  tooltip?: string;
 }) => {
   const ctx = useContext(ClearingContext);
   if (!ctx) throw new Error("Square must be nested inside Circle");
@@ -46,23 +49,25 @@ export const BuildingSlot = ({
   }
 
   return (
-    <>
-      <rect
-        x={absX}
-        y={absY}
-        width={absSize}
-        height={absSize}
-        stroke="black"
-        fill={color}
-      />
-      <text
-        x={absX + absSize / 2}
-        y={absY + (3 * absSize) / 4}
-        textAnchor="middle"
-        stroke="white"
-      >
-        {text}
-      </text>
-    </>
+    <Tooltip label={tooltip} disabled={!tooltip} openDelay={0} withArrow>
+      <g>
+        <rect
+          x={absX}
+          y={absY}
+          width={absSize}
+          height={absSize}
+          stroke="black"
+          fill={color}
+        />
+        <text
+          x={absX + absSize / 2}
+          y={absY + (3 * absSize) / 4}
+          textAnchor="middle"
+          stroke="white"
+        >
+          {text}
+        </text>
+      </g>
+    </Tooltip>
   );
 };
