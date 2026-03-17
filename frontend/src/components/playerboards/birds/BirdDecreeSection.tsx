@@ -1,4 +1,4 @@
-import { Box, SimpleGrid, Text } from "@mantine/core";
+import { SimpleGrid, Stack, Text } from "@mantine/core";
 import { IconHome2, IconPlus, IconShoe, IconSwords } from "@tabler/icons-react";
 import BirdDecreeColumn from "./BirdDecreeColumn";
 import type { components } from "../../../api/types";
@@ -31,11 +31,11 @@ export default function BirdDecreeSection({
   viziers,
 }: BirdDecreeSectionProps) {
   return (
-    <Box>
-      <Text size="lg" fw={800} mb="sm" ta="center">
+    <Stack gap={4} style={{ flex: 1 }}>
+      <Text size="md" fw={800} ta="center" tt="uppercase" c="dimmed">
         The Decree
       </Text>
-      <SimpleGrid cols={4} spacing="md">
+      <SimpleGrid cols={4} spacing="sm" style={{ flex: 1 }}>
         {COLUMNS.map((col) => {
           const cardsInColumn = decree.filter(
             (d: DecreeEntry) => d.column === col.code,
@@ -55,6 +55,6 @@ export default function BirdDecreeSection({
           );
         })}
       </SimpleGrid>
-    </Box>
+    </Stack>
   );
 }

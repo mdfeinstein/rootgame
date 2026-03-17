@@ -19,22 +19,44 @@ interface WaSympathyTrackProps {
 export default function WaSympathyTrack({ tokensOnMap }: WaSympathyTrackProps) {
   return (
     <Paper
-      p="md"
+      p="xs"
       radius="md"
+      shadow="sm"
+      withBorder
       style={{
-        backgroundColor: "#fff9db",
-        border: "1px solid #e9ecef",
+        backgroundColor: "white",
+        flex: 1,
       }}
     >
-      <Text
-        fz="h3"
-        fw={700}
-        ta="center"
-        mb="md"
-        style={{ fontFamily: "serif" }}
+      <Tooltip
+        label={
+          <Stack gap={4}>
+            <Text size="xs">
+              Placement Limits: Each clearing may only have one sympathy token.
+            </Text>
+            <Text size="xs">
+              Martial Law: Must spend another matching supporter if target
+              clearing has 3+ enemy warriors.
+            </Text>
+          </Stack>
+        }
+        multiline
+        w={250}
+        withArrow
+        position="bottom"
       >
-        Sympathy
-      </Text>
+        <Text
+          size="md"
+          fw={800}
+          ta="center"
+          mb={4}
+          tt="uppercase"
+          c="dimmed"
+          style={{ cursor: "help" }}
+        >
+          Sympathy
+        </Text>
+      </Tooltip>
 
       {/* Sympathy Track */}
       <Group justify="center" align="flex-start" gap="md">
@@ -102,13 +124,6 @@ export default function WaSympathyTrack({ tokensOnMap }: WaSympathyTrackProps) {
           </Stack>
         ))}
       </Group>
-      <Text size="xs" c="dimmed" mt="sm">
-        Placement Limits: Each clearing may only have one sympathy token.
-      </Text>
-      <Text size="xs" c="dimmed" mt="sm">
-        Martial Law: Must spend another matching supporter if target clearing
-        has 3+ enemy warriors.
-      </Text>
     </Paper>
   );
 }

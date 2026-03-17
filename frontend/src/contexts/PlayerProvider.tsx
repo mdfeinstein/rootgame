@@ -7,7 +7,9 @@ import type { components } from "../api/types";
 
 export type PlayerPublic = components["schemas"]["PlayerPublic"];
 
-const PlayerContext = createContext<{ faction: FactionLabel | null }>({
+const PlayerContext = createContext<{
+  faction: FactionLabel | null;
+}>({
   faction: null,
 });
 

@@ -41,7 +41,7 @@ export default function BirdDecreeColumn({
       p="sm"
       style={{
         backgroundColor: "white",
-        minHeight: "300px",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
       }}

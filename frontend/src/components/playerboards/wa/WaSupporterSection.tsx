@@ -7,6 +7,7 @@ import {
   Stack,
   Text,
   ThemeIcon,
+  Tooltip,
 } from "@mantine/core";
 import { IconCards } from "@tabler/icons-react";
 import { SUIT_CONFIG } from "../../../data/suitConfig";
@@ -73,38 +74,46 @@ export default function WaSupporterSection({
   return (
     <Paper
       radius="md"
-      h="100%"
+      withBorder
+      shadow="sm"
       style={{
-        backgroundColor: "#2f9e44",
-        color: "white",
+        backgroundColor: "white",
         display: "flex",
         flexDirection: "column",
-        padding: "1rem",
-        justifyContent: "space-between",
-        border: "2px solid white",
+        padding: "0.5rem",
+        flex: 1,
       }}
     >
-      <Box>
-        <Text fz="h2" fw={900} ta="center" style={{ fontFamily: "serif" }}>
-          Supporters
-        </Text>
+      <Box mb={4}>
+        <Tooltip
+          label="If you have no bases on the map, discard any cards that would be added beyond 5."
+          multiline
+          w={220}
+          withArrow
+          position="bottom"
+        >
+          <Text
+            size="md"
+            fw={800}
+            ta="center"
+            tt="uppercase"
+            c="dimmed"
+            style={{ cursor: "help" }}
+          >
+            Supporters
+          </Text>
+        </Tooltip>
       </Box>
 
-      <Center>
+      <Center style={{ flex: 1 }}>
         <Stack align="center" gap={0}>
-          <IconCards size={64} />
-          <Text fz={48} fw={900} lh={1}>
+          <IconCards size={48} color="var(--mantine-color-green-7)" />
+          <Text fz={36} fw={900} lh={1} c="green.9">
             {supporterCount}
           </Text>
         </Stack>
       </Center>
 
-      <Box>
-        <Text size="xs" ta="center" c="green.1">
-          If you have no bases on the map, discard any cards that would be added
-          beyond 5.
-        </Text>
-      </Box>
       {playerIsWA && supporterCards && (
         <SupporterStack supporterCards={supporterCards} />
       )}

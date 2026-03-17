@@ -15,13 +15,18 @@ const useWAPlayerQuery = (gameId: number, enabled: boolean = true) => {
     getFactionPlayerInfoQueryOptions(gameId, "woodland-alliance", enabled),
   );
   const { faction } = useContext(PlayerContext);
+  const isWA = faction === "Woodland Alliance";
+
   const {
     data: privateInfo,
     isLoading: privateInfoLoading,
     isError: privateInfoError,
     isSuccess: privateInfoSuccess,
   } = useQuery({
-    queryKey: gameKeys.factionPrivate(gameId, "woodland-alliance"),
+    queryKey: gameKeys.factionPrivate(
+      gameId,
+      "woodland-alliance",
+    ),
     queryFn: async () => {
       const response = await fetch(
         apiUrl + "/woodland-alliance/player-private-info/" + gameId + "/",
@@ -32,18 +37,20 @@ const useWAPlayerQuery = (gameId: number, enabled: boolean = true) => {
           },
         },
       );
+      if (!response.ok) {
+        throw new Error("Failed to fetch private info");
+      }
       return response.json();
     },
-    enabled: enabled && faction === "Woodland Alliance",
+    enabled: enabled && isWA,
   });
+
   return {
     publicInfo,
     privateInfo,
-    isLoading,
-    isError,
+    isLoading: isLoading || (isWA && privateInfoLoading),
+    isError: isError || (isWA && privateInfoError),
     isSuccess,
-    privateInfoLoading,
-    privateInfoError,
     privateInfoSuccess,
   };
 };

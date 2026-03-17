@@ -1,4 +1,4 @@
-import { Box, Grid, Group, Paper, Stack, Text, ThemeIcon } from "@mantine/core";
+import { Box, Grid, Group, Paper, Stack, Text, ThemeIcon, Tooltip } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { SUIT_CONFIG } from "../../../data/suitConfig";
 import type { SuitValue } from "../../../data/suitConfig";
@@ -14,26 +14,41 @@ export default function WaBasesAndOfficers({
 }: WaBasesAndOfficersProps) {
   return (
     <Paper
-      p="sm"
+      p="xs"
       radius="md"
+      shadow="sm"
+      withBorder
       style={{
-        backgroundColor: "#fff9db",
-        border: "2px solid #adb5bd",
+        backgroundColor: "white",
       }}
     >
       <Grid>
         {/* Bases Section */}
         <Grid.Col span={7} style={{ borderRight: "1px dashed #ced4da" }}>
-          <Stack align="center" gap="xs">
-            <Text fz="h3" fw={700} style={{ fontFamily: "serif" }}>
-              Bases
-            </Text>
+          <Stack align="center" gap={4}>
+            <Tooltip
+              label="If a base is removed from the map, discard all matching supporters (including birds), and remove half of officers (rounded up). If no bases remain on the map, discard supporters down to 5."
+              multiline
+              w={250}
+              withArrow
+              position="bottom"
+            >
+              <Text
+                size="md"
+                fw={800}
+                tt="uppercase"
+                c="dimmed"
+                style={{ cursor: "help" }}
+              >
+                Bases
+              </Text>
+            </Tooltip>
             <Group justify="center">
               {["r", "y", "o"].map((suit) => {
                 const config = SUIT_CONFIG[suit as SuitValue];
                 const SuitIcon = config.icon;
-                const base = bases?.find((b: any) => b.suit.value === suit);
-                const isOnBoard = base?.building?.clearing_number === null;
+                const baseOnMap = bases?.find((b: any) => b.suit.value === suit);
+                const isOnPlayerBoard = !baseOnMap;
 
                 return (
                   <Paper
@@ -44,7 +59,7 @@ export default function WaBasesAndOfficers({
                     style={{
                       backgroundColor: "rgba(255,255,255,0.5)",
                       border: `2px solid ${
-                        isOnBoard ? config.color : "#dee2e6"
+                        isOnPlayerBoard ? config.color : "#dee2e6"
                       }`, // Highlight if present
                       display: "flex",
                       justifyContent: "center",
@@ -62,8 +77,8 @@ export default function WaBasesAndOfficers({
                       }}
                     />
 
-                    {/* Base Token if on board */}
-                    {isOnBoard && (
+                    {/* Base Token if on player board (in reserve) */}
+                    {isOnPlayerBoard && (
                       <ThemeIcon
                         size={40}
                         radius="md"
@@ -88,21 +103,13 @@ export default function WaBasesAndOfficers({
                 );
               })}
             </Group>
-            <Text size="xs" lh={1.2}>
-              <Text span fw={700}>
-                Removing Bases.
-              </Text>{" "}
-              If a base is removed from the map, discard all matching supporters
-              (including birds), and remove half of officers (rounded up). If no
-              bases remain on the map, discard supporters down to 5.
-            </Text>
           </Stack>
         </Grid.Col>
 
         {/* Officers Section */}
         <Grid.Col span={5}>
-          <Stack align="center" h="100%">
-            <Text fz="h3" fw={700} style={{ fontFamily: "serif" }}>
+          <Stack align="center" gap={4} h="100%">
+            <Text size="md" fw={800} tt="uppercase" c="dimmed">
               Officers
             </Text>
             <Box

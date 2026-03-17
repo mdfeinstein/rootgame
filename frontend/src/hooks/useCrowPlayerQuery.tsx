@@ -65,6 +65,9 @@ export const useCrowPlayerQuery = (gameId: number, enabled: boolean = true) => {
           },
         },
       );
+      if (!response.ok) {
+        throw new Error("Failed to fetch private info");
+      }
       return response.json();
     },
     enabled: !!gameId && enabled && isCrows,

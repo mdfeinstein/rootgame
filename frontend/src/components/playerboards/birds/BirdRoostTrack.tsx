@@ -1,4 +1,4 @@
-import { Box, Paper, SimpleGrid, Stack, Text, Tooltip } from "@mantine/core";
+import { Paper, SimpleGrid, Stack, Text, Tooltip } from "@mantine/core";
 import { IconHome2 } from "@tabler/icons-react";
 import ConditionalWrapper from "../../utility/ConditionalWrapper";
 
@@ -12,11 +12,8 @@ interface BirdRoostTrackProps {
 
 export default function BirdRoostTrack({ roostsOnMap }: BirdRoostTrackProps) {
   return (
-    <Box>
-      <Text size="lg" fw={800} mb="sm" ta="center">
-        Roosts
-      </Text>
-      <Paper p="md" radius="md" withBorder bg="gray.1">
+    <Paper p="xs" radius="md" withBorder bg="white" shadow="sm">
+      <Stack gap={4}>
         <SimpleGrid cols={7} spacing="xs">
           {pointPerTurn.map((vp, index) => {
             const isFilled = index >= roostsOnMap;
@@ -34,7 +31,7 @@ export default function BirdRoostTrack({ roostsOnMap }: BirdRoostTrackProps) {
                 >
                   <Paper
                     w="100%"
-                    h={50}
+                    h={40}
                     withBorder
                     radius="sm"
                     style={{
@@ -51,7 +48,7 @@ export default function BirdRoostTrack({ roostsOnMap }: BirdRoostTrackProps) {
                   >
                     {isFilled ? (
                       <IconHome2
-                        size={24}
+                        size={20}
                         color="var(--mantine-color-blue-8)"
                       />
                     ) : (
@@ -65,14 +62,17 @@ export default function BirdRoostTrack({ roostsOnMap }: BirdRoostTrackProps) {
                     )}
                   </Paper>
                 </ConditionalWrapper>
-                <Text size="sm" fw={700} c="dimmed">
+                <Text size="xs" fw={700} c="dimmed">
                   +{vp} VP
                 </Text>
               </Stack>
             );
           })}
         </SimpleGrid>
-      </Paper>
-    </Box>
+        <Text size="xs" fw={800} ta="center" c="dimmed" tt="uppercase">
+          Roosts
+        </Text>
+      </Stack>
+    </Paper>
   );
 }

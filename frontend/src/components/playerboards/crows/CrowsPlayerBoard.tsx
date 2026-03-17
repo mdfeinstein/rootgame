@@ -1,10 +1,12 @@
-import { Modal, Paper, Stack } from "@mantine/core";
+import { Modal, Paper, Stack, Grid, LoadingOverlay } from "@mantine/core";
 import { useContext } from "react";
 import { GameContext } from "../../../contexts/GameProvider";
+import { PlayerContext } from "../../../contexts/PlayerProvider";
 import { useCrowPlayerQuery } from "../../../hooks/useCrowPlayerQuery";
-import CrowsAbilities from "./CrowsAbilities";
 import CrowsHeaderSection from "./CrowsHeaderSection";
 import CrowsPlotReserve from "./CrowsPlotReserve";
+import CrowsTurnFlow from "./CrowsTurnFlow";
+import CrowsPlotsSection from "./CrowsPlotsSection";
 
 interface CrowsPlayerBoardProps {
   isOpen: boolean;
@@ -16,9 +18,15 @@ export default function CrowsPlayerBoard({
   onClose,
 }: CrowsPlayerBoardProps) {
   const { gameId } = useContext(GameContext);
-  const { publicInfo, privateInfo } = useCrowPlayerQuery(gameId, isOpen);
+  const { faction } = useContext(PlayerContext);
+  const { publicInfo, privateInfo, isLoading } = useCrowPlayerQuery(
+    gameId,
+    isOpen,
+  );
 
   if (!publicInfo) return null;
+
+  const isOwner = faction === "Crows";
 
   const warriorsInSupply = publicInfo.warriors.filter(
     (w) => w.clearing_number === null,
@@ -28,30 +36,55 @@ export default function CrowsPlayerBoard({
     <Modal
       opened={isOpen}
       onClose={onClose}
-      size="lg"
+      size="xl"
       centered
-      title="Corvid Conspiracy Player Board"
+      padding={0}
+      withCloseButton={false}
+      styles={{ content: { background: "transparent", boxShadow: "none" } }}
+      overlayProps={{ backgroundOpacity: 0.55, blur: 3 }}
     >
       <Paper
         p="md"
         radius="lg"
+        shadow="xl"
         style={{
-          backgroundColor: "var(--mantine-color-indigo-0)",
-          border: "2px solid var(--mantine-color-indigo-6)",
+          backgroundColor: "#fef6e4", // Warm paper background
+          border: "4px solid var(--mantine-color-indigo-6)",
+          overflow: "hidden",
+          position: "relative", // Needed for LoadingOverlay
         }}
       >
-        <Stack gap="xl">
-          <CrowsHeaderSection
-            score={publicInfo.player.score}
-            warriorsInSupply={warriorsInSupply}
-            plotsInSupply={publicInfo.reserve_plots_count}
-          />
+        <LoadingOverlay visible={isLoading} overlayProps={{ blur: 2 }} />
+        <Stack gap="xs">
+          <CrowsHeaderSection warriorsInSupply={warriorsInSupply} />
 
-          {privateInfo && (
-            <CrowsPlotReserve reservePlots={privateInfo.reserve_plots} />
-          )}
+          <Grid gutter="xs" align="stretch">
+            {/* Left Column: Turn Flow */}
+            <Grid.Col span={{ base: 12, md: 5 }} style={{ display: "flex" }}>
+              <Paper
+                withBorder
+                p="xs"
+                radius="md"
+                bg="white"
+                shadow="sm"
+                style={{ flex: 1 }}
+              >
+                <CrowsTurnFlow />
+              </Paper>
+            </Grid.Col>
 
-          <CrowsAbilities />
+            {/* Right Column: Plots Reference & Reserve */}
+            <Grid.Col span={{ base: 12, md: 7 }} style={{ display: "flex" }}>
+              <Stack gap="xs" style={{ flex: 1 }}>
+                <CrowsPlotsSection />
+                <CrowsPlotReserve
+                  reservePlots={privateInfo?.reserve_plots || []}
+                  totalCount={publicInfo.reserve_plots_count}
+                  isOwner={isOwner}
+                />
+              </Stack>
+            </Grid.Col>
+          </Grid>
         </Stack>
       </Paper>
     </Modal>

@@ -1,9 +1,11 @@
-import { Group, Modal, Paper, Stack, Text } from "@mantine/core";
+import { Modal, Paper, Stack, Grid } from "@mantine/core";
 import { useContext } from "react";
 import { GameContext } from "../../../contexts/GameProvider";
 import useBuildingTable from "../../../hooks/useBuildingTable";
 import useCatPlayerQuery from "../../../hooks/useCatPlayerQuery";
 import CatBuildingTracks from "./CatBuildingTracks";
+import CatTurnFlow from "./CatTurnFlow";
+import CatHeaderSection from "./CatHeaderSection";
 
 interface CatPlayerBoardProps {
   isOpen: boolean;
@@ -15,7 +17,14 @@ export default function CatPlayerBoard({
   onClose,
 }: CatPlayerBoardProps) {
   const { gameId } = useContext(GameContext);
-  useCatPlayerQuery(gameId, isOpen);
+  const { publicInfo } = useCatPlayerQuery(gameId, isOpen);
+
+  if (!publicInfo) return null;
+
+  const warriorsInSupply = publicInfo.warriors.filter(
+    (w: any) => w.clearing_number === null,
+  ).length;
+
   const { buildingTable } = useBuildingTable(gameId, ["Cats"], isOpen);
   const catBuildingsOnBoard = buildingTable.filter(
     (b) => b.faction === "Cats" && b.clearing_number === null,
@@ -34,33 +43,45 @@ export default function CatPlayerBoard({
   const counts = { sawmills, workshops, recruiters };
 
   return (
-    <Modal opened={isOpen} onClose={onClose} size="xl" centered>
+    <Modal
+      opened={isOpen}
+      onClose={onClose}
+      size="80%"
+      centered
+      padding={0}
+      withCloseButton={false}
+      styles={{ content: { background: 'transparent', boxShadow: 'none' } }}
+    >
       <Paper
         p="md"
         radius="lg"
+        shadow="xl"
         style={{
-          backgroundColor: "var(--mantine-color-orange-1)",
-          border: "2px solid var(--mantine-color-orange-6)",
-          maxWidth: "800px",
-          margin: "0 auto",
+          backgroundColor: "#fef6e4", // Warm paper-like background
+          border: "4px solid var(--mantine-color-orange-6)",
+          overflow: "hidden",
         }}
       >
-        <Stack gap="lg">
-          {/* Title / Header */}
-          <Group justify="center">
-            <Text
-              size="xl"
-              fw={900}
-              tt="uppercase"
-              c="orange.9"
-              style={{ letterSpacing: "2px" }}
-            >
-              Cats
-            </Text>
-          </Group>
+        <Stack gap="xs">
+          <CatHeaderSection warriorsInSupply={warriorsInSupply} />
 
-          {/* Tracks */}
-          <CatBuildingTracks counts={counts} />
+          <Grid gutter="xs">
+            {/* Left Column: Turn Flow */}
+            <Grid.Col span={{ base: 12, md: 4 }}>
+              <Paper withBorder p="xs" radius="md" bg="white" shadow="sm">
+                <CatTurnFlow />
+              </Paper>
+            </Grid.Col>
+
+            {/* Right Column: Tracks */}
+            <Grid.Col span={{ base: 12, md: 8 }}>
+              <Stack gap="xs">
+                <Paper withBorder p="sm" radius="md" bg="white" shadow="sm">
+                  <CatBuildingTracks counts={counts} />
+                </Paper>
+              </Stack>
+            </Grid.Col>
+          </Grid>
         </Stack>
       </Paper>
     </Modal>

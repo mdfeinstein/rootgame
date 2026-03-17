@@ -6,9 +6,9 @@ Game Lobby:
   - [x] During setup: calls to turn-info
   - [x] Fewer than all factions: calls to player-info for factions not in game
 
-- [ ] More instructions for the player
-  - [ ] actions prompts: tooltips on the option buttons providing relevant info
-  - [ ] Playerboards: as much info as actual playerbaords. use tooltips to conserve space
+- [x] More instructions for the player
+  - [x] actions prompts: tooltips on the option buttons providing relevant info
+  - [x] Playerboards: as much info as actual playerbaords. use tooltips to conserve space
   - [ ] tooltips for board components.
 
 - [ ] Appearance
