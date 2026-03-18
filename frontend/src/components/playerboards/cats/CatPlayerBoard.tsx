@@ -1,4 +1,4 @@
-import { Modal, Paper, Stack, Grid } from "@mantine/core";
+import { Modal, Paper, Stack, Grid, LoadingOverlay } from "@mantine/core";
 import { useContext } from "react";
 import { GameContext } from "../../../contexts/GameProvider";
 import useBuildingTable from "../../../hooks/useBuildingTable";
@@ -17,15 +17,13 @@ export default function CatPlayerBoard({
   onClose,
 }: CatPlayerBoardProps) {
   const { gameId } = useContext(GameContext);
-  const { publicInfo } = useCatPlayerQuery(gameId, isOpen);
-
-  if (!publicInfo) return null;
-
-  const warriorsInSupply = publicInfo.warriors.filter(
-    (w: any) => w.clearing_number === null,
-  ).length;
-
+  const { publicInfo, isLoading } = useCatPlayerQuery(gameId, isOpen);
   const { buildingTable } = useBuildingTable(gameId, ["Cats"], isOpen);
+
+  const warriorsInSupply =
+    publicInfo?.warriors.filter((w: any) => w.clearing_number === null)
+      .length ?? 0;
+
   const catBuildingsOnBoard = buildingTable.filter(
     (b) => b.faction === "Cats" && b.clearing_number === null,
   );
@@ -60,29 +58,33 @@ export default function CatPlayerBoard({
           backgroundColor: "#fef6e4", // Warm paper-like background
           border: "4px solid var(--mantine-color-orange-6)",
           overflow: "hidden",
+          position: "relative",
         }}
       >
-        <Stack gap="xs">
-          <CatHeaderSection warriorsInSupply={warriorsInSupply} />
+        <LoadingOverlay visible={isLoading} overlayProps={{ blur: 2 }} />
+        {publicInfo && (
+          <Stack gap="xs">
+            <CatHeaderSection warriorsInSupply={warriorsInSupply} />
 
-          <Grid gutter="xs">
-            {/* Left Column: Turn Flow */}
-            <Grid.Col span={{ base: 12, md: 4 }}>
-              <Paper withBorder p="xs" radius="md" bg="white" shadow="sm">
-                <CatTurnFlow />
-              </Paper>
-            </Grid.Col>
-
-            {/* Right Column: Tracks */}
-            <Grid.Col span={{ base: 12, md: 8 }}>
-              <Stack gap="xs">
-                <Paper withBorder p="sm" radius="md" bg="white" shadow="sm">
-                  <CatBuildingTracks counts={counts} />
+            <Grid gutter="xs">
+              {/* Left Column: Turn Flow */}
+              <Grid.Col span={{ base: 12, md: 4 }}>
+                <Paper withBorder p="xs" radius="md" bg="white" shadow="sm">
+                  <CatTurnFlow />
                 </Paper>
-              </Stack>
-            </Grid.Col>
-          </Grid>
-        </Stack>
+              </Grid.Col>
+
+              {/* Right Column: Tracks */}
+              <Grid.Col span={{ base: 12, md: 8 }}>
+                <Stack gap="xs">
+                  <Paper withBorder p="sm" radius="md" bg="white" shadow="sm">
+                    <CatBuildingTracks counts={counts} />
+                  </Paper>
+                </Stack>
+              </Grid.Col>
+            </Grid>
+          </Stack>
+        )}
       </Paper>
     </Modal>
   );

@@ -24,13 +24,11 @@ export default function CrowsPlayerBoard({
     isOpen,
   );
 
-  if (!publicInfo) return null;
-
   const isOwner = faction === "Crows";
 
-  const warriorsInSupply = publicInfo.warriors.filter(
-    (w) => w.clearing_number === null,
-  ).length;
+  const warriorsInSupply =
+    publicInfo?.warriors.filter((w: any) => w.clearing_number === null)
+      .length ?? 0;
 
   return (
     <Modal
@@ -55,37 +53,39 @@ export default function CrowsPlayerBoard({
         }}
       >
         <LoadingOverlay visible={isLoading} overlayProps={{ blur: 2 }} />
-        <Stack gap="xs">
-          <CrowsHeaderSection warriorsInSupply={warriorsInSupply} />
+        {publicInfo && (
+          <Stack gap="xs">
+            <CrowsHeaderSection warriorsInSupply={warriorsInSupply} />
 
-          <Grid gutter="xs" align="stretch">
-            {/* Left Column: Turn Flow */}
-            <Grid.Col span={{ base: 12, md: 5 }} style={{ display: "flex" }}>
-              <Paper
-                withBorder
-                p="xs"
-                radius="md"
-                bg="white"
-                shadow="sm"
-                style={{ flex: 1 }}
-              >
-                <CrowsTurnFlow />
-              </Paper>
-            </Grid.Col>
+            <Grid gutter="xs" align="stretch">
+              {/* Left Column: Turn Flow */}
+              <Grid.Col span={{ base: 12, md: 5 }} style={{ display: "flex" }}>
+                <Paper
+                  withBorder
+                  p="xs"
+                  radius="md"
+                  bg="white"
+                  shadow="sm"
+                  style={{ flex: 1 }}
+                >
+                  <CrowsTurnFlow />
+                </Paper>
+              </Grid.Col>
 
-            {/* Right Column: Plots Reference & Reserve */}
-            <Grid.Col span={{ base: 12, md: 7 }} style={{ display: "flex" }}>
-              <Stack gap="xs" style={{ flex: 1 }}>
-                <CrowsPlotsSection />
-                <CrowsPlotReserve
-                  reservePlots={privateInfo?.reserve_plots || []}
-                  totalCount={publicInfo.reserve_plots_count}
-                  isOwner={isOwner}
-                />
-              </Stack>
-            </Grid.Col>
-          </Grid>
-        </Stack>
+              {/* Right Column: Plots Reference & Reserve */}
+              <Grid.Col span={{ base: 12, md: 7 }} style={{ display: "flex" }}>
+                <Stack gap="xs" style={{ flex: 1 }}>
+                  <CrowsPlotsSection />
+                  <CrowsPlotReserve
+                    reservePlots={privateInfo?.reserve_plots || []}
+                    totalCount={publicInfo.reserve_plots_count}
+                    isOwner={isOwner}
+                  />
+                </Stack>
+              </Grid.Col>
+            </Grid>
+          </Stack>
+        )}
       </Paper>
     </Modal>
   );

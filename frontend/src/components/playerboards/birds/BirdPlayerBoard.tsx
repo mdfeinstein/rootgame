@@ -1,4 +1,4 @@
-import { Modal, Stack, Grid, Paper } from "@mantine/core";
+import { Modal, Stack, Grid, Paper, LoadingOverlay } from "@mantine/core";
 import { useContext } from "react";
 import { GameContext } from "../../../contexts/GameProvider";
 import useBirdPlayerQuery from "../../../hooks/useBirdPlayerQuery";
@@ -18,10 +18,7 @@ export default function BirdPlayerBoard({
   onClose,
 }: BirdPlayerBoardProps) {
   const { gameId } = useContext(GameContext);
-  const { publicInfo } = useBirdPlayerQuery(gameId, isOpen);
-
-  if (!publicInfo) return null;
-
+  const { publicInfo, isLoading } = useBirdPlayerQuery(gameId, isOpen);
   const { buildingTable } = useBuildingTable(gameId, ["Birds"], isOpen);
   const roostsOnMap = buildingTable.filter(
     (b) =>
@@ -63,31 +60,42 @@ export default function BirdPlayerBoard({
           backgroundColor: "#fef6e4", // Warm paper-like background
           border: "4px solid var(--mantine-color-blue-6)",
           overflow: "hidden",
+          position: "relative",
         }}
       >
-        <Stack gap="xs">
-          <BirdHeaderSection
-            activeLeader={activeLeader}
-            warriorsInSupply={warriorsInSupply}
-          />
+        <LoadingOverlay visible={isLoading} overlayProps={{ blur: 2 }} />
+        {publicInfo && (
+          <Stack gap="xs">
+            <BirdHeaderSection
+              activeLeader={activeLeader}
+              warriorsInSupply={warriorsInSupply}
+            />
 
-          <Grid gutter="xs" align="stretch">
-            {/* Left Column: Turn Flow */}
-            <Grid.Col span={{ base: 12, md: 3 }} style={{ display: 'flex' }}>
-              <Paper withBorder p="xs" radius="md" bg="white" shadow="sm" style={{ flex: 1 }}>
-                <BirdTurnFlow />
-              </Paper>
-            </Grid.Col>
+            <Grid gutter="xs" align="stretch">
+              {/* Left Column: Turn Flow */}
+              <Grid.Col span={{ base: 12, md: 3 }} style={{ display: "flex" }}>
+                <Paper
+                  withBorder
+                  p="xs"
+                  radius="md"
+                  bg="white"
+                  shadow="sm"
+                  style={{ flex: 1 }}
+                >
+                  <BirdTurnFlow />
+                </Paper>
+              </Grid.Col>
 
-            {/* Right Column: Tracks and Decree */}
-            <Grid.Col span={{ base: 12, md: 9 }} style={{ display: 'flex' }}>
-              <Stack gap="xs" style={{ flex: 1 }}>
-                <BirdRoostTrack roostsOnMap={roostsOnMap} />
-                <BirdDecreeSection decree={decree} viziers={viziers} />
-              </Stack>
-            </Grid.Col>
-          </Grid>
-        </Stack>
+              {/* Right Column: Tracks and Decree */}
+              <Grid.Col span={{ base: 12, md: 9 }} style={{ display: "flex" }}>
+                <Stack gap="xs" style={{ flex: 1 }}>
+                  <BirdRoostTrack roostsOnMap={roostsOnMap} />
+                  <BirdDecreeSection decree={decree} viziers={viziers} />
+                </Stack>
+              </Grid.Col>
+            </Grid>
+          </Stack>
+        )}
       </Paper>
     </Modal>
   );

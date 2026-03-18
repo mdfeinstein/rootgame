@@ -24,8 +24,6 @@ export default function WaPlayerBoard({ isOpen, onClose }: WaPlayerBoardProps) {
     isOpen,
   );
 
-  if (!publicInfo) return null;
-
   const { tokenTable } = useTokenTable(
     gameId,
     ["Woodland Alliance" as FactionLabel],
@@ -33,9 +31,10 @@ export default function WaPlayerBoard({ isOpen, onClose }: WaPlayerBoardProps) {
   );
 
   const playerIsWA = faction === "Woodland Alliance";
-  const tokensOnMap = tokenTable.filter(
-    (t) => t.faction === "Woodland Alliance" && t.clearing_number !== null,
-  ).length;
+  const tokensOnMap =
+    tokenTable?.filter(
+      (t) => t.faction === "Woodland Alliance" && t.clearing_number !== null,
+    ).length ?? 0;
 
   const supporterCount = publicInfo?.supporter_count ?? 0;
   const supporterCards = privateInfo?.supporter_cards;
@@ -68,38 +67,47 @@ export default function WaPlayerBoard({ isOpen, onClose }: WaPlayerBoardProps) {
         }}
       >
         <LoadingOverlay visible={isLoading} overlayProps={{ blur: 2 }} />
-        <Stack gap="xs">
-          <WaHeaderSection warriorsInSupply={warriorsInSupply} />
+        {publicInfo && (
+          <Stack gap="xs">
+            <WaHeaderSection warriorsInSupply={warriorsInSupply} />
 
-          <Grid gutter="xs" align="stretch">
-            {/* Left Column: Turn Flow */}
-            <Grid.Col span={{ base: 12, md: 3 }} style={{ display: 'flex' }}>
-              <Paper withBorder p="xs" radius="md" bg="white" shadow="sm" style={{ flex: 1 }}>
-                <WaTurnFlow />
-              </Paper>
-            </Grid.Col>
+            <Grid gutter="xs" align="stretch">
+              {/* Left Column: Turn Flow */}
+              <Grid.Col span={{ base: 12, md: 3 }} style={{ display: "flex" }}>
+                <Paper
+                  withBorder
+                  p="xs"
+                  radius="md"
+                  bg="white"
+                  shadow="sm"
+                  style={{ flex: 1 }}
+                >
+                  <WaTurnFlow />
+                </Paper>
+              </Grid.Col>
 
-            {/* Middle Column: Supporters */}
-            <Grid.Col span={{ base: 12, md: 3 }} style={{ display: 'flex' }}>
-              <WaSupporterSection
-                supporterCount={supporterCount}
-                playerIsWA={playerIsWA}
-                supporterCards={supporterCards}
-              />
-            </Grid.Col>
-
-            {/* Right Column: Bases/Officers & Sympathy */}
-            <Grid.Col span={{ base: 12, md: 6 }} style={{ display: 'flex' }}>
-              <Stack gap="xs" style={{ flex: 1 }}>
-                <WaBasesAndOfficers
-                  bases={publicInfo?.buildings?.base ?? []}
-                  officerCount={publicInfo?.officer_count ?? 0}
+              {/* Middle Column: Supporters */}
+              <Grid.Col span={{ base: 12, md: 3 }} style={{ display: "flex" }}>
+                <WaSupporterSection
+                  supporterCount={supporterCount}
+                  playerIsWA={playerIsWA}
+                  supporterCards={supporterCards}
                 />
-                <WaSympathyTrack tokensOnMap={tokensOnMap} />
-              </Stack>
-            </Grid.Col>
-          </Grid>
-        </Stack>
+              </Grid.Col>
+
+              {/* Right Column: Bases/Officers & Sympathy */}
+              <Grid.Col span={{ base: 12, md: 6 }} style={{ display: "flex" }}>
+                <Stack gap="xs" style={{ flex: 1 }}>
+                  <WaBasesAndOfficers
+                    bases={publicInfo?.buildings?.base ?? []}
+                    officerCount={publicInfo?.officer_count ?? 0}
+                  />
+                  <WaSympathyTrack tokensOnMap={tokensOnMap} />
+                </Stack>
+              </Grid.Col>
+            </Grid>
+          </Stack>
+        )}
       </Paper>
     </Modal>
   );
