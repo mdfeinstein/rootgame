@@ -142,7 +142,6 @@ export default function SvgBoard({
     return defaultPositions.map((pos, i) => {
       const clearingNumber = i + 1;
       const suit = suitMap[clearingNumber];
-      const suitLabel = suit.charAt(0).toUpperCase() + suit.slice(1);
       return {
         clearingNumber,
         suit,

@@ -7,7 +7,8 @@ import { Box, Group } from "@mantine/core";
 
 const Hand = () => {
   const { username } = useContext(UserContext);
-  const { gameId, isGameStarted } = useContext(GameContext);
+  const { gameId, session } = useContext(GameContext);
+  const isGameStarted = session?.status?.label !== "Not Started";
   const { playerHand } = useGetPlayerHandQuery(
     gameId,
     username ?? "",

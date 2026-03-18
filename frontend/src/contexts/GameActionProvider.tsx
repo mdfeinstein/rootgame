@@ -31,7 +31,8 @@ const GameActionContext = createContext<GameActionContextType>(
 );
 
 const GameActionProvider = ({ children }: { children: React.ReactNode }) => {
-  const { gameId, isGameStarted } = useContext(GameContext);
+  const { gameId, session } = useContext(GameContext);
+  const isGameStarted = session?.status?.label !== "Not Started";
   const {
     actionInfo,
     error,
