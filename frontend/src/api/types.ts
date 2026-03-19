@@ -1663,6 +1663,23 @@ export interface paths {
         patch: operations["game_pick_faction_partial_update"];
         trace?: never;
     };
+    "/api/game/revealed-cards/{game_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Returns history of revealed cards visible to the requesting player. */
+        get: operations["game_revealed_cards_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/game/start/{game_id}/": {
         parameters: {
             query?: never;
@@ -2341,6 +2358,24 @@ export interface components {
         Recruiter: {
             building: components["schemas"]["Building"];
             used?: boolean;
+        };
+        /** @description Serializer to represent a card revealed through Outrage or Exposure. */
+        RevealedCard: {
+            card: components["schemas"]["Card"];
+            faction: {
+                /**
+                 * @description * `ca` - ca
+                 *     * `bi` - bi
+                 *     * `wa` - wa
+                 *     * `cr` - cr
+                 * @enum {string}
+                 */
+                value: "ca" | "bi" | "wa" | "cr";
+                /** @enum {string} */
+                label: "Birds" | "Cats" | "Crows" | "Woodland Alliance";
+            };
+            event_type: string;
+            turns_ago: number;
         };
         Roost: {
             building: components["schemas"]["Building"];
@@ -6777,6 +6812,27 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    game_revealed_cards_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevealedCard"][];
+                };
             };
         };
     };

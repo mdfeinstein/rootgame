@@ -6,6 +6,7 @@ import PlayerIcon from "./PlayerIcon";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserProvider";
+import RevealedCardsHistory from "../board/RevealedCardsHistory";
 
 const PlayerRow = () => {
   const { gameId, session } = useContext(GameContext);
@@ -68,6 +69,7 @@ const PlayerRow = () => {
       </Group>
 
       <Group gap="md">
+
         {sortedPlayers.map((player) => (
           <PlayerIcon
             key={player.username}
@@ -80,6 +82,17 @@ const PlayerRow = () => {
             }
           />
         ))}
+        {gameId && (
+          <RevealedCardsHistory
+            gameId={gameId as number}
+            isOpen={openBoardFaction === "revealed-cards"}
+            onToggle={() =>
+              setOpenBoardFaction((prev) =>
+                prev === "revealed-cards" ? null : "revealed-cards",
+              )
+            }
+          />
+        )}
       </Group>
     </Group>
   );

@@ -141,6 +141,40 @@ def get_current_player(game: Game) -> Player:
     """returns the player whose turn it is"""
     return Player.objects.get(game=game, turn_order=game.current_turn)
 
+def get_current_turn_number(game: Game) -> int:
+    """Returns the turn_number of the currently active player's turn"""
+    player = get_current_player(game)
+    if game.status == Game.GameStatus.STARTED:
+        from game.models.birds.setup import BirdsSimpleSetup
+        from game.models.cats.setup import CatsSimpleSetup
+        from game.models.crows.setup import CrowsSimpleSetup
+        turn_object_dict = {
+            Faction.CATS: CatsSimpleSetup,
+            Faction.BIRDS: BirdsSimpleSetup,
+            Faction.WOODLAND_ALLIANCE: None,
+            Faction.CROWS: CrowsSimpleSetup,
+        }
+    elif game.status == Game.GameStatus.SETUP_COMPLETED:
+        from game.models.cats.turn import CatTurn
+        from game.models.birds.turn import BirdTurn
+        from game.models.wa.turn import WATurn
+        from game.models.crows.turn import CrowTurn
+        turn_object_dict = {
+            Faction.CATS: CatTurn,
+            Faction.BIRDS: BirdTurn,
+            Faction.WOODLAND_ALLIANCE: WATurn,
+            Faction.CROWS: CrowTurn,
+        }
+    else:
+        return 0
+    
+    faction_model = turn_object_dict.get(Faction(player.faction))
+    if faction_model is None:
+        return 0
+    
+    turn_object = faction_model.objects.filter(player=player).order_by("-turn_number").first()
+    return turn_object.turn_number if turn_object else 0
+
 from game.models.crows.turn import CrowBirdsong, CrowDaylight, CrowEvening
 
 

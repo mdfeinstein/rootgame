@@ -55,6 +55,10 @@ const useGameWebSocket = (gameId: string | undefined) => {
           queryClient.invalidateQueries({
             queryKey: gameKeys.gameState(Number(gameId)),
           });
+          // Explicitly invalidate revealed cards just in case
+          queryClient.invalidateQueries({
+            queryKey: gameKeys.revealedCards(Number(gameId)),
+          });
         }
       };
 

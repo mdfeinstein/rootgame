@@ -3,7 +3,7 @@ from game.models.game_models import Player, Clearing, HandEntry, Suit, Faction
 from game.models.crows.tokens import PlotToken
 from game.models.crows.exposure import ExposureRevealedCards, ExposureGuessedPlot
 from game.queries.crows.exposure import can_attempt_exposure
-from game.queries.general import player_has_pieces_in_clearing
+from game.queries.general import player_has_pieces_in_clearing, get_current_turn_number
 from game.transactions.removal import player_removes_token
 
 @transaction.atomic
@@ -41,11 +41,13 @@ def guess_exposure(
     if hand_entry.player != player:
         raise ValueError("Card is not in player's hand")
 
+    turn_number = get_current_turn_number(game)
     # Ensure we are comparing strings
     if str(plot_token.plot_type) == str(plot_token_type):
         ExposureRevealedCards.objects.create(
             player=player,
-            card=hand_entry.card
+            card=hand_entry.card,
+            turn_number=turn_number,
         )
         player_removes_token(game, plot_token, player, is_exposure=True)
     else:
@@ -55,5 +57,6 @@ def guess_exposure(
         ExposureGuessedPlot.objects.create(
             player=player,
             guessed_plot_type=plot_token_type,
-            clearing=clearing
+            clearing=clearing,
+            turn_number=turn_number,
         )

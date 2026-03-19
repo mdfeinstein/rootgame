@@ -15,6 +15,9 @@ Game Lobby:
   - [ ] icons for warriors, tokens, buildings
   - [x] better way to display token counts for wood
 
+- [x] Revealed Cards Functionality
+  - [x] Endpoint and serializer to package revealed cards and the events that reveal them
+  - [x] Frontend display of revealed cards
 - [ ] Game Log
 - [ ] Custom Errors
 

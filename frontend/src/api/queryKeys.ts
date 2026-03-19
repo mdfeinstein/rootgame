@@ -41,6 +41,8 @@ export const gameKeys = {
     [...gameKeys.gameState(gameId), "dominance-supply"] as const,
   wsAuth: (gameId: number | string) =>
     [...gameKeys.gameState(Number(gameId)), "ws-auth"] as const,
+  revealedCards: (gameId: number) =>
+    [...gameKeys.gameState(gameId), "revealed-cards"] as const,
 
   // Player specific
   playerHand: (gameId: number, username: string) =>

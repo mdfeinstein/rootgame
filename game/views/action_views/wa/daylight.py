@@ -1,3 +1,5 @@
+from game.transactions.wa import mobilize_supporter
+from game.queries.general import validate_player_has_card_in_hand
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.game_models import Faction
 from game.models.wa.turn import WADaylight
@@ -193,7 +195,7 @@ class WADaylightActionsView(GameActionView):
         except KeyError:
             raise ValidationError("Invalid card")
         try:
-            atomic_game_action(add_supporter)(player, card)
+            atomic_game_action(mobilize_supporter)(player, card)
 
         except ValueError as e:
             raise ValidationError({"detail": str(e)})

@@ -4045,6 +4045,30 @@ paths:
       responses:
         '200':
           description: No response body
+  /api/game/revealed-cards/{game_id}/:
+    get:
+      operationId: game_revealed_cards_list
+      description: Returns history of revealed cards visible to the requesting player.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - game
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RevealedCard'
+          description: ''
   /api/game/start/{game_id}/:
     patch:
       operationId: game_start_partial_update
@@ -5461,6 +5485,46 @@ components:
           type: boolean
       required:
       - building
+    RevealedCard:
+      type: object
+      description: Serializer to represent a card revealed through Outrage or Exposure.
+      properties:
+        card:
+          $ref: '#/components/schemas/Card'
+        faction:
+          type: object
+          properties:
+            value:
+              enum:
+              - ca
+              - bi
+              - wa
+              - cr
+              type: string
+              description: |-
+                * `ca` - ca
+                * `bi` - bi
+                * `wa` - wa
+                * `cr` - cr
+            label:
+              type: string
+              enum:
+              - Birds
+              - Cats
+              - Crows
+              - Woodland Alliance
+          required:
+          - value
+          - label
+        event_type:
+          type: string
+        turns_ago:
+          type: integer
+      required:
+      - card
+      - event_type
+      - faction
+      - turns_ago
     Roost:
       type: object
       properties:

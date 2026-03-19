@@ -219,9 +219,9 @@ class CrowsRecruitingView(GameActionView):
                 [{"type": "suit", "name": "selected_suit"}],
                 {"card_used": request.data["card_used"]},
                 options=[
-                    {"value": "fox", "label": "Fox"},
-                    {"value": "mouse", "label": "Mouse"},
-                    {"value": "rabbit", "label": "Rabbit"},
+                    {"value": Suit.RED.name, "label": "Fox"},
+                    {"value": Suit.ORANGE.name, "label": "Mouse"},
+                    {"value": Suit.YELLOW.name, "label": "Rabbit"},
                 ],
             )
 
@@ -240,7 +240,7 @@ class CrowsRecruitingView(GameActionView):
         if not suit_string:
             raise ValidationError("You must provide a chosen suit for a bird card")
 
-        target_suit = Suit(suit_string)
+        target_suit = Suit[suit_string]
 
         try:
             atomic_game_action(crows_recruit)(player, card, target_suit)

@@ -23,10 +23,12 @@ export const GameCard = ({
   cardData,
   isCollapsed,
   index,
+  isHand = true,
 }: {
   cardData: CardType;
   isCollapsed: boolean;
   index: number;
+  isHand?: boolean;
 }) => {
   const config = SUIT_CONFIG[cardData.suit.value as SuitValue];
   const Icon = config.icon;
@@ -52,6 +54,7 @@ export const GameCard = ({
   };
 
   const canActivate =
+    isHand &&
     cardData.dominance &&
     (currentPlayer?.score || 0) >= 10 &&
     !currentPlayer?.active_dominance;
@@ -59,17 +62,17 @@ export const GameCard = ({
   return (
     <Box
       w={250}
-      pos="absolute"
-      bottom={0}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={() => submitPayloadOnClick()}
+      pos={isHand ? "absolute" : "relative"}
+      bottom={isHand ? 0 : undefined}
+      onMouseEnter={isHand ? () => setIsHovered(true) : undefined}
+      onMouseLeave={isHand ? () => setIsHovered(false) : undefined}
+      onClick={isHand ? () => submitPayloadOnClick() : undefined}
       style={{
         borderRadius: "8px 8px 0 0",
         overflow: "hidden",
         border: "1px solid #dee2e6",
         backgroundColor: "#fff",
-        cursor: "pointer",
+        cursor: isHand ? "pointer" : "default",
         transition: "transform 0.2s ease",
         zIndex: isHovered ? 100 : index,
         // transform: isHovered ? "translateY(-20%)" : "translateY(0%)",
@@ -177,39 +180,3 @@ export const GameCard = ({
     </Box>
   );
 };
-
-const Card = ({ cardData }: { cardData: CardType }) => {
-  const { submitPayloadCallback } = useContext(GameActionContext);
-  const submitPayloadOnClick = () => {
-    submitPayloadCallback({ card: cardData.card_name });
-  };
-  const colormap = {
-    r: "red",
-    y: "yellow",
-    o: "orange",
-    b: "blue",
-  };
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-        height: "100%",
-        background: "#00000095",
-      }}
-      onClick={() => submitPayloadOnClick()}
-    >
-      <div style={{ color: colormap[cardData.suit.value] }}>
-        {cardData.suit.label}
-      </div>
-      <div>{cardData.title}</div>
-      <div>{cardData.text}</div>
-      <div>{cardData.cost?.map((c) => c.label).join(", ")}</div>
-    </div>
-  );
-};
-
-export default Card;

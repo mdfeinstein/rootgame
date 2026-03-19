@@ -13,12 +13,17 @@ def create_outrage_event(
 ):
     """creates an outrage event when a player removes a token"""
     from game.transactions.wa import draw_card_to_supporters
+    from game.queries.general import get_current_turn_number
+
     event = Event.objects.create(game=clearing.game, type=EventType.OUTRAGE)
+    turn_number = get_current_turn_number(clearing.game)
+
     outrage_event = OutrageEvent.objects.create(
         event=event,
         outraged_player=removed_player,
         outrageous_player=removing_player,
         suit=clearing.suit,
+        turn_number=turn_number,
     )
     # if player does not have correct suit or wild, resolve by drawing and showing hand
     has_suit = HandEntry.objects.filter(

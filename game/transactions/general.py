@@ -64,7 +64,6 @@ def draw_card_from_deck(player: Player) -> Card:
     if card_in_deck is None:
         reshuffle_discard_into_deck(player.game)
         card_in_deck = DeckEntry.objects.filter(game=player.game).first()
-    # add card to player's hand
     assert card_in_deck is not None, "card_in_deck is none"
     card = card_in_deck.card
     # delete card from deck
@@ -141,8 +140,9 @@ def place_piece_from_supply_into_clearing(piece: Piece, clearing: Clearing):
     """
     if piece.clearing is not None:
         raise ValueError("piece is already in a clearing")
-        
+
     from game.queries.general import validate_can_place_piece_in_clearing
+
     validate_can_place_piece_in_clearing(piece.player, clearing)
 
     piece.clearing = clearing

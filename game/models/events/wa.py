@@ -19,3 +19,5 @@ class OutrageEvent(models.Model):
     hand_shown = models.BooleanField(default=False)
     # store shown hand data here
     hand = models.JSONField(default=dict, blank=True, null=True)
+    turn_number = models.IntegerField(default=0)
+

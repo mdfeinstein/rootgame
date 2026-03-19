@@ -31,6 +31,7 @@ from game.serializers.general_serializers import (
     DominanceSupplyEntrySerializer,
     ValidationErrorSerializer,
 )
+from game.serializers.revealed_cards_serializers import RevealedCardSerializer
 from game.logic.playback import undo_last_action
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -190,4 +191,72 @@ def get_dominance_supply(request, game_id: int):
     supply_entries = DominanceSupplyEntry.objects.filter(game=game)
     serializer = DominanceSupplyEntrySerializer(supply_entries, many=True)
 
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@extend_schema(responses={200: RevealedCardSerializer(many=True)})
+@api_view(["GET"])
+def get_revealed_cards(request, game_id: int):
+    """
+    Returns history of revealed cards visible to the requesting player.
+    """
+    from game.serializers.revealed_cards_serializers import RevealedCardSerializer
+    from game.models.events.wa import OutrageEvent
+    from game.models.crows.exposure import ExposureRevealedCards
+    from game.queries.general import get_current_turn_number
+    from game.models.game_models import Card
+
+    try:
+        game = Game.objects.get(pk=game_id)
+    except Game.DoesNotExist:
+        return Response({"detail": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        player = Player.objects.get(user=request.user, game=game)
+    except Player.DoesNotExist:
+        # For spectators maybe empty array
+        return Response([], status=status.HTTP_200_OK)
+
+    current_turn = get_current_turn_number(game)
+
+    revealed_cards_data = []
+
+    if player.faction == Faction.WOODLAND_ALLIANCE.value:
+        # Fetch outrage events where cards were shown
+        outrage_events = OutrageEvent.objects.filter(event__game=game, hand_shown=True)
+        for outrage in outrage_events:
+            if outrage.hand and outrage.hand.get("cards_in_hand"):
+                for hand_card_data in outrage.hand["cards_in_hand"]:
+                    try:
+                        card_obj = Card.objects.get(id=hand_card_data["id"])
+                        turns_ago = max(0, current_turn - outrage.turn_number)
+                        revealed_cards_data.append(
+                            {
+                                "card": card_obj,
+                                "faction": outrage.outrageous_player.faction,
+                                "event_type": "Outrage",
+                                "turns_ago": turns_ago,
+                            }
+                        )
+                    except Card.DoesNotExist:
+                        continue
+
+    elif player.faction == Faction.CROWS.value:
+        # Fetch cards wagered against crows by incorrect exposures
+        exposure_events = ExposureRevealedCards.objects.filter(player__game=game)
+        for exposure in exposure_events:
+            turns_ago = max(0, current_turn - exposure.turn_number)
+            revealed_cards_data.append(
+                {
+                    "card": exposure.card,
+                    "faction": exposure.player.faction,
+                    "event_type": "Exposure",
+                    "turns_ago": turns_ago,
+                }
+            )
+
+    # Sort descending by turns_ago (most recent first)
+    revealed_cards_data.sort(key=lambda x: x["turns_ago"])
+
+    serializer = RevealedCardSerializer(revealed_cards_data, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

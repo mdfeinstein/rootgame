@@ -56,9 +56,9 @@ from game.views.gamestate_views.general import (
     get_players,
     get_turn_info,
     undo_last_action_view,
-    undo_last_action_view,
     get_game_session_detail,
     get_dominance_supply,
+    get_revealed_cards,
 )
 from game.views.gamestate_views.cards import GetCraftedCardsView
 from game.views.setup_views import (
@@ -145,6 +145,11 @@ urlpatterns = [
         "api/dominance-supply/<int:game_id>/",
         get_dominance_supply,
         name="get-dominance-supply",
+    ),
+    path(
+        "api/game/revealed-cards/<int:game_id>/",
+        get_revealed_cards,
+        name="get-revealed-cards",
     ),
 ]
 register_action(
