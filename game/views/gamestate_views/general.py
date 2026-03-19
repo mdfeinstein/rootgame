@@ -218,7 +218,8 @@ def get_revealed_cards(request, game_id: int):
     except Player.DoesNotExist:
         # For spectators maybe empty array
         return Response([], status=status.HTTP_200_OK)
-
+    if game.status in [Game.GameStatus.NOT_STARTED, Game.GameStatus.STARTED]:
+        return Response([], status=status.HTTP_200_OK)
     current_turn = get_current_turn_number(game)
 
     revealed_cards_data = []
@@ -276,6 +277,8 @@ def get_craftable_items(request, game_id: int):
         return Response({"detail": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
 
     # Note: Using select_related('item') to optimize the database query
-    craftable_items = CraftableItemEntry.objects.filter(game=game).select_related('item')
+    craftable_items = CraftableItemEntry.objects.filter(game=game).select_related(
+        "item"
+    )
     serializer = CraftableItemSerializer(craftable_items, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

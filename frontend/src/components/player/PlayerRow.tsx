@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import { GameContext } from "../../contexts/GameProvider";
 import useGetPlayersInfoQuery from "../../hooks/useGetPlayersInfoQuery";
-import { Group, Button, Title, Text, Stack } from "@mantine/core";
+import { Group, Button, Text, Stack } from "@mantine/core";
 import PlayerIcon from "./PlayerIcon";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
