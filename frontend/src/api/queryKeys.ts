@@ -43,6 +43,10 @@ export const gameKeys = {
     [...gameKeys.gameState(Number(gameId)), "ws-auth"] as const,
   revealedCards: (gameId: number) =>
     [...gameKeys.gameState(gameId), "revealed-cards"] as const,
+  discardPile: (gameId: number) =>
+    [...gameKeys.gameState(gameId), "discard-pile"] as const,
+  craftableItems: (gameId: number) =>
+    [...gameKeys.gameState(gameId), "craftable-items"] as const,
 
   // Player specific
   playerHand: (gameId: number, username: string) =>

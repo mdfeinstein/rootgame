@@ -17,12 +17,14 @@ from game.models.game_models import (
     Game,
     HandEntry,
     Player,
+    CraftableItemEntry,
 )
 from game.queries.cats.turn import get_phase as get_cat_phase
 from game.queries.current_action.setup import get_setup_action
 from game.queries.current_action.turns import get_current_turn_action
 from game.serializers.general_serializers import (
     CardSerializer,
+    CraftableItemSerializer,
     GameStatusSerializer,
     PlayerPublicSerializer,
     GameSessionSerializer,
@@ -259,4 +261,21 @@ def get_revealed_cards(request, game_id: int):
     revealed_cards_data.sort(key=lambda x: x["turns_ago"])
 
     serializer = RevealedCardSerializer(revealed_cards_data, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@extend_schema(responses={200: CraftableItemSerializer(many=True)})
+@api_view(["GET"])
+def get_craftable_items(request, game_id: int):
+    """
+    Returns a list of items that are still available to be crafted in the game.
+    """
+    try:
+        game = Game.objects.get(pk=game_id)
+    except Game.DoesNotExist:
+        return Response({"detail": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Note: Using select_related('item') to optimize the database query
+    craftable_items = CraftableItemEntry.objects.filter(game=game).select_related('item')
+    serializer = CraftableItemSerializer(craftable_items, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

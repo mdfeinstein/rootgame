@@ -23,6 +23,7 @@ from game.models.game_models import (
     CraftedCardEntry,
     Suit,
     ItemTypes,
+    CraftableItemEntry,
 )
 from game.models.wa.turn import WATurn
 from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
@@ -104,6 +105,14 @@ class CardSerializer(serializers.ModelSerializer):
 
     def get_card_name(self, card: Card):
         return card.enum.name
+
+
+class CraftableItemSerializer(serializers.ModelSerializer):
+    item = LabeledChoiceField(choices=ItemTypes.choices, source="item.item_type")
+
+    class Meta:
+        model = CraftableItemEntry
+        fields = ["item"]
 
 
 class DominanceSupplyEntrySerializer(serializers.ModelSerializer):

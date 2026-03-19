@@ -2933,6 +2933,31 @@ paths:
                 items:
                   $ref: '#/components/schemas/Clearing'
           description: ''
+  /api/craftable-items/{game_id}/:
+    get:
+      operationId: craftable_items_list
+      description: Returns a list of items that are still available to be crafted
+        in the game.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - craftable-items
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CraftableItem'
+          description: ''
   /api/crafted-cards/{game_id}/{faction}/:
     get:
       operationId: crafted_cards_retrieve
@@ -5101,6 +5126,45 @@ components:
         * `M` - Move
         * `B` - Battle
         * `U` - Build
+    CraftableItem:
+      type: object
+      properties:
+        item:
+          type: object
+          properties:
+            value:
+              enum:
+              - '0'
+              - '1'
+              - '2'
+              - '3'
+              - '4'
+              - '5'
+              - '6'
+              type: string
+              description: |-
+                * `0` - 0
+                * `1` - 1
+                * `2` - 2
+                * `3` - 3
+                * `4` - 4
+                * `5` - 5
+                * `6` - 6
+            label:
+              type: string
+              enum:
+              - Bag
+              - Boots
+              - Coin
+              - Crossbow
+              - Hammer
+              - Sword
+              - Tea
+          required:
+          - value
+          - label
+      required:
+      - item
     Crows:
       type: object
       description: Serializer to provide all (public) information about crows

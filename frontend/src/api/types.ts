@@ -1140,6 +1140,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/craftable-items/{game_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Returns a list of items that are still available to be crafted in the game. */
+        get: operations["craftable_items_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/crafted-cards/{game_id}/{faction}/": {
         parameters: {
             query?: never;
@@ -2194,6 +2211,23 @@ export interface components {
          * @enum {string}
          */
         ColumnEnum: "R" | "M" | "B" | "U";
+        CraftableItem: {
+            item: {
+                /**
+                 * @description * `0` - 0
+                 *     * `1` - 1
+                 *     * `2` - 2
+                 *     * `3` - 3
+                 *     * `4` - 4
+                 *     * `5` - 5
+                 *     * `6` - 6
+                 * @enum {string}
+                 */
+                value: "0" | "1" | "2" | "3" | "4" | "5" | "6";
+                /** @enum {string} */
+                label: "Bag" | "Boots" | "Coin" | "Crossbow" | "Hammer" | "Sword" | "Tea";
+            };
+        };
         /** @description Serializer to provide all (public) information about crows */
         Crows: {
             player: components["schemas"]["PlayerPublic"];
@@ -5612,6 +5646,27 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Clearing"][];
+                };
+            };
+        };
+    };
+    craftable_items_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CraftableItem"][];
                 };
             };
         };

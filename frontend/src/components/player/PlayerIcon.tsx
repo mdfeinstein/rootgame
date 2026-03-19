@@ -32,7 +32,7 @@ const PlayerIcon = ({
     <>
       <Paper
         withBorder
-        p="xs"
+        p="0.2rem"
         radius="md"
         shadow="sm"
         onClick={() => {
@@ -40,8 +40,8 @@ const PlayerIcon = ({
         }}
         style={{ cursor: hasBoard ? "pointer" : "default" }}
       >
-        <Group justify="space-between">
-          <Group gap="sm">
+        <Group justify="space-between" gap="0.1rem">
+          <Group gap="0.1rem">
             {/* Faction Icon / Avatar */}
             <Tooltip label={username} zIndex={1100}>
               <Avatar color={color} radius="sm" variant="filled">
@@ -52,7 +52,7 @@ const PlayerIcon = ({
           </Group>
 
           {/* Score Badge */}
-          <Group gap="xs">
+          <Group gap="0.1rem">
             <CraftedCardBadge
               gameId={gameId as number}
               faction={labelToRoute(faction.label as FactionLabel) as any}

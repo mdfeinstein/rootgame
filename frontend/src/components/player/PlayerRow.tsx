@@ -1,12 +1,14 @@
 import { useContext, useState, useEffect } from "react";
 import { GameContext } from "../../contexts/GameProvider";
 import useGetPlayersInfoQuery from "../../hooks/useGetPlayersInfoQuery";
-import { Group, Button, Title, Text } from "@mantine/core";
+import { Group, Button, Title, Text, Stack } from "@mantine/core";
 import PlayerIcon from "./PlayerIcon";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserProvider";
 import RevealedCardsHistory from "../board/RevealedCardsHistory";
+import DiscardPile from "../board/DiscardPile";
+import CraftableItems from "../board/CraftableItems";
 
 const PlayerRow = () => {
   const { gameId, session } = useContext(GameContext);
@@ -39,6 +41,7 @@ const PlayerRow = () => {
     <Group
       justify="left"
       px="xl"
+      wrap="nowrap"
       style={{
         position: "fixed",
         top: 0,
@@ -51,25 +54,35 @@ const PlayerRow = () => {
         borderBottom: "1px solid #eee",
         boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
         margin: 0,
+        overflowX: "auto",
       }}
     >
-      <Group>
-        <Button
-          variant="subtle"
-          leftSection={<IconArrowLeft size={16} />}
-          onClick={() => navigate("/lobby")}
-        >
-          Lobby
-        </Button>
-        <Title order={4}>Game #{gameId}</Title>
-
-        <Text size="sm">
-          Playing as: <b>{currentUserPlayer?.faction.label || "Spectator"}</b>
-        </Text>
+      <Group wrap="nowrap" style={{ flexShrink: 0 }}>
+        <Stack gap={0} align="flex-start">
+          <Text size="sm" lh={1}>
+            Game #{gameId}
+          </Text>
+          <Button
+            variant="subtle"
+            size="compact-sm"
+            leftSection={<IconArrowLeft size={14} />}
+            onClick={() => navigate("/lobby")}
+            px={0}
+          >
+            Lobby
+          </Button>
+        </Stack>
+        <Stack gap={2} justify="center">
+          <Text size="xs" c="dimmed" lh={1}>
+            Playing as:
+          </Text>
+          <Text size="sm" fw={700} lh={1}>
+            {currentUserPlayer?.faction.label || "Spectator"}
+          </Text>
+        </Stack>
       </Group>
 
-      <Group gap="md">
-
+      <Group gap="md" wrap="nowrap" style={{ flexShrink: 0 }}>
         {sortedPlayers.map((player) => (
           <PlayerIcon
             key={player.username}
@@ -83,15 +96,35 @@ const PlayerRow = () => {
           />
         ))}
         {gameId && (
-          <RevealedCardsHistory
-            gameId={gameId as number}
-            isOpen={openBoardFaction === "revealed-cards"}
-            onToggle={() =>
-              setOpenBoardFaction((prev) =>
-                prev === "revealed-cards" ? null : "revealed-cards",
-              )
-            }
-          />
+          <>
+            <RevealedCardsHistory
+              gameId={gameId as number}
+              isOpen={openBoardFaction === "revealed-cards"}
+              onToggle={() =>
+                setOpenBoardFaction((prev) =>
+                  prev === "revealed-cards" ? null : "revealed-cards",
+                )
+              }
+            />
+            <DiscardPile
+              gameId={gameId as number}
+              isOpen={openBoardFaction === "discard-pile"}
+              onToggle={() =>
+                setOpenBoardFaction((prev) =>
+                  prev === "discard-pile" ? null : "discard-pile",
+                )
+              }
+            />
+            <CraftableItems
+              gameId={gameId as number}
+              isOpen={openBoardFaction === "craftable-items"}
+              onToggle={() =>
+                setOpenBoardFaction((prev) =>
+                  prev === "craftable-items" ? null : "craftable-items",
+                )
+              }
+            />
+          </>
         )}
       </Group>
     </Group>
