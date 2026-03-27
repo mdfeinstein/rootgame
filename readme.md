@@ -13,17 +13,17 @@ This is a web-based adaptation of the board game Root by Cole Wehrle. Root is a 
 
 The eventual aim is to implement all current factions and one day, maybe fan-made factions as well.
 
-A demo version of the game can be played at [https://root.mattdf.net/](https://root.mattdf.net/). Click a Demo User button to sign in and play around with any "ongoing" games, or go to the "create game" tab and click the Create Demo Game to quickly start a game with 3 factions. Within a game, use the faction control below the board to switch between users. The player info on the left of the screen can be clicked to bring up the player boards. The demo is not designed for mobile in mind. The demo usually runs smoothly, but it is on a cheap VM and sometimes the server might not have much compute which will make the demo crawl.
+A demo version of the game can be played at [https://root.mattdf.net/](https://root.mattdf.net/). Click a Demo User button to sign in and play around with any "ongoing" games, or go to the "create game" tab and click the Create Demo Game to quickly start a game with 4 factions. Within a game, use the faction control below the board to switch between users. The player info on the left of the screen can be clicked to bring up the player boards. The demo is not designed for mobile in mind. The demo usually runs smoothly, but it is on a cheap VM and sometimes the server might not have much compute which will make the demo crawl.
 
 ## Tech Stack and design philosophy
 
-This project is built using Python and Django. The frontend is built using React and Tanstack Query for interaction with the API.
+This project is built using Python and Django. The frontend is built using React and Tanstack Query for interaction with the API. The openAPI schema is generated with drf-spectacular, which allows for easier development between the front- and back-end
 
 Real time updates are handled using django-channels and Redis.
 
 The project is designed such that the server handles all game logic and the frontend handles all user interaction. The frontend will not be responsible for any game logic, as that would mean duplicating the logic in the frontend and backend in different languages, which is hard to maintain and likely to lead to bugs and inconsistencies.
 
-The API is largely RPC-style, with endpoints for each player action. As the game objects are all intertwined, operating on individual "resources" is not practical within a single game. However, the API is "RESTful" in that it uses standard HTTP methods, status codes, token-based authentication, and JSON for data transfer.
+The API can be split into two categories of responsibilities. The first is providing gamestate information. The second category is handling player actions and is largely RPC-style, with endpoints for each player action. As the game objects are all intertwined, operating on individual "resources" is not practical within a single game.
 
 ### Project Structure
 
@@ -72,11 +72,13 @@ Games can be created and played, but right now there are only 4 factions: Cats, 
 - Game Browser to create, join, and switch between games.
 - Undo functionality
 - Dominance Conditions/Dominance Swapping
+- Game Logs
+- Cards revealed during play are displayed in a widget
+- Discard Piles are displayed in a widget
+- Items available to craft are displayed in a widget
 
 #### Not yet implemented:
 
-- Game Logs (players should be able to scroll and see all public actions taken in the game)
-- Woodland Alliance outrage: Need to provide the WA player with a widget to see any cards revealed by players who caused outrage but did not pay a card, and instead "revealed their hand". The data is saved in the database, but no display mechanism exists yet.
 - Advanced Setup Rules (need to have enough factions implemented for this to be worthwhile)
 
 ### Frontend
@@ -87,7 +89,7 @@ The frontend is minimal, but will be augmented over time. Components such as car
 
 Clearings are clickable for actions that require a clearing to be selected.
 
-![Screenshot of the frontend](images/map_1-29-2026.png)
+![Screenshot of the frontend](images/map.png)
 
 #### Action Prompter
 
@@ -101,19 +103,21 @@ Mousing over the hand of cards will expand them, and the hovered card will be br
 
 ![Screenshot of the frontend](images/cards.png)
 
-#### Player Badges
+#### Top Row
 
-Player badges with facton, name, crafted cards, and score. Clicking a badge will show that player's board. Clicking crafted cards will display the crafted cards.
-![Screenshot of the frontend](images/player_icons.png)
+The top row provides game information, app navigation, and access to player board and other game information modals, such as the discard pile, items available to craft, and the discard pile.
+![Screenshot of the frontend](images/toprow.png)
 
 #### Player Boards
 
-When a piece on a track covers information, that info is displayed in a tooltip.
-![Screenshot of the frontend](images/cat_board.png)
-![Screenshot of the frontend](images/bird_board.png)
+Player boards provide information on that player's turn structure, special abilities, and any other details for that faction. Information that only the player of the faction can see is hidden from other players.
+When a piece on a track covers information, that info is displayed in a tooltip. Extra information is displayed in tooltips when hovering over the board to conserve space
+![Cats Player Board](images/cat_board.png)
+![Birds Player Board](images/bird_board.png)
 Decree actions have a checkbox to indicate if the decree is used.
-![Screenshot of the frontend](images/wa_board.png)
-Only the woodland alliance player can see the details of their supporter stack.
+![Woodland Alliance Player Board](images/wa_board.png)
+
+![Crows Player Board](images/crow_board.png)
 
 # Running Locally/Development
 
