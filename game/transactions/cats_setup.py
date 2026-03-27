@@ -16,7 +16,6 @@ from game.models import (
     Game,
     Player,
     Warrior,
-    WarriorSupplyEntry,
 )
 from game.queries.general import available_building_slot
 from game.models.events.setup import GameSimpleSetup
@@ -29,6 +28,7 @@ from game.queries.setup.cats import (
 from game.transactions.cats import create_cats_turn
 from game.transactions.setup_util import next_player_setup
 from game.utility.textchoice import next_choice
+from game.queries.general import determine_clearing_rule
 
 
 @transaction.atomic
@@ -37,11 +37,7 @@ def create_cats_warrior_supply(player: Player):
     warriors = [Warrior(player=player) for _ in range(25)]
     for warrior in warriors:
         warrior.save()
-    # assign warriors to supply
-    supply_entries = [
-        WarriorSupplyEntry(player=player, warrior=warrior) for warrior in warriors
-    ]
-    WarriorSupplyEntry.objects.bulk_create(supply_entries)
+    pass
 
 
 @transaction.atomic
@@ -98,24 +94,24 @@ def pick_corner(player: Player, clearing: Clearing):
         game=player.game, clearing_number=opposite_clearing_number
     )
     place_garrison(player, opposite_clearing)
-    # update setup
     cats_setup = CatsSimpleSetup.objects.get(player=player)
     cats_setup.step = next_choice(CatsSimpleSetup.Steps, cats_setup.step)
     cats_setup.save()
+
+    from game.serializers.logs.cats import log_cats_setup_pick_corner
+    log_cats_setup_pick_corner(player.game, player, clearing.clearing_number)
 
 
 # this is general logic that shoudl be extracted out of setup later
 @transaction.atomic
 def place_warrior(player: Player, clearing: Clearing):
     # grab a warrior from the supply
-    warrior_supply = WarriorSupplyEntry.objects.filter(player=player).first()
-    if warrior_supply is None:
+    warrior = Warrior.objects.filter(player=player, clearing__isnull=True).first()
+    if warrior is None:
         raise ValueError("No warriors left to place")
     # assign clearing to warrior
-    warrior_supply.warrior.clearing = clearing
-    warrior_supply.warrior.save()
-    # remove warrior from supply
-    warrior_supply.delete()
+    warrior.clearing = clearing
+    warrior.save()
 
 
 @transaction.atomic
@@ -158,16 +154,12 @@ def place_garrison(player: Player, clearing_to_avoid: Clearing):
         Clearing.objects.filter(game=player.game).exclude(pk=clearing_to_avoid.pk)
     )
     warriors_from_supply = list(
-        WarriorSupplyEntry.objects.filter(player=player)[: len(clearings_to_place)]
+        Warrior.objects.filter(player=player, clearing__isnull=True)[: len(clearings_to_place)]
     )
-    for supply_warrior, clearing in zip(warriors_from_supply, clearings_to_place):
-        supply_warrior.warrior.clearing = clearing
-    # bulk update the warriors (not the supply entries)
-    Warrior.objects.bulk_update([s.warrior for s in warriors_from_supply], ["clearing"])
-    # bulk delete the supply entries by primary key
-    WarriorSupplyEntry.objects.filter(
-        pk__in=[s.pk for s in warriors_from_supply]
-    ).delete()
+    for warrior, clearing in zip(warriors_from_supply, clearings_to_place):
+        warrior.clearing = clearing
+    # bulk update the warriors
+    Warrior.objects.bulk_update(warriors_from_supply, ["clearing"])
 
 
 @transaction.atomic
@@ -191,6 +183,10 @@ def place_initial_building(
         raise ValueError("No free building slots")
     # otherwise place the building
     place_building(player, building_type, building_slot)
+    
+    from game.serializers.logs.cats import log_cats_setup_place_building
+    log_cats_setup_place_building(player.game, player, building_type.value, clearing.clearing_number)
+
     building_slots = BuildingSlot.objects.filter(clearing=clearing)
 
     # update setup
@@ -221,7 +217,5 @@ def confirm_completed_setup(player: Player):
         raise ValueError("Setup not complete")
     setup.step = next_choice(CatsSimpleSetup.Steps, setup.step)
     setup.save()
-    # create first turn
-    create_cats_turn(player)
     # go to next player setup
     next_player_setup(player.game)

@@ -79,6 +79,9 @@ def discard_card(player: Player, card: CardsEP):
         
     # discard card
     discard_card_from_hand(player, card_in_hand)
+
+    from game.serializers.logs.general import log_discard, get_current_phase_log
+    log_discard(player.game, player, card_in_hand.card, parent=get_current_phase_log(player.game, player))
     
     # move to next step if player has 5 or fewer cards
     if get_player_hand_size(player) <= 5:

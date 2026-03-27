@@ -60,6 +60,7 @@ from game.views.gamestate_views.general import (
     get_dominance_supply,
     get_revealed_cards,
     get_craftable_items,
+    get_game_logs,
 )
 from game.views.gamestate_views.cards import GetCraftedCardsView
 from game.views.setup_views import (
@@ -156,6 +157,11 @@ urlpatterns = [
         "api/craftable-items/<int:game_id>/",
         get_craftable_items,
         name="get-craftable-items",
+    ),
+    path(
+        "api/game-log/<int:game_id>/",
+        get_game_logs,
+        name="get-game-logs",
     ),
 ]
 register_action(

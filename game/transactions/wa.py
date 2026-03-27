@@ -1,3 +1,4 @@
+from game.models import Game
 from game.models.game_models import Card
 from game.transactions.general import draw_card_from_deck_to_hand
 from game.queries.wa.supporters import can_add_supporter
@@ -93,6 +94,16 @@ def mobilize_supporter(player: Player, card: CardsEP):
         raise ValueError("Cannot add a supporter to the stack: no base and at limit")
     # add card to supporter stack
     add_supporter(player, card_in_hand.card)
+    from game.serializers.logs.wa import log_wa_mobilize
+    from game.serializers.logs.general import get_current_phase_log
+
+    log_wa_mobilize(
+        player.game,
+        player,
+        card_in_hand.card,
+        parent=get_current_phase_log(player.game, player),
+    )
+
     # delete card from player's hand
     card_in_hand.delete()
 
@@ -152,19 +163,58 @@ def revolt(player: Player, clearing: Clearing):
     supporters = validate_revolt(player, clearing)
     # discard supporters
     discard_supporters(player, supporters)
+    score_before = player.score
+    pieces_destroyed = {}  # { "Faction Label PieceTypeLabel": count }
+
+    from game.serializers.logs.wa import log_wa_revolt
+    from game.serializers.logs.general import get_current_phase_log
+
+    # Create revolt log first so we can use it as parent for removals
+    revolt_log = log_wa_revolt(
+        player.game,
+        player,
+        [],  # placeholders
+        clearing.clearing_number,
+        0,
+        {},
+        parent=get_current_phase_log(player.game, player),
+    )
+
     # remove all enemy pieces from clearing
     for player_ in Player.objects.filter(game=player.game):
         if player_ != player:
+            faction_label = player_.get_faction_display()
             count = Warrior.objects.filter(clearing=clearing, player=player_).count()
-            player_removes_warriors(clearing, player_, player_, count)
+            if count > 0:
+                player_removes_warriors(
+                    clearing, player_, player_, count, parent=revolt_log, skip_log=True
+                )
+                key = f"{faction_label} Warrior"
+                pieces_destroyed[key] = pieces_destroyed.get(key, 0) + count
+
             # remove tokens from clearing
             for token in Token.objects.filter(clearing=clearing, player=player_):
-                player_removes_token(player.game, token, player)
+                from game.transactions.removal import get_piece_name
+
+                token_label = f"{faction_label} {get_piece_name(token)}"
+                player_removes_token(
+                    player.game, token, player, parent=revolt_log, skip_log=True
+                )
+                pieces_destroyed[token_label] = pieces_destroyed.get(token_label, 0) + 1
+
             # remove buildings from clearing
             for building in Building.objects.filter(
                 building_slot__clearing=clearing, player=player_
             ):
-                player_removes_building(player.game, building, player)
+                from game.transactions.removal import get_piece_name
+
+                building_label = f"{faction_label} {get_piece_name(building)}"
+                player_removes_building(
+                    player.game, building, player, parent=revolt_log, skip_log=True
+                )
+                pieces_destroyed[building_label] = (
+                    pieces_destroyed.get(building_label, 0) + 1
+                )
             # TODO: if vagabond, deal three hits
     # place matching base
     base = WABase.objects.get(player=player, suit=clearing.suit)
@@ -185,6 +235,64 @@ def revolt(player: Player, clearing: Clearing):
             pass
         else:
             raise e
+
+    player.refresh_from_db()
+    points_scored = player.score - score_before
+    # Update the revolt log with final details
+    from game.serializers.general_serializers import CardSerializer
+
+    revolt_log.details["supporters_spent"] = CardSerializer(
+        [s.card for s in supporters], many=True
+    ).data
+    revolt_log.details["points_scored"] = points_scored
+    revolt_log.details["pieces_destroyed"] = pieces_destroyed
+    revolt_log.save()
+
+
+@transaction.atomic
+def resolve_wa_base_removal(
+    game: Game,
+    wa_player: Player,
+    clearing: Clearing,
+    building: Building,
+    parent: "GameLog" = None,
+):
+    """
+    Rule 8.4.3: Discard all supporters matching its suit (including birds)
+    Discard half of officers (rounded up)
+    """
+    from game.models.wa.player import SupporterStackEntry, OfficerEntry
+    from game.models import Suit
+    from game.serializers.logs.wa import (
+        log_wa_supporters_lost,
+        log_wa_officers_lost,
+        log_wa_base_removed,
+    )
+
+    suit_to_match = building.suit
+    wild_suit = Suit.WILD.value
+    matching_supporters = SupporterStackEntry.objects.filter(
+        player=wa_player, card__suit__in=[suit_to_match, wild_suit]
+    )
+    if matching_supporters.exists():
+        log_wa_supporters_lost(
+            game, wa_player, [s.card for s in matching_supporters], parent=parent
+        )
+        discard_supporters(wa_player, list(matching_supporters))
+
+    officers = OfficerEntry.objects.filter(player=wa_player)
+    officer_count = officers.count()
+    if officer_count > 0:
+        to_remove = (officer_count + 1) // 2
+        log_wa_officers_lost(game, wa_player, to_remove, parent=parent)
+        for officer in officers[:to_remove]:
+            officer.warrior.clearing = None
+            officer.warrior.save()
+            officer.delete()
+
+    log_wa_base_removed(
+        game, wa_player, clearing.clearing_number, building.suit, parent=parent
+    )
 
 
 @transaction.atomic
@@ -212,8 +320,27 @@ def spread_sympathy(player: Player, clearing: Clearing):
     """
     # check that player can spread sympathy
     supporters = validate_sympathy_spread(player, clearing)
+    score_before = player.score
+
     discard_supporters(player, supporters)
     place_sympathy(player, clearing)
+
+    player.refresh_from_db()
+    points_scored = player.score - score_before
+
+    supporters_spent = [s.card for s in supporters]
+
+    from game.serializers.logs.wa import log_wa_spread_sympathy
+    from game.serializers.logs.general import get_current_phase_log
+
+    log_wa_spread_sympathy(
+        player.game,
+        player,
+        supporters_spent,
+        clearing.clearing_number,
+        points_scored,
+        parent=get_current_phase_log(player.game, player),
+    )
 
 
 @transaction.atomic
@@ -233,6 +360,17 @@ def training(player: Player, card: CardsEP):
     if not matching_base and card_suit != Suit.WILD:
         raise ValueError("Suit does not match a base on the board")
     add_officer(player)
+
+    from game.serializers.logs.wa import log_wa_train
+    from game.serializers.logs.general import get_current_phase_log
+
+    log_wa_train(
+        player.game,
+        player,
+        card_in_hand.card,
+        parent=get_current_phase_log(player.game, player),
+    )
+
     discard_card_from_hand(player, card_in_hand)
 
 
@@ -258,6 +396,17 @@ def operation_move(
     # execute move
     move_warriors(player, start_clearing, end_clearing, count)
 
+    from game.serializers.logs.general import log_move, get_current_phase_log
+
+    log_move(
+        player.game,
+        player,
+        count,
+        start_clearing.clearing_number,
+        end_clearing.clearing_number,
+        parent=get_current_phase_log(player.game, player),
+    )
+
 
 @transaction.atomic
 def operation_battle(player: Player, defender: Player, clearing: Clearing):
@@ -278,9 +427,21 @@ def operation_battle(player: Player, defender: Player, clearing: Clearing):
     officer.used = True
     officer.save()
     # execute battle
-    from game.transactions.battle import start_battle
+    from game.transactions.battle import start_battle, log_battle_start
 
-    start_battle(player.game, player.faction, defender.faction, clearing)
+    battle = start_battle(player.game, player.faction, defender.faction, clearing)
+
+    from game.serializers.logs.wa import log_wa_military_operation
+    from game.serializers.logs.general import get_current_phase_log
+
+    parent = log_wa_military_operation(
+        player.game,
+        player,
+        "Battle",
+        parent=get_current_phase_log(player.game, player),
+    )
+
+    log_battle_start(battle, player, parent=parent)
 
 
 @transaction.atomic
@@ -307,7 +468,19 @@ def operation_recruit(player: Player, clearing: Clearing):
     officer.save()
     # execute recruit
     warrior = get_warriors_in_supply(player).first()
+    if warrior is None:
+        raise ValueError("No warriors in supply")
     place_piece_from_supply_into_clearing(warrior, clearing)
+
+    from game.serializers.logs.wa import log_wa_military_operation
+    from game.serializers.logs.general import get_current_phase_log
+
+    log_wa_military_operation(
+        player.game,
+        player,
+        "Recruit",
+        parent=get_current_phase_log(player.game, player),
+    )
 
 
 @transaction.atomic
@@ -327,11 +500,27 @@ def operation_organize(player: Player, clearing: Clearing):
     # mark officer as used
     officer.used = True
     officer.save()
+    score_before = player.score
+
     # remove warrior
     warrior.clearing = None
     warrior.save()
     # place sympathy
     place_sympathy(player, clearing)
+
+    player.refresh_from_db()
+    points_scored = player.score - score_before
+
+    from game.serializers.logs.wa import log_wa_organize
+    from game.serializers.logs.general import get_current_phase_log
+
+    log_wa_organize(
+        player.game,
+        player,
+        clearing.clearing_number,
+        points_scored,
+        parent=get_current_phase_log(player.game, player),
+    )
 
 
 @transaction.atomic
@@ -380,8 +569,19 @@ def draw_cards(player: Player):
     cards_to_draw = (
         WABase.objects.filter(player=player, building_slot__isnull=False).count() + 1
     )
+    drawn_cards = []
     for _ in range(cards_to_draw):
-        draw_card_from_deck_to_hand(player)
+        hand_entry = draw_card_from_deck_to_hand(player)
+        drawn_cards.append(hand_entry.card)
+
+    from game.serializers.logs.general import log_draw, get_current_phase_log
+
+    log_draw(
+        player.game,
+        player,
+        drawn_cards,
+        parent=get_current_phase_log(player.game, player),
+    )
     # move to next step
     next_step(player)
 
@@ -399,6 +599,17 @@ def check_discard_step(player: Player):
 
 
 @transaction.atomic
+def create_wa_turn(player: Player):
+    # create turn
+    turn = WATurn.create_turn(player)
+
+    from game.serializers.logs.general import log_turn, log_phase
+
+    turn_log = log_turn(player.game, player, turn_number=turn.turn_number + 1)
+    log_phase(player.game, player, "Birdsong", parent=turn_log)
+
+
+@transaction.atomic
 def end_turn(player: Player):
     """ends the current turn, generating the next turn and moving to the next players phase
     careful where this is called. will move evening to completed if called.
@@ -411,7 +622,6 @@ def end_turn(player: Player):
         evening.save()
     except:
         pass
-    WATurn.create_turn(player)
     next_players_turn(player.game)
     reset_wa_turn(player)
 
@@ -435,7 +645,17 @@ def wa_craft_card(player: Player, card: CardsEP, crafting_pieces: list[WASympath
     card_in_hand = validate_player_has_card_in_hand(player, card)
     if not validate_crafting_pieces_satisfy_requirements(player, card, crafting_pieces):
         raise ValueError("Not enough crafting pieces to craft card")
+    card_model = card_in_hand.card
     craft_card(card_in_hand, cast(list[Piece], crafting_pieces))
+
+    from game.serializers.logs.general import log_craft, get_current_phase_log
+
+    log_craft(
+        player.game,
+        player,
+        card_model,
+        parent=get_current_phase_log(player.game, player),
+    )
 
 
 @transaction.atomic
@@ -447,8 +667,9 @@ def pay_outrage(outrage_event: OutrageEvent, card: CardsEP):
     outrageous_player: Player = outrage_event.outrageous_player
     outraged_player: Player = outrage_event.outraged_player
     card_in_hand = validate_card_can_pay_outrage(outrage_event, card)
-    # transfer card from hand to supporter stack
-    SupporterStackEntry.objects.create(player=outraged_player, card=card_in_hand.card)
+    card = card_in_hand.card
+    # add card to outraged player's supporters (if able, else will discard)
+    add_supporter(outraged_player, card)
     # remove card from player's hand
     card_in_hand.delete()
     # resolve event
@@ -456,6 +677,21 @@ def pay_outrage(outrage_event: OutrageEvent, card: CardsEP):
     event.is_resolved = True
     event.save()
     outrage_event.card_given = True
+
+    # Update log if it exists
+    from game.models.game_log import GameLog
+
+    log = GameLog.objects.filter(outrage_event=outrage_event).first()
+    if log:
+        from game.serializers.logs.wa import WAOutrageLogDetailsSerializer
+        from game.serializers.general_serializers import CardSerializer
+
+        details = dict(log.details)
+        details["card_given"] = True
+        details["card"] = CardSerializer(card).data
+        log.details = details
+        log.save()
+
     outrage_event.save()
 
 
@@ -513,7 +749,19 @@ def step_effect(
                 case WABirdsong.WABirdsongSteps.COMPLETED:
                     from game.transactions.crafted_cards.eyrie_emigre import is_emigre
 
-                    is_emigre(player)
+                    if not is_emigre(player):
+                        from game.serializers.logs.general import (
+                            log_phase,
+                            get_current_turn_log,
+                        )
+
+                        log_phase(
+                            player.game,
+                            player,
+                            "Daylight",
+                            parent=get_current_turn_log(player.game, player),
+                        )
+                        step_effect(player, None)
                 case _:
                     raise ValueError(
                         f"Invalid step in step_effect for WA Birdsong: {phase.step.name}"
@@ -524,8 +772,17 @@ def step_effect(
                     pass
                 case WADaylight.WADaylightSteps.COMPLETED:
                     if not check_charm_offensive(player):
-                        # ensures effect at beginning of evening is called
-                        # not relevant here, but good to have the structure anyway
+                        from game.serializers.logs.general import (
+                            log_phase,
+                            get_current_turn_log,
+                        )
+
+                        log_phase(
+                            player.game,
+                            player,
+                            "Evening",
+                            parent=get_current_turn_log(player.game, player),
+                        )
                         step_effect(player, None)
                 case _:
                     raise ValueError(

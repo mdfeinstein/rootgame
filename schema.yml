@@ -3961,6 +3961,29 @@ paths:
                 items:
                   $ref: '#/components/schemas/DominanceSupplyEntry'
           description: ''
+  /api/game-log/{game_id}/:
+    get:
+      operationId: game_log_list
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - game-log
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GameLog'
+          description: ''
   /api/game/{game_id}/session/:
     get:
       operationId: game_session_retrieve
@@ -5313,6 +5336,39 @@ components:
             $ref: '#/components/schemas/Option'
       required:
       - name
+    GameLog:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        parent_id:
+          type: integer
+          nullable: true
+          readOnly: true
+        player_faction:
+          type: string
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        log_type:
+          $ref: '#/components/schemas/LogTypeEnum'
+        details:
+          readOnly: true
+        children:
+          type: string
+          readOnly: true
+      required:
+      - children
+      - created_at
+      - details
+      - id
+      - log_type
+      - parent_id
+      - player_faction
     GameSession:
       type: object
       properties:
@@ -5459,6 +5515,48 @@ components:
         * `1` - Charismatic
         * `2` - Commander
         * `3` - Despot
+    LogTypeEnum:
+      enum:
+      - TURN
+      - PHASE
+      - MOVE
+      - BATTLE
+      - CRAFT
+      - DRAW
+      - DISCARD
+      - CATS_BIRDS_FOR_HIRE
+      - CATS_MARCH
+      - CATS_WOOD_PLACEMENT
+      - CATS_BUILD
+      - CATS_OVERWORK
+      - CATS_RECRUIT
+      - BIRDS_ADD_TO_DECREE
+      - BIRDS_EMERGENCY_ROOST
+      - BIRDS_DECREE_ACTION
+      - BIRDS_SCORE_ROOSTS
+      - BIRDS_TURMOIL
+      - BIRDS_NEW_LEADER
+      type: string
+      description: |-
+        * `TURN` - Turn
+        * `PHASE` - Phase
+        * `MOVE` - Move
+        * `BATTLE` - Battle
+        * `CRAFT` - Craft
+        * `DRAW` - Draw
+        * `DISCARD` - Discard
+        * `CATS_BIRDS_FOR_HIRE` - Cats Birds for Hire
+        * `CATS_MARCH` - Cats March
+        * `CATS_WOOD_PLACEMENT` - Cats Wood Placement
+        * `CATS_BUILD` - Cats Build
+        * `CATS_OVERWORK` - Cats Overwork
+        * `CATS_RECRUIT` - Cats Recruit
+        * `BIRDS_ADD_TO_DECREE` - Birds Add To Decree
+        * `BIRDS_EMERGENCY_ROOST` - Birds Emergency Roost
+        * `BIRDS_DECREE_ACTION` - Birds Decree Action
+        * `BIRDS_SCORE_ROOSTS` - Birds Score Roosts
+        * `BIRDS_TURMOIL` - Birds Turmoil
+        * `BIRDS_NEW_LEADER` - Birds New Leader
     NestedToken:
       type: object
       properties:

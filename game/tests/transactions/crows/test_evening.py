@@ -6,8 +6,10 @@ from game.tests.my_factories import GameSetupFactory, CardFactory
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.transactions.crows.evening import do_exert_action, calculate_crow_draw_amount, check_discard_step, discard_card
 from game.transactions.crows.actions import crows_plot
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 
-class CrowEveningTestCase(TestCase):
+class CrowEveningTestCase(LoggingTestMixin, TestCase):
     def setUp(self):
         self.game = GameSetupFactory(factions=[Faction.CATS, Faction.CROWS])
         self.player = self.game.players.get(faction=Faction.CROWS)
@@ -48,6 +50,9 @@ class CrowEveningTestCase(TestCase):
         self.evening.refresh_from_db()
         self.assertTrue(self.evening.exert_used)
         self.assertEqual(self.evening.step, CrowEvening.CrowEveningSteps.COMPLETED)
+        
+        # Verify Logs (Move)
+        self.assertLogExists(LogType.MOVE, player=self.player, origin_clearing_number=self.c1.clearing_number, dest_clearing_number=self.c2.clearing_number, warriors_moved=1)
 
     def test_exert_fails_if_already_exerted(self):
         self.evening.exert_used = True
@@ -65,6 +70,9 @@ class CrowEveningTestCase(TestCase):
         self.assertEqual(Warrior.objects.filter(clearing=self.c1, player=self.player).count(), 2) # Started with 5
         self.daylight.refresh_from_db()
         self.assertEqual(self.daylight.plots_placed, 3)
+        
+        # Verify Logs (Plot)
+        self.assertLogExists(LogType.CROWS_PLOT, player=self.player, clearing_number=self.c1.clearing_number)
 
     def test_drawing_1_plus_extortion(self):
         # Advanced to DRAWING
@@ -84,6 +92,9 @@ class CrowEveningTestCase(TestCase):
         self.evening.refresh_from_db()
         self.assertEqual(self.evening.cards_drawn, 2)
         self.assertEqual(self.evening.step, CrowEvening.CrowEveningSteps.COMPLETED)
+        
+        # Verify Logs (Draw)
+        self.assertLogExists(LogType.DRAW, player=self.player, count=2)
 
     def test_drawing_1_plus_extortion_facedown_does_not_count(self):
         self.evening.step = CrowEvening.CrowEveningSteps.DRAWING

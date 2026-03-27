@@ -1,12 +1,12 @@
 import {
   Modal,
-  Button,
   ScrollArea,
   Text,
   Group,
   Stack,
   Paper,
   Tooltip,
+  ActionIcon,
 } from "@mantine/core";
 import {
   IconShoe,
@@ -57,15 +57,18 @@ const CraftableItems: React.FC<CraftableItemsProps> = ({
 
   return (
     <>
-      <Button
-        variant="light"
-        leftSection={<IconTools size={16} />}
-        onClick={onToggle}
-        size="sm"
-        color="teal"
-      >
-        Items
-      </Button>
+      <Tooltip label="Available Craftable Items" withArrow position="bottom" zIndex={2000}>
+        <ActionIcon
+          variant="light"
+          onClick={onToggle}
+          w={64}
+          h={48}
+          color="teal"
+          radius="md"
+        >
+          <IconTools size={28} />
+        </ActionIcon>
+      </Tooltip>
 
       <Modal
         opened={isOpen}

@@ -9,6 +9,7 @@ import { UserContext } from "../../contexts/UserProvider";
 import RevealedCardsHistory from "../board/RevealedCardsHistory";
 import DiscardPile from "../board/DiscardPile";
 import CraftableItems from "../board/CraftableItems";
+import GameLogViewer from "../board/GameLogViewer";
 
 const PlayerRow = () => {
   const { gameId, session } = useContext(GameContext);
@@ -49,8 +50,8 @@ const PlayerRow = () => {
         width: "100vw",
         zIndex: 1000,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
-        paddingTop: "10px",
-        paddingBottom: "10px",
+        paddingTop: "4px",
+        paddingBottom: "4px",
         borderBottom: "1px solid #eee",
         boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
         margin: 0,
@@ -82,7 +83,7 @@ const PlayerRow = () => {
         </Stack>
       </Group>
 
-      <Group gap="md" wrap="nowrap" style={{ flexShrink: 0 }}>
+      <Group gap="xs" wrap="nowrap" style={{ flexShrink: 0 }}>
         {sortedPlayers.map((player) => (
           <PlayerIcon
             key={player.username}
@@ -121,6 +122,15 @@ const PlayerRow = () => {
               onToggle={() =>
                 setOpenBoardFaction((prev) =>
                   prev === "craftable-items" ? null : "craftable-items",
+                )
+              }
+            />
+            <GameLogViewer
+              gameId={gameId as number}
+              isOpen={openBoardFaction === "game-log"}
+              onToggle={() =>
+                setOpenBoardFaction((prev) =>
+                  prev === "game-log" ? null : "game-log",
                 )
               }
             />

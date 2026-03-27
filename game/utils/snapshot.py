@@ -20,7 +20,7 @@ from game.models.game_models import (
     CraftedItemEntry,
     CraftedCardEntry,
     HandEntry,
-    WarriorSupplyEntry,
+    CoffinWarrior,
 )
 from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
 from game.models.birds.player import BirdLeader, DecreeEntry, Vizier
@@ -58,6 +58,7 @@ from game.models.events.crafted_cards import (
     SwapMeetEvent,
 )
 from game.models.events.crows import CrowRecruitEvent, CrowRaidEvent
+from game.models.game_log import GameLog
 
 
 def get_all_game_objects(game: Game):
@@ -100,7 +101,7 @@ def get_all_game_objects(game: Game):
         objects.extend(CraftedItemEntry.objects.filter(player=player))
         objects.extend(CraftedCardEntry.objects.filter(player=player))
         objects.extend(ActiveDominanceEntry.objects.filter(player=player))
-        objects.extend(WarriorSupplyEntry.objects.filter(player=player))
+        objects.extend(CoffinWarrior.objects.filter(player=player))
 
         # Setup state (depend on Player)
         objects.extend(CatsSimpleSetup.objects.filter(player=player))
@@ -194,6 +195,9 @@ def get_all_game_objects(game: Game):
     objects.extend(SwapMeetEvent.objects.filter(event__in=events))
     objects.extend(CrowRecruitEvent.objects.filter(event__in=events))
     objects.extend(CrowRaidEvent.objects.filter(event__in=events))
+
+    # 5. Game Logs
+    objects.extend(GameLog.objects.filter(game=game).order_by("created_at"))
 
     return objects
 

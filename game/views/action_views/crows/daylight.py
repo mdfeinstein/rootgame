@@ -261,7 +261,7 @@ class CrowsDaylightActionsView(GameActionView):
         enemy_factions = get_enemy_factions_in_clearing(player, clearing)
         options = [
             {
-                "value": f.name,
+                "value": f.value,
                 "label": f.label,
                 "info": f"Initiate battle against the {f.label}.",
             }

@@ -37,6 +37,8 @@ class ValidationErrorSerializer(serializers.Serializer):
 
 class LabeledChoiceField(serializers.ChoiceField):
     def to_representation(self, value):
+        if isinstance(value, dict) and "value" in value:
+            return value
         result = super().to_representation(value)
         if result is None:
             return None
@@ -79,7 +81,7 @@ class CardSerializer(serializers.ModelSerializer):
     card_name = serializers.SerializerMethodField()
     suit = LabeledChoiceField(choices=Suit.choices)
     title = serializers.CharField()
-    text = serializers.CharField()
+    text = serializers.CharField(allow_blank=True)
     craftable = serializers.BooleanField()
     cost = serializers.ListField(child=LabeledChoiceField(choices=Suit.choices))
     item = LabeledChoiceField(choices=ItemTypes.choices, allow_null=True)
@@ -103,8 +105,13 @@ class CardSerializer(serializers.ModelSerializer):
             "dominance",
         ]
 
-    def get_card_name(self, card: Card):
-        return card.enum.name
+    def get_card_name(self, card: Card | dict):
+        enum = getattr(card, "enum", None)
+        if enum:
+            return enum.name
+        if isinstance(card, dict):
+            return card.get("card_name", "")
+        return ""
 
 
 class CraftableItemSerializer(serializers.ModelSerializer):

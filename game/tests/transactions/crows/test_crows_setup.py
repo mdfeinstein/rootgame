@@ -7,9 +7,11 @@ from game.models.cats.tokens import CatKeep
 from game.tests.my_factories import GameSetupFactory
 from game.transactions.crows_setup import place_initial_warrior, confirm_completed_setup, start_simple_crows_setup
 from game.transactions.cats_setup import pick_corner, place_initial_building
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 
 
-class CrowSetupBaseTestCase(TestCase):
+class CrowSetupBaseTestCase(LoggingTestMixin, TestCase):
     def setUp(self):
         # Create a game with Cats and Crows
         self.game = GameSetupFactory(factions=[Faction.CATS, Faction.CROWS])
@@ -78,6 +80,11 @@ class CrowPlaceWarriorTests(CrowSetupBaseTestCase):
         
         # Check transition to PENDING_CONFIRMATION
         self.assertEqual(self.crow_setup.step, CrowsSimpleSetup.Steps.PENDING_CONFIRMATION)
+        
+        # Verify logs
+        self.assertLogExists(LogType.CROWS_SETUP_PLACE_WARRIOR, player=self.player, clearing_number=fox_c.clearing_number, suit=Suit.RED.value)
+        self.assertLogExists(LogType.CROWS_SETUP_PLACE_WARRIOR, player=self.player, clearing_number=rabbit_c.clearing_number, suit=Suit.YELLOW.value)
+        self.assertLogExists(LogType.CROWS_SETUP_PLACE_WARRIOR, player=self.player, clearing_number=mouse_c.clearing_number, suit=Suit.ORANGE.value)
 
     def test_place_warrior_duplicate_suit_fails(self):
         fox_c1 = Clearing.objects.filter(game=self.game, suit=Suit.RED.value).exclude(clearing_number=1).first()
@@ -116,9 +123,9 @@ class CrowConfirmSetupTests(CrowSetupBaseTestCase):
         self.crow_setup.refresh_from_db()
         self.assertEqual(self.crow_setup.step, CrowsSimpleSetup.Steps.COMPLETED)
         
-        # Check that first turn was created
-        from game.models.crows.turn import CrowTurn
-        self.assertTrue(CrowTurn.objects.filter(player=self.player).exists())
+        # Check that game status advanced
+        self.game.refresh_from_db()
+        self.assertEqual(self.game.status, self.game.GameStatus.SETUP_COMPLETED)
 
     def test_confirm_completed_setup_wrong_step_fails(self):
         self.crow_setup.step = CrowsSimpleSetup.Steps.WARRIOR_PLACE

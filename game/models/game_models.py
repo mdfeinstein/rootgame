@@ -342,12 +342,7 @@ class Player(models.Model):
             return ""
 
 
-class WarriorSupplyEntry(models.Model):
-    # warriors in the players supply.
-    player = models.ForeignKey(
-        Player, on_delete=models.CASCADE, related_name="warrior_supply_entries"
-    )
-    warrior = models.ForeignKey(Warrior, on_delete=models.CASCADE)
+
 
 
 class Item(models.Model):

@@ -20,7 +20,7 @@ export default function CrowsHeaderSection({
           size="1.5rem"
           fw={900}
           variant="gradient"
-          gradient={{ from: "indigo.9", to: "indigo.6", deg: 45 }}
+          gradient={{ from: "indigo.9", to: "indigo.7", deg: 45 }}
           style={{ letterSpacing: "2px", fontFamily: "serif", lineHeight: 1 }}
         >
           Crows

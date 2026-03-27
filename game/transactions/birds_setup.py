@@ -1,7 +1,7 @@
 from game.models.birds.buildings import BirdRoost
 from game.models.birds.player import BirdLeader, Vizier
 from game.models.birds.setup import BirdsSimpleSetup
-from game.models import Clearing, Player, Warrior, WarriorSupplyEntry
+from game.models import Clearing, Player, Warrior
 from django.db import transaction
 
 from game.models.birds.turn import BirdTurn
@@ -20,11 +20,7 @@ def create_birds_warrior_supply(player: Player):
     warriors = [Warrior(player=player) for _ in range(20)]
     for warrior in warriors:
         warrior.save()
-    # assign warriors to supply
-    supply_entries = [
-        WarriorSupplyEntry(player=player, warrior=warrior) for warrior in warriors
-    ]
-    WarriorSupplyEntry.objects.bulk_create(supply_entries)
+    pass
 
 
 @transaction.atomic
@@ -75,20 +71,19 @@ def pick_corner(player: Player, clearing: Clearing):
     roost.save()
 
     # place 6 warriors
-    warriors_in_supply = list(WarriorSupplyEntry.objects.filter(player=player)[:6])
-    assert len(warriors_in_supply) == 6, "not 6 warriors in supply during setup!"
-    # bulk place warriors by assigning clearing and bulk updating the warriors
-    for supply_warrior in warriors_in_supply:
-        supply_warrior.warrior.clearing = clearing
-    Warrior.objects.bulk_update([sw.warrior for sw in warriors_in_supply], ["clearing"])
-    # bulk delete the supply entries by primary key
-    WarriorSupplyEntry.objects.filter(
-        pk__in=[sw.pk for sw in warriors_in_supply]
-    ).delete()
+    warriors_to_place = list(Warrior.objects.filter(player=player, clearing__isnull=True)[:6])
+    assert len(warriors_to_place) == 6, "not 6 warriors in supply during setup!"
+    # bulk place warriors by assigning clearing and bulk updating
+    for warrior in warriors_to_place:
+        warrior.clearing = clearing
+    Warrior.objects.bulk_update(warriors_to_place, ["clearing"])
 
     # update setup
     birds_setup.step = BirdsSimpleSetup.Steps.CHOOSING_LEADER
     birds_setup.save()
+
+    from game.serializers.logs.birds import log_birds_setup_pick_corner
+    log_birds_setup_pick_corner(player.game, player, clearing.clearing_number)
 
 
 @transaction.atomic
@@ -112,6 +107,9 @@ def choose_leader_initial(player: Player, leader: BirdLeader.BirdLeaders):
     bird_setup.step = BirdsSimpleSetup.Steps.PENDING_CONFIRMATION
     bird_setup.save()
 
+    from game.serializers.logs.birds import log_birds_setup_choose_leader
+    log_birds_setup_choose_leader(player.game, player, picked_leader)
+
 
 @transaction.atomic
 def confirm_completed_setup(player: Player):
@@ -121,11 +119,4 @@ def confirm_completed_setup(player: Player):
     setup.step = BirdsSimpleSetup.Steps.COMPLETED
     setup.save()
     # move to next step in general setup (next player, perhaps)
-    create_birds_turn(player)
     next_player_setup(player.game)
-
-
-@transaction.atomic
-def create_birds_turn(player: Player):
-    # create turn
-    turn = BirdTurn.create_turn(player)

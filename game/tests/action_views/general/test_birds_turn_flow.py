@@ -1,7 +1,7 @@
 from game.models.game_models import Warrior
 from game.models.birds.turn import BirdBirdsong
 from django.test import TestCase
-from .client import RootGameClient
+from game.tests.client import RootGameClient
 from game.models.game_models import Faction, Player, Game, HandEntry, Clearing
 from game.tests.my_factories import GameSetupWithFactionsFactory
 from game.transactions.general import next_step
@@ -198,7 +198,7 @@ class BirdTurnFlowTestCase(TestCase):
         self.assertEqual(self.birds_client.base_route, "/api/action/card/charm-offensive/")
         
         # Skip charm offensive
-        self.birds_client.submit_action({"faction": "skip"})
+        self.birds_client.submit_action({"select": "skip"})
         
         # After skip, turn should move through Evening scoring/drawing/discarding to next player
         self.game.refresh_from_db()

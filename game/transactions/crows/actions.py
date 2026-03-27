@@ -39,10 +39,20 @@ def crows_plot(player: Player, clearing: Clearing, plot_type: str, daylight: Cro
     if not plot_token:
         raise ValueError(f"No plot token of type {plot_type} available in supply")
     
+    from game.serializers.logs.general import get_current_phase_log
+    from game.serializers.logs.crows import log_crows_plot
+    parent = log_crows_plot(
+        player.game, 
+        player, 
+        clearing.clearing_number, 
+        plot_type,
+        parent=get_current_phase_log(player.game, player)
+    )
+
     # Effect: Remove warriors
     # Using attacker=player, defender=player as a workaround or just direct removal
     # The spec says "remove crow warriors", usually implies returning to supply
-    player_removes_warriors(clearing, None, player, cost) # None as 'remover' might be okay or just use someone else
+    player_removes_warriors(clearing, None, player, cost, parent=parent) # None as 'remover' might be okay or just use someone else
     
     # Effect: Place plot token facedown
     plot_token.is_facedown = True
@@ -58,10 +68,28 @@ def crows_move(player: Player, origin: Clearing, destination: Clearing, count: i
     """Crows Move: ignore rule (handled by general move update)"""
     move_warriors(player, origin, destination, count, ignore_rule=True)
 
+    from game.serializers.logs.general import log_move, get_current_phase_log
+    log_move(
+        player.game, 
+        player, 
+        origin.clearing_number, 
+        destination.clearing_number, 
+        count,
+        parent=get_current_phase_log(player.game, player)
+    )
+
 @transaction.atomic
 def crows_battle(player: Player, defender_faction: str, clearing: Clearing):
     """Crows Battle"""
-    start_battle(player.game, player.faction, defender_faction, clearing)
+    battle = start_battle(player.game, player.faction, defender_faction, clearing)
+
+    from game.transactions.battle import log_battle_start
+    from game.serializers.logs.general import get_current_phase_log
+    log_battle_start(
+        battle, 
+        player, 
+        parent=get_current_phase_log(player.game, player)
+    )
 
 @transaction.atomic
 def crows_trick(player: Player, plot1: PlotToken, plot2: PlotToken):
@@ -91,3 +119,13 @@ def crows_trick(player: Player, plot1: PlotToken, plot2: PlotToken):
     
     plot1.clearing = c2
     plot1.save()
+
+    from game.serializers.logs.general import get_current_phase_log
+    from game.serializers.logs.crows import log_crows_trick
+    log_crows_trick(
+        player.game, 
+        player, 
+        c1.clearing_number, 
+        c2.clearing_number,
+        parent=get_current_phase_log(player.game, player)
+    )

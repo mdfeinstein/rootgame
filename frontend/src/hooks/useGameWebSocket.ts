@@ -17,7 +17,7 @@ const useGameWebSocket = (gameId: string | undefined) => {
     // Use VITE_DJANGO_URL if set (like in local dev), otherwise use the current window host
     const envUrl = import.meta.env.VITE_DJANGO_URL;
     let wsUrl = "";
-    
+
     if (envUrl) {
       wsUrl = envUrl.replace(/^http/, "ws") + `/ws/game/${gameId}/`;
     } else {
@@ -54,10 +54,6 @@ const useGameWebSocket = (gameId: string | undefined) => {
           // Invalidate all queries related to the game
           queryClient.invalidateQueries({
             queryKey: gameKeys.gameState(Number(gameId)),
-          });
-          // Explicitly invalidate revealed cards just in case
-          queryClient.invalidateQueries({
-            queryKey: gameKeys.revealedCards(Number(gameId)),
           });
         }
       };

@@ -16,6 +16,8 @@ from game.models.wa.buildings import WABase
 from game.models.wa.player import SupporterStackEntry, OfficerEntry
 from game.models.wa.tokens import WASympathy
 from game.models.wa.turn import WATurn, WABirdsong
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 from game.tests.my_factories import (
     GameSetupWithFactionsFactory,
     CardFactory,
@@ -27,11 +29,12 @@ from game.transactions.wa import (
     end_revolt_step,
     end_spread_sympathy_step,
 )
+from game.transactions.general import create_turn
 from game.game_data.cards.exiles_and_partisans import CardsEP
 
 logger = logging.getLogger(__name__)
 
-class WABirdsongBaseTestCase(TestCase):
+class WABirdsongBaseTestCase(TestCase, LoggingTestMixin):
     def setUp(self):
         # Create a game with Cats and WA
         self.game = GameSetupWithFactionsFactory(factions=[Faction.CATS, Faction.WOODLAND_ALLIANCE])
@@ -44,7 +47,9 @@ class WABirdsongBaseTestCase(TestCase):
         self.game.current_turn = 1
         self.game.save()
         
-        # Get turn and phases
+        # Create turn using the transaction if it doesn't exist
+        if not WATurn.objects.filter(player=self.player, turn_number=0).exists():
+            create_turn(self.player)
         self.turn = WATurn.objects.get(player=self.player, turn_number=0)
         self.birdsong = self.turn.birdsong.first()
         self.birdsong.step = WABirdsong.WABirdsongSteps.REVOLT
@@ -84,6 +89,7 @@ class WARevoltTests(WABirdsongBaseTestCase):
         self.add_supporters(Suit.ORANGE, 2)
         
         # Add enemy pieces to remove (1 warrior, 1 building)
+        Warrior.objects.filter(clearing=self.mouse_clearing).delete()
         WarriorFactory(player=self.cats_player, clearing=self.mouse_clearing)
         from game.queries.general import available_building_slot
         from game.models.cats.buildings import Workshop
@@ -110,6 +116,14 @@ class WARevoltTests(WABirdsongBaseTestCase):
         self.assertEqual(OfficerEntry.objects.filter(player=self.player).count(), 1)
         # Supporters discarded
         self.assertEqual(SupporterStackEntry.objects.filter(player=self.player).count(), 0)
+        
+        # Verify Logs
+        from game.models.game_log import GameLog
+        self.assertLogExists(LogType.WA_REVOLT, player=self.player, clearing_number=self.mouse_clearing.clearing_number, points_scored=1)
+        # Check pieces destroyed in log
+        revolt_log = GameLog.objects.filter(log_type=LogType.WA_REVOLT, player=self.player).last()
+        self.assertEqual(revolt_log.details['pieces_destroyed']['Cats Warrior'], 1)
+        self.assertEqual(revolt_log.details['pieces_destroyed']['Cats Workshop'], 1)
 
     def test_revolt_with_bird_supporters(self):
         # Revolt using 1 Mouse and 1 Bird supporter in Mouse clearing
@@ -159,6 +173,8 @@ class WASpreadSympathyTests(WABirdsongBaseTestCase):
         self.assertTrue(WASympathy.objects.filter(player=self.player, clearing=self.mouse_clearing).exists())
         self.player.refresh_from_db()
         self.assertEqual(self.player.score, 0) # 1st sympathy = 0 VP
+        
+        self.assertLogExists(LogType.WA_SPREAD_SYMPATHY, player=self.player, clearing_number=self.mouse_clearing.clearing_number, points_scored=0)
 
     def test_spread_sympathy_adjacency_required(self):
         self.birdsong.step = WABirdsong.WABirdsongSteps.SPREAD_SYMPATHY

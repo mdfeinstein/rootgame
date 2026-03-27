@@ -127,7 +127,7 @@ def move_warriors(
         wa_player = Player.objects.get(
             game=player.game, faction=Faction.WOODLAND_ALLIANCE
         )
-        create_outrage_event(clearing_end, player, wa_player)
+        create_outrage_event(clearing_end, player, wa_player, trigger_type="move")
 
 
 @transaction.atomic
@@ -138,6 +138,8 @@ def place_piece_from_supply_into_clearing(piece: Piece, clearing: Clearing):
     -- non-cats placing into keep clearing will be blocked
     -- crows snare will block
     """
+    if piece is None:
+        raise ValueError("piece is None. Perhaps none left in supply?")
     if piece.clearing is not None:
         raise ValueError("piece is already in a clearing")
 
@@ -221,12 +223,13 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
         CraftedItemEntry(player=card_in_hand.player, item=item).save()
         item_from_pool.delete()
         try:
-            validate_player_has_crafted_card(
+            master_engravers_card = validate_player_has_crafted_card(
                 card_in_hand.player, CardsEP.MASTER_ENGRAVERS
             )
             has_master_engravers = True
         except ValueError:
             has_master_engravers = False
+            master_engravers_card = None
 
         # update score
         # Birds Disdain for Trade: items only score 1VP unless Builder leader
@@ -240,6 +243,16 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
         card_in_hand.player.score += points
         if has_master_engravers:
             card_in_hand.player.score += 1
+
+            from game.serializers.logs.general import get_active_phase_log
+            from game.serializers.logs.crafted_cards import log_crafted_card_action
+            log_crafted_card_action(
+                card_in_hand.player.game,
+                card_in_hand.player,
+                master_engravers_card.card, # I need to get the card entry.
+                "score",
+                parent=get_active_phase_log(card_in_hand.player.game)
+            )
         card_in_hand.player.save()
         # discard card from player's hand
         discard_card_from_hand(card_in_hand.player, card_in_hand)
@@ -256,10 +269,43 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
         )
         for other_player in other_players:
             try:
-                validate_player_has_crafted_card(other_player, CardsEP.MURINE_BROKERS)
+                murine_brokers_card = validate_player_has_crafted_card(other_player, CardsEP.MURINE_BROKERS)
                 draw_card_from_deck_to_hand(other_player)
+
+                from game.serializers.logs.general import get_active_phase_log
+                from game.serializers.logs.crafted_cards import log_crafted_card_action
+                log_crafted_card_action(
+                    other_player.game,
+                    other_player,
+                    murine_brokers_card.card,
+                    "draw",
+                    parent=get_active_phase_log(other_player.game)
+                )
             except ValueError:
                 pass
+
+
+@transaction.atomic
+def create_turn(player: Player):
+    """creates the turn model and initial logs for the player"""
+    if player.faction == Faction.CATS:
+        from game.transactions.cats import create_cats_turn
+
+        create_cats_turn(player)
+    elif player.faction == Faction.BIRDS:
+        from game.transactions.birds import create_birds_turn
+
+        create_birds_turn(player)
+    elif player.faction == Faction.WOODLAND_ALLIANCE:
+        from game.transactions.wa import create_wa_turn
+
+        create_wa_turn(player)
+    elif player.faction == Faction.CROWS:
+        from game.transactions.crows.turn import create_crows_turn
+
+        create_crows_turn(player)
+    else:
+        raise ValueError(f"Faction {player.faction} not supported for turn creation")
 
 
 @transaction.atomic
@@ -284,6 +330,8 @@ def next_players_turn(game: Game):
     CraftedCardEntry.objects.filter(player=new_player).update(
         used=CraftedCardEntry.UsedChoice.UNUSED
     )
+    # create first turn or next turn
+    create_turn(new_player)
     next_step(new_player)
 
 

@@ -5,7 +5,7 @@ export const factionToColor: Record<FactionLabel, string> = {
   Cats: "orange",
   Birds: "blue",
   "Woodland Alliance": "green",
-  Crows: "indigo",
+  Crows: "#4B0082",
 };
 
 export const WarriorTroop = ({

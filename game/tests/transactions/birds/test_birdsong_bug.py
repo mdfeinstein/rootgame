@@ -5,8 +5,10 @@ from game.models.birds.turn import BirdTurn, BirdBirdsong
 from game.tests.my_factories import GameSetupFactory, CardFactory
 from game.transactions.birds import add_card_to_decree
 from game.game_data.cards.exiles_and_partisans import CardsEP
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 
-class BirdDecreeBugTest(TestCase):
+class BirdDecreeBugTest(TestCase, LoggingTestMixin):
     def setUp(self):
         self.game = GameSetupFactory(factions=[Faction.CATS, Faction.BIRDS])
         self.player = self.game.players.get(faction=Faction.BIRDS)
@@ -56,3 +58,4 @@ class BirdDecreeBugTest(TestCase):
         
         # Adding a bird card second shouldn't throw "Not Moving Step"
         add_card_to_decree(self.player, CardsEP.AMBUSH_WILD, DecreeEntry.Column.BUILD)
+        self.assertLogCount(2, log_type=LogType.BIRDS_ADD_TO_DECREE, player=self.player)

@@ -88,6 +88,9 @@ def place_initial_warrior(player: Player, clearing: Clearing):
     elif suit == Suit.ORANGE:
         setup.mouse_placed = True
 
+    from game.serializers.logs.crows import log_crows_setup_place_warrior
+    log_crows_setup_place_warrior(player.game, player, clearing.clearing_number, suit.value)
+
     if setup.fox_placed and setup.rabbit_placed and setup.mouse_placed:
         setup.step = next_choice(CrowsSimpleSetup.Steps, setup.step)
 
@@ -105,7 +108,5 @@ def confirm_completed_setup(player: Player):
 
     setup.step = next_choice(CrowsSimpleSetup.Steps, setup.step)
     setup.save()
-    # create first turn
-    CrowTurn.create_turn(player=player)
     # go to next player setup
     next_player_setup(player.game)

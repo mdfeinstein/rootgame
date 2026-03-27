@@ -7,12 +7,13 @@ from game.transactions.general import place_piece_from_supply_into_clearing
 from game.queries.general import get_adjacent_clearings
 
 @transaction.atomic
-def trigger_raid_effect(player: Player, clearing: Clearing):
+def trigger_raid_effect(player: Player, clearing: Clearing, **kwargs):
     """
     Triggers the Raid effect when a Raid token is removed.
     Places one Crow warrior in every adjacent clearing if able.
     If not enough warriors in reserve, launches a CrowRaidEvent.
     """
+    parent = kwargs.get("parent")
     adjacent_clearings = list(get_adjacent_clearings(player, clearing))
     
     # Filter valid clearings (e.g. not CatKeep, Snare)
@@ -36,6 +37,16 @@ def trigger_raid_effect(player: Player, clearing: Clearing):
             warrior = Warrior.objects.filter(player=player, clearing__isnull=True).first()
             if warrior:
                 place_piece_from_supply_into_clearing(warrior, v_clearing)
+
+        from game.serializers.logs.general import get_active_phase_log
+        from game.serializers.logs.crows import log_crows_raid
+        log_crows_raid(
+            player.game, 
+            player, 
+            clearing.clearing_number, 
+            len(valid_clearings),
+            parent=parent if parent else get_active_phase_log(player.game)
+        )
     else:
         # Launch event
         event = Event.objects.create(

@@ -45,6 +45,34 @@ export function Clearing({
           onClick={() => submitPayloadOnClick?.(clearingNumber)}
         >
           <circle cx={cx} cy={cy} r={r} stroke={suit} strokeWidth={6} />
+          {/* Clearing Number Indicator */}
+          <Tooltip
+            label={`Clearing Number ${clearingNumber}`}
+            openDelay={750}
+            withArrow
+          >
+            <g>
+              <circle
+                cx={cx}
+                cy={cy - r}
+                r={16}
+                fill="white"
+                stroke="black"
+                strokeWidth={1}
+              />
+              <text
+                x={cx}
+                y={cy - r}
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontSize={16}
+                fill="black"
+                style={{ pointerEvents: "none" }}
+              >
+                {clearingNumber}
+              </text>
+            </g>
+          </Tooltip>
           {children}
         </g>
       </Tooltip>

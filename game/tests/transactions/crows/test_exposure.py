@@ -10,8 +10,10 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.queries.crows.exposure import can_attempt_exposure
 from game.transactions.crows.exposure import guess_exposure
 from game.transactions.battle import roll_dice
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 
-class CrowsExposureAndAgentsTestCase(TestCase):
+class CrowsExposureAndAgentsTestCase(LoggingTestMixin, TestCase):
     def setUp(self):
         self.game = GameSetupFactory(factions=[Faction.CATS, Faction.CROWS])
         self.crows_player = self.game.players.get(faction=Faction.CROWS)
@@ -106,6 +108,9 @@ class CrowsExposureAndAgentsTestCase(TestCase):
         # Plot remained
         self.token.refresh_from_db()
         self.assertEqual(self.token.clearing, self.c1)
+        
+        # Verify Logs
+        self.assertLogExists(LogType.CROWS_EXPOSURE, player=self.cats_player, clearing_number=self.c1.clearing_number, guessed_plot_type="snare", success=False)
 
     def test_exposure_correct_guess(self):
         hand_entry = HandEntry.objects.create(player=self.cats_player, card=self.fox_card)
@@ -128,6 +133,9 @@ class CrowsExposureAndAgentsTestCase(TestCase):
         self.assertIsNone(self.token.clearing)
         self.cats_player.refresh_from_db()
         self.assertEqual(self.cats_player.score, starting_score + 1)
+        
+        # Verify Logs
+        self.assertLogExists(LogType.CROWS_EXPOSURE, player=self.cats_player, clearing_number=self.c1.clearing_number, guessed_plot_type="bomb", success=True)
 
     def test_exposure_failures(self):
         hand_entry_fox = HandEntry.objects.create(player=self.cats_player, card=self.fox_card)

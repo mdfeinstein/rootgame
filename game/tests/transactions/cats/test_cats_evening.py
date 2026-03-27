@@ -1,16 +1,22 @@
 from django.test import TestCase
 from game.models.game_models import Faction, HandEntry
 from game.models.cats.buildings import Recruiter
-from game.models.cats.turn import CatBirdsong, CatDaylight, CatEvening
+from game.models.cats.turn import CatBirdsong, CatDaylight, CatEvening, CatTurn
 from game.tests.my_factories import GameSetupWithFactionsFactory, CardFactory
 from game.transactions.cats import cat_evening_draw, check_auto_discard, cat_discard_card
+from game.transactions.general import create_turn
 from game.game_data.cards.exiles_and_partisans import CardsEP
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 
-class CatEveningBaseTestCase(TestCase):
+class CatEveningBaseTestCase(TestCase, LoggingTestMixin):
     def setUp(self):
         self.game = GameSetupWithFactionsFactory(factions=[Faction.CATS, Faction.BIRDS])
         self.player = self.game.players.get(faction=Faction.CATS)
         
+        # Create turn using the transaction if it doesn't already exist
+        if not CatTurn.objects.filter(player=self.player, turn_number=0).exists():
+            create_turn(self.player)
         self.turn = CatEvening.objects.get(turn__player=self.player).turn
         
         # Mark previous phases as COMPLETED so get_phase returns evening
@@ -27,13 +33,15 @@ class CatEveningBaseTestCase(TestCase):
         self.evening.save()
 
 class CatEveningFlowTests(CatEveningBaseTestCase):
-    def test_draw_cards_success(self):
+    def test_evening_draw_no_recruiters(self):
         initial_hand_count = HandEntry.objects.filter(player=self.player).count()
         cat_evening_draw(self.player)
         
         # With 1 recruiter, bonus is 0. Total draw 1.
         self.assertEqual(HandEntry.objects.filter(player=self.player).count(), initial_hand_count + 1)
         
+        self.assertLogExists(LogType.DRAW, player=self.player, count=1)
+
         # Check step advancement. It goes DRAWING -> DISCARDING -> check_auto_discard -> COMPLETED
         # because hand size is small.
         self.evening.refresh_from_db()
@@ -77,6 +85,8 @@ class CatEveningFlowTests(CatEveningBaseTestCase):
         # Now discard one card manually
         cat_discard_card(self.player, CardsEP.AMBUSH_RED)
         
+        self.assertLogExists(LogType.DISCARD, player=self.player)
+
         # Now it should be COMPLETED
         self.evening.refresh_from_db()
         self.assertEqual(self.evening.step, CatEvening.CatEveningSteps.COMPLETED)

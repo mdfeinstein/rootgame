@@ -1,5 +1,5 @@
 Creating test database for alias 'default'...
-Found 5 test(s).
+Found 7 test(s).
 System check identified some issues:
 
 WARNINGS:
@@ -7,22 +7,9 @@ game.Building.building_slot: (fields.W342) Setting unique=True on a ForeignKey h
 	HINT: ForeignKey(unique=True) is usually better served by a OneToOneField.
 
 System check identified 1 issue (0 silenced).
-.F...
-======================================================================
-FAIL: test_get_crafted_cards (test_crafted_cards.TestCraftedCardsEndpoint.test_get_crafted_cards)
+.......
 ----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "F:\rootGame\game\tests\gamestate_views\test_crafted_cards.py", line 90, in test_get_crafted_cards
-    self.assertTrue(informants["can_be_used"])
-    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: False is not true
+Ran 7 tests in 0.128s
 
-----------------------------------------------------------------------
-Ran 5 tests in 3.273s
-
-FAILED (failures=1)
+OK
 Destroying test database for alias 'default'...
-DEBUG add_new_player_to_game: player_count=0 faction_count=2
-DEBUG add_new_player_to_game: player_count=1 faction_count=2
-Join game debug: player_count=1, faction_count=4
-DEBUG add_new_player_to_game: player_count=1 faction_count=4

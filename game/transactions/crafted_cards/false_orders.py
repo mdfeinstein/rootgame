@@ -48,6 +48,22 @@ def use_false_orders(
         ignore_rule=True,
     )
 
+    from game.serializers.logs.general import get_active_phase_log
+    from game.serializers.logs.crafted_cards import log_crafted_card_action
+    log_crafted_card_action(
+        player.game,
+        player,
+        crafted_card_entry.card,
+        "use",
+        details={
+            "faction": target_player.faction,
+            "count": number_to_move,
+            "origin": origin_clearing.clearing_number,
+            "destination": destination_clearing.clearing_number
+        },
+        parent=get_active_phase_log(player.game)
+    )
+
     # 5. discard the false orders
     card = crafted_card_entry.card
     crafted_card_entry.delete()

@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { useContext } from "react";
+import { UserContext } from "../contexts/UserProvider";
 import type { components } from "../api/types";
 import { gameKeys } from "../api/queryKeys";
 
@@ -6,6 +8,7 @@ export type CraftableItemType = components["schemas"]["CraftableItem"];
 const djangoUrl = import.meta.env.VITE_DJANGO_URL || "";
 
 const useCraftableItemsQuery = (gameId: number, enabled: boolean = true) => {
+  const { username } = useContext(UserContext);
   const {
     data: craftableItems,
     isLoading,
@@ -25,7 +28,7 @@ const useCraftableItemsQuery = (gameId: number, enabled: boolean = true) => {
       }
       return response.json();
     },
-    enabled: !!gameId && enabled,
+    enabled: !!gameId && enabled && !!username,
   });
   return { craftableItems, isLoading, isError, isSuccess };
 };

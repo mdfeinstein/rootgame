@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import type { components } from "../api/types";
 import { gameKeys } from "../api/queryKeys";
+import { UserContext } from "../contexts/UserProvider";
 
 const djangoUrl = import.meta.env.VITE_DJANGO_URL || "";
 
@@ -11,12 +12,14 @@ export type Option = components["schemas"]["Option"];
 
 const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
   const queryClient = useQueryClient();
+  const { username } = useContext(UserContext);
 
   const {
     data: actionRoute,
     isLoading: actionRouteIsLoading,
     isError: actionRouteIsError,
     isSuccess: actionRouteIsSuccess,
+    error: actionRouteError,
   } = useQuery({
     queryKey: gameKeys.currentAction(gameId),
     queryFn: async (): Promise<RouteData> => {
@@ -39,8 +42,9 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
     isLoading: actionInfoIsLoading,
     isError: actionInfoIsError,
     isSuccess: actionInfoIsSuccess,
+    error: actionInfoError,
   } = useQuery({
-    queryKey: gameKeys.currentActionInfo(gameId, actionRoute?.route ?? null),
+    queryKey: gameKeys.currentActionInfo(gameId, actionRoute?.route ?? null, username),
     queryFn: async (): Promise<GameActionStep> => {
       const response = await fetch(
         `${djangoUrl}${actionRoute?.route}?game_id=${gameId}`,
@@ -49,14 +53,26 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         },
-      ).then((r) => r.json());
-      console.log("action info", response);
-      return response;
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.detail || "Failed to load action info");
+      }
+      return data;
     },
-    enabled: !!actionRoute?.route && enabled,
+    enabled: !!actionRoute?.route && enabled && !!username,
+    retry: false, // Don't retry on 400 errors usually
   });
 
-  const [error, setError] = useState<string | null>(null);
+  const [mutationError, setMutationError] = useState<string | null>(null);
+  
+  // Unified error from either the GET query or the POST mutation
+  let unifiedError: string | null = mutationError;
+  if (actionInfoError instanceof Error) {
+    unifiedError = actionInfoError.message;
+  } else if (actionRouteError instanceof Error) {
+    unifiedError = actionRouteError.message;
+  }
   const submitPayloadMutation = useMutation({
     mutationFn: async (payload: Record<string, unknown>) => {
       // add accumulated payload to payload
@@ -88,7 +104,7 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
       return response.json();
     },
     onSuccess: async (data) => {
-      setError(null);
+      setMutationError(null);
       if (data.name === "completed") {
         const isWsAuthenticated = queryClient.getQueryData(
           gameKeys.wsAuth(gameId?.toString() || ""),
@@ -107,14 +123,14 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
       }
       //update actionInfo
       queryClient.setQueryData(
-        gameKeys.currentActionInfo(gameId, actionRoute?.route ?? null),
+        gameKeys.currentActionInfo(gameId, actionRoute?.route ?? null, username),
         data,
       );
       console.log("success", data);
     },
     onError: (error) => {
       console.log("error", error);
-      setError(error.message);
+      setMutationError(error.message);
     },
   });
 
@@ -134,7 +150,7 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
   return {
     baseEndpoint: actionRoute?.route,
     actionInfo,
-    error,
+    error: unifiedError,
     isLoading: actionInfoIsLoading || actionRouteIsLoading,
     isError: actionInfoIsError || actionRouteIsError,
     isSuccess: actionInfoIsSuccess && actionRouteIsSuccess,

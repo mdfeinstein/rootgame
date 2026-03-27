@@ -30,10 +30,12 @@ from game.transactions.birds import (
     begin_evening,
 )
 from game.game_data.cards.exiles_and_partisans import CardsEP
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 
 logger = logging.getLogger(__name__)
 
-class BirdEveningBaseTestCase(TestCase):
+class BirdEveningBaseTestCase(TestCase, LoggingTestMixin):
     def setUp(self):
         # Create a game with Cats and Birds
         self.game = GameSetupWithFactionsFactory()
@@ -114,6 +116,7 @@ class BirdEveningScoringAndDrawTests(BirdEveningBaseTestCase):
         roost_scoring(self.player)
         self.player.refresh_from_db()
         self.assertEqual(self.player.score, 1)
+        self.assertLogExists(LogType.BIRDS_SCORE_ROOSTS, player=self.player, points=1)
         
         # Reset
         self.reset_phase_and_turn(BirdEvening.BirdEveningSteps.SCORING)
@@ -137,6 +140,7 @@ class BirdEveningScoringAndDrawTests(BirdEveningBaseTestCase):
         initial_hand = HandEntry.objects.filter(player=self.player).count()
         draw_cards(self.player)
         self.assertEqual(HandEntry.objects.filter(player=self.player).count(), initial_hand + 1)
+        self.assertLogExists(LogType.DRAW, player=self.player, count=1)
         
         # Reset to DRAWING step
         self.reset_phase_and_turn(BirdEvening.BirdEveningSteps.DRAWING)
@@ -195,6 +199,7 @@ class BirdEveningDiscardTests(BirdEveningBaseTestCase):
         self.evening.refresh_from_db()
         self.assertEqual(self.evening.step, BirdEvening.BirdEveningSteps.COMPLETED)
         self.assertEqual(HandEntry.objects.filter(player=self.player).count(), 5)
+        self.assertLogExists(LogType.DISCARD, player=self.player)
 
     def test_discard_error_if_not_needed(self):
         # Hand size 5

@@ -36,6 +36,19 @@ def use_informants(crafted_card_entry: CraftedCardEntry, ambush_card_in_discard:
     if informants_event:
         informants_event.event.is_resolved = True
         informants_event.event.save()
+
+    from game.serializers.logs.general import get_active_phase_log
+    from game.serializers.logs.crafted_cards import log_crafted_card_action
+    log_crafted_card_action(
+        game,
+        player,
+        crafted_card_entry.card,
+        "use",
+        details={
+            "card_name": ambush_card_in_discard.card.title
+        },
+        parent=get_active_phase_log(game)
+    )
     #bypass drawing by setting phase step to drawing and calling faction specific next_step
     match player.faction:
         case Faction.WOODLAND_ALLIANCE:

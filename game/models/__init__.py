@@ -5,6 +5,7 @@ from .wa import *
 from .events import *
 from .checkpoint_models import Checkpoint, Action
 from .dominance import DominanceSupplyEntry, ActiveDominanceEntry
+from .game_log import GameLog, LogType
 
 __all__ = [
     "Faction",
@@ -24,7 +25,6 @@ __all__ = [
     "DeckEntry",
     "DiscardPileEntry",
     "Player",
-    "WarriorSupplyEntry",
     "Item",
     "CraftableItemEntry",
     "CraftedItemEntry",
@@ -34,4 +34,6 @@ __all__ = [
     "Action",
     "DominanceSupplyEntry",
     "ActiveDominanceEntry",
+    "GameLog",
+    "LogType",
 ]

@@ -1,12 +1,13 @@
 import {
   Modal,
-  Button,
   ScrollArea,
   Text,
   Group,
   Stack,
   Paper,
   Box,
+  ActionIcon,
+  Tooltip,
 } from "@mantine/core";
 import useDiscardPileQuery from "../../hooks/useDiscardPileQuery";
 import { IconTrash } from "@tabler/icons-react";
@@ -27,15 +28,18 @@ const DiscardPile: React.FC<DiscardPileProps> = ({
 
   return (
     <>
-      <Button
-        variant="light"
-        leftSection={<IconTrash size={16} />}
-        onClick={onToggle}
-        size="sm"
-        color="gray"
-      >
-        Discard Pile
-      </Button>
+      <Tooltip label="Discard Pile" withArrow position="bottom" zIndex={2000}>
+        <ActionIcon
+          variant="light"
+          onClick={onToggle}
+          w={64}
+          h={48}
+          color="gray"
+          radius="md"
+        >
+          <IconTrash size={28} />
+        </ActionIcon>
+      </Tooltip>
 
       <Modal
         opened={isOpen}

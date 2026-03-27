@@ -41,5 +41,18 @@ def use_propaganda_bureau(player: Player, card_to_spend : CardsEP, clearing : Cl
     # use up propaganda bureau card
     crafted_card.used = CraftedCardEntry.UsedChoice.USED
     crafted_card.save()
+
+    from game.serializers.logs.general import get_active_phase_log
+    from game.serializers.logs.crafted_cards import log_crafted_card_action
+    log_crafted_card_action(
+        player.game,
+        player,
+        crafted_card.card,
+        "use",
+        details={
+            "clearing": clearing.clearing_number
+        },
+        parent=get_active_phase_log(player.game)
+    )
     
     

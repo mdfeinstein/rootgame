@@ -7,8 +7,10 @@ from game.models.events.setup import GameSimpleSetup
 from game.tests.my_factories import GameSetupFactory
 from game.transactions.cats_setup import pick_corner, place_initial_building, confirm_completed_setup, start_simple_cats_setup
 from game.queries.general import determine_clearing_rule
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 
-class CatSetupBaseTestCase(TestCase):
+class CatSetupBaseTestCase(TestCase, LoggingTestMixin):
     def setUp(self):
         # Create a game with Cats and Birds.
         # GameSetupFactory starts the game, which should trigger CATS_SETUP status.
@@ -36,6 +38,7 @@ class CatPickCornerTests(CatSetupBaseTestCase):
         
         # Check Keep placement
         self.assertTrue(CatKeep.objects.filter(player=self.player, clearing=c1).exists())
+        self.assertLogExists(LogType.CATS_SETUP_PICK_CORNER, player=self.player, clearing_number=c1.clearing_number)
         
         # Check Garrison placement: 1 warrior in every clearing except the opposite corner (3)
         clearings = Clearing.objects.filter(game=self.game)
@@ -77,6 +80,7 @@ class CatPlaceBuildingTests(CatSetupBaseTestCase):
         slot1 = BuildingSlot.objects.filter(clearing=self.c1, building=None).first()
         place_initial_building(self.player, self.c1, CatBuildingTypes.WORKSHOP)
         self.assertTrue(Workshop.objects.filter(building_slot=slot1).exists())
+        self.assertLogExists(LogType.CATS_SETUP_PLACE_BUILDING, player=self.player, building_type=CatBuildingTypes.WORKSHOP.value, clearing_number=self.c1.clearing_number)
         
         # Place Sawmill in C5 (Adjacent)
         c5 = Clearing.objects.get(game=self.game, clearing_number=5)
@@ -138,10 +142,6 @@ class CatConfirmSetupTests(CatSetupBaseTestCase):
         
         self.game_setup.refresh_from_db()
         self.assertEqual(self.game_setup.status, GameSimpleSetup.GameSetupStatus.BIRDS_SETUP)
-        
-        # Check that first turn was created
-        from game.models import CatTurn
-        self.assertTrue(CatTurn.objects.filter(player=self.player).exists())
 
     def test_confirm_completed_setup_wrong_step_fails(self):
         # Revert one building to break requirements

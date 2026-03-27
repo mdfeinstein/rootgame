@@ -24,7 +24,7 @@ export const FACTION_CONFIG = {
   },
   crows: {
     value: "Crows",
-    color: "indigo.6",
+    color: "#4B0082",
     abbreviation: "CR",
     boardComponent: CrowsPlayerBoard,
   },

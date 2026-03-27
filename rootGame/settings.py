@@ -184,3 +184,6 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Custom Test Runner for CLI flags
+TEST_RUNNER = "game.tests.runner.RootTestRunner"

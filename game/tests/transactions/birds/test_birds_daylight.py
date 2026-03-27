@@ -11,7 +11,6 @@ from game.models import (
     BirdDaylight,
     BirdRoost,
     Suit,
-    WarriorSupplyEntry,
     Warrior,
 )
 from game.models.birds.player import BirdLeader, DecreeEntry, Vizier
@@ -32,11 +31,12 @@ from game.transactions.birds import (
 )
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.queries.birds.turn import get_phase
-from django.db import transaction
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 
 logger = logging.getLogger(__name__)
 
-class BirdDaylightBaseTestCase(TestCase):
+class BirdDaylightBaseTestCase(TestCase, LoggingTestMixin):
     def setUp(self):
         # Create a game with Cats and Birds
         self.game = GameSetupWithFactionsFactory()
@@ -101,6 +101,8 @@ class BirdDaylightCraftingTests(BirdDaylightBaseTestCase):
         
         # Craft it
         bird_craft_card(self.player, CardsEP.PROTECTION_RACKET, [self.roost3, self.roost4])
+        
+        self.assertLogExists(LogType.CRAFT, player=self.player)
         
         # Should only score 1 VP
         self.player.refresh_from_db()
@@ -174,6 +176,8 @@ class BirdDecreeRecruitTests(BirdDaylightBaseTestCase):
         
         bird_recruit_action(self.player, self.roost3, self.decree_rabbit)
         
+        self.assertLogExists(LogType.BIRDS_DECREE_ACTION, player=self.player, action="recruit", clearing_number=self.roost3.building_slot.clearing.clearing_number)
+        
         # 1 warrior placed in clearing 3
         self.assertEqual(Warrior.objects.filter(player=self.player, clearing=self.roost3.building_slot.clearing).count(), 7) # 6 initial + 1
         self.decree_rabbit.refresh_from_db()
@@ -206,9 +210,10 @@ class BirdDecreeRecruitTests(BirdDaylightBaseTestCase):
         bird_recruit_action(self.player, self.roost3, self.decree_rabbit)
         
         # 1 warrior placed, then turmoil
+        self.assertLogExists(LogType.BIRDS_TURMOIL, player=self.player, action="recruit")
         self.assertEqual(Warrior.objects.filter(player=self.player, clearing=self.roost3.building_slot.clearing).count(), 7)
         self.daylight.refresh_from_db()
-        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.COMPLETED)
+        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.RECRUITING)
         
         # Verify turmoil event created
         from game.models.events.event import Event, EventType
@@ -223,7 +228,9 @@ class BirdDecreeRecruitTests(BirdDaylightBaseTestCase):
         recruit_turmoil_check(self.player)
         
         self.daylight.refresh_from_db()
-        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.COMPLETED)
+        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.RECRUITING)
+        from game.models.events.event import Event, EventType
+        self.assertTrue(Event.objects.filter(game=self.game, type=EventType.TURMOIL).exists())
 
     def test_recruit_turmoil_no_matching_roost(self):
         # No mouse clearings with roosts, but Mouse decree card
@@ -238,7 +245,9 @@ class BirdDecreeRecruitTests(BirdDaylightBaseTestCase):
         recruit_turmoil_check(self.player)
         
         self.daylight.refresh_from_db()
-        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.COMPLETED)
+        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.RECRUITING)
+        from game.models.events.event import Event, EventType
+        self.assertTrue(Event.objects.filter(game=self.game, type=EventType.TURMOIL).exists())
 
 class BirdDecreeMoveTests(BirdDaylightBaseTestCase):
     def setUp(self):
@@ -262,6 +271,8 @@ class BirdDecreeMoveTests(BirdDaylightBaseTestCase):
     def test_move_success(self):
         bird_move_action(self.player, self.clearing3, self.target_clearing, 3, self.decree_rabbit)
         
+        self.assertLogExists(LogType.BIRDS_DECREE_ACTION, player=self.player, action="move", clearing_number=self.clearing3.clearing_number)
+        
         # 3 warriors moved
         self.assertEqual(Warrior.objects.filter(player=self.player, clearing=self.clearing3).count(), 3)
         self.assertEqual(Warrior.objects.filter(player=self.player, clearing=self.target_clearing).count(), 3)
@@ -279,7 +290,9 @@ class BirdDecreeMoveTests(BirdDaylightBaseTestCase):
         move_turmoil_check(self.player)
         
         self.daylight.refresh_from_db()
-        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.COMPLETED)
+        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.MOVING)
+        from game.models.events.event import Event, EventType
+        self.assertTrue(Event.objects.filter(game=self.game, type=EventType.TURMOIL).exists())
 
     def test_move_turmoil_stuck_warriors(self):
         # Delete Move vizier
@@ -293,7 +306,9 @@ class BirdDecreeMoveTests(BirdDaylightBaseTestCase):
         move_turmoil_check(self.player)
         
         self.daylight.refresh_from_db()
-        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.COMPLETED)
+        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.MOVING)
+        from game.models.events.event import Event, EventType
+        self.assertTrue(Event.objects.filter(game=self.game, type=EventType.TURMOIL).exists())
 
 class BirdDecreeBattleTests(BirdDaylightBaseTestCase):
     def setUp(self):
@@ -316,6 +331,8 @@ class BirdDecreeBattleTests(BirdDaylightBaseTestCase):
 
     def test_battle_success(self):
         bird_battle_action(self.player, self.cats_player, self.clearing3, self.decree_rabbit)
+        self.assertLogExists(LogType.BIRDS_DECREE_ACTION, player=self.player, action="battle", clearing_number=self.clearing3.clearing_number)
+        self.assertLogExists(LogType.BATTLE, player=self.player)
         self.decree_rabbit.refresh_from_db()
         self.assertTrue(self.decree_rabbit.fulfilled)
 
@@ -331,7 +348,9 @@ class BirdDecreeBattleTests(BirdDaylightBaseTestCase):
         battle_turmoil_check(self.player)
         
         self.daylight.refresh_from_db()
-        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.COMPLETED)
+        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.BATTLING)
+        from game.models.events.event import Event, EventType
+        self.assertTrue(Event.objects.filter(game=self.game, type=EventType.TURMOIL).exists())
 
 class BirdDecreeBuildTests(BirdDaylightBaseTestCase):
     def setUp(self):
@@ -361,6 +380,7 @@ class BirdDecreeBuildTests(BirdDaylightBaseTestCase):
 
     def test_build_success(self):
         bird_build_action(self.player, self.clearing10, self.decree_rabbit)
+        self.assertLogExists(LogType.BIRDS_DECREE_ACTION, player=self.player, action="build", clearing_number=self.clearing10.clearing_number)
         # Roost placed
         from game.models.birds.buildings import BirdRoost
         self.assertTrue(BirdRoost.objects.filter(player=self.player, building_slot__clearing=self.clearing10).exists())
@@ -376,7 +396,9 @@ class BirdDecreeBuildTests(BirdDaylightBaseTestCase):
         build_turmoil_check(self.player)
         
         self.daylight.refresh_from_db()
-        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.COMPLETED)
+        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.BUILDING)
+        from game.models.events.event import Event, EventType
+        self.assertTrue(Event.objects.filter(game=self.game, type=EventType.TURMOIL).exists())
 
     def test_build_turmoil_no_roosts_in_supply(self):
         # Place all remaining roosts on the board
@@ -392,4 +414,6 @@ class BirdDecreeBuildTests(BirdDaylightBaseTestCase):
         build_turmoil_check(self.player)
         
         self.daylight.refresh_from_db()
-        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.COMPLETED)
+        self.assertEqual(self.daylight.step, BirdDaylight.BirdDaylightSteps.BUILDING)
+        from game.models.events.event import Event, EventType
+        self.assertTrue(Event.objects.filter(game=self.game, type=EventType.TURMOIL).exists())

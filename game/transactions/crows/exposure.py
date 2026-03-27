@@ -60,3 +60,16 @@ def guess_exposure(
             clearing=clearing,
             turn_number=turn_number,
         )
+
+    # Common log for both outcomes
+    from game.serializers.logs.general import get_current_phase_log
+    from game.serializers.logs.crows import log_crows_exposure
+    log_crows_exposure(
+        game, 
+        player, 
+        clearing.clearing_number, 
+        str(plot_token_type), 
+        hand_entry.card, 
+        str(plot_token.plot_type) == str(plot_token_type),
+        parent=get_current_phase_log(game, player)
+    )

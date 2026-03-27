@@ -1,7 +1,7 @@
 from game.transactions.setup_util import next_player_setup
 from django.db import transaction
 
-from game.models import DeckEntry, Player, Suit, Warrior, WarriorSupplyEntry
+from game.models import DeckEntry, Player, Suit, Warrior
 from game.models.wa.buildings import WABase
 from game.models.wa.player import SupporterStackEntry
 from game.models.wa.tokens import WASympathy
@@ -15,11 +15,7 @@ def create_wa_warrior_supply(player: Player):
     warriors = [Warrior(player=player) for _ in range(10)]
     for warrior in warriors:
         warrior.save()
-    # assign warriors to supply
-    supply_entries = [
-        WarriorSupplyEntry(player=player, warrior=warrior) for warrior in warriors
-    ]
-    WarriorSupplyEntry.objects.bulk_create(supply_entries)
+    pass
 
 
 @transaction.atomic
@@ -66,9 +62,3 @@ def wa_setup(player: Player):
     create_sympathy_tokens(player)
     create_wa_buildings(player)
     draw_supporters(player)
-    create_wa_turn(player)
-
-
-def create_wa_turn(player: Player):
-    # create turn
-    turn = WATurn.create_turn(player)

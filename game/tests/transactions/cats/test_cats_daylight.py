@@ -3,12 +3,15 @@ from game.models.game_models import Faction, Clearing, Warrior, BuildingSlot, Ha
 from game.queries.general import determine_clearing_rule
 from game.models.cats.buildings import Recruiter, Sawmill, Workshop, CatBuildingTypes
 from game.models.cats.tokens import CatWood
-from game.models.cats.turn import CatDaylight, CatBirdsong
+from game.models.cats.turn import CatDaylight, CatBirdsong, CatTurn
 from game.tests.my_factories import GameSetupWithFactionsFactory, CardFactory, WarriorFactory, CatWoodFactory
 from game.transactions.cats import cat_recruit, cat_build, overwork, cat_recruit_all, cat_march, birds_for_hire, cat_craft_card, end_action_step
+from game.transactions.general import create_turn
 from game.game_data.cards.exiles_and_partisans import CardsEP
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 
-class CatBaseTestCase(TestCase):
+class CatBaseTestCase(TestCase, LoggingTestMixin):
     def setUp(self):
         self.game = GameSetupWithFactionsFactory(factions=[Faction.CATS, Faction.BIRDS])
         self.player = self.game.players.get(faction=Faction.CATS)
@@ -18,7 +21,9 @@ class CatBaseTestCase(TestCase):
         self.c5 = Clearing.objects.get(game=self.game, clearing_number=5) # Rabbit (Workshop)
         self.c9 = Clearing.objects.get(game=self.game, clearing_number=9) # Mouse (Recruiter)
 
-        # Standardise state for Daylight Actions
+        # Create turn using the transaction if it doesn't already exist
+        if not CatTurn.objects.filter(player=self.player, turn_number=0).exists():
+            create_turn(self.player)
         self.turn = CatDaylight.objects.get(turn__player=self.player).turn
         birdsong = self.turn.birdsong
         birdsong.step = birdsong.CatBirdsongSteps.COMPLETED
@@ -44,6 +49,9 @@ class CatRecruitTests(CatBaseTestCase):
         
         self.assertEqual(Warrior.objects.filter(player=self.player, clearing=self.c9).count(), initial_w9 + 1)
         self.assertEqual(Warrior.objects.filter(player=self.player, clearing=self.c5).count(), initial_w5 + 1)
+        
+        self.assertLogExists(LogType.CATS_RECRUIT, player=self.player, total_warriors=2)
+
         self.assertTrue(self.daylight.refresh_from_db() or self.daylight.recruit_used)
 
     def test_recruit_no_actions_fails(self):
@@ -79,6 +87,8 @@ class CatRecruitTests(CatBaseTestCase):
         target_recruiter = Recruiter.objects.filter(player=self.player, building_slot__isnull=False)
         cat_recruit(self.player, target_recruiter)
         
+        self.assertLogExists(LogType.CATS_RECRUIT, player=self.player, total_warriors=target_recruiter.count())
+
         self.daylight.refresh_from_db()
         self.assertTrue(self.daylight.recruit_used)
         self.assertEqual(self.daylight.actions_left, 2)
@@ -93,6 +103,9 @@ class CatBuildTests(CatBaseTestCase):
         
         self.assertTrue(Workshop.objects.filter(building_slot=slot).exists())
         self.assertIsNone(wood.refresh_from_db() or wood.clearing)
+        
+        self.assertLogExists(LogType.CATS_BUILD, player=self.player, building_type=CatBuildingTypes.WORKSHOP.value, clearing_number=self.c9.clearing_number)
+
         self.daylight.refresh_from_db()
         self.assertEqual(self.daylight.actions_left, 2)
 
@@ -156,6 +169,8 @@ class CatBuildTests(CatBaseTestCase):
 class CatOverworkTests(CatBaseTestCase):
     def test_overwork_success(self):
         card_enum = CardsEP.AMBUSH_RED
+        # Clear hand to ensure only the test card exists
+        HandEntry.objects.filter(player=self.player).delete()
         card_obj = CardFactory(game=self.game, card_type=card_enum.name)
         HandEntry.objects.create(player=self.player, card=card_obj)
         
@@ -164,6 +179,9 @@ class CatOverworkTests(CatBaseTestCase):
         
         self.assertEqual(CatWood.objects.filter(player=self.player, clearing=self.c1).count(), initial_wood + 1)
         self.assertFalse(HandEntry.objects.filter(player=self.player, card=card_obj).exists())
+        
+        self.assertLogExists(LogType.CATS_OVERWORK, player=self.player, clearing_number=self.c1.clearing_number)
+
         self.daylight.refresh_from_db()
         self.assertEqual(self.daylight.actions_left, 2)
 
@@ -187,6 +205,9 @@ class CatOverworkTests(CatBaseTestCase):
             overwork(self.player, self.c1, card_enum)
 
     def test_overwork_bird_suit_succeeds(self):
+        # Clear hand to avoid randomly drawn duplicate causing assertion to test the wrong card
+        HandEntry.objects.filter(player=self.player).delete()
+        
         # Bird card should work for ANY clearing with a sawmill.
         card_enum = CardsEP.AMBUSH_WILD
         card_obj = CardFactory(game=self.game, card_type=card_enum.name)
@@ -202,6 +223,10 @@ class CatMovementTests(CatBaseTestCase):
     def test_march_uses_one_action_for_two_moves(self):
         # 1st move (C1 to C5)
         cat_march(self.player, self.c1, self.c5, 1)
+        
+        self.assertLogExists(LogType.CATS_MARCH, player=self.player)
+        self.assertLogExists(LogType.MOVE, player=self.player, origin_clearing_number=self.c1.clearing_number, dest_clearing_number=self.c5.clearing_number)
+
         self.daylight.refresh_from_db()
         self.assertEqual(self.daylight.actions_left, 2)
         self.assertTrue(self.daylight.midmarch)
@@ -228,6 +253,8 @@ class CatActionTests(CatBaseTestCase):
         initial_actions = self.daylight.actions_left
         birds_for_hire(self.player, card_enum)
         
+        self.assertLogExists(LogType.CATS_BIRDS_FOR_HIRE, player=self.player)
+
         self.daylight.refresh_from_db()
         self.assertEqual(self.daylight.actions_left, initial_actions + 1)
         self.assertFalse(HandEntry.objects.filter(player=self.player, card=card_obj).exists())
@@ -242,6 +269,7 @@ class CatActionTests(CatBaseTestCase):
 
     def test_end_actions_step(self):
         end_action_step(self.player)
+        
         self.daylight.refresh_from_db()
         self.assertEqual(self.daylight.step, CatDaylight.CatDaylightSteps.COMPLETED)
 
@@ -264,6 +292,8 @@ class CatCraftingTests(CatBaseTestCase):
         # Craft it (Rabbit Partisans requires 1 Rabbit)
         cat_craft_card(self.player, card_enum, [workshop1])
         
+        self.assertLogExists(LogType.CRAFT, player=self.player)
+
         # Verify card is crafted
         from game.models.game_models import CraftedCardEntry
         self.assertTrue(CraftedCardEntry.objects.filter(player=self.player, card__card_type=card_enum.name).exists())

@@ -25,7 +25,7 @@ class CrowPlotTokenSerializer(serializers.ModelSerializer):
         is_private = self.context.get("is_private", False)
         if instance.is_facedown and not is_private:
             ret["plot_type"] = None
-            
+
         return ret
 
 
@@ -59,10 +59,11 @@ class CrowTurnSerializer(serializers.ModelSerializer):
 
 from game.models.crows.exposure import ExposureGuessedPlot, ExposureRevealedCards
 
+
 class ExposureGuessedPlotSerializer(serializers.ModelSerializer):
     clearing_number = serializers.IntegerField(source="clearing.clearing_number")
     faction = serializers.CharField(source="player.faction")
-    
+
     class Meta:
         model = ExposureGuessedPlot
         fields = ["clearing_number", "guessed_plot_type", "faction", "turn_number"]
@@ -73,7 +74,10 @@ class CrowsTokenSerializer(serializers.Serializer):
         # instance is a dict of {type_name: [plots]}
         ret = {}
         for type_name, plots in instance.items():
-            ret[type_name] = [{"token": CrowPlotTokenSerializer(p, context=self.context).data} for p in plots]
+            ret[type_name] = [
+                {"token": CrowPlotTokenSerializer(p, context=self.context).data}
+                for p in plots
+            ]
         return ret
 
 
@@ -89,7 +93,7 @@ class CrowsSerializer(serializers.Serializer):
     @classmethod
     def from_player(cls, player: Player):
         tokens_plots = PlotToken.objects.filter(player=player, clearing__isnull=False)
-        
+
         token_groups = {}
         for p in tokens_plots:
             label = "?" if p.is_facedown else p.plot_type.capitalize()
@@ -98,7 +102,9 @@ class CrowsSerializer(serializers.Serializer):
             token_groups[label].append(p)
 
         warriors = Warrior.objects.filter(player=player)
-        reserve_plots_count = PlotToken.objects.filter(player=player, clearing__isnull=True).count()
+        reserve_plots_count = PlotToken.objects.filter(
+            player=player, clearing__isnull=True
+        ).count()
         guessed_plots = ExposureGuessedPlot.objects.filter(player__game=player.game)
 
         return cls(
@@ -109,7 +115,7 @@ class CrowsSerializer(serializers.Serializer):
                 "reserve_plots_count": reserve_plots_count,
                 "exposure_guessed_plots": guessed_plots,
             },
-            context={"is_private": False}
+            context={"is_private": False},
         )
 
 
@@ -119,10 +125,13 @@ class CrowsPrivateSerializer(serializers.Serializer):
     exposure_revealed_cards = CardSerializer(many=True)
 
     def get_reserve_plots(self, obj):
-        serializer = CrowPlotTokenSerializer(obj["reserve_plots"], many=True, context={"is_private": True})
+        serializer = CrowPlotTokenSerializer(
+            obj["reserve_plots"], many=True, context={"is_private": True}
+        )
         return serializer.data
 
     def get_facedown_plots(self, obj):
-        serializer = CrowPlotTokenSerializer(obj["facedown_plots"], many=True, context={"is_private": True})
+        serializer = CrowPlotTokenSerializer(
+            obj["facedown_plots"], many=True, context={"is_private": True}
+        )
         return serializer.data
-

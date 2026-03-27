@@ -1578,6 +1578,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/game-log/{game_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["game_log_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/game/{game_id}/session/": {
         parameters: {
             query?: never;
@@ -2288,6 +2304,16 @@ export interface components {
             accumulated_payload?: unknown;
             options?: components["schemas"]["Option"][];
         };
+        GameLog: {
+            readonly id: number;
+            readonly parent_id: number | null;
+            readonly player_faction: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+            log_type: components["schemas"]["LogTypeEnum"];
+            readonly details: unknown;
+            readonly children: string;
+        };
         GameSession: {
             readonly id: number;
             owner_username: string;
@@ -2357,6 +2383,29 @@ export interface components {
          * @enum {string}
          */
         LeaderEnum: "0" | "1" | "2" | "3";
+        /**
+         * @description * `TURN` - Turn
+         *     * `PHASE` - Phase
+         *     * `MOVE` - Move
+         *     * `BATTLE` - Battle
+         *     * `CRAFT` - Craft
+         *     * `DRAW` - Draw
+         *     * `DISCARD` - Discard
+         *     * `CATS_BIRDS_FOR_HIRE` - Cats Birds for Hire
+         *     * `CATS_MARCH` - Cats March
+         *     * `CATS_WOOD_PLACEMENT` - Cats Wood Placement
+         *     * `CATS_BUILD` - Cats Build
+         *     * `CATS_OVERWORK` - Cats Overwork
+         *     * `CATS_RECRUIT` - Cats Recruit
+         *     * `BIRDS_ADD_TO_DECREE` - Birds Add To Decree
+         *     * `BIRDS_EMERGENCY_ROOST` - Birds Emergency Roost
+         *     * `BIRDS_DECREE_ACTION` - Birds Decree Action
+         *     * `BIRDS_SCORE_ROOSTS` - Birds Score Roosts
+         *     * `BIRDS_TURMOIL` - Birds Turmoil
+         *     * `BIRDS_NEW_LEADER` - Birds New Leader
+         * @enum {string}
+         */
+        LogTypeEnum: "TURN" | "PHASE" | "MOVE" | "BATTLE" | "CRAFT" | "DRAW" | "DISCARD" | "CATS_BIRDS_FOR_HIRE" | "CATS_MARCH" | "CATS_WOOD_PLACEMENT" | "CATS_BUILD" | "CATS_OVERWORK" | "CATS_RECRUIT" | "BIRDS_ADD_TO_DECREE" | "BIRDS_EMERGENCY_ROOST" | "BIRDS_DECREE_ACTION" | "BIRDS_SCORE_ROOSTS" | "BIRDS_TURMOIL" | "BIRDS_NEW_LEADER";
         NestedToken: {
             token: components["schemas"]["Token"];
         };
@@ -6740,6 +6789,27 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DominanceSupplyEntry"][];
+                };
+            };
+        };
+    };
+    game_log_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameLog"][];
                 };
             };
         };

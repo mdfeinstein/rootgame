@@ -5,9 +5,11 @@ from game.models.birds.player import BirdLeader, DecreeEntry, Vizier
 from game.models.birds.turn import BirdTurn, BirdBirdsong
 from game.tests.my_factories import GameSetupFactory, CardFactory, HandEntryFactory
 from game.transactions.birds import emergency_draw, add_card_to_decree, end_add_to_decree_step, emergency_roost, try_auto_emergency_roost
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 from game.game_data.cards.exiles_and_partisans import CardsEP
 
-class BirdBirdsongBaseTestCase(TestCase):
+class BirdBirdsongBaseTestCase(TestCase, LoggingTestMixin):
     def setUp(self):
         self.game = GameSetupFactory(factions=[Faction.CATS, Faction.BIRDS])
         self.player = self.game.players.get(faction=Faction.BIRDS)
@@ -31,6 +33,7 @@ class BirdEmergencyDrawTests(BirdBirdsongBaseTestCase):
         emergency_draw(self.player)
         
         self.assertEqual(HandEntry.objects.filter(player=self.player).count(), 1)
+        self.assertLogExists(LogType.DRAW, player=self.player, count=1)
         self.birdsong.refresh_from_db()
         self.assertEqual(self.birdsong.step, BirdBirdsong.BirdBirdsongSteps.ADD_TO_DECREE)
 
@@ -65,6 +68,7 @@ class BirdDecreeTests(BirdBirdsongBaseTestCase):
         add_card_to_decree(self.player, CardsEP.AMBUSH_RED, DecreeEntry.Column.RECRUIT)
         
         self.assertTrue(DecreeEntry.objects.filter(player=self.player, column=DecreeEntry.Column.RECRUIT, card=self.card1).exists())
+        self.assertLogExists(LogType.BIRDS_ADD_TO_DECREE, player=self.player)
         self.assertFalse(HandEntry.objects.filter(pk=self.h1.pk).exists())
         self.birdsong.refresh_from_db()
         self.assertEqual(self.birdsong.cards_added_to_decree, 1)
@@ -127,6 +131,7 @@ class BirdEmergencyRoostTests(BirdBirdsongBaseTestCase):
         emergency_roost(self.player, c5)
         
         self.assertTrue(BirdRoost.objects.filter(player=self.player, building_slot__clearing=c5).exists())
+        self.assertLogExists(LogType.BIRDS_EMERGENCY_ROOST, player=self.player, clearing_number=c5.clearing_number)
         self.assertEqual(Warrior.objects.filter(player=self.player, clearing=c5).count(), 3)
         self.birdsong.refresh_from_db()
         self.assertEqual(self.birdsong.step, BirdBirdsong.BirdBirdsongSteps.COMPLETED)

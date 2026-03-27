@@ -16,13 +16,13 @@ def can_use_card(player: Player, card_entry: CraftedCardEntry) -> bool:
         return False
 
     card = card_entry.card.enum  # CardsEP enum
-    
+
     # helper for phase checking
     try:
         phase = get_current_phase(player)
     except ValueError:
         return False
-    
+
     if phase is None:
         return False
 
@@ -31,7 +31,7 @@ def can_use_card(player: Player, card_entry: CraftedCardEntry) -> bool:
         case CardsEP.SABOTEURS:
             # "At start of Birdsong"
             if player.faction == Faction.BIRDS:
-                 return is_start_of_phase(player, BirdBirdsong)
+                return is_start_of_phase(player, BirdBirdsong)
             elif player.faction == Faction.WOODLAND_ALLIANCE:
                 return is_start_of_phase(player, WABirdsong)
             elif player.faction == Faction.CATS:
@@ -44,17 +44,17 @@ def can_use_card(player: Player, card_entry: CraftedCardEntry) -> bool:
             return is_phase(player, "Birdsong")
 
         case CardsEP.INFORMANTS:
-             # "In Evening, if you would draw cards"
-             if not is_phase(player, "Evening"):
-                 return False
-             
-             if player.faction == Faction.BIRDS:
+            # "In Evening, if you would draw cards"
+            if not is_phase(player, "Evening"):
+                return False
+
+            if player.faction == Faction.BIRDS:
                 return phase.step == BirdEvening.BirdEveningSteps.DRAWING
-             elif player.faction == Faction.WOODLAND_ALLIANCE:
+            elif player.faction == Faction.WOODLAND_ALLIANCE:
                 return phase.step == WAEvening.WAEveningSteps.DRAWING
-             elif player.faction == Faction.CATS:
+            elif player.faction == Faction.CATS:
                 return phase.step == CatEvening.CatEveningSteps.DRAWING
-             elif player.faction == Faction.CROWS:
+            elif player.faction == Faction.CROWS:
                 return phase.step == CrowEvening.CrowEveningSteps.DRAWING
 
         case CardsEP.CHARM_OFFENSIVE:
@@ -68,18 +68,27 @@ def can_use_card(player: Player, card_entry: CraftedCardEntry) -> bool:
             elif player.faction == Faction.CROWS:
                 return is_start_of_phase(player, CrowEvening)
 
-        case CardsEP.LEAGUE_OF_ADVENTURERS | CardsEP.PROPAGANDA_BUREAU:
+        case CardsEP.LEAGUE_OF_ADVENTURERS:
+            # "Once in Daylight" AND has available items
+            if not is_phase(player, "Daylight"):
+                return False
+            from game.models.game_models import CraftedItemEntry
+            return CraftedItemEntry.objects.filter(player=player, exhausted=False).exists()
+
+        case CardsEP.PROPAGANDA_BUREAU:
             # "Once in Daylight"
             return is_phase(player, "Daylight")
 
     # If no match or conditions not met
     return False
 
+
 def has_active_effect(card_entry: CraftedCardEntry) -> bool:
     """
     Returns True if the card has an active effect.
     """
-    return not card_entry.used == CraftedCardEntry.UsedChoice.NOT_APPLICABLE 
+    return not card_entry.used == CraftedCardEntry.UsedChoice.NOT_APPLICABLE
+
 
 def is_used(card_entry: CraftedCardEntry) -> bool:
     """

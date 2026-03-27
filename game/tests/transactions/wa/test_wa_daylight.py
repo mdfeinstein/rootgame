@@ -17,6 +17,8 @@ from game.models.wa.buildings import WABase
 from game.models.wa.player import SupporterStackEntry, OfficerEntry
 from game.models.wa.tokens import WASympathy
 from game.models.wa.turn import WATurn, WADaylight, WABirdsong
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 from game.tests.my_factories import (
     GameSetupWithFactionsFactory,
     CardFactory,
@@ -30,10 +32,11 @@ from game.transactions.wa import (
     end_daylight_actions,
 )
 from game.game_data.cards.exiles_and_partisans import CardsEP
+from game.transactions.general import create_turn
 
 logger = logging.getLogger(__name__)
 
-class WADaylightBaseTestCase(TestCase):
+class WADaylightBaseTestCase(TestCase, LoggingTestMixin):
     def setUp(self):
         # Create a game with Cats and WA
         self.game = GameSetupWithFactionsFactory(factions=[Faction.CATS, Faction.WOODLAND_ALLIANCE])
@@ -46,7 +49,9 @@ class WADaylightBaseTestCase(TestCase):
         self.game.current_turn = 1
         self.game.save()
         
-        # Get turn and phases
+        # Create turn using the transaction if it doesn't already exist
+        if not WATurn.objects.filter(player=self.player, turn_number=0).exists():
+            create_turn(self.player)
         self.turn = WATurn.objects.get(player=self.player, turn_number=0)
         
         # Complete Birdsong to get to Daylight
@@ -58,8 +63,9 @@ class WADaylightBaseTestCase(TestCase):
         self.daylight.step = WADaylight.WADaylightSteps.ACTIONS
         self.daylight.save()
         
-        # Clear default supporters added by factory setup
+        # Clear default supporters and hand added by factory setup
         SupporterStackEntry.objects.filter(player=self.player).delete()
+        HandEntry.objects.filter(player=self.player).delete()
         
         # Clearings by suit for easy access
         self.fox_clearing = Clearing.objects.filter(game=self.game, suit=Suit.RED).first()
@@ -119,6 +125,9 @@ class WADaylightTests(WADaylightBaseTestCase):
         # Check sympathy marked as crafted_with
         sympathy.refresh_from_db()
         self.assertTrue(sympathy.crafted_with)
+        
+        # Verify Log
+        self.assertLogExists(LogType.CRAFT, player=self.player)
 
     def test_mobilize_success(self):
         card_enum = CardsEP.AMBUSH_RED
@@ -130,6 +139,9 @@ class WADaylightTests(WADaylightBaseTestCase):
         
         self.assertEqual(SupporterStackEntry.objects.filter(player=self.player).count(), initial_supporters + 1)
         self.assertFalse(HandEntry.objects.filter(player=self.player, card__card_type=card_enum.name).exists())
+        
+        # Verify Log
+        self.assertLogExists(LogType.WA_MOBILIZE, player=self.player)
 
     def test_mobilize_fail_card_not_in_hand(self):
         card_enum = CardsEP.AMBUSH_RED
@@ -154,6 +166,9 @@ class WADaylightTests(WADaylightBaseTestCase):
         # Check card discarded
         self.assertFalse(HandEntry.objects.filter(player=self.player, card__card_type=card_enum.name).exists())
         self.assertTrue(DiscardPileEntry.objects.filter(game=self.game, card__card_type=card_enum.name).exists())
+        
+        # Verify Log
+        self.assertLogExists(LogType.WA_TRAIN, player=self.player)
 
     def test_training_success_bird_wild(self):
         # Training with a Bird card should work even if only a Mouse base is on board

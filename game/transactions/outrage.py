@@ -1,4 +1,3 @@
-
 from game.models.events.event import Event, EventType
 from game.models.events.wa import OutrageEvent
 from game.models.game_models import Clearing, HandEntry, Player, Suit
@@ -9,7 +8,10 @@ from game.serializers.general_serializers import PlayerPrivateSerializer
 
 @transaction.atomic
 def create_outrage_event(
-    clearing: Clearing, removing_player: Player, removed_player: Player
+    clearing: Clearing,
+    removing_player: Player,
+    removed_player: Player,
+    trigger_type: str = "",
 ):
     """creates an outrage event when a player removes a token"""
     from game.transactions.wa import draw_card_to_supporters
@@ -37,8 +39,24 @@ def create_outrage_event(
         serializer = PlayerPrivateSerializer(removing_player)
         outrage_event.hand = serializer.data
         draw_card_to_supporters(removed_player)
-        outrage_event.card_given = True
+        outrage_event.card_given = False
         outrage_event.hand_shown = True
         outrage_event.save()
         event.is_resolved = True
         event.save()
+
+    # Log the Outrage trigger
+    from game.serializers.logs.wa import log_wa_outrage
+    from game.serializers.logs.general import get_active_phase_log
+
+    log_wa_outrage(
+        clearing.game,
+        removed_player,
+        removing_player,
+        clearing.clearing_number,
+        outrage_event.card_given,
+        outrage_event.hand_shown,
+        trigger_type=trigger_type,
+        outrage_event=outrage_event,
+        parent=get_active_phase_log(clearing.game),
+    )

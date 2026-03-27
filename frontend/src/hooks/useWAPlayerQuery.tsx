@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { gameKeys } from "../api/queryKeys";
 import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
 import { PlayerContext } from "../contexts/PlayerProvider";
+import { UserContext } from "../contexts/UserProvider";
 import { useContext } from "react";
 
 const apiUrl = import.meta.env.VITE_API_URL || "/api";
@@ -15,6 +16,7 @@ const useWAPlayerQuery = (gameId: number, enabled: boolean = true) => {
     getFactionPlayerInfoQueryOptions(gameId, "woodland-alliance", enabled),
   );
   const { faction } = useContext(PlayerContext);
+  const { username } = useContext(UserContext);
   const isWA = faction === "Woodland Alliance";
 
   const {
@@ -26,6 +28,7 @@ const useWAPlayerQuery = (gameId: number, enabled: boolean = true) => {
     queryKey: gameKeys.factionPrivate(
       gameId,
       "woodland-alliance",
+      username
     ),
     queryFn: async () => {
       const response = await fetch(
@@ -42,7 +45,11 @@ const useWAPlayerQuery = (gameId: number, enabled: boolean = true) => {
       }
       return response.json();
     },
-    enabled: enabled && isWA,
+    enabled:
+      enabled &&
+      isWA &&
+      !!username &&
+      publicInfo?.player.username.toLowerCase() === username?.toLowerCase(),
   });
 
   return {

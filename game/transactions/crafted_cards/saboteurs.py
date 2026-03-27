@@ -1,4 +1,3 @@
-from game.transactions.general import step_effect
 from game.models.events.crafted_cards import SaboteursEvent
 from django.db import transaction
 from game.models.game_models import Player, CraftedCardEntry, DiscardPileEntry, Faction
@@ -27,7 +26,7 @@ def use_saboteurs(player: Player, target_crafted_card: CraftedCardEntry):
     # 4. Check if player owns the target card
     if target_crafted_card.player == player:
          raise ValueError("You cannot discard your own crafted card with Saboteurs.")
-
+    
     # 5. Discard target card
     target_card = target_crafted_card.card
     if target_card.card_type == CardsEP.COFFIN_MAKERS.name:
@@ -42,6 +41,20 @@ def use_saboteurs(player: Player, target_crafted_card: CraftedCardEntry):
     if event:
         event.event.is_resolved = True
         event.event.save()
+
+    from game.serializers.logs.general import get_active_phase_log
+    from game.serializers.logs.crafted_cards import log_crafted_card_action
+    log_crafted_card_action(
+        player.game,
+        player,
+        saboteurs_entry.card,
+        "use",
+        details={
+            "target_faction": target_crafted_card.player.faction,
+            "card_name": target_card.title
+        },
+        parent=get_active_phase_log(player.game)
+    )
 
     # 6. Discard Saboteurs
     saboteurs_card = saboteurs_entry.card
@@ -86,5 +99,5 @@ def saboteurs_skip(player: Player):
         event.event.save()
     
     # continue phase step
+    from game.transactions.general import step_effect
     step_effect(player)
-

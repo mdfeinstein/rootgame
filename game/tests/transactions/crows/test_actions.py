@@ -8,8 +8,10 @@ from game.models.crows.tokens import PlotToken
 from game.models.crows.turn import CrowTurn
 from game.tests.my_factories import GameSetupFactory
 from game.transactions.crows.actions import crows_plot, crows_move, crows_trick
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 
-class CrowActionsTestCase(TestCase):
+class CrowActionsTestCase(LoggingTestMixin, TestCase):
     def setUp(self):
         self.game = GameSetupFactory(factions=[Faction.CATS, Faction.CROWS])
         self.player = self.game.players.get(faction=Faction.CROWS)
@@ -39,6 +41,10 @@ class CrowActionsTestCase(TestCase):
         self.daylight.refresh_from_db()
         self.assertEqual(self.daylight.plots_placed, 1)
         self.assertEqual(Warrior.objects.filter(clearing=self.c2, player=self.player).count(), 1)
+        
+        # Verify Logs
+        self.assertLogExists(LogType.CROWS_PLOT, player=self.player, clearing_number=self.c2.clearing_number, plot_type=plot_type)
+        self.assertLogExists(LogType.PIECE_REMOVAL, player=self.player, count=1, piece_type="Warrior")
         
         #make sure only one warrior in c1, and no catkeep
         CatKeep.objects.filter(clearing=self.c1).delete()
@@ -77,6 +83,9 @@ class CrowActionsTestCase(TestCase):
         
         crows_move(self.player, self.c1, self.c2, 1)
         self.assertEqual(Warrior.objects.filter(clearing=self.c2, player=self.player).count(), 3)
+        
+        # Verify Logs
+        self.assertLogExists(LogType.MOVE, player=self.player, origin_clearing_number=self.c1.clearing_number, dest_clearing_number=self.c2.clearing_number, warriors_moved=1)
 
     def test_crows_trick_both_facedown_success(self):
         p1 = PlotToken.objects.filter(player=self.player, plot_type=PlotToken.PlotType.BOMB).first()
@@ -90,6 +99,9 @@ class CrowActionsTestCase(TestCase):
         crows_trick(self.player, p1, p2)
         self.assertEqual(p1.clearing, self.c2)
         self.assertEqual(p2.clearing, self.c1)
+        
+        # Verify Logs
+        self.assertLogExists(LogType.CROWS_TRICK, player=self.player, clearing1=self.c1.clearing_number, clearing2=self.c2.clearing_number)
 
     def test_crows_trick_failures_and_faceup_success(self):
         p1 = PlotToken.objects.filter(player=self.player, plot_type=PlotToken.PlotType.BOMB).first()
@@ -118,3 +130,6 @@ class CrowActionsTestCase(TestCase):
         crows_trick(self.player, p1, p2)
         self.assertEqual(p1.clearing, self.c2)
         self.assertEqual(p2.clearing, self.c1)
+        
+        # Verify Logs
+        self.assertLogExists(LogType.CROWS_TRICK, player=self.player, clearing1=self.c1.clearing_number, clearing2=self.c2.clearing_number)

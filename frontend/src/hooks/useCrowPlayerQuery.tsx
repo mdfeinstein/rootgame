@@ -3,6 +3,7 @@ import { gameKeys } from "../api/queryKeys";
 import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
 import { useContext } from "react";
 import { PlayerContext } from "../contexts/PlayerProvider";
+import { UserContext } from "../contexts/UserProvider";
 
 export type CrowPlayerInfo = {
   player: {
@@ -46,6 +47,7 @@ export const useCrowPlayerQuery = (gameId: number, enabled: boolean = true) => {
   });
 
   const { faction } = useContext(PlayerContext);
+  const { username } = useContext(UserContext);
   const isCrows = faction === "Crows";
 
   const {
@@ -54,7 +56,7 @@ export const useCrowPlayerQuery = (gameId: number, enabled: boolean = true) => {
     isError: isPrivateError,
     isSuccess: isPrivateSuccess,
   } = useQuery<CrowPrivateInfo>({
-    queryKey: gameKeys.factionPrivate(gameId, "crows"),
+    queryKey: gameKeys.factionPrivate(gameId, "crows", username),
     queryFn: async () => {
       const response = await fetch(
         apiUrl + "/crows/player-private-info/" + gameId + "/",
@@ -70,7 +72,12 @@ export const useCrowPlayerQuery = (gameId: number, enabled: boolean = true) => {
       }
       return response.json();
     },
-    enabled: !!gameId && enabled && isCrows,
+    enabled:
+      !!gameId &&
+      enabled &&
+      isCrows &&
+      !!username &&
+      publicInfo?.player.username.toLowerCase() === username?.toLowerCase(),
   });
 
   return {

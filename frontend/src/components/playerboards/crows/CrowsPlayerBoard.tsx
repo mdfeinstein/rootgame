@@ -47,7 +47,7 @@ export default function CrowsPlayerBoard({
         shadow="xl"
         style={{
           backgroundColor: "#fef6e4", // Warm paper background
-          border: "4px solid var(--mantine-color-indigo-6)",
+          border: "4px solid #4B0082",
           overflow: "hidden",
           position: "relative", // Needed for LoadingOverlay
         }}

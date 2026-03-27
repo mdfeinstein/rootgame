@@ -1,11 +1,11 @@
-from game.transactions.general import step_effect
+
 from game.models.events.crafted_cards import CharmOffensiveEvent
 from django.db import transaction
 from game.models.game_models import Player, CraftedCardEntry
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.queries.general import validate_player_has_crafted_card
 from game.queries.cards.active_effects import can_use_card
-from game.transactions.general import draw_card_from_deck_to_hand, raise_score
+
 
 
 @transaction.atomic
@@ -31,6 +31,7 @@ def use_charm_offensive(player: Player, opponent: Player):
         raise ValueError("You cannot give yourself a point.")
 
     # 4. Draw a card for the player
+    from game.transactions.general import draw_card_from_deck_to_hand, raise_score
     draw_card_from_deck_to_hand(player)
 
     # 5. Raise score for the opponent
@@ -40,11 +41,26 @@ def use_charm_offensive(player: Player, opponent: Player):
     crafted_card.used = CraftedCardEntry.UsedChoice.USED
     crafted_card.save()
     # resolve event
-    event = CharmOffensiveEvent.objects.filter(crafted_card_entry=crafted_card).first()
+    event = CharmOffensiveEvent.objects.filter(crafted_card_entry=crafted_card, event__is_resolved=False).first()
     if event:
         event.event.is_resolved = True
         event.event.save()
+
+    from game.serializers.logs.general import get_active_phase_log
+    from game.serializers.logs.crafted_cards import log_crafted_card_action
+    log_crafted_card_action(
+        player.game,
+        player,
+        crafted_card.card,
+        "use",
+        details={
+            "target_faction": opponent.faction
+        },
+        parent=get_active_phase_log(player.game)
+    )
     # resolve step_effect for beginning of evening
+    # resolve step_effect for beginning of evening
+    from game.transactions.general import step_effect
     step_effect(player)
 
 
@@ -58,6 +74,10 @@ def check_charm_offensive(player: Player) -> bool:
         crafted_card = validate_player_has_crafted_card(player, CardsEP.CHARM_OFFENSIVE)
     except ValueError:
         return False
+    
+    if not can_use_card(player, crafted_card):
+        return False
+
     CharmOffensiveEvent.create(crafted_card)
     return True
 
@@ -68,9 +88,11 @@ def skip_charm_offensive(player: Player):
     crafted_card = validate_player_has_crafted_card(player, CardsEP.CHARM_OFFENSIVE)
     crafted_card.used = CraftedCardEntry.UsedChoice.USED
     crafted_card.save()
-    event = CharmOffensiveEvent.objects.filter(crafted_card_entry=crafted_card).first()
+    event = CharmOffensiveEvent.objects.filter(crafted_card_entry=crafted_card, event__is_resolved=False).first()
     if event:
         event.event.is_resolved = True
         event.event.save()
     # resolve step_effect for beginning of evening
+    # resolve step_effect for beginning of evening
+    from game.transactions.general import step_effect
     step_effect(player)

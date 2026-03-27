@@ -1,10 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
+import { useContext } from "react";
+import { UserContext } from "../contexts/UserProvider";
 import type { components } from "../api/types";
 import { gameKeys } from "../api/queryKeys";
 
 export type Player = components["schemas"]["PlayerPublic"];
 
 const useGetPlayersInfoQuery = (gameId: number, enabled: boolean = true) => {
+  const { username } = useContext(UserContext);
   const {
     data: players,
     isLoading,
@@ -24,7 +27,7 @@ const useGetPlayersInfoQuery = (gameId: number, enabled: boolean = true) => {
       );
       return response.json();
     },
-    enabled: !!gameId && enabled,
+    enabled: !!gameId && enabled && !!username,
   });
   return { players, isLoading, isError, isSuccess };
 };

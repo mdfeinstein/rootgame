@@ -17,6 +17,8 @@ from game.models.wa.buildings import WABase
 from game.models.wa.player import SupporterStackEntry, OfficerEntry
 from game.models.wa.tokens import WASympathy
 from game.models.wa.turn import WATurn, WAEvening, WADaylight, WABirdsong
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 from game.tests.my_factories import (
     GameSetupWithFactionsFactory,
     CardFactory,
@@ -31,12 +33,13 @@ from game.transactions.wa import (
     check_discard_step,
     end_turn
 )
+from game.transactions.general import create_turn
 from game.queries.wa.turn import get_phase
 from game.queries.general import get_player_hand_size
 
 logger = logging.getLogger(__name__)
 
-class WAEveningBaseTestCase(TestCase):
+class WAEveningBaseTestCase(TestCase, LoggingTestMixin):
     def setUp(self):
         # Create a game with Cats and WA
         self.game = GameSetupWithFactionsFactory(factions=[Faction.CATS, Faction.WOODLAND_ALLIANCE])
@@ -49,7 +52,9 @@ class WAEveningBaseTestCase(TestCase):
         self.game.current_turn = 1
         self.game.save()
         
-        # Get turn and phases
+        # Create turn using the transaction if it doesn't already exist
+        if not WATurn.objects.filter(player=self.player, turn_number=0).exists():
+            create_turn(self.player)
         self.turn = WATurn.objects.get(player=self.player, turn_number=0)
         
         # Complete Birdsong and Daylight to get to Evening
@@ -112,6 +117,9 @@ class WAEveningOperationsTests(WAEveningBaseTestCase):
         self.assertEqual(Warrior.objects.filter(player=self.player, clearing=self.fox_clearing).count(), initial_warriors + 1)
         # Check officer used
         self.assertTrue(OfficerEntry.objects.get(player=self.player).used)
+        
+        # Verify Log
+        self.assertLogExists(LogType.WA_MILITARY_OPERATION, player=self.player, operation="Recruit")
 
     def test_recruit_fail_no_base(self):
         self.add_officer()
@@ -135,6 +143,9 @@ class WAEveningOperationsTests(WAEveningBaseTestCase):
         self.assertGreater(self.player.score, initial_vp)
         # Officer used
         self.assertTrue(OfficerEntry.objects.get(player=self.player).used)
+        
+        # Verify Log
+        self.assertLogExists(LogType.WA_ORGANIZE, player=self.player, clearing_number=self.fox_clearing.clearing_number)
 
     def test_organize_fail_no_warrior(self):
         self.add_officer()
@@ -183,6 +194,10 @@ class WAEveningTransitionTests(WAEveningBaseTestCase):
         
         # Should draw 1 + 2 = 3 cards
         self.assertEqual(get_player_hand_size(self.player), initial_hand + 3)
+        
+        # Verify Logs
+        self.assertLogCount(1, LogType.DRAW, self.player)
+        self.assertLogExists(LogType.DRAW, player=self.player, count=3)
         
         # Should auto-advance to DISCARDING if hand size <= 5
         self.evening.refresh_from_db()
@@ -241,5 +256,6 @@ class WAEveningTransitionTests(WAEveningBaseTestCase):
         sympathy.refresh_from_db()
         self.assertFalse(sympathy.crafted_with)
         
-        # Next turn should be created
-        self.assertTrue(WATurn.objects.filter(player=self.player, turn_number=1).exists())
+        # Next turn should NOT be created for WA yet (it creates for the next player, Cats)
+        from game.models.cats.turn import CatTurn
+        self.assertTrue(CatTurn.objects.filter(player=self.cats_player, turn_number=1).exists())

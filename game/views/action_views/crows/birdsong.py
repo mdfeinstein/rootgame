@@ -21,6 +21,7 @@ from game.transactions.crows.birdsong import (
     end_flip_step,
     crows_recruit,
     manual_recruit,
+    end_recruit_step,
 )
 
 
@@ -197,6 +198,13 @@ class CrowsRecruitingView(GameActionView):
         "prompt": "Select a card from your hand to recruit a warrior into every clearing matching its suit. If reserving runs out, you will manually pick clearings.",
         "endpoint": "card",
         "payload_details": [{"type": "card", "name": "card_used"}],
+        "options": [
+            {
+                "value": "",
+                "label": "Done Recruiting",
+                "info": "Finish recruiting and proceed to the next step.",
+            }
+        ],
     }
 
     def route_post(self, request, game_id: int, route: str):
@@ -208,6 +216,13 @@ class CrowsRecruitingView(GameActionView):
 
     def post_card(self, request, game_id: int):
         player = self.player(request, game_id)
+        if request.data["card_used"] == "":
+            try:
+                atomic_game_action(end_recruit_step)(player)
+            except ValueError as e:
+                raise ValidationError({"detail": str(e)})
+            return self.generate_completed_step()
+
         card = CardsEP[request.data["card_used"]]
 
         # If it's a bird card, prompt the user to select the suit they are activating as
@@ -267,9 +282,8 @@ class CrowsManualRecruitView(GameActionView):
 
         active_event = Event.objects.filter(
             game=self.game(game_id),
-            event_type=EventType.CROW_RECRUIT,
-            is_completed=False,
-            acting_player=player,
+            type=EventType.CROW_RECRUIT,
+            is_resolved=False,
         ).first()
 
         if not active_event:

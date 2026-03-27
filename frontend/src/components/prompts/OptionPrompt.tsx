@@ -9,7 +9,7 @@ const factionColorMap = {
   Cats: "orange",
   Birds: "blue",
   WoodlandAlliance: "green",
-  Crows: "indigo",
+  Crows: "#4B0082",
 };
 
 const OptionPrompt = () => {

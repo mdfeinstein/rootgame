@@ -45,7 +45,11 @@ class BirdCraftingView(GameActionView):
         "endpoint": "card",
         "payload_details": [{"type": "card", "name": "card_to_craft"}],
         "options": [
-            {"value": "", "label": "Done Crafting", "info": "Finish crafting cards and proceed to recruit actions."},
+            {
+                "value": "",
+                "label": "Done Crafting",
+                "info": "Finish crafting cards and proceed to recruit actions.",
+            },
         ],
     }
 
@@ -210,6 +214,9 @@ class BirdMoveView(GameActionView):
             raise ValidationError({"detail": str(e)})
         try:
             validate_has_legal_moves(player, clearing)
+            decree = get_decree_entry_to_use(
+                player, DecreeEntry.Column.MOVE, clearing.suit
+            )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_step(
@@ -267,11 +274,11 @@ class BirdMoveView(GameActionView):
             )
         except Clearing.DoesNotExist as e:
             raise ValidationError({"detail": str(e)})
-        decree = get_decree_entry_to_use(
-            player, DecreeEntry.Column.MOVE, origin_clearing.suit
-        )
         # call move transaction
         try:
+            decree = get_decree_entry_to_use(
+                player, DecreeEntry.Column.MOVE, origin_clearing.suit
+            )
             atomic_game_action(bird_move_action)(
                 player, origin_clearing, destination_clearing, count, decree
             )
@@ -326,7 +333,11 @@ class BirdBattleView(GameActionView):
             raise ValidationError({"detail": str(e)})
         enemy_factions = get_enemy_factions_in_clearing(player, clearing)
         options = [
-            {"value": faction.name, "label": faction.label, "info": f"Initiate battle against {faction.label}."}
+            {
+                "value": faction.name,
+                "label": faction.label,
+                "info": f"Initiate battle against {faction.label}.",
+            }
             for faction in enemy_factions
         ]
         return self.generate_step(
@@ -364,7 +375,9 @@ class BirdBattleView(GameActionView):
             raise ValidationError({"detail": str(e)})
         # call bird battle transaction
         try:
-            atomic_game_action(bird_battle_action)(player, defender, clearing, decree_to_use)
+            atomic_game_action(bird_battle_action)(
+                player, defender, clearing, decree_to_use
+            )
         except ValueError as e:
             raise ValidationError({"detail": str(e)})
         return self.generate_completed_step()

@@ -89,7 +89,8 @@ class OutrageTests(TestCase):
         # Should auto-resolve by drawing to supporters
         outrage_event = OutrageEvent.objects.get(outraged_player=self.wa, outrageous_player=self.cats)
         self.assertTrue(outrage_event.event.is_resolved)
-        self.assertTrue(outrage_event.card_given)
+        self.assertFalse(outrage_event.card_given)
+        self.assertTrue(outrage_event.hand_shown)
         
         from game.models.wa.player import SupporterStackEntry
         self.assertTrue(SupporterStackEntry.objects.filter(player=self.wa).exists())

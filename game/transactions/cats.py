@@ -77,6 +77,18 @@ def produce_wood(player: Player, sawmill: Sawmill):
     place_piece_from_supply_into_clearing(wood_token, sawmill.building_slot.clearing)
     sawmill.used = True
     sawmill.save()
+
+    from game.serializers.logs.cats import log_cats_wood_placement
+    from game.serializers.logs.general import get_current_phase_log
+
+    log_cats_wood_placement(
+        player.game,
+        player,
+        sawmill.building_slot.clearing.clearing_number,
+        1,
+        parent=get_current_phase_log(player.game, player),
+    )
+
     if not Sawmill.objects.filter(
         player=player, used=False, building_slot__isnull=False
     ).exists():
@@ -88,6 +100,11 @@ def produce_wood(player: Player, sawmill: Sawmill):
 def create_cats_turn(player: Player):
     # create turn
     turn = CatTurn.create_turn(player)
+
+    from game.serializers.logs.general import log_turn, log_phase
+
+    turn_log = log_turn(player.game, player, turn_number=turn.turn_number + 1)
+    log_phase(player.game, player, "Birdsong", parent=turn_log)
 
 
 @transaction.atomic
@@ -135,6 +152,19 @@ def build_building(
         token.clearing = None
         token.save()
 
+    from game.serializers.logs.cats import log_cats_build
+    from game.serializers.logs.general import get_current_phase_log
+
+    log_cats_build(
+        player.game,
+        player,
+        building_type.value,
+        clearing.clearing_number,
+        required_wood,
+        scoring,
+        parent=get_current_phase_log(player.game, player),
+    )
+
 
 @transaction.atomic
 def action_used(player: Player):
@@ -153,6 +183,7 @@ def overwork(player: Player, clearing: Clearing, card: CardsEP):
     """overworks a sawmill in the given clearing, discarding the card from the player's hand"""
     # check that player has card in hand
     hand_entry = validate_player_has_card_in_hand(player, card)
+    card_model = hand_entry.card
     # check that player has a sawmill in given clearing, and that the suit matches the card
     sawmills = get_sawmills_by_suit(player, card.value.suit)
     if not sawmills.filter(building_slot__clearing=clearing).exists():
@@ -168,12 +199,24 @@ def overwork(player: Player, clearing: Clearing, card: CardsEP):
     # reduce actions remaining
     action_used(player)
 
+    from game.serializers.logs.cats import log_cats_overwork
+    from game.serializers.logs.general import get_current_phase_log
+
+    log_cats_overwork(
+        player.game,
+        player,
+        clearing.clearing_number,
+        card_model,
+        parent=get_current_phase_log(player.game, player),
+    )
+
 
 @transaction.atomic
 def birds_for_hire(player: Player, card: CardsEP):
     """uses the given card to gain an action"""
     # check that player has card in hand/get card instance
     hand_entry = validate_player_has_card_in_hand(player, card)
+    card_model = hand_entry.card
     # check that card is a bird card
     if card.value.suit != Suit.WILD:
         raise ValueError("Not a bird card")
@@ -187,14 +230,34 @@ def birds_for_hire(player: Player, card: CardsEP):
     # remove card from player's hand
     discard_card_from_hand(player, hand_entry)
 
+    from game.serializers.logs.cats import log_cats_birds_for_hire
+    from game.serializers.logs.general import get_current_phase_log
+
+    log_cats_birds_for_hire(
+        player.game,
+        player,
+        card_model,
+        parent=get_current_phase_log(player.game, player),
+    )
+
 
 @transaction.atomic
 def cat_craft_card(player: Player, card: CardsEP, crafting_pieces: list[Workshop]):
 
     card_in_hand = validate_player_has_card_in_hand(player, card)
+    card_model = card_in_hand.card
     if not validate_crafting_pieces_satisfy_requirements(player, card, crafting_pieces):
         raise ValueError("Not enough crafting pieces to craft card")
     craft_card(card_in_hand, crafting_pieces)
+
+    from game.serializers.logs.general import log_craft, get_current_phase_log
+
+    log_craft(
+        player.game,
+        player,
+        card_model,
+        parent=get_current_phase_log(player.game, player),
+    )
 
 
 @transaction.atomic
@@ -240,6 +303,21 @@ def cat_recruit(player: Player, recruiters: QuerySet[Recruiter]):
     daylight.recruit_used = True
     daylight.actions_left -= 1
     daylight.save()
+
+    from game.serializers.logs.cats import log_cats_recruit
+    from game.serializers.logs.general import get_current_phase_log
+
+    clearings_dict = {}
+    for r in recruiters:
+        c_num = str(r.building_slot.clearing.clearing_number)
+        clearings_dict[c_num] = clearings_dict.get(c_num, 0) + 1
+    log_cats_recruit(
+        player.game,
+        player,
+        len(recruiters),
+        clearings_dict,
+        parent=get_current_phase_log(player.game, player),
+    )
 
 
 @transaction.atomic
@@ -301,8 +379,21 @@ def cat_evening_draw(player: Player):
     ]  # idx: recruiters  on board, val: number of cards drawn
     recruiter_count = buildings_on_board(player, CatBuildingTypes.RECRUITER)
     cards_to_draw = cards_drawn_by_recruiters_on_board[recruiter_count]
+
+    drawn_cards = []
     for _ in range(cards_to_draw):
-        draw_card_from_deck_to_hand(player)
+        entry = draw_card_from_deck_to_hand(player)
+        drawn_cards.append(entry.card)
+
+    from game.serializers.logs.general import log_draw, get_current_phase_log
+
+    log_draw(
+        player.game,
+        player,
+        drawn_cards,
+        parent=get_current_phase_log(player.game, player),
+    )
+
     # move to next step (discard, presumably)
     next_step(player)
 
@@ -321,7 +412,6 @@ def cat_end_turn(player: Player):
     except ValueError:  # already done evening, do nothing
         pass
     reset_cats_turn(player)
-    create_cats_turn(player)
     next_players_turn(player.game)
 
 
@@ -352,6 +442,7 @@ def create_field_hospital_event(clearing: Clearing, removed_player: Player, coun
     fh_event = FieldHospitalEvent.objects.create(
         event=event,
         player=removed_player,
+        clearing=clearing,
         troops_to_save=count,
         suit=clearing.suit,
     )
@@ -391,6 +482,16 @@ def cat_resolve_field_hospital(player: Player, card: CardsEP | None):
         # discard card
         discard_card_from_hand(player, hand_entry)
 
+        from game.serializers.logs.general import get_active_phase_log
+        from game.serializers.logs.cats import log_cats_field_hospitals
+        log_cats_field_hospitals(
+            player.game,
+            player,
+            field_hospital_event.clearing.clearing_number if field_hospital_event.clearing else 0,
+            to_save,
+            parent=get_active_phase_log(player.game)
+        )
+
     # resolve event
     field_hospital_event.event.is_resolved = True
     field_hospital_event.event.save()
@@ -425,15 +526,41 @@ def cat_march(player: Player, origin: Clearing, destination: Clearing, count: in
     if type(daylight) != CatDaylight:
         raise ValueError("Not Daylight phase")
 
-    move_warriors(player, origin, destination, count)
+    from game.serializers.logs.general import log_move, get_current_phase_log
+    from game.serializers.logs.cats import log_cats_march, get_current_march_log
 
     if not daylight.midmarch:
         if daylight.actions_left < 1:
             raise ValueError("No actions remaining")
+
+        phase_log = get_current_phase_log(player.game, player)
+        march_log = log_cats_march(player.game, player, parent=phase_log)
+        log_move(
+            player.game,
+            player,
+            origin.clearing_number,
+            destination.clearing_number,
+            count,
+            parent=march_log,
+        )
+
+        move_warriors(player, origin, destination, count)
+
         daylight.actions_left -= 1
         daylight.midmarch = True
         daylight.save()
     else:
+        march_log = get_current_march_log(player.game, player)
+        log_move(
+            player.game,
+            player,
+            origin.clearing_number,
+            destination.clearing_number,
+            count,
+            parent=march_log,
+        )
+
+        move_warriors(player, origin, destination, count)
         daylight.midmarch = False
         daylight.save()
 
@@ -445,9 +572,18 @@ def cat_battle(player: Player, defender: Player, clearing: Clearing):
     daylight = get_phase(player)
     if type(daylight) != CatDaylight:
         raise ValueError("Not Daylight phase")
-    start_battle(player.game, player.faction, defender.faction, clearing)
+    battle = start_battle(player.game, player.faction, defender.faction, clearing)
     daylight.actions_left -= 1
     daylight.save()
+
+    from game.transactions.battle import log_battle_start
+    from game.serializers.logs.general import get_current_phase_log
+
+    log_battle_start(
+        battle,
+        player,
+        parent=get_current_phase_log(player.game, player),
+    )
 
 
 @transaction.atomic
@@ -470,7 +606,18 @@ def cat_discard_card(player: Player, card: CardsEP):
         raise ValueError("Not discarding step")
 
     hand_entry = validate_player_has_card_in_hand(player, card)
+    card_model = hand_entry.card
     discard_card_from_hand(player, hand_entry)
+
+    from game.serializers.logs.general import log_discard, get_current_phase_log
+
+    log_discard(
+        player.game,
+        player,
+        card_model,
+        parent=get_current_phase_log(player.game, player),
+    )
+
     check_auto_discard(player)
 
 
@@ -522,8 +669,14 @@ def step_effect(
                         check_auto_place_wood(player)
                 case CatBirdsong.CatBirdsongSteps.COMPLETED:
                     from game.transactions.crafted_cards.eyrie_emigre import is_emigre
-
                     if not is_emigre(player):
+                        from game.serializers.logs.general import log_phase, get_current_turn_log
+                        log_phase(
+                            player.game,
+                            player,
+                            "Daylight",
+                            parent=get_current_turn_log(player.game, player),
+                        )
                         step_effect(player, None)
 
                 case _:
@@ -537,11 +690,15 @@ def step_effect(
                 case CatDaylight.CatDaylightSteps.ACTIONS:
                     pass
                 case CatDaylight.CatDaylightSteps.COMPLETED:
-                    from game.transactions.crafted_cards.charm_offensive import (
-                        check_charm_offensive,
-                    )
-
+                    from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
                     if not check_charm_offensive(player):
+                        from game.serializers.logs.general import log_phase, get_current_turn_log
+                        log_phase(
+                            player.game,
+                            player,
+                            "Evening",
+                            parent=get_current_turn_log(player.game, player),
+                        )
                         step_effect(player, None)
                 case _:
                     raise ValueError(

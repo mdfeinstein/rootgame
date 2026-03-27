@@ -44,12 +44,22 @@ def crows_craft_card(player: Player, card: CardsEP, plot_tokens: list[PlotToken]
     if not validate_crafting_pieces_satisfy_requirements(player, card, plot_tokens):
         raise ValueError("Not enough plot tokens to craft card")
     craft_card(card_in_hand, cast(list[Piece], plot_tokens))
+    
+    from game.serializers.logs.general import log_craft, get_current_phase_log
+    from game.serializers.logs.crows import log_crows_flip
+    log_craft(player.game, player, card_in_hand.card, parent=get_current_phase_log(player.game, player))
 
 
 @transaction.atomic
-def resolve_bomb(player: Player, token: PlotToken):
+def resolve_bomb(player: Player, token: PlotToken, **kwargs):
     """resolves a bomb plot token"""
+    parent = kwargs.get("parent")
     from game.models.game_models import Building, Token
+    from game.transactions.removal import (
+        player_removes_building,
+        player_removes_token,
+        player_removes_warriors,
+    )
 
     clearing = token.clearing
     # remove all enemy pieces
@@ -57,13 +67,13 @@ def resolve_bomb(player: Player, token: PlotToken):
         if player_ != player:
             count = Warrior.objects.filter(clearing=clearing, player=player_).count()
             if count > 0:
-                player_removes_warriors(clearing, player_, player_, count)
+                player_removes_warriors(clearing, player, player_, count, parent=parent)
             for enemy_token in Token.objects.filter(clearing=clearing, player=player_):
-                player_removes_token(player.game, enemy_token, player)
+                player_removes_token(player.game, enemy_token, player, parent=parent)
             for enemy_building in Building.objects.filter(
                 building_slot__clearing=clearing, player=player_
             ):
-                player_removes_building(player.game, enemy_building, player)
+                player_removes_building(player.game, enemy_building, player, parent=parent)
 
     # remove the bomb token itself
     token.clearing = None
@@ -71,20 +81,19 @@ def resolve_bomb(player: Player, token: PlotToken):
 
 
 @transaction.atomic
-def resolve_extortion(player: Player, token: PlotToken):
+def resolve_extortion(player: Player, token: PlotToken, **kwargs):
     """resolves an extortion plot token"""
+    parent = kwargs.get("parent")
     from game.models.game_models import HandEntry
     import random
 
     clearing = token.clearing
-    # take a random card from each player with pieces in the clearing
+    from game.models.game_models import Token, Building
     for player_ in Player.objects.filter(game=player.game):
         if player_ != player:
-            has_pieces = False
-            if Warrior.objects.filter(clearing=clearing, player=player_).exists():
-                has_pieces = True
-            elif Piece.objects.filter(clearing=clearing, player=player_).exists():
-                has_pieces = True
+            has_pieces = Warrior.objects.filter(clearing=clearing, player=player_).exists() or \
+                         Token.objects.filter(clearing=clearing, player=player_).exists() or \
+                         Building.objects.filter(building_slot__clearing=clearing, player=player_).exists()
 
             if has_pieces:
                 enemy_hand = list(HandEntry.objects.filter(player=player_))
@@ -92,10 +101,13 @@ def resolve_extortion(player: Player, token: PlotToken):
                     stolen_card = random.choice(enemy_hand)
                     stolen_card.player = player
                     stolen_card.save()
+                    
+                    from game.serializers.logs.crows import log_crows_extortion_stole_card
+                    log_crows_extortion_stole_card(player.game, player, player_, stolen_card.card, parent=parent)
 
 
 @transaction.atomic
-def flip_plot(player: Player, token: PlotToken):
+def flip_plot(player: Player, token: PlotToken, **kwargs):
     """flips a plot token face up"""
     validate_step(player, CrowBirdsong.CrowBirdsongSteps.FLIP)
     if not token.is_facedown:
@@ -116,11 +128,22 @@ def flip_plot(player: Player, token: PlotToken):
         player=player, is_facedown=False, clearing__isnull=False
     ).count()
     raise_score(player, face_up_count)
+    from game.serializers.logs.crows import log_crows_flip
+    from game.serializers.logs.general import get_current_phase_log
+    
+    parent = log_crows_flip(
+        player.game, 
+        player, 
+        token.clearing.clearing_number, 
+        token.plot_type, 
+        face_up_count,
+        parent=kwargs.get("parent") or get_current_phase_log(player.game, player)
+    )
 
     if token.plot_type == PlotToken.PlotType.BOMB:
-        resolve_bomb(player, token)
+        resolve_bomb(player, token, parent=parent)
     elif token.plot_type == PlotToken.PlotType.EXTORTION:
-        resolve_extortion(player, token)
+        resolve_extortion(player, token, parent=parent)
 
 
 @transaction.atomic
@@ -141,6 +164,13 @@ def crows_recruit(player: Player, card: CardsEP, suit: Suit | None = None):
     from game.models.game_models import Clearing
 
     validate_step(player, CrowBirdsong.CrowBirdsongSteps.RECRUIT)
+    
+    warriors_in_supply = Warrior.objects.filter(
+        player=player, clearing__isnull=True
+    ).count()
+    if warriors_in_supply == 0:
+        raise ValueError("No Crow warriors left in supply")
+
     card_in_hand = validate_player_has_card_in_hand(player, card)
 
     card_suit = Suit(card_in_hand.card.suit)
@@ -170,6 +200,8 @@ def crows_recruit(player: Player, card: CardsEP, suit: Suit | None = None):
     warriors_in_supply = Warrior.objects.filter(
         player=player, clearing__isnull=True
     ).count()
+    # otherwise, place them if able
+    placed_count = 0
     if warriors_in_supply < len(valid_clearings):
         # launch event
         from game.models.events.event import Event, EventType
@@ -179,18 +211,27 @@ def crows_recruit(player: Player, card: CardsEP, suit: Suit | None = None):
         recruit_event = CrowRecruitEvent.objects.create(
             event=event, suit=target_suit.value
         )
-        return
+    else:
+        for clearing in valid_clearings:
+            warrior = Warrior.objects.filter(player=player, clearing__isnull=True).first()
+            if warrior:
+                try:
+                    place_piece_from_supply_into_clearing(warrior, clearing)
+                    placed_count += 1
+                except ValueError:
+                    pass
+        next_step(player)
 
-    # otherwise, place them if able
-    for clearing in valid_clearings:
-        warrior = Warrior.objects.filter(player=player, clearing__isnull=True).first()
-        if warrior:
-            try:
-                place_piece_from_supply_into_clearing(warrior, clearing)
-            except ValueError:
-                pass
-
-    next_step(player)
+    from game.serializers.logs.general import get_current_phase_log
+    from game.serializers.logs.crows import log_crows_recruit
+    log_crows_recruit(
+        player.game, 
+        player, 
+        target_suit.value, 
+        card_in_hand.card, 
+        placed_count,
+        parent=get_current_phase_log(player.game, player)
+    )
 
 
 @transaction.atomic
@@ -201,7 +242,7 @@ def manual_recruit(player: Player, clearing: Clearing, event: Event):
 
     validate_step(player, CrowBirdsong.CrowBirdsongSteps.RECRUIT)
 
-    if event.originating_player != player:
+    if player.faction != Faction.CROWS:
         raise ValueError("Cannot resolve another player's event")
 
     recruit_event = CrowRecruitEvent.objects.get(event=event)

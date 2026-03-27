@@ -7,8 +7,10 @@ from game.models.events.setup import GameSimpleSetup
 from game.models.cats.tokens import CatKeep
 from game.tests.my_factories import GameSetupFactory, PlayerFactory
 from game.transactions.birds_setup import pick_corner, choose_leader_initial, confirm_completed_setup, start_simple_birds_setup
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 
-class BirdSetupBaseTestCase(TestCase):
+class BirdSetupBaseTestCase(TestCase, LoggingTestMixin):
     def setUp(self):
         # Create a game with Cats and Birds by default
         self.game = GameSetupFactory(factions=[Faction.CATS, Faction.BIRDS])
@@ -40,6 +42,7 @@ class BirdPickCornerTests(BirdSetupBaseTestCase):
         
         # Check Roost placement
         self.assertTrue(BirdRoost.objects.filter(building_slot__clearing=c3).exists())
+        self.assertLogExists(LogType.BIRDS_SETUP_PICK_CORNER, player=self.player, clearing_number=c3.clearing_number)
         
         # Check 6 warriors placement
         self.assertEqual(Warrior.objects.filter(clearing=c3, player=self.player).count(), 6)
@@ -99,6 +102,7 @@ class BirdChooseLeaderTests(BirdSetupBaseTestCase):
         choose_leader_initial(self.player, BirdLeader.BirdLeaders.BUILDER)
         
         self.assertTrue(BirdLeader.objects.get(player=self.player, leader=BirdLeader.BirdLeaders.BUILDER).active)
+        self.assertLogExists(LogType.BIRDS_SETUP_CHOOSE_LEADER, player=self.player)
         # Builder: Recruit, Move
         self.assertTrue(Vizier.objects.filter(player=self.player, column=Vizier.Column.RECRUIT).exists())
         self.assertTrue(Vizier.objects.filter(player=self.player, column=Vizier.Column.MOVE).exists())
@@ -146,7 +150,7 @@ class BirdConfirmSetupTests(BirdSetupBaseTestCase):
         self.bird_setup.refresh_from_db()
         self.assertEqual(self.bird_setup.step, BirdsSimpleSetup.Steps.COMPLETED)
         
-        # Check that first turn was created
-        from game.models.birds.turn import BirdTurn
-        self.assertTrue(BirdTurn.objects.filter(player=self.player).exists())
+        # Check that game status advanced
+        self.game.refresh_from_db()
+        self.assertEqual(self.game.status, self.game.GameStatus.SETUP_COMPLETED)
 

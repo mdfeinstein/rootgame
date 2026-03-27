@@ -35,18 +35,24 @@ export const gameKeys = {
   currentAction: (gameId: number) => gameKeys.currentActions(gameId),
   currentActionInfos: (gameId: number) =>
     [...gameKeys.gameState(gameId), "current-action-info"] as const,
-  currentActionInfo: (gameId: number, route: string | null) =>
-    [...gameKeys.currentActionInfos(gameId), route] as const,
+  currentActionInfo: (gameId: number, route: string | null, username: string | null | undefined) =>
+    [...gameKeys.currentActionInfos(gameId), route, username ?? "anonymous"] as const,
   dominanceSupply: (gameId: number) =>
     [...gameKeys.gameState(gameId), "dominance-supply"] as const,
   wsAuth: (gameId: number | string) =>
     [...gameKeys.gameState(Number(gameId)), "ws-auth"] as const,
-  revealedCards: (gameId: number) =>
-    [...gameKeys.gameState(gameId), "revealed-cards"] as const,
+  revealedCards: (gameId: number, username: string | null | undefined) =>
+    [
+      ...gameKeys.gameState(gameId),
+      "revealed-cards",
+      username ?? "anonymous",
+    ] as const,
   discardPile: (gameId: number) =>
     [...gameKeys.gameState(gameId), "discard-pile"] as const,
   craftableItems: (gameId: number) =>
     [...gameKeys.gameState(gameId), "craftable-items"] as const,
+  gameLog: (gameId: number, username: string | null | undefined) =>
+    [...gameKeys.gameState(gameId), "game-log", username ?? "anonymous"] as const,
 
   // Player specific
   playerHand: (gameId: number, username: string) =>
@@ -57,8 +63,8 @@ export const gameKeys = {
     [...gameKeys.gameState(gameId), "faction"] as const,
   faction: (gameId: number, faction: FactionValue) =>
     [...gameKeys.factions(gameId), faction?.toUpperCase()] as const,
-  factionPrivate: (gameId: number, faction: FactionValue) =>
-    [...gameKeys.faction(gameId, faction), "private"] as const,
+  factionPrivate: (gameId: number, faction: FactionValue, username: string | null | undefined) =>
+    [...gameKeys.faction(gameId, faction), "private", username ?? "anonymous"] as const,
   craftedCards: (gameId: number, faction: FactionValue) =>
     [...gameKeys.faction(gameId, faction), "crafted-cards"] as const,
 };

@@ -1,7 +1,7 @@
 from game.transactions.cats import reset_cats_turn
 from game.models import HandEntry
 from django.test import TestCase
-from .client import RootGameClient
+from game.tests.client import RootGameClient
 from game.models.game_models import Faction, Player, Game, CraftedCardEntry
 from game.tests.my_factories import (
     GameSetupWithFactionsFactory,

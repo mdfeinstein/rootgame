@@ -18,7 +18,8 @@ Game Lobby:
 - [x] Revealed Cards Functionality
   - [x] Endpoint and serializer to package revealed cards and the events that reveal them
   - [x] Frontend display of revealed cards
-- [ ] Discard Pile: Frontend display
+- [x] Discard Pile: Frontend display
+- [x] Items: Frontend display and backend implementation
 - [ ] Game Log
 - [ ] Custom Errors
 

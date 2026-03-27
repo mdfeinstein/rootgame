@@ -144,17 +144,7 @@ def get_current_player(game: Game) -> Player:
 def get_current_turn_number(game: Game) -> int:
     """Returns the turn_number of the currently active player's turn"""
     player = get_current_player(game)
-    if game.status == Game.GameStatus.STARTED:
-        from game.models.birds.setup import BirdsSimpleSetup
-        from game.models.cats.setup import CatsSimpleSetup
-        from game.models.crows.setup import CrowsSimpleSetup
-        turn_object_dict = {
-            Faction.CATS: CatsSimpleSetup,
-            Faction.BIRDS: BirdsSimpleSetup,
-            Faction.WOODLAND_ALLIANCE: None,
-            Faction.CROWS: CrowsSimpleSetup,
-        }
-    elif game.status == Game.GameStatus.SETUP_COMPLETED:
+    if game.status == Game.GameStatus.SETUP_COMPLETED:
         from game.models.cats.turn import CatTurn
         from game.models.birds.turn import BirdTurn
         from game.models.wa.turn import WATurn

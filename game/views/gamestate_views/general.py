@@ -276,9 +276,40 @@ def get_craftable_items(request, game_id: int):
     except Game.DoesNotExist:
         return Response({"detail": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    # Note: Using select_related('item') to optimize the database query
-    craftable_items = CraftableItemEntry.objects.filter(game=game).select_related(
-        "item"
-    )
+    craftable_items = CraftableItemEntry.objects.filter(game=game).select_related('item')
     serializer = CraftableItemSerializer(craftable_items, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+from game.serializers.logs import GameLogSerializer
+from game.models.game_log import GameLog
+
+@extend_schema(responses={200: GameLogSerializer(many=True)})
+@api_view(["GET"])
+def get_game_logs(request, game_id: int):
+    try:
+        game = Game.objects.get(pk=game_id)
+    except Game.DoesNotExist:
+        return Response({"detail": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Flat fetch all logs for this game (highly performant single query)
+    all_logs = list(GameLog.objects.filter(game=game).order_by("created_at").select_related("player"))
+    
+    # Map them by ID
+    logs_by_id = {log.id: log for log in all_logs}
+    
+    # Establish root logs list and attach _children to each instance
+    root_logs = []
+    
+    for log in all_logs:
+        log._children = [] # Initialize manual children array
+        
+    for log in all_logs:
+        if log.parent_id:
+            parent = logs_by_id.get(log.parent_id)
+            if parent:
+                parent._children.append(log)
+        else:
+            root_logs.append(log)
+
+    serializer = GameLogSerializer(root_logs, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)

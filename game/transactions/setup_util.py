@@ -20,6 +20,8 @@ def next_player_setup(game: Game):
         game.save()
         # ad hoc, but need the next_step called initially
         first_player = get_current_player(game)
+        from game.transactions.general import create_turn
+        create_turn(first_player)
         next_step(first_player)
         return
 

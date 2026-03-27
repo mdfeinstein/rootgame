@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .client import RootGameClient
+from game.tests.client import RootGameClient
 from game.models.game_models import Faction, Player, Game, HandEntry, CraftedCardEntry
 
 from game.tests.my_factories import (
@@ -41,6 +41,10 @@ class WATurnFlowTestCase(TestCase):
         self.game.save()
 
         # Initialize WA's turn
+        from game.models.wa.turn import WATurn
+        if not WATurn.objects.filter(player=self.wa_player).exists():
+            WATurn.create_turn(self.wa_player)
+            
         next_step(self.wa_player)
 
     def test_wa_turn_flow(self):

@@ -26,7 +26,18 @@ def next_step(player: Player):
         case _:
             raise ValueError("Invalid phase")
     phase.save()
+    
     step_effect(player, phase)
+
+
+@transaction.atomic
+def create_crows_turn(player: Player):
+    # create turn
+    turn = CrowTurn.create_turn(player)
+
+    from game.serializers.logs.general import log_turn, log_phase
+    turn_log = log_turn(player.game, player, turn_number=turn.turn_number + 1)
+    log_phase(player.game, player, "Birdsong", parent=turn_log)
 
 
 @transaction.atomic
@@ -63,10 +74,13 @@ def step_effect(
                 case CrowBirdsong.CrowBirdsongSteps.COMPLETED:
                     from game.transactions.crafted_cards.eyrie_emigre import is_emigre
                     if not is_emigre(player):
+                        from game.serializers.logs.general import log_phase, get_current_turn_log
+                        turn_log = get_current_turn_log(player.game, player)
+                        log_phase(player.game, player, "Daylight", parent=turn_log)
                         step_effect(player, None)
                 case _:
                     raise ValueError(
-                        f"Invalid step in step_effect for Crows Birdsong: {phase.step.name}"
+                        f"Invalid step in step_effect for Crows Birdsong: {phase.step}"
                     )
         case CrowDaylight():
             match phase.step:
@@ -75,10 +89,13 @@ def step_effect(
                 case CrowDaylight.CrowDaylightSteps.COMPLETED:
                     from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
                     if not check_charm_offensive(player):
+                        from game.serializers.logs.general import log_phase, get_current_turn_log
+                        turn_log = get_current_turn_log(player.game, player)
+                        log_phase(player.game, player, "Evening", parent=turn_log)
                         step_effect(player, None)
                 case _:
                     raise ValueError(
-                        f"Invalid step in step_effect for Crows Daylight: {phase.step.name}"
+                        f"Invalid step in step_effect for Crows Daylight: {phase.step}"
                     )
         case CrowEvening():
             match phase.step:
@@ -93,8 +110,13 @@ def step_effect(
                         else:
                             from game.transactions.crows.evening import calculate_crow_draw_amount
                             amount = calculate_crow_draw_amount(player)
+                            drawn_cards = []
                             for _ in range(amount):
-                                draw_card_from_deck_to_hand(player)
+                                drawn_cards.append(draw_card_from_deck_to_hand(player))
+                            
+                            from game.serializers.logs.general import log_draw, get_current_phase_log
+                            log_draw(player.game, player, [d.card for d in drawn_cards], parent=get_current_phase_log(player.game, player))
+                            
                             phase.cards_drawn = amount
                             phase.save()
                             next_step(player)
@@ -104,7 +126,7 @@ def step_effect(
                 case CrowEvening.CrowEveningSteps.COMPLETED:
                     end_crows_turn(player)
                 case _:
-                    raise ValueError(f"Invalid step in step_effect for Crows Evening: {phase.step.name}")
+                    raise ValueError(f"Invalid step in step_effect for Crows Evening: {phase.step}")
         case _:
             raise ValueError("Invalid phase")
 
@@ -119,7 +141,6 @@ def end_crows_turn(player: Player):
         evening.save()
     except Exception:
         pass
-    CrowTurn.create_turn(player)
     next_players_turn(player.game)
     reset_crows_turn(player)
 

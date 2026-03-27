@@ -183,3 +183,23 @@ class ActiveEffectsTests(TestCase):
         evening.step = CrowEvening.CrowEveningSteps.DISCARDING
         evening.save()
         self.assertFalse(can_use_card(self.player_crows, entry_inf))
+    def test_league_of_adventurers_logic(self):
+        from game.models.game_models import CraftedItemEntry, ItemTypes
+        card_league = self.create_card_object(CardsEP.LEAGUE_OF_ADVENTURERS)
+        entry = CraftedCardEntry.objects.create(player=self.player_birds, card=card_league)
+        
+        # 1. Daylight phase, but NO items -> False
+        birdsong = self.turn.birdsong.first()
+        birdsong.step = BirdBirdsong.BirdBirdsongSteps.COMPLETED
+        birdsong.save()
+        self.assertFalse(can_use_card(self.player_birds, entry))
+
+        # 2. Add unexhausted item -> True
+        from game.models.game_models import Item
+        item = Item.objects.create(game=self.player_birds.game, item_type=Item.ItemTypes.BOOTS)
+        CraftedItemEntry.objects.create(player=self.player_birds, item=item, exhausted=False)
+        self.assertTrue(can_use_card(self.player_birds, entry))
+
+        # 3. Exhaust item -> False
+        CraftedItemEntry.objects.filter(player=self.player_birds).update(exhausted=True)
+        self.assertFalse(can_use_card(self.player_birds, entry))

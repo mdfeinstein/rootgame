@@ -42,7 +42,6 @@ from game.queries.general import (
     warrior_count_in_supply,
 )
 from game.transactions.battle import start_battle
-from game.transactions.birds_setup import create_birds_turn
 from game.transactions.general import (
     craft_card,
     draw_card_from_deck,
@@ -67,7 +66,9 @@ def emergency_draw(player: Player):
     validate_step(player, BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING)
     # check if player has cards in hand and draw if not
     if get_player_hand_size(player) == 0:
-        draw_card_from_deck_to_hand(player)
+        hand_entry = draw_card_from_deck_to_hand(player)
+        from game.serializers.logs.general import log_draw, get_current_phase_log
+        log_draw(player.game, player, [hand_entry.card], parent=get_current_phase_log(player.game, player))
     # move to next step
     next_step(player)
 
@@ -102,9 +103,14 @@ def add_card_to_decree(player: Player, card: CardsEP, column: DecreeEntry.Column
         card=card_in_hand.card,
     )
     # remove card from player's hand
+    card_model = card_in_hand.card
     card_in_hand.delete()
     # increment cards added and flag bird card added if needed
     birdsong.cards_added_to_decree += 1
+
+    from game.serializers.logs.birds import log_birds_add_to_decree
+    from game.serializers.logs.general import get_current_phase_log
+    log_birds_add_to_decree(player.game, player, decree_entry, parent=get_current_phase_log(player.game, player))
     # move to next step if all cards have been added
     birdsong.save()
     if birdsong.cards_added_to_decree == 2:
@@ -219,6 +225,11 @@ def emergency_roost(player: Player, clearing: Clearing):
     # place roost and warriors
     place_roost(player, clearing)
     place_warriors_into_clearing(player, clearing, 3)
+    
+    from game.serializers.logs.birds import log_birds_emergency_roost
+    from game.serializers.logs.general import get_current_phase_log
+    log_birds_emergency_roost(player.game, player, clearing.clearing_number, parent=get_current_phase_log(player.game, player))
+    
     # move to next step
     birdsong = get_phase(player)
     assert type(birdsong) == BirdBirdsong
@@ -235,7 +246,11 @@ def bird_craft_card(player: Player, card: CardsEP, crafting_pieces: list[BirdRoo
     card_in_hand = validate_player_has_card_in_hand(player, card)
     if not validate_crafting_pieces_satisfy_requirements(player, card, crafting_pieces):
         raise ValueError("Not enough crafting pieces to craft card")
+    card_model = card_in_hand.card
     craft_card(card_in_hand, cast(list[Piece], crafting_pieces))
+
+    from game.serializers.logs.general import log_craft, get_current_phase_log
+    log_craft(player.game, player, card_model, parent=get_current_phase_log(player.game, player))
     # if no more crafting pieces, move to next step
     if get_player_hand_size(player) == 0 or get_all_unused_roosts(player).count() == 0:
         next_step(player)
@@ -281,6 +296,11 @@ def bird_recruit_action(
     # mark decree entry as used
     decree_entry.fulfilled = True
     decree_entry.save()
+    
+    from game.serializers.logs.birds import log_birds_decree_action
+    from game.serializers.logs.general import get_current_phase_log
+    log_birds_decree_action(player.game, player, "recruit", clearing.clearing_number, parent=get_current_phase_log(player.game, player))
+    
     # check if turmoil or next_step
     recruit_turmoil_check(player)
 
@@ -316,6 +336,11 @@ def bird_move_action(
     # mark decree entry as used
     decree_entry.fulfilled = True
     decree_entry.save()
+
+    from game.serializers.logs.birds import log_birds_decree_action
+    from game.serializers.logs.general import get_current_phase_log
+    log_birds_decree_action(player.game, player, "move", origin_clearing.clearing_number, parent=get_current_phase_log(player.game, player))
+
     # check if turmoil or next_step
     move_turmoil_check(player)
 
@@ -347,10 +372,25 @@ def bird_battle_action(
     if decree_suit != clearing.suit and decree_suit != Suit.WILD:
         raise ValueError("Decree suit does not match clearing suit")
     # battle checks are in start_battle
-    start_battle(player.game, player.faction, defender.faction, clearing)
+    battle = start_battle(player.game, player.faction, defender.faction, clearing)
     # use decree entry
     decree_entry.fulfilled = True
     decree_entry.save()
+
+    from game.transactions.battle import log_battle_start
+    from game.serializers.logs.birds import log_birds_decree_action
+    from game.serializers.logs.general import get_current_phase_log
+    
+    parent = log_birds_decree_action(
+        player.game,
+        player,
+        "battle",
+        clearing.clearing_number,
+        parent=get_current_phase_log(player.game, player)
+    )
+    
+    log_battle_start(battle, player, parent=parent)
+
     # check if turmoil or next_step
     battle_turmoil_check(player)
 
@@ -383,6 +423,11 @@ def bird_build_action(
     # use decree entry
     decree_entry.fulfilled = True
     decree_entry.save()
+
+    from game.serializers.logs.birds import log_birds_decree_action
+    from game.serializers.logs.general import get_current_phase_log
+    log_birds_decree_action(player.game, player, "build", clearing.clearing_number, parent=get_current_phase_log(player.game, player))
+
     # check if turmoil or next_step
     build_turmoil_check(player)
 
@@ -405,6 +450,12 @@ def roost_scoring(player: Player):
     ]  # 0 on board, 1 on board... all 7 on board
     roosts_on_board = len(get_roosts_on_board(player))
     raise_score(player, scoring_per_roost_on_board[roosts_on_board])
+
+    if scoring_per_roost_on_board[roosts_on_board] > 0:
+        from game.serializers.logs.birds import log_birds_score_roosts
+        from game.serializers.logs.general import get_current_phase_log
+        log_birds_score_roosts(player.game, player, scoring_per_roost_on_board[roosts_on_board], parent=get_current_phase_log(player.game, player))
+
     next_step(player)
 
 
@@ -416,8 +467,13 @@ def draw_cards(player: Player):
     assert type(evening) == BirdEvening
     drawing_per_roost_on_board = [1, 1, 1, 2, 2, 2, 3, 3]
     roosts_on_board = len(get_roosts_on_board(player))
+    drawn_cards_objs = []
     for _ in range(drawing_per_roost_on_board[roosts_on_board]):
-        draw_card_from_deck_to_hand(player)
+        drawn_cards_objs.append(draw_card_from_deck_to_hand(player).card)
+        
+    from game.serializers.logs.general import log_draw, get_current_phase_log
+    log_draw(player.game, player, drawn_cards_objs, parent=get_current_phase_log(player.game, player))
+
     next_step(player)
 
 
@@ -443,7 +499,11 @@ def discard_card(player: Player, card: CardsEP):
     if player.faction != Faction.BIRDS.value:
         raise ValueError("Player is not birds")
     # discard card
+    card_model = card_in_hand.card
     discard_card_from_hand(player, card_in_hand)
+
+    from game.serializers.logs.general import log_discard, get_current_phase_log
+    log_discard(player.game, player, card_model, parent=get_current_phase_log(player.game, player))
     # move to next step if player has 5 or fewer cards
     if get_player_hand_size(player) <= 5:
         next_step(player)
@@ -485,6 +545,17 @@ def begin_evening(player: Player):
 
 
 @transaction.atomic
+def create_birds_turn(player: Player):
+    from game.models.birds.turn import BirdTurn
+    # create turn
+    turn = BirdTurn.create_turn(player)
+
+    from game.serializers.logs.general import log_turn, log_phase
+    turn_log = log_turn(player.game, player, turn_number=turn.turn_number + 1)
+    log_phase(player.game, player, "Birdsong", parent=turn_log)
+
+
+@transaction.atomic
 def end_birds_turn(player: Player):
     """ends the current turn, generating the next turn and moving to the next players phase
     careful where this is called. will move evening to completed if called.
@@ -493,7 +564,6 @@ def end_birds_turn(player: Player):
     phase = get_phase(player)
     assert type(phase) == BirdEvening
     assert phase.step == BirdEvening.BirdEveningSteps.COMPLETED
-    create_birds_turn(player)
     next_players_turn(player.game)
     reset_birds_turn(player)
 
@@ -757,9 +827,13 @@ def turmoil(player: Player):
     points_to_lose += DecreeEntry.objects.filter(
         player=player, card__suit=Suit.WILD
     ).count()
+    raise_score(player, -points_to_lose)
+    
     # clear the decree: disard all cards and destory the viziers
+    cards_lost = 0
     for decree_entry in DecreeEntry.objects.filter(player=player):
         discard_card_from_decree(player, decree_entry)
+        cards_lost += 1
     Vizier.objects.filter(player=player).delete()
     # set leader to unavailable and inactive
     current_leader = BirdLeader.objects.get(player=player, active=True)
@@ -769,13 +843,26 @@ def turmoil(player: Player):
     # if all leaders unavailable, make them all available
     if BirdLeader.objects.filter(player=player, available=False).count() == 4:
         BirdLeader.objects.filter(player=player, available=False).update(available=True)
+    
     # move daylight to completed
     daylight = get_phase(player)
     assert type(daylight) == BirdDaylight
-    daylight.step = BirdDaylight.BirdDaylightSteps.COMPLETED
-    daylight.save()
-    # activate step effects for end of daylight (eg charm offensive)
-    step_effect(player)
+    
+    # derive action string for logging
+    action = None
+    if daylight.step == BirdDaylight.BirdDaylightSteps.RECRUITING:
+        action = "recruit"
+    elif daylight.step == BirdDaylight.BirdDaylightSteps.MOVING:
+        action = "move"
+    elif daylight.step == BirdDaylight.BirdDaylightSteps.BATTLING:
+        action = "battle"
+    elif daylight.step == BirdDaylight.BirdDaylightSteps.BUILDING:
+        action = "build"
+
+    from game.serializers.logs.birds import log_birds_turmoil
+    from game.serializers.logs.general import get_current_phase_log
+    log_birds_turmoil(player.game, player, points_to_lose, cards_lost, action, parent=get_current_phase_log(player.game, player))
+
     # create turmoil event
     event = Event.objects.create(game=player.game, type=EventType.TURMOIL)
     TurmoilEvent.objects.create(event=event, player=player)
@@ -813,8 +900,19 @@ def turmoil_choose_new_leader(player: Player, leader: BirdLeader):
     event = turmoil_event.event
     event.is_resolved = True
     event.save()
-    # go to next step
-    next_step(player)
+    
+    from game.serializers.logs.birds import log_birds_new_leader
+    from game.serializers.logs.general import get_current_phase_log
+    log_birds_new_leader(player.game, player, leader, parent=get_current_phase_log(player.game, player))
+    
+    # move daylight to completed
+    daylight = get_phase(player)
+    assert type(daylight) == BirdDaylight
+    daylight.step = BirdDaylight.BirdDaylightSteps.COMPLETED
+    daylight.save()
+    
+    # activate step effects for end of daylight
+    step_effect(player)
 
 
 @transaction.atomic
@@ -864,7 +962,16 @@ def step_effect(
                 case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING:
                     try_auto_emergency_roost(player)
                 case BirdBirdsong.BirdBirdsongSteps.COMPLETED:
-                    is_emigre(player)
+                    from game.transactions.crafted_cards.eyrie_emigre import is_emigre
+                    if not is_emigre(player):
+                        from game.serializers.logs.general import log_phase, get_current_turn_log
+                        log_phase(
+                            player.game,
+                            player,
+                            "Daylight",
+                            parent=get_current_turn_log(player.game, player),
+                        )
+                        step_effect(player, None)
         case BirdDaylight():
             match phase.step:
                 case BirdDaylight.BirdDaylightSteps.CRAFTING:
@@ -878,7 +985,15 @@ def step_effect(
                 case BirdDaylight.BirdDaylightSteps.BUILDING:
                     build_turmoil_check(player)
                 case BirdDaylight.BirdDaylightSteps.COMPLETED:
+                    from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
                     if not check_charm_offensive(player):
+                        from game.serializers.logs.general import log_phase, get_current_turn_log
+                        log_phase(
+                            player.game,
+                            player,
+                            "Evening",
+                            parent=get_current_turn_log(player.game, player),
+                        )
                         # call step_effect for current phase (evening) by passing None
                         step_effect(player, None)
         case BirdEvening():

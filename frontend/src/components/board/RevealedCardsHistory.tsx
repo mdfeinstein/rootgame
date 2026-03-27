@@ -1,6 +1,5 @@
 import {
   Modal,
-  Button,
   ScrollArea,
   Card as MantineCard,
   Text,
@@ -10,11 +9,15 @@ import {
   Indicator,
   Paper,
   Box,
+  ActionIcon,
+  Tooltip as MantineTooltip,
 } from "@mantine/core";
 import useRevealedCardsQuery from "../../hooks/useRevealedCardsQuery";
 import { IconCards } from "@tabler/icons-react";
 
 import { GameCard } from "../cards/Card";
+import { useContext } from "react";
+import { UserContext } from "../../contexts/UserProvider";
 
 interface RevealedCardsHistoryProps {
   gameId: number;
@@ -27,59 +30,69 @@ const RevealedCardsHistory: React.FC<RevealedCardsHistoryProps> = ({
   isOpen,
   onToggle,
 }) => {
-  const { revealedCards, isLoading } = useRevealedCardsQuery(gameId);
+  const { username } = useContext(UserContext);
+  const { revealedCards, isLoading } = useRevealedCardsQuery(gameId, username);
 
   // Consider an item new if turns_ago is 0, just to highlight
   const hasRecentReveals =
     revealedCards?.some((rc) => rc.turns_ago === 0) ?? false;
 
-  const groupedCards = revealedCards?.reduce(
-    (acc, rc) => {
-      const key = `${rc.turns_ago}-${rc.event_type}-${rc.faction.value}`;
-      if (!acc[key]) {
-        acc[key] = {
-          turns_ago: rc.turns_ago,
-          event_type: rc.event_type,
-          faction: rc.faction,
-          cards: [],
-        };
-      }
-      
-      // Deduplicate cards in the same event based on card id
-      if (!acc[key].cards.some((c: any) => c.id === rc.card.id)) {
-        acc[key].cards.push(rc.card);
-      }
-      
-      return acc;
-    },
-    {} as Record<
-      string,
-      { turns_ago: number; event_type: string; faction: any; cards: any[] }
-    >
-  ) || {};
+  const groupedCards =
+    revealedCards?.reduce(
+      (acc, rc) => {
+        const key = `${rc.turns_ago}-${rc.event_type}-${rc.faction.value}`;
+        if (!acc[key]) {
+          acc[key] = {
+            turns_ago: rc.turns_ago,
+            event_type: rc.event_type,
+            faction: rc.faction,
+            cards: [],
+          };
+        }
+
+        // Deduplicate cards in the same event based on card id
+        if (!acc[key].cards.some((c: any) => c.id === rc.card.id)) {
+          acc[key].cards.push(rc.card);
+        }
+
+        return acc;
+      },
+      {} as Record<
+        string,
+        { turns_ago: number; event_type: string; faction: any; cards: any[] }
+      >,
+    ) || {};
 
   const sortedGroups = Object.values(groupedCards).sort(
-    (a, b) => a.turns_ago - b.turns_ago
+    (a, b) => a.turns_ago - b.turns_ago,
   );
 
   return (
     <>
-      <Indicator
-        disabled={!hasRecentReveals}
-        color="red"
-        size={12}
-        offset={4}
-        withBorder
+      <MantineTooltip
+        label="Revealed Cards History"
+        withArrow
+        position="bottom"
+        zIndex={2000}
       >
-        <Button
-          variant="light"
-          leftSection={<IconCards size={16} />}
-          onClick={onToggle}
-          size="sm"
+        <Indicator
+          disabled={!hasRecentReveals}
+          color="red"
+          size={12}
+          offset={4}
+          withBorder
         >
-          Revealed Cards
-        </Button>
-      </Indicator>
+          <ActionIcon
+            variant="light"
+            onClick={onToggle}
+            w={64}
+            h={48}
+            radius="md"
+          >
+            <IconCards size={28} />
+          </ActionIcon>
+        </Indicator>
+      </MantineTooltip>
 
       <Modal
         opened={isOpen}
@@ -116,7 +129,13 @@ const RevealedCardsHistory: React.FC<RevealedCardsHistoryProps> = ({
                 </Text>
               )}
               {sortedGroups.map((group, idx) => (
-                <MantineCard key={idx} shadow="sm" padding="md" radius="md" withBorder>
+                <MantineCard
+                  key={idx}
+                  shadow="sm"
+                  padding="md"
+                  radius="md"
+                  withBorder
+                >
                   <Group justify="space-between" mb="xs">
                     <Group gap="xs">
                       <Badge color="blue" variant="light" size="lg">
@@ -125,7 +144,9 @@ const RevealedCardsHistory: React.FC<RevealedCardsHistoryProps> = ({
                       <Text fw={500}>by {group.faction.label}</Text>
                     </Group>
                     <Text size="sm" c="dimmed" fw={600}>
-                      {group.turns_ago === 0 ? "This turn" : `${group.turns_ago} turn(s) ago`}
+                      {group.turns_ago === 0
+                        ? "This turn"
+                        : `${group.turns_ago} turn(s) ago`}
                     </Text>
                   </Group>
 

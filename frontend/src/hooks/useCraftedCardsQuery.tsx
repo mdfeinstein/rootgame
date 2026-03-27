@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { useContext } from "react";
+import { UserContext } from "../contexts/UserProvider";
 import { gameKeys, type FactionValue } from "../api/queryKeys";
 import type { CardType } from "./useGetPlayerHandQuery";
 
@@ -15,6 +17,7 @@ const useCraftedCardsQuery = (
   gameId: number,
   faction: FactionValue | undefined,
 ) => {
+  const { username } = useContext(UserContext);
   const {
     data: craftedCards,
     isLoading,
@@ -55,7 +58,7 @@ const useCraftedCardsQuery = (
       }
       return response.json();
     },
-    enabled: !!gameId && !!faction,
+    enabled: !!gameId && !!faction && !!username,
   });
 
   return { craftedCards, isLoading, isError, isSuccess };

@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { UserContext } from "../contexts/UserProvider";
 import { useQuery } from "@tanstack/react-query";
 import type { components } from "../api/types";
 import { gameKeys } from "../api/queryKeys";
@@ -6,6 +8,7 @@ export type CardType = components["schemas"]["Card"];
 const djangoUrl = import.meta.env.VITE_DJANGO_URL || "";
 
 const useDiscardPileQuery = (gameId: number, enabled: boolean = true) => {
+  const { username } = useContext(UserContext);
   const {
     data: discardPile,
     isLoading,
@@ -25,7 +28,7 @@ const useDiscardPileQuery = (gameId: number, enabled: boolean = true) => {
       }
       return response.json();
     },
-    enabled: !!gameId && enabled,
+    enabled: !!gameId && enabled && !!username,
   });
   return { discardPile, isLoading, isError, isSuccess };
 };

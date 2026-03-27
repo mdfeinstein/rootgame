@@ -60,3 +60,16 @@ def swap_meet_give_card(swap_meet_event: SwapMeetEvent, card_to_give: CardsEP):
     # Resolve event
     swap_meet_event.event.is_resolved = True
     swap_meet_event.event.save()
+
+    from game.serializers.logs.general import get_active_phase_log
+    from game.serializers.logs.crafted_cards import log_crafted_card_action
+    log_crafted_card_action(
+        taking_player.game,
+        taking_player,
+        swap_meet_event.crafted_card_entry.card if hasattr(swap_meet_event, 'crafted_card_entry') else Card.objects.filter(game=taking_player.game, card_type=CardsEP.SWAP_MEET.name).first(),
+        "use",
+        details={
+            "target_faction": taken_from_player.faction
+        },
+        parent=get_active_phase_log(taking_player.game)
+    )

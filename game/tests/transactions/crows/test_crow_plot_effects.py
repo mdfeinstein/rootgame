@@ -4,10 +4,11 @@ from game.models.game_models import Faction, Clearing, Warrior, Token, Building
 from game.models.crows.tokens import PlotToken
 from game.models.events.event import Event, EventType
 from game.models.events.crows import CrowRaidEvent
-from game.tests.client import RootGameClient
 from game.tests.my_factories import GameSetupWithFactionsFactory
+from game.tests.logging_mixin import LoggingTestMixin
+from game.models.game_log import LogType
 
-class CrowPlotTokenEffectsTests(APITestCase):
+class CrowPlotTokenEffectsTests(APITestCase, LoggingTestMixin):
     def setUp(self):
         self.game = GameSetupWithFactionsFactory(factions=[Faction.CATS, Faction.CROWS])
         self.crows_player = self.game.players.get(faction=Faction.CROWS)
@@ -82,6 +83,8 @@ class CrowPlotTokenEffectsTests(APITestCase):
         player_removes_token(self.game, raid, self.cats_player, is_exposure=False)
         
         self.assertEqual(Warrior.objects.filter(clearing=self.c5, player=self.crows_player).count(), initial_warriors_in_c5 + 1)
+        # VERIFY LOG
+        self.assertLogExists(LogType.CROWS_RAID, player=self.crows_player, origin_clearing_number=self.c1.clearing_number)
 
     def test_raid_manual_placement_event(self):
         """Verify Raid launches event if supply is insufficient"""
