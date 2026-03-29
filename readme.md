@@ -129,16 +129,28 @@ Decree actions have a checkbox to indicate if the decree is used.
 
 ## Setup
 
-To run the project locally, I use npm and vite to serve the frontend and django to run the backend. the packages for the frontend are listed in the package.json file and the packages for the backend are listed in the requirements.txt file. To run the backend, you will need to be in the project root and run:
-
-`python manage.py runserver`
-
 The database is setup to run locally using sqlite3. You will need to run the initial migrations to set the database up before running the server the first time:
 
 ```
 python manage.py makemigrations
 python manage.py migrate
 ```
+
+Now add the user accounts that the demo expects
+```
+python manage.py shell
+>>> from django.contrib.auth.models import User
+>>> user=User.objects.create_user('user1', password='password')
+>>> user=User.objects.create_user('user2', password='password')
+>>> user=User.objects.create_user('user3', password='password')
+>>> user=User.objects.create_user('user4', password='password')
+>>> user.save()
+>>> quit()
+```
+
+To run the project locally, I use npm and vite to serve the frontend and django to run the backend. the packages for the frontend are listed in the package.json file and the packages for the backend are listed in the requirements.txt file. To run the backend, you will need to be in the project root and run:
+
+`python manage.py runserver`
 
 To run the frontend, you will need to be in the folder ./frontend and run:
 
