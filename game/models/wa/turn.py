@@ -30,6 +30,7 @@ class WABirdsong(models.Model):
         NOT_STARTED = "0", "Not Started"
         REVOLT = "1", "Revolt"
         SPREAD_SYMPATHY = "2", "Spread Sympathy"
+        BEFORE_END = "z", "Before End"
         COMPLETED = "3", "Completed"
 
     turn = models.ForeignKey(WATurn, on_delete=models.CASCADE, related_name="birdsong")
@@ -42,7 +43,9 @@ class WABirdsong(models.Model):
 
 class WADaylight(models.Model):
     class WADaylightSteps(models.TextChoices):
+        NOT_STARTED = "0", "Not Started"
         ACTIONS = "1", "Actions"
+        BEFORE_END = "z", "Before End"
         COMPLETED = "2", "Completed"
 
     turn = models.ForeignKey(WATurn, on_delete=models.CASCADE, related_name="daylight")
@@ -55,9 +58,11 @@ class WADaylight(models.Model):
 
 class WAEvening(models.Model):
     class WAEveningSteps(models.TextChoices):
+        NOT_STARTED = "0", "Not Started"
         MILITARY_OPERATIONS = "1", "Military Operations"
         DRAWING = "2", "Drawing Cards"
         DISCARDING = "3", "Discarding Cards"
+        BEFORE_END = "z", "Before End"
         COMPLETED = "4", "Completed"
 
     turn = models.ForeignKey(WATurn, on_delete=models.CASCADE, related_name="evening")

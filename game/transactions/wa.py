@@ -603,10 +603,10 @@ def create_wa_turn(player: Player):
     # create turn
     turn = WATurn.create_turn(player)
 
-    from game.serializers.logs.general import log_turn, log_phase
+    from game.serializers.logs.general import log_turn
 
-    turn_log = log_turn(player.game, player, turn_number=turn.turn_number + 1)
-    log_phase(player.game, player, "Birdsong", parent=turn_log)
+    log_turn(player.game, player, turn_number=turn.turn_number + 1)
+    # Birdsong log will be created in WABirdsong.NOT_STARTED step_effect
 
 
 @transaction.atomic
@@ -730,7 +730,14 @@ def step_effect(
         case WABirdsong():
             match phase.step:
                 case WABirdsong.WABirdsongSteps.NOT_STARTED:
-                    pass
+                    from game.serializers.logs.general import log_phase, get_current_turn_log
+                    log_phase(
+                        player.game,
+                        player,
+                        "Birdsong",
+                        parent=get_current_turn_log(player.game, player),
+                    )
+                    next_step(player)
                 case WABirdsong.WABirdsongSteps.REVOLT:
                     from game.queries.crafted_cards import get_coffin_makers_player
                     from game.transactions.crafted_cards.coffin_makers import (
@@ -746,50 +753,49 @@ def step_effect(
                     saboteurs_check(player)
                 case WABirdsong.WABirdsongSteps.SPREAD_SYMPATHY:
                     pass
-                case WABirdsong.WABirdsongSteps.COMPLETED:
+                case WABirdsong.WABirdsongSteps.BEFORE_END:
                     from game.transactions.crafted_cards.eyrie_emigre import is_emigre
-
                     if not is_emigre(player):
-                        from game.serializers.logs.general import (
-                            log_phase,
-                            get_current_turn_log,
-                        )
-
-                        log_phase(
-                            player.game,
-                            player,
-                            "Daylight",
-                            parent=get_current_turn_log(player.game, player),
-                        )
-                        step_effect(player, None)
+                        next_step(player)
+                case WABirdsong.WABirdsongSteps.COMPLETED:
+                    step_effect(player)
                 case _:
                     raise ValueError(
                         f"Invalid step in step_effect for WA Birdsong: {phase.step.name}"
                     )
         case WADaylight():
             match phase.step:
+                case WADaylight.WADaylightSteps.NOT_STARTED:
+                    from game.serializers.logs.general import log_phase, get_current_turn_log
+                    log_phase(
+                        player.game,
+                        player,
+                        "Daylight",
+                        parent=get_current_turn_log(player.game, player),
+                    )
+                    next_step(player)
                 case WADaylight.WADaylightSteps.ACTIONS:
                     pass
-                case WADaylight.WADaylightSteps.COMPLETED:
+                case WADaylight.WADaylightSteps.BEFORE_END:
                     if not check_charm_offensive(player):
-                        from game.serializers.logs.general import (
-                            log_phase,
-                            get_current_turn_log,
-                        )
-
-                        log_phase(
-                            player.game,
-                            player,
-                            "Evening",
-                            parent=get_current_turn_log(player.game, player),
-                        )
-                        step_effect(player, None)
+                        next_step(player)
+                case WADaylight.WADaylightSteps.COMPLETED:
+                    step_effect(player)
                 case _:
                     raise ValueError(
                         f"Invalid step in step_effect for WA Daylight: {phase.step.name}"
                     )
         case WAEvening():
             match phase.step:
+                case WAEvening.WAEveningSteps.NOT_STARTED:
+                    from game.serializers.logs.general import log_phase, get_current_turn_log
+                    log_phase(
+                        player.game,
+                        player,
+                        "Evening",
+                        parent=get_current_turn_log(player.game, player),
+                    )
+                    next_step(player)
                 case WAEvening.WAEveningSteps.MILITARY_OPERATIONS:
                     pass
                 case WAEvening.WAEveningSteps.DRAWING:
@@ -798,6 +804,8 @@ def step_effect(
                         draw_cards(player)
                 case WAEvening.WAEveningSteps.DISCARDING:
                     check_discard_step(player)
+                case WAEvening.WAEveningSteps.BEFORE_END:
+                    next_step(player)
                 case WAEvening.WAEveningSteps.COMPLETED:
                     end_turn(player)
                 case _:

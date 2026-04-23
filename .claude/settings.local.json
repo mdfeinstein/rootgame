@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.birds.test_birds_evening)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions)"
+    ]
+  }
+}

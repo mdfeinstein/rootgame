@@ -10,6 +10,7 @@ from game.models.cats.tokens import CatKeep, CatWood
 from game.models.cats.turn import CatBirdsong, CatDaylight, CatEvening, CatTurn
 from game.models.events.event import Event, EventType
 from game.models.game_models import (
+    Building,
     Clearing,
     Faction,
     HandEntry,
@@ -101,10 +102,10 @@ def create_cats_turn(player: Player):
     # create turn
     turn = CatTurn.create_turn(player)
 
-    from game.serializers.logs.general import log_turn, log_phase
+    from game.serializers.logs.general import log_turn
 
-    turn_log = log_turn(player.game, player, turn_number=turn.turn_number + 1)
-    log_phase(player.game, player, "Birdsong", parent=turn_log)
+    log_turn(player.game, player, turn_number=turn.turn_number + 1)
+    # Birdsong log will be created in CatBirdsong.NOT_STARTED step_effect
 
 
 @transaction.atomic
@@ -146,6 +147,9 @@ def build_building(
     raise_score(player, scoring)
     building_model = apps.get_model("game", building_type.value)
     building = building_model.objects.filter(player=player, building_slot=None).first()
+    if building is None:
+        raise ValueError("No building of that type in supply")
+    assert isinstance(building, Building)
     place_piece_from_supply_into_clearing(building, clearing)
     # remove wood tokens from board
     for token in wood_tokens:
@@ -658,7 +662,14 @@ def step_effect(
         case CatBirdsong():
             match phase.step:
                 case CatBirdsong.CatBirdsongSteps.NOT_STARTED:
-                    pass
+                    from game.serializers.logs.general import log_phase, get_current_turn_log
+                    log_phase(
+                        player.game,
+                        player,
+                        "Birdsong",
+                        parent=get_current_turn_log(player.game, player),
+                    )
+                    next_step(player)
                 case CatBirdsong.CatBirdsongSteps.PLACING_WOOD:
                     from game.queries.crafted_cards import get_coffin_makers_player
                     from game.transactions.crafted_cards.coffin_makers import (
@@ -674,22 +685,12 @@ def step_effect(
                     if not saboteurs_check(player):
                         # if more wood tokens in supply than tokens to produce, automate placement
                         check_auto_place_wood(player)
-                case CatBirdsong.CatBirdsongSteps.COMPLETED:
+                case CatBirdsong.CatBirdsongSteps.BEFORE_END:
                     from game.transactions.crafted_cards.eyrie_emigre import is_emigre
-
                     if not is_emigre(player):
-                        from game.serializers.logs.general import (
-                            log_phase,
-                            get_current_turn_log,
-                        )
-
-                        log_phase(
-                            player.game,
-                            player,
-                            "Daylight",
-                            parent=get_current_turn_log(player.game, player),
-                        )
-                        step_effect(player, None)
+                        next_step(player)
+                case CatBirdsong.CatBirdsongSteps.COMPLETED:
+                    step_effect(player)
 
                 case _:
                     raise ValueError(
@@ -697,34 +698,42 @@ def step_effect(
                     )
         case CatDaylight():
             match phase.step:
+                case CatDaylight.CatDaylightSteps.NOT_STARTED:
+                    from game.serializers.logs.general import log_phase, get_current_turn_log
+                    log_phase(
+                        player.game,
+                        player,
+                        "Daylight",
+                        parent=get_current_turn_log(player.game, player),
+                    )
+                    next_step(player)
                 case CatDaylight.CatDaylightSteps.CRAFTING:
                     pass
                 case CatDaylight.CatDaylightSteps.ACTIONS:
                     pass
-                case CatDaylight.CatDaylightSteps.COMPLETED:
+                case CatDaylight.CatDaylightSteps.BEFORE_END:
                     from game.transactions.crafted_cards.charm_offensive import (
                         check_charm_offensive,
                     )
-
                     if not check_charm_offensive(player):
-                        from game.serializers.logs.general import (
-                            log_phase,
-                            get_current_turn_log,
-                        )
-
-                        log_phase(
-                            player.game,
-                            player,
-                            "Evening",
-                            parent=get_current_turn_log(player.game, player),
-                        )
-                        step_effect(player, None)
+                        next_step(player)
+                case CatDaylight.CatDaylightSteps.COMPLETED:
+                    step_effect(player)
                 case _:
                     raise ValueError(
                         f"Invalid step in step_effect for Cats Daylight: {phase.step}"
                     )
         case CatEvening():
             match phase.step:
+                case CatEvening.CatEveningSteps.NOT_STARTED:
+                    from game.serializers.logs.general import log_phase, get_current_turn_log
+                    log_phase(
+                        player.game,
+                        player,
+                        "Evening",
+                        parent=get_current_turn_log(player.game, player),
+                    )
+                    next_step(player)
                 case CatEvening.CatEveningSteps.DRAWING:
                     from game.transactions.crafted_cards.informants import (
                         informants_check,
@@ -735,6 +744,8 @@ def step_effect(
                         cat_evening_draw(player)
                 case CatEvening.CatEveningSteps.DISCARDING:
                     check_auto_discard(player)
+                case CatEvening.CatEveningSteps.BEFORE_END:
+                    next_step(player)
                 case CatEvening.CatEveningSteps.COMPLETED:
                     cat_end_turn(player)
                 case _:

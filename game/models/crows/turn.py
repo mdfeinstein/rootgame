@@ -21,6 +21,7 @@ class CrowBirdsong(models.Model):
         CRAFT = "1", "Craft"
         FLIP = "2", "Flip"
         RECRUIT = "3", "Recruit"
+        BEFORE_END = "z", "Before End"
         COMPLETED = "4", "Completed"
 
     turn = models.ForeignKey(CrowTurn, on_delete=models.CASCADE, related_name="birdsong")
@@ -32,7 +33,9 @@ class CrowBirdsong(models.Model):
 
 class CrowDaylight(models.Model):
     class CrowDaylightSteps(models.TextChoices):
+        NOT_STARTED = "0", "Not Started"
         ACTIONS = "1", "Actions"
+        BEFORE_END = "z", "Before End"
         COMPLETED = "2", "Completed"
 
     turn = models.ForeignKey(CrowTurn, on_delete=models.CASCADE, related_name="daylight")
@@ -46,9 +49,11 @@ class CrowDaylight(models.Model):
 
 class CrowEvening(models.Model):
     class CrowEveningSteps(models.TextChoices):
+        NOT_STARTED = "0", "Not Started"
         EXERT = "1", "Exert"
         DRAWING = "2", "Drawing"
         DISCARDING = "3", "Discarding"
+        BEFORE_END = "z", "Before End"
         COMPLETED = "4", "Completed"
 
     turn = models.ForeignKey(CrowTurn, on_delete=models.CASCADE, related_name="evening")

@@ -30,6 +30,7 @@ class CatBirdsong(models.Model):
         NOT_STARTED = "0", "Not Started"
         PLACING_WOOD = "1", "Place wood"
         # ASYNC_FIELD_HOSPITALS = "2", "Async field hospitals"
+        BEFORE_END = "z", "Before End"
         COMPLETED = "3", "Completed"
 
     step = models.CharField(
@@ -44,8 +45,10 @@ class CatBirdsong(models.Model):
 
 class CatDaylight(models.Model):
     class CatDaylightSteps(models.TextChoices):
+        NOT_STARTED = "0", "Not Started"
         CRAFTING = "1", "Crafting"
         ACTIONS = "2", "Actions"
+        BEFORE_END = "z", "Before End"
         COMPLETED = "3", "Completed"
 
     step = models.CharField(
@@ -64,9 +67,10 @@ class CatDaylight(models.Model):
 
 class CatEvening(models.Model):
     class CatEveningSteps(models.TextChoices):
-        # NOT_STARTED = "0", "Not Started"
+        NOT_STARTED = "0", "Not Started"
         DRAWING = "1", "Drawing Cards"
         DISCARDING = "2", "Discarding Cards"
+        BEFORE_END = "z", "Before End"
         COMPLETED = "3", "Completed"
 
     step = models.CharField(

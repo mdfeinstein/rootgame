@@ -509,39 +509,6 @@ def discard_card(player: Player, card: CardsEP):
         next_step(player)
 
 
-@transaction.atomic
-def begin_evening(player: Player):
-    """automates scoring and drawing in evening, and discarding too if possible"""
-    validate_step(player, BirdEvening.BirdEveningSteps.SCORING)
-    evening = get_phase(player)
-    assert type(evening) == BirdEvening
-    scoring_per_roost_on_board = [
-        0,
-        0,
-        1,
-        2,
-        3,
-        4,
-        4,
-        5,
-    ]  # 0 on board, 1 on board... all 7 on board
-    drawing_per_roost_on_board = [1, 1, 1, 2, 2, 2, 3, 3]
-    roosts_on_board = len(get_roosts_on_board(player))
-    raise_score(player, scoring_per_roost_on_board[roosts_on_board])
-    evening.step = next_choice(BirdEvening.BirdEveningSteps, evening.step)
-    # draw
-    assert evening.step == BirdEvening.BirdEveningSteps.DRAWING
-    for _ in range(drawing_per_roost_on_board[roosts_on_board]):
-        draw_card_from_deck_to_hand(player)
-    evening.step = next_choice(BirdEvening.BirdEveningSteps, evening.step)
-    # ignore discard step, if able
-    assert evening.step == BirdEvening.BirdEveningSteps.DISCARDING
-    if get_player_hand_size(player) <= 5:
-        evening.step = next_choice(BirdEvening.BirdEveningSteps, evening.step)
-
-    evening.save()
-    if evening.step == BirdEvening.BirdEveningSteps.COMPLETED:
-        end_birds_turn(player)
 
 
 @transaction.atomic
@@ -550,9 +517,9 @@ def create_birds_turn(player: Player):
     # create turn
     turn = BirdTurn.create_turn(player)
 
-    from game.serializers.logs.general import log_turn, log_phase
-    turn_log = log_turn(player.game, player, turn_number=turn.turn_number + 1)
-    log_phase(player.game, player, "Birdsong", parent=turn_log)
+    from game.serializers.logs.general import log_turn
+    log_turn(player.game, player, turn_number=turn.turn_number + 1)
+    # Birdsong log will be created in BirdBirdsong.NOT_STARTED step_effect
 
 
 @transaction.atomic
@@ -941,7 +908,14 @@ def step_effect(
         case BirdBirdsong():
             match phase.step:
                 case BirdBirdsong.BirdBirdsongSteps.NOT_STARTED:
-                    pass
+                    from game.serializers.logs.general import log_phase, get_current_turn_log
+                    log_phase(
+                        player.game,
+                        player,
+                        "Birdsong",
+                        parent=get_current_turn_log(player.game, player),
+                    )
+                    next_step(player)
                 case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING:
                     from game.queries.crafted_cards import get_coffin_makers_player
                     from game.transactions.crafted_cards.coffin_makers import (
@@ -961,19 +935,22 @@ def step_effect(
                     pass
                 case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING:
                     try_auto_emergency_roost(player)
-                case BirdBirdsong.BirdBirdsongSteps.COMPLETED:
-                    from game.transactions.crafted_cards.eyrie_emigre import is_emigre
+                case BirdBirdsong.BirdBirdsongSteps.BEFORE_END:
                     if not is_emigre(player):
-                        from game.serializers.logs.general import log_phase, get_current_turn_log
-                        log_phase(
-                            player.game,
-                            player,
-                            "Daylight",
-                            parent=get_current_turn_log(player.game, player),
-                        )
-                        step_effect(player, None)
+                        next_step(player)
+                case BirdBirdsong.BirdBirdsongSteps.COMPLETED:
+                    step_effect(player)
         case BirdDaylight():
             match phase.step:
+                case BirdDaylight.BirdDaylightSteps.NOT_STARTED:
+                    from game.serializers.logs.general import log_phase, get_current_turn_log
+                    log_phase(
+                        player.game,
+                        player,
+                        "Daylight",
+                        parent=get_current_turn_log(player.game, player),
+                    )
+                    next_step(player)
                 case BirdDaylight.BirdDaylightSteps.CRAFTING:
                     pass
                 case BirdDaylight.BirdDaylightSteps.RECRUITING:
@@ -984,20 +961,22 @@ def step_effect(
                     battle_turmoil_check(player)
                 case BirdDaylight.BirdDaylightSteps.BUILDING:
                     build_turmoil_check(player)
-                case BirdDaylight.BirdDaylightSteps.COMPLETED:
-                    from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
+                case BirdDaylight.BirdDaylightSteps.BEFORE_END:
                     if not check_charm_offensive(player):
-                        from game.serializers.logs.general import log_phase, get_current_turn_log
-                        log_phase(
-                            player.game,
-                            player,
-                            "Evening",
-                            parent=get_current_turn_log(player.game, player),
-                        )
-                        # call step_effect for current phase (evening) by passing None
-                        step_effect(player, None)
+                        next_step(player)
+                case BirdDaylight.BirdDaylightSteps.COMPLETED:
+                    step_effect(player)
         case BirdEvening():
             match phase.step:
+                case BirdEvening.BirdEveningSteps.NOT_STARTED:
+                    from game.serializers.logs.general import log_phase, get_current_turn_log
+                    log_phase(
+                        player.game,
+                        player,
+                        "Evening",
+                        parent=get_current_turn_log(player.game, player),
+                    )
+                    next_step(player)
                 case BirdEvening.BirdEveningSteps.SCORING:
                     roost_scoring(player)
                 case BirdEvening.BirdEveningSteps.DRAWING:
@@ -1006,6 +985,8 @@ def step_effect(
                         draw_cards(player)
                 case BirdEvening.BirdEveningSteps.DISCARDING:
                     check_discard_step(player)
+                case BirdEvening.BirdEveningSteps.BEFORE_END:
+                    next_step(player)
                 case BirdEvening.BirdEveningSteps.COMPLETED:
                     end_birds_turn(player)
         case _:
