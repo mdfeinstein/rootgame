@@ -81,7 +81,8 @@ def crows_move(player: Player, origin: Clearing, destination: Clearing, count: i
 @transaction.atomic
 def crows_battle(player: Player, defender_faction: str, clearing: Clearing):
     """Crows Battle"""
-    battle = start_battle(player.game, player.faction, defender_faction, clearing)
+    from game.models.game_models import Faction
+    battle = start_battle(player.game, Faction(player.faction), Faction(defender_faction), clearing)
 
     from game.transactions.battle import log_battle_start
     from game.serializers.logs.general import get_current_phase_log

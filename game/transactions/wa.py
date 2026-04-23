@@ -429,7 +429,7 @@ def operation_battle(player: Player, defender: Player, clearing: Clearing):
     # execute battle
     from game.transactions.battle import start_battle, log_battle_start
 
-    battle = start_battle(player.game, player.faction, defender.faction, clearing)
+    battle = start_battle(player.game, Faction(player.faction), Faction(defender.faction), clearing)
 
     from game.serializers.logs.wa import log_wa_military_operation
     from game.serializers.logs.general import get_current_phase_log

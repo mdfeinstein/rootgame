@@ -71,7 +71,8 @@ def emigre_battle(event: EyrieEmigreEvent, target_faction : Faction):
     game = event.event.game
     clearing = event.move_destination
     assert clearing is not None, "Destination Clearing of Emigre Event is None!"
-    attacking_faction = event.crafted_card_entry.player.faction
+    from game.models.game_models import Faction
+    attacking_faction = Faction(event.crafted_card_entry.player.faction)
     defending_faction = target_faction
     start_battle(game, attacking_faction, defending_faction, clearing)
 

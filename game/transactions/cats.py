@@ -572,7 +572,7 @@ def cat_battle(player: Player, defender: Player, clearing: Clearing):
     daylight = get_phase(player)
     if type(daylight) != CatDaylight:
         raise ValueError("Not Daylight phase")
-    battle = start_battle(player.game, player.faction, defender.faction, clearing)
+    battle = start_battle(player.game, Faction(player.faction), Faction(defender.faction), clearing)
     daylight.actions_left -= 1
     daylight.save()
 

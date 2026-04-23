@@ -372,7 +372,7 @@ def bird_battle_action(
     if decree_suit != clearing.suit and decree_suit != Suit.WILD:
         raise ValueError("Decree suit does not match clearing suit")
     # battle checks are in start_battle
-    battle = start_battle(player.game, player.faction, defender.faction, clearing)
+    battle = start_battle(player.game, Faction(player.faction), Faction(defender.faction), clearing)
     # use decree entry
     decree_entry.fulfilled = True
     decree_entry.save()

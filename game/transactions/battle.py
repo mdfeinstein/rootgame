@@ -44,19 +44,19 @@ def start_battle(game: Game, attacker: Faction, defender: Faction, clearing: Cle
     if attacker == defender:
         raise ValueError("Attacker and defender cannot be the same faction")
     # check that attacker has warriors in the clearing
-    player = Player.objects.get(game=game, faction=attacker)
+    player = Player.objects.get(game=game, faction=attacker.value)
 
     if not player_has_warriors_in_clearing(player, clearing):
         raise ValueError("Attacker does not have warriors in that clearing")
     # check that defender has pieces in the clearing
-    defender_player = Player.objects.get(game=game, faction=defender)
+    defender_player = Player.objects.get(game=game, faction=defender.value)
     if not player_has_pieces_in_clearing(defender_player, clearing):
         raise ValueError("Defender does not have pieces in that clearing")
 
     # create battle
     event = Event.objects.create(game=game, type=EventType.BATTLE)
     battle = Battle(
-        attacker=attacker, defender=defender, clearing=clearing, event=event
+        attacker=attacker.value, defender=defender.value, clearing=clearing, event=event
     )
     battle.save()
     return battle
