@@ -9,7 +9,7 @@ game.Building.building_slot: (fields.W342) Setting unique=True on a ForeignKey h
 System check identified 1 issue (0 silenced).
 ............................
 ----------------------------------------------------------------------
-Ran 28 tests in 5.408s
+Ran 28 tests in 5.092s
 
 OK
 Destroying test database for alias 'default'...
@@ -54,7 +54,7 @@ dice rolled: 0, 0
 DEBUG add_new_player_to_game: player_count=0 faction_count=3
 DEBUG add_new_player_to_game: player_count=1 faction_count=3
 DEBUG add_new_player_to_game: player_count=2 faction_count=3
-dice rolled: 0, 2
+dice rolled: 2, 3
 DEBUG add_new_player_to_game: player_count=0 faction_count=3
 DEBUG add_new_player_to_game: player_count=1 faction_count=3
 DEBUG add_new_player_to_game: player_count=2 faction_count=3

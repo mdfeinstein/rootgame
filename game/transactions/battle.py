@@ -73,7 +73,7 @@ def log_battle_start(
         player,
         battle.clearing.clearing_number,
         battle.defender,
-        battle_id=battle.id,
+        battle_id=battle.pk,
         parent=parent,
     )
     return log
@@ -121,7 +121,7 @@ def defender_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
             game,
             defender_player,
             card_in_hand.card,
-            parent=get_battle_log(game, battle.id),
+            parent=get_battle_log(game, battle.pk),
         )
 
 
@@ -147,7 +147,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
             # resolve ambush by removing attacking warriors and proceeding to roll
             from game.serializers.logs.general import get_battle_log
 
-            parent_log = get_battle_log(game, battle.id)
+            parent_log = get_battle_log(game, battle.pk)
             player_removes_warriors(
                 battle.clearing,
                 defending_player,
@@ -168,7 +168,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
                 defending_player,
                 attacking_player,
                 2,
-                parent=get_battle_log(game, battle.id),
+                parent=get_battle_log(game, battle.pk),
             )
             end_battle(game, battle)
             return
@@ -181,7 +181,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
                 defending_player,
                 attacking_player,
                 1,
-                parent=get_battle_log(game, battle.id),
+                parent=get_battle_log(game, battle.pk),
             )
             # do i need to convey that attacker must choose one hit, or is this kind of guaranteed to only be one?
             battle.step = Battle.BattleSteps.ATTACKER_CHOOSE_AMBUSH_HITS
@@ -203,7 +203,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
     from game.serializers.logs.general import log_ambush, get_battle_log
 
     log_ambush(
-        game, attacker_player, card_in_hand.card, parent=get_battle_log(game, battle.id)
+        game, attacker_player, card_in_hand.card, parent=get_battle_log(game, battle.pk)
     )
     # flag the battle as ambushed
     battle.attacker_cancel_ambush = True
@@ -234,7 +234,7 @@ def attacker_choose_ambush_hit(game: Game, battle: Battle, piece: Piece):
     # Verify piece is in the battle clearing
     from game.serializers.logs.general import get_battle_log
 
-    parent_log = get_battle_log(game, battle.id)
+    parent_log = get_battle_log(game, battle.pk)
     if isinstance(piece, Building):
         if (
             getattr(piece, "building_slot", None) is None
@@ -372,7 +372,7 @@ def roll_dice(game: Game, battle: Battle):
         die2,
         battle.attacker_hits_taken,
         battle.defender_hits_taken,
-        parent=get_battle_log(game, battle.id),
+        parent=get_battle_log(game, battle.pk),
     )
     battle.save()
 
@@ -445,7 +445,7 @@ def apply_dice_hits(game: Game, battle: Battle):
 
     from game.serializers.logs.general import get_battle_log
 
-    parent_log = get_battle_log(game, battle.id)
+    parent_log = get_battle_log(game, battle.pk)
 
     # assign hits automatically if possible. otherwise, go to choice steps
     if defending_warriors_count >= battle.defender_hits_taken:
@@ -559,7 +559,7 @@ def defender_chooses_hit(game: Game, battle: Battle, piece: Piece):
     if isinstance(piece, Building):
         from game.serializers.logs.general import get_battle_log
 
-        parent_log = get_battle_log(game, battle.id)
+        parent_log = get_battle_log(game, battle.pk)
         if (
             getattr(piece, "building_slot", None) is None
             or getattr(piece.building_slot, "clearing", None) != battle.clearing
@@ -569,7 +569,7 @@ def defender_chooses_hit(game: Game, battle: Battle, piece: Piece):
     elif isinstance(piece, Token):
         from game.serializers.logs.general import get_battle_log
 
-        parent_log = get_battle_log(game, battle.id)
+        parent_log = get_battle_log(game, battle.pk)
         if piece.clearing != battle.clearing:
             raise ValueError("Piece is not in the battle clearing")
         player_removes_token(game, piece, attacking_player, parent=parent_log)
@@ -605,7 +605,7 @@ def attacker_chooses_hit(game: Game, battle: Battle, piece: Piece):
     if isinstance(piece, Building):
         from game.serializers.logs.general import get_battle_log
 
-        parent_log = get_battle_log(game, battle.id)
+        parent_log = get_battle_log(game, battle.pk)
         if (
             getattr(piece, "building_slot", None) is None
             or getattr(piece.building_slot, "clearing", None) != battle.clearing
@@ -615,7 +615,7 @@ def attacker_chooses_hit(game: Game, battle: Battle, piece: Piece):
     elif isinstance(piece, Token):
         from game.serializers.logs.general import get_battle_log
 
-        parent_log = get_battle_log(game, battle.id)
+        parent_log = get_battle_log(game, battle.pk)
         if piece.clearing != battle.clearing:
             raise ValueError("Piece is not in the battle clearing")
         player_removes_token(game, piece, defending_player, parent=parent_log)
