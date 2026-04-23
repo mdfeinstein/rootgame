@@ -55,25 +55,24 @@ def step_effect(
         case CrowBirdsong():
             match phase.step:
                 case CrowBirdsong.CrowBirdsongSteps.NOT_STARTED:
-                    from game.serializers.logs.general import log_phase, get_current_turn_log
-                    log_phase(
+                    from game.serializers.logs.general import get_or_log_phase, get_current_turn_log
+                    from game.transactions.crafted_cards.saboteurs import saboteurs_check
+                    get_or_log_phase(
                         player.game,
                         player,
                         "Birdsong",
                         parent=get_current_turn_log(player.game, player),
                     )
-                    next_step(player)
+                    if not saboteurs_check(player):
+                        next_step(player)
                 case CrowBirdsong.CrowBirdsongSteps.CRAFT:
                     from game.queries.crafted_cards import get_coffin_makers_player
                     from game.transactions.crafted_cards.coffin_makers import score_coffins, release_warriors
-                    from game.transactions.crafted_cards.saboteurs import saboteurs_check
 
                     coffin_player = get_coffin_makers_player(player.game)
                     if coffin_player == player:
                         score_coffins(player)
                         release_warriors(player.game)
-
-                    saboteurs_check(player)
                 case CrowBirdsong.CrowBirdsongSteps.FLIP:
                     pass
                 case CrowBirdsong.CrowBirdsongSteps.RECRUIT:
@@ -91,8 +90,8 @@ def step_effect(
         case CrowDaylight():
             match phase.step:
                 case CrowDaylight.CrowDaylightSteps.NOT_STARTED:
-                    from game.serializers.logs.general import log_phase, get_current_turn_log
-                    log_phase(
+                    from game.serializers.logs.general import get_or_log_phase, get_current_turn_log
+                    get_or_log_phase(
                         player.game,
                         player,
                         "Daylight",
@@ -114,8 +113,8 @@ def step_effect(
         case CrowEvening():
             match phase.step:
                 case CrowEvening.CrowEveningSteps.NOT_STARTED:
-                    from game.serializers.logs.general import log_phase, get_current_turn_log
-                    log_phase(
+                    from game.serializers.logs.general import get_or_log_phase, get_current_turn_log
+                    get_or_log_phase(
                         player.game,
                         player,
                         "Evening",

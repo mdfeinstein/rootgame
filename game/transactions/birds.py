@@ -908,14 +908,15 @@ def step_effect(
         case BirdBirdsong():
             match phase.step:
                 case BirdBirdsong.BirdBirdsongSteps.NOT_STARTED:
-                    from game.serializers.logs.general import log_phase, get_current_turn_log
-                    log_phase(
+                    from game.serializers.logs.general import get_or_log_phase, get_current_turn_log
+                    get_or_log_phase(
                         player.game,
                         player,
                         "Birdsong",
                         parent=get_current_turn_log(player.game, player),
                     )
-                    next_step(player)
+                    if not saboteurs_check(player):
+                        next_step(player)
                 case BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING:
                     from game.queries.crafted_cards import get_coffin_makers_player
                     from game.transactions.crafted_cards.coffin_makers import (
@@ -928,8 +929,7 @@ def step_effect(
                         score_coffins(player)
                         release_warriors(player.game)
 
-                    if not saboteurs_check(player):
-                        emergency_draw(player)
+                    emergency_draw(player)
 
                 case BirdBirdsong.BirdBirdsongSteps.ADD_TO_DECREE:
                     pass
@@ -943,8 +943,8 @@ def step_effect(
         case BirdDaylight():
             match phase.step:
                 case BirdDaylight.BirdDaylightSteps.NOT_STARTED:
-                    from game.serializers.logs.general import log_phase, get_current_turn_log
-                    log_phase(
+                    from game.serializers.logs.general import get_or_log_phase, get_current_turn_log
+                    get_or_log_phase(
                         player.game,
                         player,
                         "Daylight",
@@ -969,8 +969,8 @@ def step_effect(
         case BirdEvening():
             match phase.step:
                 case BirdEvening.BirdEveningSteps.NOT_STARTED:
-                    from game.serializers.logs.general import log_phase, get_current_turn_log
-                    log_phase(
+                    from game.serializers.logs.general import get_or_log_phase, get_current_turn_log
+                    get_or_log_phase(
                         player.game,
                         player,
                         "Evening",

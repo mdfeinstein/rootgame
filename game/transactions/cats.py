@@ -662,14 +662,15 @@ def step_effect(
         case CatBirdsong():
             match phase.step:
                 case CatBirdsong.CatBirdsongSteps.NOT_STARTED:
-                    from game.serializers.logs.general import log_phase, get_current_turn_log
-                    log_phase(
+                    from game.serializers.logs.general import get_or_log_phase, get_current_turn_log
+                    get_or_log_phase(
                         player.game,
                         player,
                         "Birdsong",
                         parent=get_current_turn_log(player.game, player),
                     )
-                    next_step(player)
+                    if not saboteurs_check(player):
+                        next_step(player)
                 case CatBirdsong.CatBirdsongSteps.PLACING_WOOD:
                     from game.queries.crafted_cards import get_coffin_makers_player
                     from game.transactions.crafted_cards.coffin_makers import (
@@ -682,9 +683,8 @@ def step_effect(
                         score_coffins(player)
                         release_warriors(player.game)
 
-                    if not saboteurs_check(player):
-                        # if more wood tokens in supply than tokens to produce, automate placement
-                        check_auto_place_wood(player)
+                    # if more wood tokens in supply than tokens to produce, automate placement
+                    check_auto_place_wood(player)
                 case CatBirdsong.CatBirdsongSteps.BEFORE_END:
                     from game.transactions.crafted_cards.eyrie_emigre import is_emigre
                     if not is_emigre(player):
@@ -699,8 +699,8 @@ def step_effect(
         case CatDaylight():
             match phase.step:
                 case CatDaylight.CatDaylightSteps.NOT_STARTED:
-                    from game.serializers.logs.general import log_phase, get_current_turn_log
-                    log_phase(
+                    from game.serializers.logs.general import get_or_log_phase, get_current_turn_log
+                    get_or_log_phase(
                         player.game,
                         player,
                         "Daylight",
@@ -726,8 +726,8 @@ def step_effect(
         case CatEvening():
             match phase.step:
                 case CatEvening.CatEveningSteps.NOT_STARTED:
-                    from game.serializers.logs.general import log_phase, get_current_turn_log
-                    log_phase(
+                    from game.serializers.logs.general import get_or_log_phase, get_current_turn_log
+                    get_or_log_phase(
                         player.game,
                         player,
                         "Evening",
