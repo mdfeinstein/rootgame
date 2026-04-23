@@ -10,6 +10,7 @@ from game.models import (
     FactionChoiceEntry,
     Game,
     Item,
+    ItemTypes,
     Player,
     Ruin,
     Suit,
@@ -98,13 +99,13 @@ def assign_turn_order(game: Game):
 def create_craftable_item_supply(game: Game):
     # create craftable items
     items = {
-        Item.ItemTypes.BOOTS: 2,
-        Item.ItemTypes.BAG: 2,
-        Item.ItemTypes.CROSSBOW: 1,
-        Item.ItemTypes.HAMMER: 1,
-        Item.ItemTypes.SWORD: 2,
-        Item.ItemTypes.TEA: 2,
-        Item.ItemTypes.COIN: 2,
+        ItemTypes.BOOTS: 2,
+        ItemTypes.BAG: 2,
+        ItemTypes.CROSSBOW: 1,
+        ItemTypes.HAMMER: 1,
+        ItemTypes.SWORD: 2,
+        ItemTypes.TEA: 2,
+        ItemTypes.COIN: 2,
     }
     for item_type, amount in items.items():
         for i in range(amount):
@@ -168,10 +169,10 @@ def autumn_map_setup(game: Game):
     # add ruins with randomized ruin items
     ruin_clearings = [5, 9, 10, 11]  # 0 based
     ruin_item_types = [
-        Item.ItemTypes.BAG,
-        Item.ItemTypes.BOOTS,
-        Item.ItemTypes.HAMMER,
-        Item.ItemTypes.SWORD,
+        ItemTypes.BAG,
+        ItemTypes.BOOTS,
+        ItemTypes.HAMMER,
+        ItemTypes.SWORD,
     ]
     shuffle(ruin_item_types)
     for i in ruin_clearings:

@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from game.models.game_models import Game, Player, Clearing, Faction, Suit, BuildingSlot
+from game.models import ItemTypes
 from game.models.birds.buildings import BirdRoost
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.queries.birds.crafting import validate_crafting_pieces_satisfy_requirements
@@ -92,7 +93,7 @@ class CraftingLogicTests(TestCase):
     def test_can_craft_duplicate_item_if_in_pool(self):
         # Player can craft an item if they already have that same item, provided it is in the pool.
         card_type = CardsEP.TRAVEL_GEAR_RED  # One of the boot cards
-        item_type = Item.ItemTypes.BOOTS
+        item_type = ItemTypes.BOOTS
 
         # Player already has a boot
         boot_item1 = Item.objects.create(game=self.game, item_type=item_type)
@@ -116,7 +117,7 @@ class CraftingLogicTests(TestCase):
     def test_cannot_craft_item_if_not_in_pool(self):
         # A player cannot craft an item that is no longer in the pool.
         card_type = CardsEP.FOXFOLK_STEEL
-        item_type = Item.ItemTypes.SWORD
+        item_type = ItemTypes.SWORD
 
         # Sword is NOT in the pool (CraftableItemEntry)
         card_in_hand = Card.objects.create(game=self.game, card_type=card_type.name)

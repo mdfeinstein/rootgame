@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from game.models.game_models import Game, Player, Clearing, Card, HandEntry, CraftedCardEntry, Warrior, DiscardPileEntry, Faction
 from game.models.birds.turn import BirdTurn, BirdBirdsong, BirdDaylight
 from game.game_data.cards.exiles_and_partisans import CardsEP
-from game.game_data.general.game_enums import Suit
+from game.models.game_models import Suit
 from game.transactions.crafted_cards.false_orders import use_false_orders
 from game.transactions.game_setup import construct_deck
 from game.transactions.general import craft_card

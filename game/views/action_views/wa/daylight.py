@@ -15,7 +15,7 @@ from rest_framework.views import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
-from game.game_data.general.game_enums import Suit
+from game.models.game_models import Suit
 from game.queries.wa.crafting import (
     is_able_to_be_crafted,
     validate_crafting_pieces_satisfy_requirements,

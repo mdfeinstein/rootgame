@@ -1,5 +1,5 @@
 from game.models import GameLog
-from game.game_data.general.game_enums import Suit
+from game.models.game_models import Suit
 from game.queries.general import validate_player_has_card_in_hand
 from random import randint
 from django.db import transaction

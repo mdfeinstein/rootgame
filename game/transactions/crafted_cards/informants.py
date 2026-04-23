@@ -1,4 +1,4 @@
-from game.game_data.general.game_enums import Faction
+from game.models.game_models import Faction
 from game.models import Player
 from django.db import transaction
 from rest_framework.exceptions import ValidationError

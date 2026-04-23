@@ -6,7 +6,7 @@ from game.models.game_models import (
     Warrior, Clearing, Suit, FactionChoiceEntry, Item, CraftedItemEntry,
     DiscardPileEntry
 )
-from game.game_data.general.game_enums import ItemTypes
+from game.models.game_models import ItemTypes
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.birds.turn import BirdTurn
 from game.models.cats.turn import CatTurn

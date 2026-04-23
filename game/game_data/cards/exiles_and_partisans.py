@@ -8,7 +8,7 @@ DB only stores the card_id and code will need to com here to look up relevant de
 from dataclasses import dataclass
 from enum import Enum
 
-from game.game_data.general.game_enums import ItemTypes, Suit
+from game.models.enums import ItemTypes, Suit
 
 
 @dataclass

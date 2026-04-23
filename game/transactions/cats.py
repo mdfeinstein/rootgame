@@ -484,12 +484,17 @@ def cat_resolve_field_hospital(player: Player, card: CardsEP | None):
 
         from game.serializers.logs.general import get_active_phase_log
         from game.serializers.logs.cats import log_cats_field_hospitals
+
         log_cats_field_hospitals(
             player.game,
             player,
-            field_hospital_event.clearing.clearing_number if field_hospital_event.clearing else 0,
+            (
+                field_hospital_event.clearing.clearing_number
+                if field_hospital_event.clearing
+                else 0
+            ),
             to_save,
-            parent=get_active_phase_log(player.game)
+            parent=get_active_phase_log(player.game),
         )
 
     # resolve event
@@ -572,7 +577,9 @@ def cat_battle(player: Player, defender: Player, clearing: Clearing):
     daylight = get_phase(player)
     if type(daylight) != CatDaylight:
         raise ValueError("Not Daylight phase")
-    battle = start_battle(player.game, Faction(player.faction), Faction(defender.faction), clearing)
+    battle = start_battle(
+        player.game, Faction(player.faction), Faction(defender.faction), clearing
+    )
     daylight.actions_left -= 1
     daylight.save()
 
@@ -669,8 +676,13 @@ def step_effect(
                         check_auto_place_wood(player)
                 case CatBirdsong.CatBirdsongSteps.COMPLETED:
                     from game.transactions.crafted_cards.eyrie_emigre import is_emigre
+
                     if not is_emigre(player):
-                        from game.serializers.logs.general import log_phase, get_current_turn_log
+                        from game.serializers.logs.general import (
+                            log_phase,
+                            get_current_turn_log,
+                        )
+
                         log_phase(
                             player.game,
                             player,
@@ -690,9 +702,16 @@ def step_effect(
                 case CatDaylight.CatDaylightSteps.ACTIONS:
                     pass
                 case CatDaylight.CatDaylightSteps.COMPLETED:
-                    from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
+                    from game.transactions.crafted_cards.charm_offensive import (
+                        check_charm_offensive,
+                    )
+
                     if not check_charm_offensive(player):
-                        from game.serializers.logs.general import log_phase, get_current_turn_log
+                        from game.serializers.logs.general import (
+                            log_phase,
+                            get_current_turn_log,
+                        )
+
                         log_phase(
                             player.game,
                             player,

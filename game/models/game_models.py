@@ -3,30 +3,8 @@ from django.db import models
 
 # from django.contrib.auth.models import User
 
+from game.models.enums import Faction, Suit, DayPhase, ItemTypes
 from game.game_data.cards.exiles_and_partisans import CardsEP
-from game.game_data.general.game_enums import ItemTypes
-
-# from game.game_data.general.game_enums import Suit as SuitEnum
-
-
-class Faction(models.TextChoices):
-    CATS = "ca", "Cats"
-    BIRDS = "bi", "Birds"
-    WOODLAND_ALLIANCE = "wa", "Woodland Alliance"
-    CROWS = "cr", "Crows"
-
-
-class Suit(models.TextChoices):
-    RED = "r", "Fox"
-    YELLOW = "y", "Rabbit"
-    ORANGE = "o", "Mouse"
-    WILD = "b", "Bird"
-
-
-class DayPhase(models.TextChoices):
-    BIRDSONG = "0", "Birdsong"
-    DAYLIGHT = "1", "Daylight"
-    EVENING = "2", "Evening"
 
 
 class Game(models.Model):
@@ -346,15 +324,6 @@ class Player(models.Model):
 
 
 class Item(models.Model):
-    class ItemTypes(models.TextChoices):
-        BOOTS = "0", "Boots"
-        BAG = "1", "Bag"
-        CROSSBOW = "2", "Crossbow"
-        HAMMER = "3", "Hammer"
-        SWORD = "4", "Sword"
-        TEA = "5", "Tea"
-        COIN = "6", "Coin"
-
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     item_type = models.CharField(
         max_length=1,
