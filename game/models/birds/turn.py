@@ -67,7 +67,7 @@ class BirdDaylight(models.Model):
     step = models.CharField(
         max_length=1,
         choices=BirdDaylightSteps.choices,
-        default=BirdDaylightSteps.CRAFTING,
+        default=BirdDaylightSteps.NOT_STARTED,
     )
     # decree model will track which cards have been used
 
@@ -85,6 +85,6 @@ class BirdEvening(models.Model):
     step = models.CharField(
         max_length=1,
         choices=BirdEveningSteps.choices,
-        default=BirdEveningSteps.SCORING,
+        default=BirdEveningSteps.NOT_STARTED,
     )
     cards_drawn = models.IntegerField(default=0)

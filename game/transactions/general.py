@@ -246,12 +246,13 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
 
             from game.serializers.logs.general import get_active_phase_log
             from game.serializers.logs.crafted_cards import log_crafted_card_action
+
             log_crafted_card_action(
                 card_in_hand.player.game,
                 card_in_hand.player,
-                master_engravers_card.card, # I need to get the card entry.
+                master_engravers_card.card,  # I need to get the card entry.
                 "score",
-                parent=get_active_phase_log(card_in_hand.player.game)
+                parent=get_active_phase_log(card_in_hand.player.game),
             )
         card_in_hand.player.save()
         # discard card from player's hand
@@ -269,17 +270,20 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
         )
         for other_player in other_players:
             try:
-                murine_brokers_card = validate_player_has_crafted_card(other_player, CardsEP.MURINE_BROKERS)
+                murine_brokers_card = validate_player_has_crafted_card(
+                    other_player, CardsEP.MURINE_BROKERS
+                )
                 draw_card_from_deck_to_hand(other_player)
 
                 from game.serializers.logs.general import get_active_phase_log
                 from game.serializers.logs.crafted_cards import log_crafted_card_action
+
                 log_crafted_card_action(
                     other_player.game,
                     other_player,
                     murine_brokers_card.card,
                     "draw",
-                    parent=get_active_phase_log(other_player.game)
+                    parent=get_active_phase_log(other_player.game),
                 )
             except ValueError:
                 pass
@@ -332,7 +336,7 @@ def next_players_turn(game: Game):
     )
     # create first turn or next turn
     create_turn(new_player)
-    next_step(new_player)
+    step_effect(new_player)
 
 
 @transaction.atomic

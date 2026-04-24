@@ -2,7 +2,22 @@
   "permissions": {
     "allow": [
       "Bash(python .agent/scripts/run_tests.py game.tests.transactions.birds.test_birds_evening)",
-      "Bash(python .agent/scripts/run_tests.py game.tests.transactions)"
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.birds --tb=short)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.birds)",
+      "PowerShell(\\(Get-Content 'f:\\\\rootGame\\\\game\\\\transactions\\\\cats.py'\\).Length)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.cats)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.views.action_views)",
+      "PowerShell(\\(Get-Content 'f:\\\\rootGame\\\\game\\\\transactions\\\\wa.py'\\).Length)",
+      "Bash(python manage.py test game.tests.action_views)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.action_views)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.action_views --tb=short)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.action_views)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions)",
+      "Bash(xargs grep *)",
+      "Bash(xargs cat *)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.action_views.general.test_birds_turn_flow.BirdTurnFlowTestCase.test_birds_charm_offensive_flow game.tests.action_views.general.test_cats_turn_flow.CatTurnFlowTestCase.test_cats_charm_offensive_flow game.tests.action_views.general.test_wa_turn_flow.WATurnFlowTestCase.test_wa_charm_offensive_flow)",
+      "Bash(git -C f:/rootGame diff --stat)"
     ]
   }
 }

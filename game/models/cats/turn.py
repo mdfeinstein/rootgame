@@ -54,7 +54,7 @@ class CatDaylight(models.Model):
     step = models.CharField(
         max_length=1,
         choices=CatDaylightSteps.choices,
-        default=CatDaylightSteps.CRAFTING,
+        default=CatDaylightSteps.NOT_STARTED,
     )
     actions_left = models.IntegerField(default=3)
     recruit_used = models.BooleanField(default=False)
@@ -76,7 +76,7 @@ class CatEvening(models.Model):
     step = models.CharField(
         max_length=1,
         choices=CatEveningSteps.choices,
-        default=CatEveningSteps.DRAWING,
+        default=CatEveningSteps.NOT_STARTED,
     )
     cards_drawn = models.IntegerField(default=0)
     turn = models.OneToOneField(

@@ -53,21 +53,24 @@ def use_informants(crafted_card_entry: CraftedCardEntry, ambush_card_in_discard:
     match player.faction:
         case Faction.WOODLAND_ALLIANCE:
             from game.models.wa.turn import WAEvening
-            from game.transactions.wa import next_step, get_phase
+            from game.transactions.wa import next_step
+            from game.queries.wa.turn import get_phase
             phase = get_phase(player)
             phase.step = WAEvening.WAEveningSteps.DRAWING
             phase.save()
             next_step(player)
         case Faction.BIRDS:
             from game.models.birds.turn import BirdEvening
-            from game.transactions.birds import next_step, get_phase
+            from game.transactions.birds import next_step
+            from game.queries.birds.turn import get_phase
             phase = get_phase(player)
             phase.step = BirdEvening.BirdEveningSteps.DRAWING
             phase.save()
             next_step(player)
         case Faction.CATS:
             from game.models.cats.turn import CatEvening
-            from game.transactions.cats import next_step, get_phase
+            from game.transactions.cats import next_step
+            from game.queries.cats.turn import get_phase
             phase = get_phase(player)
             phase.step = CatEvening.CatEveningSteps.DRAWING
             phase.save()

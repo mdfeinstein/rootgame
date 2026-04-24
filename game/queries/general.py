@@ -217,14 +217,14 @@ def is_phase(
 
 def is_start_of_phase(player: Player, phase_model_class) -> bool:
     """
-    Returns True if the player is in the specified phase AND at the first step.
+    Returns True if the player is in the specified phase AND at the first step (NOT_STARTED).
     phase_model_class: The class of the phase to check (e.g. BirdBirdsong)
     """
     phase = get_current_phase(player)
     if not isinstance(phase, phase_model_class):
         return False
     current_step = phase.step
-    if current_step == "1":
+    if current_step == "0":
         return True
     return False
 

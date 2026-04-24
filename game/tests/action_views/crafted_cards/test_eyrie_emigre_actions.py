@@ -33,11 +33,11 @@ class EyrieEmigreTestCase(TestCase):
         """Test full Eyrie Emigre flow: trigger at Birdsong end -> move -> battle -> card used."""
         turn = BirdTurn.objects.filter(player=self.birds_player).order_by("-turn_number").first()
         birdsong = BirdBirdsong.objects.get(turn=turn)
-        birdsong.step = BirdBirdsong.BirdBirdsongSteps.COMPLETED
+        birdsong.step = BirdBirdsong.BirdBirdsongSteps.BEFORE_END
         birdsong.save()
-        
+
         from game.transactions.birds import step_effect
-        # Must pass birdsong phase explicitly to trigger the COMPLETED case
+        # Must pass birdsong phase explicitly to trigger the BEFORE_END case which checks emigre
         step_effect(self.birds_player, birdsong)
         
         # Should now have an Eyrie Emigre event
@@ -86,9 +86,9 @@ class EyrieEmigreTestCase(TestCase):
         """Test skipping Eyrie Emigre."""
         turn = BirdTurn.objects.filter(player=self.birds_player).order_by("-turn_number").first()
         birdsong = BirdBirdsong.objects.get(turn=turn)
-        birdsong.step = BirdBirdsong.BirdBirdsongSteps.COMPLETED
+        birdsong.step = BirdBirdsong.BirdBirdsongSteps.BEFORE_END
         birdsong.save()
-        
+
         from game.transactions.birds import step_effect
         step_effect(self.birds_player, birdsong)
         

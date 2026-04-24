@@ -19,3 +19,4 @@ frontend/dist/
 
 #claude worktree
 .claude/worktrees/
+test_output.txt

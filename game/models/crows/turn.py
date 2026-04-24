@@ -42,7 +42,7 @@ class CrowDaylight(models.Model):
     step = models.CharField(
         max_length=1,
         choices=CrowDaylightSteps.choices,
-        default=CrowDaylightSteps.ACTIONS,
+        default=CrowDaylightSteps.NOT_STARTED,
     )
     actions_remaining = models.IntegerField(default=3)
     plots_placed = models.IntegerField(default=0)
@@ -60,7 +60,7 @@ class CrowEvening(models.Model):
     step = models.CharField(
         max_length=1,
         choices=CrowEveningSteps.choices,
-        default=CrowEveningSteps.EXERT,
+        default=CrowEveningSteps.NOT_STARTED,
     )
     cards_drawn = models.IntegerField(default=0)
     exert_used = models.BooleanField(default=False)
