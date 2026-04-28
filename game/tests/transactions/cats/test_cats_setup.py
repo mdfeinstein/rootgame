@@ -1,14 +1,21 @@
 from django.test import TestCase
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 from game.models.game_models import Faction, Clearing, Warrior, BuildingSlot, Building
 from game.models.cats.buildings import Recruiter, Sawmill, Workshop, CatBuildingTypes
 from game.models.cats.tokens import CatKeep, CatWood
 from game.models.cats.setup import CatsSimpleSetup
 from game.models.events.setup import GameSimpleSetup
 from game.tests.my_factories import GameSetupFactory
-from game.transactions.cats_setup import pick_corner, place_initial_building, confirm_completed_setup, start_simple_cats_setup
+from game.transactions.cats_setup import (
+    pick_corner,
+    place_initial_building,
+    confirm_completed_setup,
+    start_simple_cats_setup,
+)
 from game.queries.general import determine_clearing_rule
 from game.tests.logging_mixin import LoggingTestMixin
 from game.models.game_log import LogType
+
 
 class CatSetupBaseTestCase(TestCase, LoggingTestMixin):
     def setUp(self):
@@ -17,7 +24,7 @@ class CatSetupBaseTestCase(TestCase, LoggingTestMixin):
         self.game = GameSetupFactory(factions=[Faction.CATS, Faction.BIRDS])
         self.player = self.game.players.get(faction=Faction.CATS)
         self.birds_player = self.game.players.get(faction=Faction.BIRDS)
-        
+
         # Ensure we are in Cats setup status
         self.game_setup = GameSimpleSetup.objects.get(game=self.game)
         self.game_setup.status = GameSimpleSetup.GameSetupStatus.CATS_SETUP
@@ -29,25 +36,36 @@ class CatSetupBaseTestCase(TestCase, LoggingTestMixin):
         except CatsSimpleSetup.DoesNotExist:
             self.cat_setup = start_simple_cats_setup(self.player)
 
+
 class CatPickCornerTests(CatSetupBaseTestCase):
     def test_pick_corner_success(self):
         # Corner clearings are 1, 2, 3, 4
         c1 = Clearing.objects.get(game=self.game, clearing_number=1)
-        
+
         pick_corner(self.player, c1)
-        
+
         # Check Keep placement
-        self.assertTrue(CatKeep.objects.filter(player=self.player, clearing=c1).exists())
-        self.assertLogExists(LogType.CATS_SETUP_PICK_CORNER, player=self.player, clearing_number=c1.clearing_number)
-        
+        self.assertTrue(
+            CatKeep.objects.filter(player=self.player, clearing=c1).exists()
+        )
+        self.assertLogExists(
+            LogType.CATS_SETUP_PICK_CORNER,
+            player=self.player,
+            clearing_number=c1.clearing_number,
+        )
+
         # Check Garrison placement: 1 warrior in every clearing except the opposite corner (3)
         clearings = Clearing.objects.filter(game=self.game)
         c3 = Clearing.objects.get(game=self.game, clearing_number=3)
         for c in clearings:
             if c.pk == c3.pk:
-                self.assertEqual(Warrior.objects.filter(clearing=c, player=self.player).count(), 0)
+                self.assertEqual(
+                    Warrior.objects.filter(clearing=c, player=self.player).count(), 0
+                )
             else:
-                self.assertEqual(Warrior.objects.filter(clearing=c, player=self.player).count(), 1)
+                self.assertEqual(
+                    Warrior.objects.filter(clearing=c, player=self.player).count(), 1
+                )
         # Check setup step advancement
         self.cat_setup.refresh_from_db()
         self.assertEqual(self.cat_setup.step, CatsSimpleSetup.Steps.PLACING_BUILDINGS)
@@ -55,17 +73,18 @@ class CatPickCornerTests(CatSetupBaseTestCase):
     def test_pick_corner_invalid_fails(self):
         # C5 is not a corner clearing
         c5 = Clearing.objects.get(game=self.game, clearing_number=5)
-        
-        with self.assertRaisesMessage(ValueError, "Clearing is not a corner clearing"):
+
+        with self.assertRaises(IllegalActionError):
             pick_corner(self.player, c5)
 
     def test_pick_corner_wrong_step_fails(self):
         self.cat_setup.step = CatsSimpleSetup.Steps.PLACING_BUILDINGS
         self.cat_setup.save()
         c1 = Clearing.objects.get(game=self.game, clearing_number=1)
-        
-        with self.assertRaisesMessage(ValueError, "Wrong step"):
+
+        with self.assertRaises(UnavailableActionError):
             pick_corner(self.player, c1)
+
 
 class CatPlaceBuildingTests(CatSetupBaseTestCase):
     def setUp(self):
@@ -80,47 +99,55 @@ class CatPlaceBuildingTests(CatSetupBaseTestCase):
         slot1 = BuildingSlot.objects.filter(clearing=self.c1, building=None).first()
         place_initial_building(self.player, self.c1, CatBuildingTypes.WORKSHOP)
         self.assertTrue(Workshop.objects.filter(building_slot=slot1).exists())
-        self.assertLogExists(LogType.CATS_SETUP_PLACE_BUILDING, player=self.player, building_type=CatBuildingTypes.WORKSHOP.value, clearing_number=self.c1.clearing_number)
-        
+        self.assertLogExists(
+            LogType.CATS_SETUP_PLACE_BUILDING,
+            player=self.player,
+            building_type=CatBuildingTypes.WORKSHOP.value,
+            clearing_number=self.c1.clearing_number,
+        )
+
         # Place Sawmill in C5 (Adjacent)
         c5 = Clearing.objects.get(game=self.game, clearing_number=5)
         slot5 = BuildingSlot.objects.filter(clearing=c5, building=None).first()
         place_initial_building(self.player, c5, CatBuildingTypes.SAWMILL)
         self.assertTrue(Sawmill.objects.filter(building_slot=slot5).exists())
-        
+
         # Place Recruiter in C10 (Adjacent)
         c10 = Clearing.objects.get(game=self.game, clearing_number=10)
         slot10 = BuildingSlot.objects.filter(clearing=c10, building=None).first()
         place_initial_building(self.player, c10, CatBuildingTypes.RECRUITER)
         self.assertTrue(Recruiter.objects.filter(building_slot=slot10).exists())
-        
+
         # Check setup step advancement
         self.cat_setup.refresh_from_db()
         self.assertTrue(self.cat_setup.workshop_placed)
         self.assertTrue(self.cat_setup.sawmill_placed)
         self.assertTrue(self.cat_setup.recruiter_placed)
-        self.assertEqual(self.cat_setup.step, CatsSimpleSetup.Steps.PENDING_CONFIRMATION)
+        self.assertEqual(
+            self.cat_setup.step, CatsSimpleSetup.Steps.PENDING_CONFIRMATION
+        )
 
     def test_place_duplicate_type_fails(self):
         place_initial_building(self.player, self.c1, CatBuildingTypes.WORKSHOP)
-        
-        with self.assertRaisesMessage(ValueError, "Building (Workshop) has already been placed"):
+
+        with self.assertRaises(IllegalActionError):
             place_initial_building(self.player, self.c1, CatBuildingTypes.WORKSHOP)
 
     def test_place_not_adjacent_fails(self):
         # C3 is not adjacent to C1
         c3 = Clearing.objects.get(game=self.game, clearing_number=3)
-        
-        with self.assertRaisesMessage(ValueError, "Clearing is not adjacent to the keep"):
+
+        with self.assertRaises(IllegalActionError):
             place_initial_building(self.player, c3, CatBuildingTypes.WORKSHOP)
 
     def test_place_wrong_step_fails(self):
         # Reset to PICKING_CORNER
         self.cat_setup.step = CatsSimpleSetup.Steps.PICKING_CORNER
         self.cat_setup.save()
-        
-        with self.assertRaisesMessage(ValueError, "Wrong step"):
+
+        with self.assertRaises(UnavailableActionError):
             place_initial_building(self.player, self.c1, CatBuildingTypes.WORKSHOP)
+
 
 class CatConfirmSetupTests(CatSetupBaseTestCase):
     def setUp(self):
@@ -136,22 +163,23 @@ class CatConfirmSetupTests(CatSetupBaseTestCase):
 
     def test_confirm_completed_setup_success(self):
         confirm_completed_setup(self.player)
-        
+
         self.cat_setup.refresh_from_db()
         self.assertEqual(self.cat_setup.step, CatsSimpleSetup.Steps.COMPLETED)
-        
+
         self.game_setup.refresh_from_db()
-        self.assertEqual(self.game_setup.status, GameSimpleSetup.GameSetupStatus.BIRDS_SETUP)
+        self.assertEqual(
+            self.game_setup.status, GameSimpleSetup.GameSetupStatus.BIRDS_SETUP
+        )
 
     def test_confirm_completed_setup_wrong_step_fails(self):
         # Revert one building to break requirements
         self.cat_setup.workshop_placed = False
         self.cat_setup.step = CatsSimpleSetup.Steps.PLACING_BUILDINGS
         self.cat_setup.save()
-        
+
         # Workshop level 1 has cost 0, but Sawmill/Recruiter cost 0 too.
         # Actually place_initial_building doesn't care about wood, it's setup.
-        
-        with self.assertRaisesMessage(ValueError, "Setup not complete"):
-            confirm_completed_setup(self.player)
 
+        with self.assertRaises(UnavailableActionError):
+            confirm_completed_setup(self.player)

@@ -17,7 +17,23 @@
       "Bash(xargs grep *)",
       "Bash(xargs cat *)",
       "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.action_views.general.test_birds_turn_flow.BirdTurnFlowTestCase.test_birds_charm_offensive_flow game.tests.action_views.general.test_cats_turn_flow.CatTurnFlowTestCase.test_cats_charm_offensive_flow game.tests.action_views.general.test_wa_turn_flow.WATurnFlowTestCase.test_wa_charm_offensive_flow)",
-      "Bash(git -C f:/rootGame diff --stat)"
+      "Bash(git -C f:/rootGame diff --stat)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.crows)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.action_views.crows)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions game.tests.action_views)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.crafted_cards)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions game.tests.action_views)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.birds)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.birds game.tests.transactions.crafted_cards)",
+      "Bash(/f/python/envs/.venv_web/Scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions --tb=short)",
+      "Bash(/f/python/envs/.venv_web/Scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions)",
+      "Bash(/f/python/envs/.venv_web/Scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.birds)",
+      "Bash(F:\\\\python\\\\envs\\\\.venv_web\\\\scripts\\\\python.exe .agent\\\\scripts\\\\run_tests.py game.tests.transactions.cats.test_cats_setup game.tests.transactions.birds.test_birds_setup game.tests.transactions.crows.test_crows_setup)",
+      "Bash(/f/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.cats.test_cats_setup game.tests.transactions.birds.test_birds_setup game.tests.transactions.crows.test_crows_setup)",
+      "Bash(python .agent/scripts/run_tests.py)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.outrage.test_outrage.OutrageTests.test_outrage_token_removal_with_card)",
+      "Bash(tee test_single.txt)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.action_views.general.test_birds_turn_flow.BirdTurnFlowTestCase.test_birds_charm_offensive_flow)"
     ]
   }
 }

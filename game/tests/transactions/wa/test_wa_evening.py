@@ -1,4 +1,5 @@
 import logging
+from game.errors import IllegalActionError
 from django.test import TestCase
 from game.models import (
     Faction,
@@ -123,7 +124,7 @@ class WAEveningOperationsTests(WAEveningBaseTestCase):
 
     def test_recruit_fail_no_base(self):
         self.add_officer()
-        with self.assertRaisesRegex(ValueError, "No base in that clearing"):
+        with self.assertRaises(IllegalActionError):
             operation_recruit(self.player, self.fox_clearing)
 
     def test_organize_success(self):
@@ -150,28 +151,28 @@ class WAEveningOperationsTests(WAEveningBaseTestCase):
     def test_organize_fail_no_warrior(self):
         self.add_officer()
         # No warrior in clearing
-        with self.assertRaisesRegex(ValueError, "No warrior in that clearing"):
+        with self.assertRaises(IllegalActionError):
             operation_organize(self.player, self.fox_clearing)
 
     def test_organize_fail_already_sympathetic(self):
         self.add_officer()
         WarriorFactory(player=self.player, clearing=self.fox_clearing)
         self.add_sympathy(self.fox_clearing)
-        
-        with self.assertRaisesRegex(ValueError, "Player already has a sympathy token in this clearing"):
+
+        with self.assertRaises(IllegalActionError):
             operation_organize(self.player, self.fox_clearing)
 
     def test_operation_fail_no_officers(self):
         # No officers added
-        with self.assertRaisesRegex(ValueError, "No unused officers"):
+        with self.assertRaises(IllegalActionError):
             operation_recruit(self.player, self.fox_clearing)
 
     def test_operation_fail_all_officers_used(self):
         officer = self.add_officer()
         officer.used = True
         officer.save()
-        
-        with self.assertRaisesRegex(ValueError, "No unused officers"):
+
+        with self.assertRaises(IllegalActionError):
             operation_recruit(self.player, self.fox_clearing)
 
 class WAEveningTransitionTests(WAEveningBaseTestCase):

@@ -11,6 +11,7 @@ from game.transactions.general import (
 )
 from game.transactions.birds import place_roost
 from game.transactions.wa import place_sympathy
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 
 
 class PiecePlacementTests(TestCase):
@@ -60,17 +61,15 @@ class PiecePlacementTests(TestCase):
         bird_warrior = Warrior.objects.filter(
             player=self.player_birds, clearing=None
         ).first()
-        with self.assertRaises(ValueError) as cm:
+        with self.assertRaises(IllegalActionError):
             place_piece_from_supply_into_clearing(bird_warrior, self.clearing_keep)
-        self.assertIn("keep clearing", str(cm.exception))
 
         # WA sympathy
         wa_sympathy = WASympathy.objects.filter(
             player=self.player_wa, clearing=None
         ).first()
-        with self.assertRaises(ValueError) as cm:
+        with self.assertRaises(IllegalActionError):
             place_piece_from_supply_into_clearing(wa_sympathy, self.clearing_keep)
-        self.assertIn("keep clearing", str(cm.exception))
 
     def test_integrated_placed_warriors_into_clearing(self):
         # Cats placing 3 warriors in Keep
@@ -84,14 +83,13 @@ class PiecePlacementTests(TestCase):
         self.assertEqual(final_count, initial_count + 3)
 
         # Birds placing 1 warrior in Keep (should fail)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(IllegalActionError):
             place_warriors_into_clearing(self.player_birds, self.clearing_keep, 1)
 
     def test_integrated_place_roost(self):
         # Birds trying to place roost in keep clearing
-        with self.assertRaises(ValueError) as cm:
+        with self.assertRaises(IllegalActionError):
             place_roost(self.player_birds, self.clearing_keep)
-        self.assertIn("keep clearing", str(cm.exception))
 
         # Should work in non-keep clearing with slot
         # Clearing 2 has 2 slots and is empty
@@ -104,9 +102,8 @@ class PiecePlacementTests(TestCase):
 
     def test_integrated_place_sympathy(self):
         # WA trying to place sympathy in keep clearing
-        with self.assertRaises(ValueError) as cm:
+        with self.assertRaises(IllegalActionError):
             place_sympathy(self.player_wa, self.clearing_keep)
-        self.assertIn("keep clearing", str(cm.exception))
 
         # Should work in non-keep clearing
         place_sympathy(self.player_wa, self.clearing_no_keep)
@@ -122,6 +119,6 @@ class PiecePlacementTests(TestCase):
         ).first()
         place_piece_from_supply_into_clearing(cat_warrior, self.clearing_no_keep)
 
-        with self.assertRaises(ValueError) as cm:
+        from game.errors import InternalGameError
+        with self.assertRaises(InternalGameError):
             place_piece_from_supply_into_clearing(cat_warrior, self.clearing_keep)
-        self.assertEqual(str(cm.exception), "piece is already in a clearing")

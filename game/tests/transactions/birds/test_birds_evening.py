@@ -33,6 +33,7 @@ from game.transactions.birds import (
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.tests.logging_mixin import LoggingTestMixin
 from game.models.game_log import LogType
+from game.errors import InternalGameError, IllegalActionError, UnavailableActionError
 
 logger = logging.getLogger(__name__)
 
@@ -214,7 +215,7 @@ class BirdEveningDiscardTests(BirdEveningBaseTestCase):
         self.evening.step = BirdEvening.BirdEveningSteps.DISCARDING
         self.evening.save()
         
-        with self.assertRaisesRegex(ValueError, "Player must have more than 5 cards to discard"):
+        with self.assertRaises(UnavailableActionError):
             discard_card(self.player, CardsEP[cards[0].card_type])
 
 class BirdEveningFullAutomationTests(BirdEveningBaseTestCase):

@@ -1,6 +1,7 @@
 from game.models.game_models import Faction
 from game.models import CatTurn
 from django.db import transaction
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 from game.models.cats.buildings import (
     CatBuildingTypes,
     Recruiter,
@@ -79,11 +80,11 @@ def pick_corner(player: Player, clearing: Clearing):
     # validations
     validate_timing(player, CatsSimpleSetup.Steps.PICKING_CORNER)
     if player.faction != Faction.CATS:
-        raise ValueError("Player is not cats")
+        raise UnavailableActionError("Player is not cats")
     if clearing.game != player.game:
-        raise ValueError("Clearing is not in the same game as the player")
+        raise UnavailableActionError("Clearing is not in the same game as the player")
     if clearing.clearing_number not in [1, 2, 3, 4]:
-        raise ValueError("Clearing is not a corner clearing")
+        raise IllegalActionError("Clearing is not a corner clearing")
     # place keep
     keep = CatKeep.objects.get(player=player)
     keep.clearing = clearing
@@ -99,6 +100,7 @@ def pick_corner(player: Player, clearing: Clearing):
     cats_setup.save()
 
     from game.serializers.logs.cats import log_cats_setup_pick_corner
+
     log_cats_setup_pick_corner(player.game, player, clearing.clearing_number)
 
 
@@ -108,7 +110,7 @@ def place_warrior(player: Player, clearing: Clearing):
     # grab a warrior from the supply
     warrior = Warrior.objects.filter(player=player, clearing__isnull=True).first()
     if warrior is None:
-        raise ValueError("No warriors left to place")
+        raise IllegalActionError("No warriors left to place")
     # assign clearing to warrior
     warrior.clearing = clearing
     warrior.save()
@@ -123,7 +125,7 @@ def place_building(
     """
     # check that the building_slot is empty
     if Building.objects.filter(building_slot=building_slot).exists():
-        raise ValueError("Building slot is not empty")
+        raise IllegalActionError("Building slot is not empty")
 
     # place building from supply and score
     if building_type == CatBuildingTypes.WORKSHOP:
@@ -138,7 +140,7 @@ def place_building(
         player=player, building_slot__isnull=False
     ).count()
     if count_in_supply == 0:
-        raise ValueError("No workshops left to place")
+        raise IllegalActionError("No workshops left to place")
     building = buildings.first()
 
     assert building is not None  # we should have already raised if so
@@ -154,7 +156,9 @@ def place_garrison(player: Player, clearing_to_avoid: Clearing):
         Clearing.objects.filter(game=player.game).exclude(pk=clearing_to_avoid.pk)
     )
     warriors_from_supply = list(
-        Warrior.objects.filter(player=player, clearing__isnull=True)[: len(clearings_to_place)]
+        Warrior.objects.filter(player=player, clearing__isnull=True)[
+            : len(clearings_to_place)
+        ]
     )
     for warrior, clearing in zip(warriors_from_supply, clearings_to_place):
         warrior.clearing = clearing
@@ -180,12 +184,15 @@ def place_initial_building(
 
     building_slot = available_building_slot(clearing)
     if building_slot is None:
-        raise ValueError("No free building slots")
+        raise IllegalActionError("No free building slots")
     # otherwise place the building
     place_building(player, building_type, building_slot)
-    
+
     from game.serializers.logs.cats import log_cats_setup_place_building
-    log_cats_setup_place_building(player.game, player, building_type.value, clearing.clearing_number)
+
+    log_cats_setup_place_building(
+        player.game, player, building_type.value, clearing.clearing_number
+    )
 
     building_slots = BuildingSlot.objects.filter(clearing=clearing)
 
@@ -210,11 +217,11 @@ def confirm_completed_setup(player: Player):
     # check that it is cats setup
     simple_setup = GameSimpleSetup.objects.get(game=player.game)
     if simple_setup.status != GameSimpleSetup.GameSetupStatus.CATS_SETUP:
-        raise ValueError("Not this player's setup turn")
+        raise UnavailableActionError("Not this player's setup turn")
     # check that the step is pending confirmation
     setup = CatsSimpleSetup.objects.get(player=player)
     if setup.step != CatsSimpleSetup.Steps.PENDING_CONFIRMATION:
-        raise ValueError("Setup not complete")
+        raise UnavailableActionError("Setup not complete")
     setup.step = next_choice(CatsSimpleSetup.Steps, setup.step)
     setup.save()
     # go to next player setup

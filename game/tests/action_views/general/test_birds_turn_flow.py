@@ -167,6 +167,7 @@ class BirdTurnFlowTestCase(TestCase):
         """
         from game.tests.my_factories import CraftedCardEntryFactory, CardFactory
         from game.models.birds.turn import BirdBirdsong, BirdDaylight
+        from game.transactions.general import place_piece_from_supply_into_clearing
 
         # Give Birds the Charm Offensive card
         charm_card = CardFactory(game=self.game, card_type=CardsEP.CHARM_OFFENSIVE.name, suit="y")
@@ -182,12 +183,21 @@ class BirdTurnFlowTestCase(TestCase):
         daylight.step = BirdDaylight.BirdDaylightSteps.BUILDING
         daylight.save()
 
+        # Set up clearing 5 for Birds to rule and build in
+        clearing_5 = Clearing.objects.get(game=self.game, clearing_number=5)
+        # Remove enemy warriors from clearing 5
+        Warrior.objects.filter(clearing=clearing_5).exclude(player=self.birds_player).delete()
+        # Add a bird warrior to clearing 5
+        bird_warrior = Warrior.objects.filter(player=self.birds_player, clearing=None).first()
+        if bird_warrior:
+            place_piece_from_supply_into_clearing(bird_warrior, clearing_5)
+
         # Start at Daylight Building via HTTP
         self.birds_client.get_action()
         self.assertEqual(self.birds_client.base_route, "/api/birds/daylight/building/")
 
-        # End building - this should transition to Evening NOT_STARTED
-        self.birds_client.submit_action({"clearing_number": ""})
+        # Submit clearing 5 to complete the build - this should transition to Evening and Charm Offensive
+        self.birds_client.submit_action({"clearing_number": 5})
 
         # The next action should be charm-offensive
         self.birds_client.get_action()

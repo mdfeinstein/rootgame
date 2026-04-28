@@ -11,25 +11,29 @@ from game.models.game_models import HandEntry, Player, Clearing, Faction
 
 def use_propaganda_bureau(player: Player, card_to_spend : CardsEP, clearing : Clearing, target_faction : Faction):
     """
-    Replaces warrior of target faction with a warrior of player's faction, discarding the matching card in hand and 
+    Replaces warrior of target faction with a warrior of player's faction, discarding the matching card in hand and
     using up the propaganda bureau card for the turn
     """
+    from game.errors import IllegalActionError, UnavailableActionError
     # validate that target faction is not player's faction
     if player.faction == target_faction:
-        raise ValueError("Target faction cannot be player's faction")
-    
+        raise IllegalActionError("Target faction cannot be player's faction")
+
     card_in_hand = validate_player_has_card_in_hand(player, card_to_spend)
-    
+
     if not card_matches_clearing(card_to_spend, clearing):
-        raise ValueError("Card suit does not match clearing suit")
+        raise IllegalActionError("Card suit does not match clearing suit")
     crafted_card = validate_player_has_crafted_card(player, CardsEP.PROPAGANDA_BUREAU)
-    # validate that effect is usable right now
+    # validate that card is not already used
+    if crafted_card.used == CraftedCardEntry.UsedChoice.USED:
+        raise IllegalActionError("Propaganda Bureau cannot be used right now")
+    # validate that effect is usable in current phase
     if not can_use_card(player, crafted_card):
-        raise ValueError("Propaganda Bureau cannot be used right now")
+        raise UnavailableActionError("Propaganda Bureau cannot be used right now")
     # remove enemy warrior. if doesn't exist, raise
     enemy_warrior = Warrior.objects.filter(player__faction=target_faction, clearing=clearing).first()
     if enemy_warrior is None:
-        raise ValueError("No enemy warrior found in clearing")
+        raise IllegalActionError("No enemy warrior found in clearing")
     enemy_warrior.clearing = None
     enemy_warrior.save()
     # add player's warrior to clearing, if able. if not, don't raise

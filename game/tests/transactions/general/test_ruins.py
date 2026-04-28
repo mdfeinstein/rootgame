@@ -1,4 +1,5 @@
 from django.test import TestCase
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 from game.models.game_models import (
     Game,
     Faction,
@@ -48,7 +49,7 @@ class RuinOccupancyTests(TestCase):
         Building.objects.create(player=self.cats_player, building_slot=free_slot)
 
         # Now clearing 10 should be full
-        with self.assertRaisesRegex(ValueError, "No free building slots"):
+        with self.assertRaises(IllegalActionError):
             place_initial_building(
                 self.cats_player, clearing_10, CatBuildingTypes.WORKSHOP
             )

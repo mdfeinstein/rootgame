@@ -5,9 +5,13 @@ from game.models.game_models import Player
 from game.queries.birds.roosts import get_roosts_on_board
 from game.queries.birds.turn import validate_step, get_phase
 from game.queries.general import get_player_hand_size, validate_player_has_card_in_hand
-from game.transactions.general import draw_card_from_deck_to_hand, discard_card_from_hand
+from game.transactions.general import (
+    draw_card_from_deck_to_hand,
+    discard_card_from_hand,
+)
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.game_models import Faction
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 
 
 @transaction.atomic
@@ -28,14 +32,22 @@ def roost_scoring(player: Player):
     ]
     roosts_on_board = len(get_roosts_on_board(player))
     from game.transactions.general import raise_score
+
     raise_score(player, scoring_per_roost_on_board[roosts_on_board])
 
     if scoring_per_roost_on_board[roosts_on_board] > 0:
         from game.serializers.logs.birds import log_birds_score_roosts
         from game.serializers.logs.general import get_current_phase_log
-        log_birds_score_roosts(player.game, player, scoring_per_roost_on_board[roosts_on_board], parent=get_current_phase_log(player.game, player))
+
+        log_birds_score_roosts(
+            player.game,
+            player,
+            scoring_per_roost_on_board[roosts_on_board],
+            parent=get_current_phase_log(player.game, player),
+        )
 
     from game.transactions.birds.turn import next_step
+
     next_step(player)
 
 
@@ -52,9 +64,16 @@ def draw_cards(player: Player):
         drawn_cards_objs.append(draw_card_from_deck_to_hand(player).card)
 
     from game.serializers.logs.general import log_draw, get_current_phase_log
-    log_draw(player.game, player, drawn_cards_objs, parent=get_current_phase_log(player.game, player))
+
+    log_draw(
+        player.game,
+        player,
+        drawn_cards_objs,
+        parent=get_current_phase_log(player.game, player),
+    )
 
     from game.transactions.birds.turn import next_step
+
     next_step(player)
 
 
@@ -66,6 +85,7 @@ def check_discard_step(player: Player):
     assert type(evening) == BirdEvening
     if get_player_hand_size(player) <= 5:
         from game.transactions.birds.turn import next_step
+
         next_step(player)
 
 
@@ -76,16 +96,23 @@ def discard_card(player: Player, card: CardsEP):
     evening = get_phase(player)
     assert type(evening) == BirdEvening
     if get_player_hand_size(player) <= 5:
-        raise ValueError("Player must have more than 5 cards to discard")
+        raise UnavailableActionError("Player must have more than 5 cards to discard")
     card_in_hand = validate_player_has_card_in_hand(player, card)
     if player.faction != Faction.BIRDS.value:
-        raise ValueError("Player is not birds")
+        raise UnavailableActionError("Player is not birds")
     card_model = card_in_hand.card
     discard_card_from_hand(player, card_in_hand)
 
     from game.serializers.logs.general import log_discard, get_current_phase_log
-    log_discard(player.game, player, card_model, parent=get_current_phase_log(player.game, player))
+
+    log_discard(
+        player.game,
+        player,
+        card_model,
+        parent=get_current_phase_log(player.game, player),
+    )
 
     if get_player_hand_size(player) <= 5:
         from game.transactions.birds.turn import next_step
+
         next_step(player)

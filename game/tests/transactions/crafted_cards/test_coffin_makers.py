@@ -110,7 +110,7 @@ class CoffinMakersTestCase(TestCase):
         if not cat_turn:
             cat_turn = CatTurn.create_turn(self.cats_player)
         birdsong = cat_turn.birdsong
-        birdsong.step = CatBirdsong.CatBirdsongSteps.PLACING_WOOD
+        birdsong.step = CatBirdsong.CatBirdsongSteps.NOT_STARTED
         birdsong.save()
         
         # 2. Put 5 warriors in the coffin (enough for 1 point)

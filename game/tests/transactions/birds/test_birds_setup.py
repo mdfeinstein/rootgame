@@ -1,4 +1,5 @@
 from django.test import TestCase
+from game.errors import IllegalActionError
 from game.models.game_models import Faction, Clearing, Warrior, BuildingSlot, Building
 from game.models.birds.buildings import BirdRoost
 from game.models.birds.player import BirdLeader, Vizier
@@ -57,10 +58,10 @@ class BirdPickCornerTests(BirdSetupBaseTestCase):
         keep = CatKeep.objects.get(player=self.cats_player)
         keep.clearing = c1
         keep.save()
-        
+
         # Birds try to pick a different corner (C2)
         c2 = Clearing.objects.get(game=self.game, clearing_number=2)
-        with self.assertRaisesMessage(ValueError, "Cat's Keep is not in the opposite corner"):
+        with self.assertRaises(IllegalActionError):
             pick_corner(self.player, c2)
 
     def test_pick_corner_success_without_cats(self):
@@ -86,7 +87,7 @@ class BirdPickCornerTests(BirdSetupBaseTestCase):
 
     def test_pick_non_corner_fails(self):
         c5 = Clearing.objects.get(game=self.game, clearing_number=5)
-        with self.assertRaisesMessage(ValueError, "Clearing number must be 1, 2, 3, or 4 to be a corner"):
+        with self.assertRaises(IllegalActionError):
             pick_corner(self.player, c5)
 
 class BirdChooseLeaderTests(BirdSetupBaseTestCase):

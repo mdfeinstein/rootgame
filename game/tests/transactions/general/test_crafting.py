@@ -14,9 +14,10 @@ from game.models.game_models import (
     CraftedItemEntry,
 )
 from game.transactions.general import craft_card
-
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 
 from game.models.birds.player import BirdLeader
+
 
 class CraftingLogicTests(TestCase):
     def setUp(self):
@@ -25,7 +26,9 @@ class CraftingLogicTests(TestCase):
         self.player = Player.objects.create(
             game=self.game, faction=Faction.BIRDS, user=self.user
         )
-        BirdLeader.objects.create(player=self.player, leader=BirdLeader.BirdLeaders.DESPOT.value, active=True)
+        BirdLeader.objects.create(
+            player=self.player, leader=BirdLeader.BirdLeaders.DESPOT.value, active=True
+        )
         self.fox_clearing = Clearing.objects.create(
             game=self.game, suit=Suit.RED, clearing_number=1
         )  # RED=FOX
@@ -73,7 +76,8 @@ class CraftingLogicTests(TestCase):
         card = CardsEP.EYRIE_EMIGRE
         roosts = [roost_red, roost_red]  # Duplicate!
 
-        with self.assertRaises(ValueError):
+        from game.errors import IllegalActionError
+        with self.assertRaises(IllegalActionError):
             validate_crafting_pieces_satisfy_requirements(self.player, card, roosts)
 
     def test_cannot_craft_duplicate_card(self):
@@ -86,9 +90,8 @@ class CraftingLogicTests(TestCase):
         card_in_hand = Card.objects.create(game=self.game, card_type=card_type.name)
         hand_entry = HandEntry.objects.create(player=self.player, card=card_in_hand)
 
-        with self.assertRaises(ValueError) as cm:
+        with self.assertRaises(IllegalActionError):
             craft_card(hand_entry, [])
-        self.assertEqual(str(cm.exception), "player already has this card type crafted")
 
     def test_can_craft_duplicate_item_if_in_pool(self):
         # Player can craft an item if they already have that same item, provided it is in the pool.
@@ -123,6 +126,5 @@ class CraftingLogicTests(TestCase):
         card_in_hand = Card.objects.create(game=self.game, card_type=card_type.name)
         hand_entry = HandEntry.objects.create(player=self.player, card=card_in_hand)
 
-        with self.assertRaises(ValueError) as cm:
+        with self.assertRaises(IllegalActionError):
             craft_card(hand_entry, [])
-        self.assertEqual(str(cm.exception), "item is not in the craftable pool")

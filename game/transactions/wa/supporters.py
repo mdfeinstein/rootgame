@@ -1,5 +1,6 @@
 from django.db import transaction
 
+from game.errors.action_errors import IllegalActionError
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.game_models import Card, DiscardPileEntry, Faction, Player
 from game.models.wa.player import OfficerEntry, SupporterStackEntry
@@ -47,7 +48,9 @@ def mobilize_supporter(player: Player, card: CardsEP):
     assert isinstance(get_phase(player), WADaylight), "Not day phase"
     card_in_hand = validate_player_has_card_in_hand(player, card)
     if not can_add_supporter(player):
-        raise ValueError("Cannot add a supporter to the stack: no base and at limit")
+        raise IllegalActionError(
+            "Cannot add a supporter to the stack: no base and at limit"
+        )
 
     add_supporter(player, card_in_hand.card)
     from game.serializers.logs.wa import log_wa_mobilize
@@ -69,7 +72,7 @@ def add_officer(player: Player):
     assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
     reserve_warriors = get_warriors_in_supply(player)
     if not reserve_warriors.exists():
-        raise ValueError("No warriors in reserve")
+        raise IllegalActionError("No warriors in reserve")
     officer = OfficerEntry.objects.create(
         player=player, warrior=reserve_warriors.first()
     )
@@ -81,7 +84,7 @@ def remove_officer(player: Player):
     assert player.faction == Faction.WOODLAND_ALLIANCE, "Not WA player"
     officer = OfficerEntry.objects.filter(player=player).first()
     if officer is None:
-        raise ValueError("No officer in box")
+        raise IllegalActionError("No officer in box")
     officer.warrior.clearing = None
     officer.warrior.save()
     officer.delete()

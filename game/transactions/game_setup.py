@@ -1,6 +1,7 @@
 from random import shuffle
 from django.contrib.auth.models import User
 from django.db import transaction, models
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 from game.models import (
     BuildingSlot,
     Card,
@@ -41,14 +42,12 @@ def create_new_game(
 def add_new_player_to_game(game: Game, user_to_add: User) -> Player:
     # check that user is not already in game
     if Player.objects.filter(game=game, user=user_to_add).exists():
-        raise ValueError("User is already in game")
+        raise IllegalActionError("User is already in game")
     # check there aren't already as many players as faction choices
     player_count = Player.objects.filter(game=game).count()
     faction_count = FactionChoiceEntry.objects.filter(game=game).count()
-    print(f"DEBUG add_new_player_to_game: player_count={player_count} faction_count={faction_count}")
     if player_count >= faction_count:
-        print(f"DEBUG: Raising ValueError: player_count {player_count} >= faction_count {faction_count}")
-        raise ValueError(
+        raise IllegalActionError(
             f"Can't add a { player_count + 1 }th player, there are only { faction_count } factions"
         )
     # create player
@@ -64,9 +63,9 @@ def add_new_player_to_game(game: Game, user_to_add: User) -> Player:
 @transaction.atomic
 def player_picks_faction(player: Player, faction: FactionChoiceEntry):
     if faction.game != player.game:
-        raise ValueError("faction and player games do not match")
+        raise UnavailableActionError("faction and player games do not match")
     if faction.chosen:
-        raise ValueError("faction has already been chosen")
+        raise IllegalActionError("faction has already been chosen")
     faction.chosen = True
     player.faction = faction.faction
     faction.save()
@@ -191,7 +190,7 @@ def map_setup(game: Game):
     if game.boardmap == Game.BoardMaps.AUTUMN:
         autumn_map_setup(game)
     else:
-        raise ValueError("Board map not supported")
+        raise InternalGameError("Board map not supported")
 
 
 @transaction.atomic
@@ -241,10 +240,10 @@ def deal_starting_cards(game: Game):
 @transaction.atomic
 def start_game(game: Game):
     if game.status != Game.GameStatus.NOT_STARTED:
-        raise ValueError("Game is already started")
+        raise UnavailableActionError("Game is already started")
     players = Player.objects.filter(game=game)
     if any(player.faction is None for player in players):
-        raise ValueError("Not all players have selected a faction")
+        raise UnavailableActionError("Not all players have selected a faction")
     create_game_setup(game)
     map_setup(game)
     construct_deck(game)

@@ -1,9 +1,14 @@
 from rest_framework.views import APIView, Response
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, APIException
 from drf_spectacular.utils import extend_schema
 
 from game.queries.general import player_has_warriors_in_clearing
 from game.models.game_models import Clearing, Faction, Game, Player
+from game.errors import (
+    UnavailableActionError,
+    IllegalActionError,
+    InternalGameError,
+)
 
 from game.serializers.general_serializers import (
     GameActionSerializer,
@@ -30,9 +35,14 @@ class GameActionView(APIView):
         responses={200: GameActionStepSerializer, 400: ValidationErrorSerializer}
     )
     def post(self, request, game_id: int, route: str, *args, **kwargs):
-        self.validate_player(request, game_id, route, *args, **kwargs)
-        self.validate_timing(request, game_id, route, *args, **kwargs)
-        return self.route_post(request, game_id, route, *args, **kwargs)
+        try:
+            self.validate_player(request, game_id, route, *args, **kwargs)
+            self.validate_timing(request, game_id, route, *args, **kwargs)
+            return self.route_post(request, game_id, route, *args, **kwargs)
+        except (UnavailableActionError, IllegalActionError) as e:
+            raise ValidationError({"detail": str(e)})
+        except InternalGameError as e:
+            raise APIException(detail=str(e))
 
     def game(self, game_id: int):
         """Return the game. helper method. raises if game not found"""

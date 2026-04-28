@@ -1,6 +1,7 @@
 from typing import Union, cast
 from django.db import transaction
 
+from game.errors import IllegalActionError, InternalGameError
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.game_models import (
     Faction,
@@ -118,7 +119,7 @@ def flip_plot(player: Player, token: PlotToken, **kwargs):
         raise ValueError("Token is not on the board")
 
     if not Warrior.objects.filter(clearing=token.clearing, player=player).exists():
-        raise ValueError("Must have a Crow warrior present to flip a plot token")
+        raise IllegalActionError("Must have a Crow warrior present to flip a plot token")
 
     token.is_facedown = False
     token.save()
@@ -218,7 +219,7 @@ def crows_recruit(player: Player, card: CardsEP, suit: Suit | None = None):
                 try:
                     place_piece_from_supply_into_clearing(warrior, clearing)
                     placed_count += 1
-                except ValueError:
+                except (IllegalActionError, InternalGameError):
                     pass
         next_step(player)
 

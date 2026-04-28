@@ -8,21 +8,22 @@ from game.queries.cats.wood import (
     get_unused_sawmills,
 )
 from game.transactions.general import place_piece_from_supply_into_clearing
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 
 
 @transaction.atomic
 def produce_wood(player: Player, sawmill: Sawmill):
     """not to be used for overwork. use for birdsong"""
     if sawmill.building_slot is None:
-        raise ValueError("Sawmill is not placed")
+        raise IllegalActionError("Sawmill is not placed")
     if sawmill.used:
-        raise ValueError("Sawmill is already used")
+        raise IllegalActionError("Sawmill is already used")
     if sawmill.player != player:
-        raise ValueError("Sawmill is not owned by player")
+        raise IllegalActionError("Sawmill is not owned by player")
 
     wood_token = CatWood.objects.filter(player=player, clearing=None).first()
     if wood_token is None:
-        raise ValueError("No wood tokens left to place")
+        raise UnavailableActionError("No wood tokens left to place")
 
     place_piece_from_supply_into_clearing(wood_token, sawmill.building_slot.clearing)
     sawmill.used = True
@@ -43,6 +44,7 @@ def produce_wood(player: Player, sawmill: Sawmill):
         player=player, used=False, building_slot__isnull=False
     ).exists():
         from game.transactions.cats.turn import next_step
+
         next_step(player)
 
 

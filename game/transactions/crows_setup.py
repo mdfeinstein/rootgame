@@ -1,6 +1,7 @@
 from game.models.game_models import Faction, Suit
 from game.models.crows.turn import CrowTurn
 from django.db import transaction
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 from game.models.crows.setup import CrowsSimpleSetup
 from game.models.crows.tokens import PlotToken
 from game.models.events.setup import GameSimpleSetup
@@ -42,39 +43,39 @@ def start_simple_crows_setup(player: Player) -> CrowsSimpleSetup:
 @transaction.atomic
 def place_initial_warrior(player: Player, clearing: Clearing):
     if player.faction != Faction.CROWS:
-        raise ValueError("Player is not Corvid Conspiracy")
+        raise UnavailableActionError("Player is not Corvid Conspiracy")
     if clearing.game != player.game:
-        raise ValueError("Clearing is not in the same game as the player")
+        raise UnavailableActionError("Clearing is not in the same game as the player")
 
     setup = CrowsSimpleSetup.objects.get(player=player)
     if setup.step != CrowsSimpleSetup.Steps.WARRIOR_PLACE:
-        raise ValueError("Not in warrior placement step")
+        raise UnavailableActionError("Not in warrior placement step")
 
     suit = Suit(clearing.suit)
     if suit == Suit.RED and setup.fox_placed:
-        raise ValueError("Fox clearing warrior already placed")
+        raise IllegalActionError("Fox clearing warrior already placed")
     elif suit == Suit.YELLOW and setup.rabbit_placed:
-        raise ValueError("Rabbit clearing warrior already placed")
+        raise IllegalActionError("Rabbit clearing warrior already placed")
     elif suit == Suit.ORANGE and setup.mouse_placed:
-        raise ValueError("Mouse clearing warrior already placed")
+        raise IllegalActionError("Mouse clearing warrior already placed")
     elif suit == Suit.WILD:
         # Based on user feedback: "there are no wild clearings" unless special maps,
         # but the Autumn map doesn't use them. Standard root doesn't have bird clearings setup
-        raise ValueError("Cannot place on a bird clearing during setup")
+        raise IllegalActionError("Cannot place on a bird clearing during setup")
 
     from game.models.cats.tokens import CatKeep
 
     try:
         keep = CatKeep.objects.get(player__game=player.game)
         if keep.clearing == clearing:
-            raise ValueError("Cannot place in the keep clearing")
+            raise IllegalActionError("Cannot place in the keep clearing")
     except CatKeep.DoesNotExist:
         pass
 
     # Place the warrior
     warrior = Warrior.objects.filter(player=player, clearing__isnull=True).first()
     if warrior is None:
-        raise ValueError(
+        raise InternalGameError(
             "No warriors left to place! But this is setup so that's impossible"
         )
 
@@ -89,7 +90,10 @@ def place_initial_warrior(player: Player, clearing: Clearing):
         setup.mouse_placed = True
 
     from game.serializers.logs.crows import log_crows_setup_place_warrior
-    log_crows_setup_place_warrior(player.game, player, clearing.clearing_number, suit.value)
+
+    log_crows_setup_place_warrior(
+        player.game, player, clearing.clearing_number, suit.value
+    )
 
     if setup.fox_placed and setup.rabbit_placed and setup.mouse_placed:
         setup.step = next_choice(CrowsSimpleSetup.Steps, setup.step)
@@ -104,7 +108,7 @@ def confirm_completed_setup(player: Player):
 
     setup = CrowsSimpleSetup.objects.get(player=player)
     if setup.step != CrowsSimpleSetup.Steps.PENDING_CONFIRMATION:
-        raise ValueError("Setup not complete")
+        raise UnavailableActionError("Setup not complete")
 
     setup.step = next_choice(CrowsSimpleSetup.Steps, setup.step)
     setup.save()

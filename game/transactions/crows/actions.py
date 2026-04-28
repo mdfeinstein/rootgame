@@ -4,6 +4,7 @@ from django.db import transaction
 from game.models.game_models import Clearing, Player, Warrior, Token
 from game.models.crows.tokens import PlotToken
 from game.models.crows.turn import CrowDaylight
+from game.errors import IllegalActionError
 from game.transactions.general import (
     move_warriors,
     place_piece_from_supply_into_clearing,
@@ -28,16 +29,16 @@ def crows_plot(player: Player, clearing: Clearing, plot_type: str, daylight: Cro
     
     # Validation: Clearing empty of plots
     if PlotToken.objects.filter(clearing=clearing).exists():
-        raise ValueError("Clearing already has a plot token")
-    
+        raise IllegalActionError("Clearing already has a plot token")
+
     # Validation: Enough warriors
     if warrior_count_in_clearing(player, clearing) < cost:
-        raise ValueError(f"Not enough warriors in clearing to place a plot. Cost: {cost}")
-    
+        raise IllegalActionError(f"Not enough warriors in clearing to place a plot. Cost: {cost}")
+
     # Validation: Token available in supply
     plot_token = PlotToken.objects.filter(player=player, clearing__isnull=True, plot_type=plot_type).first()
     if not plot_token:
-        raise ValueError(f"No plot token of type {plot_type} available in supply")
+        raise IllegalActionError(f"No plot token of type {plot_type} available in supply")
     
     from game.serializers.logs.general import get_current_phase_log
     from game.serializers.logs.crows import log_crows_plot
@@ -100,13 +101,13 @@ def crows_trick(player: Player, plot1: PlotToken, plot2: PlotToken):
     - Both must be on board and in the same is_facedown state.
     """
     if not plot1.clearing or not plot2.clearing:
-        raise ValueError("Both plot tokens must be on the board")
-    
+        raise IllegalActionError("Both plot tokens must be on the board")
+
     if plot1.is_facedown != plot2.is_facedown:
-        raise ValueError("Both plot tokens must be in the same state (both facedown or both faceup)")
-    
+        raise IllegalActionError("Both plot tokens must be in the same state (both facedown or both faceup)")
+
     if plot1.player != player or plot2.player != player:
-        raise ValueError("You can only trick your own plot tokens")
+        raise IllegalActionError("You can only trick your own plot tokens")
 
     # Swap clearings
     c1 = plot1.clearing

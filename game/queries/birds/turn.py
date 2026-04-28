@@ -4,18 +4,19 @@ from game.models.events.event import Event, EventType
 from game.models.game_models import Faction, Player
 from game.queries.current_action.events import get_current_event
 from game.queries.general import get_current_player
+from game.errors import UnavailableActionError, InternalGameError
 
 
 def validate_turn(player: Player) -> BirdTurn:
-    """returns the turn if it is the player's turn, else raises ValueError"""
+    """returns the turn if it is the player's turn, else raises error"""
     current_player = get_current_player(player.game)
     if current_player != player:
-        raise ValueError("Not this player's turn")
+        raise UnavailableActionError("Not this player's turn")
     if current_player.faction != Faction.BIRDS:
-        raise ValueError("This player is not birds")
+        raise UnavailableActionError("This player is not birds")
     bird_turn = BirdTurn.objects.filter(player=player).order_by("-turn_number").first()
     if bird_turn is None:
-        raise ValueError("No turns found for this birdsplayer")
+        raise InternalGameError("No turns found for this birdsplayer")
     return bird_turn
 
 
@@ -40,9 +41,7 @@ def get_phase(player: Player) -> BirdBirdsong | BirdDaylight | BirdEvening:
 def validate_phase(
     player: Player, phase_type: type[BirdBirdsong | BirdDaylight | BirdEvening]
 ) -> BirdBirdsong | BirdDaylight | BirdEvening:
-    """returns the phase if it is the given phase, else raises ValueError
-    also validates turn and player
-    """
+    """returns the phase if it is the given phase, else raises UnavailableActionError"""
     mapper = {
         BirdBirdsong: "Not Birdsong phase",
         BirdDaylight: "Not Daylight phase",
@@ -50,7 +49,7 @@ def validate_phase(
     }
     player_phase = get_phase(player)
     if phase_type != type(player_phase):
-        raise ValueError(mapper[phase_type])
+        raise UnavailableActionError(mapper[phase_type])
     return player_phase
 
 
@@ -66,9 +65,7 @@ def validate_step(
     | BirdDaylight.BirdDaylightSteps
     | BirdEvening.BirdEveningSteps
 ):
-    """returns the step if it is the given step, else raises ValueError
-    also validates turn and player
-    """
+    """returns the step if it is the given step, else raises UnavailableActionError"""
     player_phase = get_phase(player)
     if step != player_phase.step:
         # Avoid collisions between different phases with same step values
@@ -79,7 +76,7 @@ def validate_step(
                 BirdBirdsong.BirdBirdsongSteps.EMERGENCY_ROOSTING: "Not Emergency Roosting step",
                 BirdBirdsong.BirdBirdsongSteps.COMPLETED: "Not Birdsong Completed step",
             }
-            raise ValueError(birdsong_mapper.get(step, "Invalid Birdsong step"))
+            raise UnavailableActionError(birdsong_mapper.get(step, "Invalid Birdsong step"))
         elif isinstance(player_phase, BirdDaylight):
             daylight_mapper = {
                 BirdDaylight.BirdDaylightSteps.CRAFTING: "Not Crafting step",
@@ -89,7 +86,7 @@ def validate_step(
                 BirdDaylight.BirdDaylightSteps.BUILDING: "Not building step",
                 BirdDaylight.BirdDaylightSteps.COMPLETED: "Not Daylight completed step",
             }
-            raise ValueError(daylight_mapper.get(step, "Invalid Daylight step"))
+            raise UnavailableActionError(daylight_mapper.get(step, "Invalid Daylight step"))
         elif isinstance(player_phase, BirdEvening):
             evening_mapper = {
                 BirdEvening.BirdEveningSteps.SCORING: "Not Evening scoring step",
@@ -97,9 +94,9 @@ def validate_step(
                 BirdEvening.BirdEveningSteps.DISCARDING: "Not Evening discarding step",
                 BirdEvening.BirdEveningSteps.COMPLETED: "Not Evening completedstep",
             }
-            raise ValueError(evening_mapper.get(step, "Invalid Evening step"))
+            raise UnavailableActionError(evening_mapper.get(step, "Invalid Evening step"))
         else:
-            raise ValueError(mapper[step])
+            raise UnavailableActionError("Invalid phase")
     return player_phase.step
 
 

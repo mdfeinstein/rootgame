@@ -10,10 +10,23 @@ from game.models.game_models import (
 )
 from game.models.wa.buildings import WABase
 from game.models.wa.tokens import WASympathy
-from game.queries.wa.supporters import get_sympathy_points, validate_revolt, validate_sympathy_spread
-from game.transactions.general import place_piece_from_supply_into_clearing, place_warriors_into_clearing, raise_score
-from game.transactions.removal import player_removes_building, player_removes_token, player_removes_warriors
+from game.queries.wa.supporters import (
+    get_sympathy_points,
+    validate_revolt,
+    validate_sympathy_spread,
+)
+from game.transactions.general import (
+    place_piece_from_supply_into_clearing,
+    place_warriors_into_clearing,
+    raise_score,
+)
+from game.transactions.removal import (
+    player_removes_building,
+    player_removes_token,
+    player_removes_warriors,
+)
 from game.transactions.wa.supporters import discard_supporters, add_officer
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 
 
 @transaction.atomic
@@ -22,9 +35,9 @@ def place_sympathy(player: Player, clearing: Clearing):
     to_score = get_sympathy_points(player)
     token = WASympathy.objects.filter(player=player, clearing=None).first()
     if token is None:
-        raise ValueError("No sympathy token in the supply")
+        raise IllegalActionError("No sympathy token in the supply")
     if WASympathy.objects.filter(player=player, clearing=clearing).exists():
-        raise ValueError("Player already has a sympathy token in this clearing")
+        raise IllegalActionError("Player already has a sympathy token in this clearing")
     place_piece_from_supply_into_clearing(token, clearing)
     raise_score(player, to_score)
 
@@ -85,7 +98,9 @@ def revolt(player: Player, clearing: Clearing):
                 player_removes_building(
                     player.game, building, player, parent=revolt_log, skip_log=True
                 )
-                pieces_destroyed[building_label] = pieces_destroyed.get(building_label, 0) + 1
+                pieces_destroyed[building_label] = (
+                    pieces_destroyed.get(building_label, 0) + 1
+                )
 
     base = WABase.objects.get(player=player, suit=clearing.suit)
     place_piece_from_supply_into_clearing(base, clearing)
@@ -97,12 +112,7 @@ def revolt(player: Player, clearing: Clearing):
     place_warriors_into_clearing(
         player, clearing, min(matching_sympathy_count, troops_in_supply)
     )
-
-    try:
-        add_officer(player)
-    except ValueError as e:
-        if "No warriors in reserve" not in str(e):
-            raise e
+    add_officer(player)
 
     player.refresh_from_db()
     points_scored = player.score - score_before
@@ -215,5 +225,7 @@ def end_spread_sympathy_step(player: Player):
     assert player.faction == "wa", "Not WA player"
     birdsong = get_phase(player)
     assert isinstance(birdsong, WABirdsong), "Not Birdsong phase"
-    assert birdsong.step == WABirdsong.WABirdsongSteps.SPREAD_SYMPATHY, "Not Spread Sympathy step"
+    assert (
+        birdsong.step == WABirdsong.WABirdsongSteps.SPREAD_SYMPATHY
+    ), "Not Spread Sympathy step"
     next_step(player)

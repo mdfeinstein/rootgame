@@ -41,10 +41,10 @@ class ActiveEffectsTests(TestCase):
     def test_saboteurs_timing_birds(self):
         # Crafted Card
         entry = CraftedCardEntry.objects.create(player=self.player_birds, card=self.card_saboteurs)
-        
-        # 1. Correct Timing: Birdsong, Emergency Drawing
+
+        # 1. Correct Timing: Birdsong, start of phase (NOT_STARTED)
         birdsong = self.turn.birdsong.first()
-        birdsong.step = BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING
+        birdsong.step = BirdBirdsong.BirdBirdsongSteps.NOT_STARTED
         birdsong.save()
         self.assertTrue(can_use_card(self.player_birds, entry))
 
@@ -94,11 +94,11 @@ class ActiveEffectsTests(TestCase):
         self.assertTrue(can_use_card(self.player_birds, entry))
 
     def test_cats_timing(self):
-        # 1. Saboteurs (Start of Birdsong -> Placing Wood)
+        # 1. Saboteurs (Start of Birdsong -> NOT_STARTED)
         entry_sab = CraftedCardEntry.objects.create(player=self.player_cats, card=self.card_saboteurs)
-        
+
         birdsong = self.turn_cats.birdsong
-        birdsong.step = CatBirdsong.CatBirdsongSteps.PLACING_WOOD
+        birdsong.step = CatBirdsong.CatBirdsongSteps.NOT_STARTED
         birdsong.save()
         
         # Set game turn to Cats
@@ -144,11 +144,11 @@ class ActiveEffectsTests(TestCase):
         self.assertFalse(can_use_card(self.player_birds, entry))
 
     def test_crows_timing(self):
-        # 1. Saboteurs (Start of Birdsong -> CRAFT)
+        # 1. Saboteurs (Start of Birdsong -> NOT_STARTED)
         entry_sab = CraftedCardEntry.objects.create(player=self.player_crows, card=self.card_saboteurs)
-        
+
         birdsong = self.turn_crows.birdsong.first()
-        birdsong.step = CrowBirdsong.CrowBirdsongSteps.CRAFT
+        birdsong.step = CrowBirdsong.CrowBirdsongSteps.NOT_STARTED
         birdsong.save()
         
         self.game.current_turn = 2

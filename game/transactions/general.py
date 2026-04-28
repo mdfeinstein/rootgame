@@ -35,6 +35,7 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.game_data.cards.exiles_and_partisans import Card as CardDetails
 from game.game_data.general.crafting import crafting_piece_models
 from django.db import models
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 
 from game.queries.wa.outrage import move_triggers_outrage
 
@@ -84,7 +85,7 @@ def draw_card_from_deck_to_hand(player: Player) -> HandEntry:
 def discard_card_from_hand(player: Player, card_in_hand: HandEntry):
     # check that card is in player's hand
     if player != card_in_hand.player:
-        raise ValueError("card is not in player's hand")
+        raise IllegalActionError("card is not in player's hand")
     # add card to discard pile
     # add card to discard pile
     if card_in_hand.card.dominance:
@@ -110,12 +111,12 @@ def move_warriors(
     from game.transactions.outrage import create_outrage_event
 
     if number <= 0:
-        raise ValueError("Cannot move 0 warriors")
+        raise IllegalActionError("Cannot move 0 warriors")
     warriors = list(
         Warrior.objects.filter(clearing=clearing_start, player=player)[:number]
     )
     if len(warriors) != number:
-        raise ValueError("not enough warriors in clearing to move")
+        raise IllegalActionError("not enough warriors in clearing to move")
     # check adjacency and rulership
     validate_legal_move(player, clearing_start, clearing_end, ignore_rule=ignore_rule)
     # update clearing of warriors
@@ -139,9 +140,9 @@ def place_piece_from_supply_into_clearing(piece: Piece, clearing: Clearing):
     -- crows snare will block
     """
     if piece is None:
-        raise ValueError("piece is None. Perhaps none left in supply?")
+        raise IllegalActionError("piece is None. Perhaps none left in supply?")
     if piece.clearing is not None:
-        raise ValueError("piece is already in a clearing")
+        raise InternalGameError("piece is already in a clearing")
 
     from game.queries.general import validate_can_place_piece_in_clearing
 
@@ -158,7 +159,7 @@ def place_warriors_into_clearing(player: Player, clearing: Clearing, number: int
     """
     count_in_supply = Warrior.objects.filter(clearing=None, player=player).count()
     if count_in_supply < number:
-        raise ValueError(
+        raise IllegalActionError(
             f"Not enough warriors in supply to place {number} warriors. "
             f"In supply: {count_in_supply}"
         )
@@ -176,7 +177,7 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
     """
     card: CardDetails = card_in_hand.card.enum.value
     if not card.craftable:
-        raise ValueError("card is not craftable")
+        raise InternalGameError("card is not craftable")
     item = card.item
     points = card.crafted_points
     crafting_cost = card.cost
@@ -185,27 +186,27 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
     if item is not None:
         # check that item is still in the craftable pool
         if not CraftableItemEntry.objects.filter(item__item_type=item.value).exists():
-            raise ValueError("item is not in the craftable pool")
+            raise IllegalActionError("item is not in the craftable pool")
     else:
         # check that player does not have this same card type already crafted
         if CraftedCardEntry.objects.filter(
             card__card_type=card_in_hand.card.card_type, player=card_in_hand.player
         ).exists():
-            raise ValueError("player already has this card type crafted")
+            raise IllegalActionError("player already has this card type crafted")
 
     # check that crafting pieces are actually crafting pieces
     for crafting_piece in crafting_pieces:
         if not issubclass(type(crafting_piece), CraftingPieceMixin):
-            raise ValueError("not all crafting pieces are CraftingPieceMixins")
+            raise IllegalActionError("not all crafting pieces are CraftingPieceMixins")
     # check that pieces havent been used yet
     for crafting_piece in crafting_pieces:
         assert isinstance(crafting_piece, CraftingPieceMixin)
         if crafting_piece.crafted_with:
-            raise ValueError("some pieces have already been used")
+            raise IllegalActionError("some pieces have already been used")
     # check that they belong to the player
     for crafting_piece in crafting_pieces:
         if crafting_piece.player != card_in_hand.player:
-            raise ValueError("player does not own the pieces")
+            raise UnavailableActionError("player does not own the pieces")
     # assume that the caller has already checked that the player has enough crafting pieces to craft the card
     # mark crafting pieces as used
     for crafting_piece in crafting_pieces:
@@ -227,7 +228,7 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
                 card_in_hand.player, CardsEP.MASTER_ENGRAVERS
             )
             has_master_engravers = True
-        except ValueError:
+        except IllegalActionError:
             has_master_engravers = False
             master_engravers_card = None
 
@@ -285,7 +286,7 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
                     "draw",
                     parent=get_active_phase_log(other_player.game),
                 )
-            except ValueError:
+            except IllegalActionError:
                 pass
 
 
@@ -309,7 +310,9 @@ def create_turn(player: Player):
 
         create_crows_turn(player)
     else:
-        raise ValueError(f"Faction {player.faction} not supported for turn creation")
+        raise InternalGameError(
+            f"Faction {player.faction} not supported for turn creation"
+        )
 
 
 @transaction.atomic

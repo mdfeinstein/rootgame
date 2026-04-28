@@ -36,10 +36,12 @@ def guess_exposure(
 
     card_suit = hand_entry.card.suit
     if card_suit != clearing.suit and card_suit != Suit.WILD:
-        raise ValueError("Card suit does not match clearing suit")
+        from game.errors import IllegalActionError
+        raise IllegalActionError("Card suit does not match clearing suit")
 
     if hand_entry.player != player:
-        raise ValueError("Card is not in player's hand")
+        from game.errors import IllegalActionError
+        raise IllegalActionError("Card is not in player's hand")
 
     turn_number = get_current_turn_number(game)
     # Ensure we are comparing strings

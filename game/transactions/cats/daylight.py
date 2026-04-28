@@ -38,6 +38,7 @@ from game.transactions.general import (
     place_piece_from_supply_into_clearing,
     raise_score,
 )
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 
 
 @transaction.atomic
@@ -50,10 +51,10 @@ def build_building(
     """builds a building of the given type in the given clearing using the given wood tokens"""
     game = player.game
     if clearing.game != game:
-        raise ValueError("All objects must belong to the same game")
+        raise UnavailableActionError("All objects must belong to the same game")
     for token in wood_tokens:
         if token.player != player:
-            raise ValueError("All tokens must belong to the same player")
+            raise UnavailableActionError("All tokens must belong to the same player")
     if len(wood_tokens) != len(set(wood_tokens)):
         raise ValueError("Duplicate tokens provided")
 
@@ -61,11 +62,11 @@ def build_building(
     if required_wood is None:
         raise ValueError("No building of that type in supply")
     if len(wood_tokens) < required_wood:
-        raise ValueError("Not enough wood tokens provided to build this building")
+        raise IllegalActionError("Not enough wood tokens provided to build this building")
 
     available_wood = get_usable_wood_for_building(player, building_type, clearing)
     if available_wood is None:
-        raise ValueError("Not enough connected wood to build")
+        raise IllegalActionError("Not enough connected wood to build")
     available_wood = set(available_wood)
     if not all([token in available_wood for token in wood_tokens]):
         raise ValueError("provided wood tokens are not all connected to the clearing")
@@ -106,9 +107,9 @@ def action_used(player: Player):
 
     daylight = get_phase(player)
     if type(daylight) != CatDaylight:
-        raise ValueError("Not Daylight phase")
+        raise UnavailableActionError("Not Daylight phase")
     if daylight.actions_left == 0:
-        raise ValueError("No actions remaining")
+        raise IllegalActionError("No actions remaining")
     daylight.actions_left -= 1
     daylight.save()
 
@@ -123,7 +124,7 @@ def overwork(player: Player, clearing: Clearing, card: CardsEP):
 
     sawmills = get_sawmills_by_suit(player, card.value.suit)
     if not sawmills.filter(building_slot__clearing=clearing).exists():
-        raise ValueError("No sawmill in that clearing")
+        raise IllegalActionError("No sawmill in that clearing")
 
     wood_token = CatWood.objects.filter(clearing=None, player=player).first()
     if wood_token is None:
@@ -154,11 +155,11 @@ def birds_for_hire(player: Player, card: CardsEP):
     card_model = hand_entry.card
 
     if card.value.suit != Suit.WILD:
-        raise ValueError("Not a bird card")
+        raise IllegalActionError("Not a bird card")
 
     daylight = get_phase(player)
     if type(daylight) != CatDaylight:
-        raise ValueError("Not Daylight phase")
+        raise UnavailableActionError("Not Daylight phase")
 
     daylight.actions_left += 1
     daylight.save()
@@ -197,9 +198,9 @@ def cat_craft_card(player: Player, card: CardsEP, crafting_pieces: list[Workshop
 def cat_recruit(player: Player, recruiters: QuerySet[Recruiter]):
     """recruits warriors from the given recruiter stations"""
     if is_recruit_used(player):
-        raise ValueError("Recruit has already been used this turn")
+        raise IllegalActionError("Recruit has already been used this turn")
     if recruiters.count() == 0:
-        raise ValueError("No recruiters selected to recruit from")
+        raise IllegalActionError("No recruiters selected to recruit from")
 
     if not all(
         [
@@ -210,7 +211,7 @@ def cat_recruit(player: Player, recruiters: QuerySet[Recruiter]):
         raise ValueError("Not all recruiters have been used")
 
     if Warrior.objects.filter(player=player, clearing=None).count() < len(recruiters):
-        raise ValueError(
+        raise IllegalActionError(
             f"Not enough warriors in supply to recruit at {len(recruiters)} recruiter stations"
         )
 
@@ -226,7 +227,7 @@ def cat_recruit(player: Player, recruiters: QuerySet[Recruiter]):
         raise ValueError("Not actions step")
 
     if get_actions_remaining(player) < 1:
-        raise ValueError("No actions remaining")
+        raise IllegalActionError("No actions remaining")
 
     for recruiter in recruiters:
         warrior = Warrior.objects.filter(clearing=None, player=player).first()
@@ -274,6 +275,7 @@ def end_crafting_step(player: Player):
     assert type(daylight) == CatDaylight, "Not Daylight phase"
     assert daylight.step == CatDaylight.CatDaylightSteps.CRAFTING, "Not crafting step"
     from game.transactions.cats.turn import next_step
+
     next_step(player)
 
 
@@ -286,6 +288,7 @@ def end_action_step(player: Player):
     assert type(daylight) == CatDaylight, "Not Daylight phase"
     assert daylight.step == CatDaylight.CatDaylightSteps.ACTIONS, "Not actions step"
     from game.transactions.cats.turn import next_step
+
     next_step(player)
 
 

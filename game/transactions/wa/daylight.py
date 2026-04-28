@@ -9,9 +9,14 @@ from game.models.wa.tokens import WASympathy
 from game.queries.general import validate_player_has_card_in_hand
 from game.queries.wa.crafting import validate_crafting_pieces_satisfy_requirements
 from game.queries.wa.turn import validate_step, get_phase
-from game.transactions.general import craft_card, move_warriors, place_piece_from_supply_into_clearing
+from game.transactions.general import (
+    craft_card,
+    move_warriors,
+    place_piece_from_supply_into_clearing,
+)
 from game.transactions.wa.supporters import add_officer
 from game.models.wa.turn import WADaylight
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 
 
 @transaction.atomic
@@ -20,7 +25,7 @@ def wa_craft_card(player: Player, card: CardsEP, crafting_pieces: list[WASympath
     validate_step(player, WADaylight.WADaylightSteps.ACTIONS)
     card_in_hand = validate_player_has_card_in_hand(player, card)
     if not validate_crafting_pieces_satisfy_requirements(player, card, crafting_pieces):
-        raise ValueError("Not enough crafting pieces to craft card")
+        raise IllegalActionError("Not enough crafting pieces to craft card")
     card_model = card_in_hand.card
     craft_card(card_in_hand, cast(list[Piece], crafting_pieces))
 
@@ -45,7 +50,7 @@ def training(player: Player, card: CardsEP):
         player=player, suit=card_suit, building_slot__isnull=False
     ).exists()
     if not matching_base and card_suit != Suit.WILD:
-        raise ValueError("Suit does not match a base on the board")
+        raise IllegalActionError("Suit does not match a base on the board")
     add_officer(player)
 
     from game.serializers.logs.wa import log_wa_train
@@ -59,6 +64,7 @@ def training(player: Player, card: CardsEP):
     )
 
     from game.transactions.general import discard_card_from_hand
+
     discard_card_from_hand(player, card_in_hand)
 
 
@@ -69,7 +75,7 @@ def operation_move(
     """moves warriors from start_clearing to end_clearing"""
     officer = OfficerEntry.objects.filter(player=player, used=False).first()
     if officer is None:
-        raise ValueError("No unused officers")
+        raise IllegalActionError("No unused officers")
     officer.used = True
     officer.save()
     move_warriors(player, start_clearing, end_clearing, count)
@@ -91,13 +97,15 @@ def operation_battle(player: Player, defender: Player, clearing: Clearing):
     """battles the given defender in the given clearing"""
     officer = OfficerEntry.objects.filter(player=player, used=False).first()
     if officer is None:
-        raise ValueError("No unused officers")
+        raise IllegalActionError("No unused officers")
     officer.used = True
     officer.save()
 
     from game.transactions.battle import start_battle, log_battle_start
 
-    battle = start_battle(player.game, Faction(player.faction), Faction(defender.faction), clearing)
+    battle = start_battle(
+        player.game, Faction(player.faction), Faction(defender.faction), clearing
+    )
 
     from game.serializers.logs.wa import log_wa_military_operation
     from game.serializers.logs.general import get_current_phase_log
@@ -117,11 +125,11 @@ def operation_recruit(player: Player, clearing: Clearing):
     """recruits warriors at the given clearing"""
     officer = OfficerEntry.objects.filter(player=player, used=False).first()
     if officer is None:
-        raise ValueError("No unused officers")
+        raise IllegalActionError("No unused officers")
     if not WABase.objects.filter(
         player=player, building_slot__clearing=clearing
     ).exists():
-        raise ValueError("No base in that clearing")
+        raise IllegalActionError("No base in that clearing")
     officer.used = True
     officer.save()
 
@@ -129,7 +137,7 @@ def operation_recruit(player: Player, clearing: Clearing):
 
     warrior = get_warriors_in_supply(player).first()
     if warrior is None:
-        raise ValueError("No warriors in supply")
+        raise IllegalActionError("No warriors in supply")
     place_piece_from_supply_into_clearing(warrior, clearing)
 
     from game.serializers.logs.wa import log_wa_military_operation
@@ -151,10 +159,10 @@ def operation_organize(player: Player, clearing: Clearing):
 
     officer = OfficerEntry.objects.filter(player=player, used=False).first()
     if officer is None:
-        raise ValueError("No unused officers")
+        raise IllegalActionError("No unused officers")
     warrior = Warrior.objects.filter(clearing=clearing, player=player).first()
     if warrior is None:
-        raise ValueError("No warrior in that clearing")
+        raise IllegalActionError("No warrior in that clearing")
     officer.used = True
     officer.save()
     score_before = player.score

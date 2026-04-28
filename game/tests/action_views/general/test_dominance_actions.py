@@ -1,4 +1,5 @@
 from django.test import TestCase
+from game.errors.action_errors import IllegalActionError
 from game.models.game_models import Faction, Game, HandEntry, Card, Suit, Player
 from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
 from game.transactions.dominance import swap_dominance, activate_dominance
@@ -140,7 +141,7 @@ class DominanceTestCase(TestCase):
         self.cats_player.score = 9
         self.cats_player.save()
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(IllegalActionError):
             activate_dominance(self.cats_player, hand_entry)
 
     def test_scoring_lock(self):

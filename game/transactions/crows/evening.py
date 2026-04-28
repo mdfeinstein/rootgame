@@ -7,6 +7,7 @@ from game.queries.crows.turn import validate_step, get_phase
 from game.transactions.general import discard_card_from_hand
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.transactions.crows.turn import next_step
+from game.errors import UnavailableActionError, IllegalActionError
 from .actions import crows_plot, crows_move, crows_battle, crows_trick
 
 @transaction.atomic
@@ -17,12 +18,12 @@ def do_exert_action(player: Player, action_type: str, **kwargs):
     """
     evening = get_phase(player)
     if not isinstance(evening, CrowEvening):
-        raise ValueError("Not in Crow's Evening phase")
+        raise UnavailableActionError("Not in Crow's Evening phase")
     if evening.step != CrowEvening.CrowEveningSteps.EXERT:
-        raise ValueError("Not in Exert step")
-        
+        raise UnavailableActionError("Not in Exert step")
+
     if evening.exert_used:
-        raise ValueError("Exert already used this turn")
+        raise IllegalActionError("Exert already used this turn")
 
     if action_type == "plot":
         crows_plot(player, kwargs["clearing"], kwargs["plot_type"])

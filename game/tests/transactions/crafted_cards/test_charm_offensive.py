@@ -6,6 +6,7 @@ from game.transactions.crafted_cards.charm_offensive import use_charm_offensive
 from game.tests.my_factories import (
     GameSetupFactory, BirdTurnFactory, CardFactory, CraftedCardEntryFactory
 )
+from game.errors import UnavailableActionError
 
 class TestCharmOffensiveTransaction(TestCase):
     def setUp(self):
@@ -34,7 +35,7 @@ class TestCharmOffensiveTransaction(TestCase):
         BirdBirdsong.objects.filter(turn=self.turn).update(step=BirdBirdsong.BirdBirdsongSteps.COMPLETED)
         BirdDaylight.objects.filter(turn=self.turn).update(step=BirdDaylight.BirdDaylightSteps.COMPLETED)
         evening = BirdEvening.objects.filter(turn=self.turn).first()
-        evening.step = BirdEvening.BirdEveningSteps.SCORING # "1" (Start of Evening)
+        evening.step = BirdEvening.BirdEveningSteps.NOT_STARTED
         evening.save()
         
         from game.queries.general import get_player_hand_size
@@ -56,24 +57,24 @@ class TestCharmOffensiveTransaction(TestCase):
     def test_use_charm_offensive_wrong_phase(self):
         # Move to Daylight
         self.turn = BirdTurnFactory(player=self.player, turn_number=1)
-        
+
         from game.models.birds.turn import BirdBirdsong, BirdDaylight
         BirdBirdsong.objects.filter(turn=self.turn).update(step=BirdBirdsong.BirdBirdsongSteps.COMPLETED)
         BirdDaylight.objects.filter(turn=self.turn).update(step=BirdDaylight.BirdDaylightSteps.CRAFTING)
-        
-        with self.assertRaisesMessage(ValueError, "Charm Offensive cannot be used right now"):
+
+        with self.assertRaises(UnavailableActionError):
             use_charm_offensive(self.player, self.opponent)
 
     def test_use_charm_offensive_already_used(self):
         self.turn = BirdTurnFactory(player=self.player, turn_number=1)
-        
+
         from game.models.birds.turn import BirdBirdsong, BirdDaylight, BirdEvening
         BirdBirdsong.objects.filter(turn=self.turn).update(step=BirdBirdsong.BirdBirdsongSteps.COMPLETED)
         BirdDaylight.objects.filter(turn=self.turn).update(step=BirdDaylight.BirdDaylightSteps.COMPLETED)
         BirdEvening.objects.filter(turn=self.turn).update(step=BirdEvening.BirdEveningSteps.SCORING)
-        
+
         self.crafted_charm.used = CraftedCardEntry.UsedChoice.USED
         self.crafted_charm.save()
-        
-        with self.assertRaisesMessage(ValueError, "Charm Offensive cannot be used right now"):
+
+        with self.assertRaises(UnavailableActionError):
             use_charm_offensive(self.player, self.opponent)

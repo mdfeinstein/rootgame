@@ -27,6 +27,7 @@ from game.models.cats.buildings import Workshop
 from game.models.birds.buildings import BirdRoost
 from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
 from game.models.game_models import Card, Game, HandEntry, Piece
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 
 
 def available_building_slot(clearing: Clearing) -> BuildingSlot | None:
@@ -210,7 +211,7 @@ def is_phase(
         case "Evening":
             return isinstance(phase_obj, (CatEvening, WAEvening, BirdEvening, CrowEvening))
         case _:
-            raise ValueError(
+            raise InternalGameError(
                 "Invalid phase argument provided. Must be 'Birdsong', 'Daylight', or 'Evening'"
             )
 
@@ -243,7 +244,7 @@ def validate_player_has_card_in_hand(player: Player, card: CardsEP) -> HandEntry
         player=player, card__card_type=card.name
     ).first()
     if card_in_hand is None:
-        raise ValueError(f"Player does not have card in hand. card name: {card.name}")
+        raise IllegalActionError(f"Player does not have card in hand. card name: {card.name}")
     return card_in_hand
 
 
@@ -257,16 +258,16 @@ def validate_game_has_dominance_card_in_supply(game: Game, card: CardsEP):
         game=game, card__card_type=card.name
     ).first()
     if dominance_entry is None:
-        raise ValueError(f"Dominance card not in supply. card name: {card.name}")
+        raise IllegalActionError(f"Dominance card not in supply. card name: {card.name}")
     return dominance_entry
 
 
 def validate_can_activate_dominance(player: Player):
     """validates that player can activate dominance"""
     if player.score < 10:
-        raise ValueError("Must have 10 points to activate dominance.")
+        raise IllegalActionError("Must have 10 points to activate dominance.")
     if ActiveDominanceEntry.objects.filter(player=player).exists():
-        raise ValueError("Already have an active dominance card.")
+        raise IllegalActionError("Already have an active dominance card.")
 
 
 def validate_player_has_crafted_card(player: Player, card: CardsEP) -> CraftedCardEntry:
@@ -277,7 +278,7 @@ def validate_player_has_crafted_card(player: Player, card: CardsEP) -> CraftedCa
         player=player, card__card_type=card.name
     ).first()
     if crafted_card is None:
-        raise ValueError(f"Player does not have card in hand. card name: {card.name}")
+        raise IllegalActionError(f"Player does not have crafted card. card name: {card.name}")
     return crafted_card
 
 
@@ -358,31 +359,31 @@ def validate_legal_move(
     -- player does not control either origin or target clearing
     """
     if not Warrior.objects.filter(clearing=clearing_start, player=player).exists():
-        raise ValueError("No warriors in origin clearing")
+        raise IllegalActionError("No warriors in origin clearing")
 
     # check clearing adjacency (Boat Builders, Tunnels handled here)
     adjacent_clearings = get_adjacent_clearings(player, clearing_start)
     if clearing_end not in adjacent_clearings:
-        raise ValueError("clearing_start is not adjacent to clearing_end")
+        raise IllegalActionError("clearing_start is not adjacent to clearing_end")
 
     # check for Snare in origin
     if player.faction != Faction.CROWS:
         from game.models.crows.tokens import PlotToken
         if PlotToken.objects.filter(clearing=clearing_start, plot_type=PlotToken.PlotType.SNARE, is_facedown=False).exists():
-            raise ValueError("Cannot move out of a clearing with a face-up Snare")
+            raise IllegalActionError("Cannot move out of a clearing with a face-up Snare")
 
     # Corvid Planners: ignore rule while moving
     try:
         validate_player_has_crafted_card(player, CardsEP.CORVID_PLANNERS)
         has_corvid_planners = True
-    except ValueError:
+    except IllegalActionError:
         has_corvid_planners = False
     if has_corvid_planners or ignore_rule:
         return  # skip rulership check
     rule_target = determine_clearing_rule(clearing_end)
     rule_origin = determine_clearing_rule(clearing_start)
     if rule_target != player and rule_origin != player:
-        raise ValueError("player does not control either origin or target clearing")
+        raise IllegalActionError("player does not control either origin or target clearing")
 
 
 def validate_has_legal_moves(player: Player, clearing: Clearing):
@@ -393,9 +394,9 @@ def validate_has_legal_moves(player: Player, clearing: Clearing):
         try:
             validate_legal_move(player, clearing, adjacent_clearing)
             return True
-        except ValueError:
+        except IllegalActionError:
             continue
-    raise ValueError("No legal moves from the given clearing")
+    raise IllegalActionError("No legal moves from the given clearing")
 
 
 def validate_enemy_pieces_in_clearing(
@@ -405,7 +406,7 @@ def validate_enemy_pieces_in_clearing(
     # confirm clearing and player are in the same game
     players_with_pieces = []
     if player.game != clearing.game:
-        raise ValueError("Player and clearing are not in the same game")
+        raise UnavailableActionError("Player and clearing are not in the same game")
     # get opposing players
     players_in_game = Player.objects.filter(game=player.game)
     for player_ in players_in_game:
@@ -414,7 +415,7 @@ def validate_enemy_pieces_in_clearing(
             if player_has_pieces_in_clearing(player_, clearing):
                 players_with_pieces.append(player_)
     if len(players_with_pieces) == 0:
-        raise ValueError("No enemy pieces in clearing")
+        raise IllegalActionError("No enemy pieces in clearing")
     return players_with_pieces
 
 
@@ -431,7 +432,7 @@ def validate_can_place_piece_in_clearing(player: Player, clearing: Clearing):
     if player.faction != Faction.CATS:
         from game.models.cats.tokens import CatKeep
         if CatKeep.objects.filter(clearing=clearing).exists():
-            raise ValueError("Cannot place non-cat piece in keep clearing")
+            raise IllegalActionError("Cannot place non-cat piece in keep clearing")
 
     # Check for face-up Snare
     if player.faction != Faction.CROWS:
@@ -439,4 +440,4 @@ def validate_can_place_piece_in_clearing(player: Player, clearing: Clearing):
         if PlotToken.objects.filter(
             clearing=clearing, plot_type=PlotToken.PlotType.SNARE, is_facedown=False
         ).exists():
-            raise ValueError("Cannot place piece in clearing with a face-up Snare")
+            raise IllegalActionError("Cannot place piece in clearing with a face-up Snare")

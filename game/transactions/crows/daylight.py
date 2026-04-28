@@ -2,7 +2,9 @@ from game.queries.crows.turn import get_phase
 from django.db import transaction
 from game.models.game_models import Player
 from game.models.crows.turn import CrowTurn, CrowDaylight
+from game.errors import UnavailableActionError, IllegalActionError
 from .actions import crows_plot, crows_move, crows_battle, crows_trick
+
 
 @transaction.atomic
 def do_daylight_action(player: Player, action_type: str, **kwargs):
@@ -11,11 +13,11 @@ def do_daylight_action(player: Player, action_type: str, **kwargs):
     """
     daylight = get_phase(player)
     if not isinstance(daylight, CrowDaylight):
-        raise ValueError("Not in Crow's Daylight phase")
+        raise UnavailableActionError("Not in Crow's Daylight phase")
     if daylight.step != CrowDaylight.CrowDaylightSteps.ACTIONS:
-        raise ValueError("Not in Actions step")
+        raise UnavailableActionError("Not in Actions step")
     if daylight.actions_remaining <= 0:
-        raise ValueError("No actions remaining in Daylight")
+        raise IllegalActionError("No actions remaining in Daylight")
 
     if action_type == "plot":
         crows_plot(player, kwargs["clearing"], kwargs["plot_type"], daylight=daylight)
@@ -26,20 +28,22 @@ def do_daylight_action(player: Player, action_type: str, **kwargs):
     elif action_type == "trick":
         crows_trick(player, kwargs["plot1"], kwargs["plot2"])
     else:
-        raise ValueError(f"Invalid action type: {action_type}")
-    
+        raise UnavailableActionError(f"Invalid action type: {action_type}")
+
     daylight.actions_remaining -= 1
     daylight.save()
+
 
 @transaction.atomic
 def end_daylight_action_step(player: Player):
     """Advances from Actions to Completed in Daylight"""
     turn = CrowTurn.objects.filter(player=player).last()
     daylight = turn.daylight.first()
-    
+
     if daylight.step != CrowDaylight.CrowDaylightSteps.ACTIONS:
-        raise ValueError("Not in Actions step")
-        
+        raise UnavailableActionError("Not in Actions step")
+
     # Trigger next step in turn
     from game.transactions.crows.turn import next_step
+
     next_step(player)

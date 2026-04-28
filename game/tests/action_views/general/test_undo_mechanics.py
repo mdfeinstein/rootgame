@@ -28,6 +28,8 @@ from game.models.birds.player import DecreeEntry, BirdLeader, Vizier
 from game.models.birds.turn import BirdBirdsong, BirdDaylight, BirdEvening
 import random
 
+from game.transactions.general import step_effect
+
 
 class UndoMechanicsTestCase(TestCase):
     def setUp(self):
@@ -245,7 +247,7 @@ class UndoMechanicsTestCase(TestCase):
 
         self.game.current_turn = self.cats_player.turn_order
         self.game.save()
-
+        step_effect(self.cats_player)
         # Give Cats 5 cards (they already have 3 probably)
         cards_in_hand = HandEntry.objects.filter(player=self.cats_player).count()
 

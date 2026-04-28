@@ -20,6 +20,7 @@ from game.queries.general import (
     warrior_count_in_supply,
 )
 from game.transactions.general import craft_card, move_warriors
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 
 
 @transaction.atomic
@@ -31,15 +32,22 @@ def bird_craft_card(player: Player, card: CardsEP, crafting_pieces: list[BirdRoo
     validate_step(player, BirdDaylight.BirdDaylightSteps.CRAFTING)
     card_in_hand = validate_player_has_card_in_hand(player, card)
     if not validate_crafting_pieces_satisfy_requirements(player, card, crafting_pieces):
-        raise ValueError("Not enough crafting pieces to craft card")
+        raise IllegalActionError("Not enough crafting pieces to craft card")
     card_model = card_in_hand.card
     craft_card(card_in_hand, cast(list[Piece], crafting_pieces))
 
     from game.serializers.logs.general import log_craft, get_current_phase_log
-    log_craft(player.game, player, card_model, parent=get_current_phase_log(player.game, player))
+
+    log_craft(
+        player.game,
+        player,
+        card_model,
+        parent=get_current_phase_log(player.game, player),
+    )
     # if no more crafting pieces, move to next step
     if get_player_hand_size(player) == 0 or get_all_unused_roosts(player).count() == 0:
         from game.transactions.birds.turn import next_step
+
         next_step(player)
 
 
@@ -58,20 +66,21 @@ def bird_recruit_action(
     # get clearing, checking that it is on the board
     clearing = roost.building_slot.clearing
     if clearing is None:
-        raise ValueError("Roost is not on the board")
+        raise IllegalActionError("Roost is not on the board")
     # check that decree_entry is in the correct column and that it has not been used
     if decree_entry.fulfilled:
-        raise ValueError("This decree card has already been used")
+        raise IllegalActionError("This decree card has already been used")
     if decree_entry.column != DecreeEntry.Column.RECRUIT:
-        raise ValueError("Decree card is not in the recruit column")
+        raise IllegalActionError("Decree card is not in the recruit column")
     # check that the decree suit matches the roost suit
     decree_suit = (
         decree_entry.card.suit if type(decree_entry) == DecreeEntry else Suit.WILD
     )
     if decree_suit != clearing.suit and decree_suit != Suit.WILD:
-        raise ValueError("Decree suit does not match roost suit")
+        raise IllegalActionError("Decree suit does not match roost suit")
     # determine number to recruit, based on leader
     from game.models.birds.player import BirdLeader
+
     leader = BirdLeader.objects.get(player=player, active=True)
     number_to_recruit = 1
     if leader.leader == BirdLeader.BirdLeaders.CHARISMATIC:
@@ -91,7 +100,14 @@ def bird_recruit_action(
 
     from game.serializers.logs.birds import log_birds_decree_action
     from game.serializers.logs.general import get_current_phase_log
-    log_birds_decree_action(player.game, player, "recruit", clearing.clearing_number, parent=get_current_phase_log(player.game, player))
+
+    log_birds_decree_action(
+        player.game,
+        player,
+        "recruit",
+        clearing.clearing_number,
+        parent=get_current_phase_log(player.game, player),
+    )
 
     # check if turmoil or next_step
     recruit_turmoil_check(player)
@@ -113,18 +129,20 @@ def bird_move_action(
     validate_step(player, BirdDaylight.BirdDaylightSteps.MOVING)
     # check that clearings are in the right game
     if player.game != origin_clearing.game != target_clearing.game:
-        raise ValueError("Clearings are not in the same game as each other or player")
+        raise UnavailableActionError(
+            "Clearings are not in the same game as each other or player"
+        )
     # check that decree_entry is in the correct column and that it has not been used
     if decree_entry.fulfilled:
-        raise ValueError("This decree card has already been used")
+        raise IllegalActionError("This decree card has already been used")
     if decree_entry.column != DecreeEntry.Column.MOVE:
-        raise ValueError("Decree card is not in the move column")
+        raise IllegalActionError("Decree card is not in the move column")
     # check that the decree suit matches the origin clearing suit
     decree_suit = (
         decree_entry.card.suit if type(decree_entry) == DecreeEntry else Suit.WILD
     )
     if decree_suit != origin_clearing.suit and decree_suit != Suit.WILD:
-        raise ValueError("Decree suit does not match origin clearing suit")
+        raise IllegalActionError("Decree suit does not match origin clearing suit")
     # move warriors (movement checks handled in this transaction function)
     move_warriors(player, origin_clearing, target_clearing, number)
     # mark decree entry as used
@@ -133,7 +151,14 @@ def bird_move_action(
 
     from game.serializers.logs.birds import log_birds_decree_action
     from game.serializers.logs.general import get_current_phase_log
-    log_birds_decree_action(player.game, player, "move", origin_clearing.clearing_number, parent=get_current_phase_log(player.game, player))
+
+    log_birds_decree_action(
+        player.game,
+        player,
+        "move",
+        origin_clearing.clearing_number,
+        parent=get_current_phase_log(player.game, player),
+    )
 
     # check if turmoil or next_step
     move_turmoil_check(player)
@@ -155,21 +180,23 @@ def bird_battle_action(
     validate_step(player, BirdDaylight.BirdDaylightSteps.BATTLING)
     # check that the defender is in the same game as the player
     if defender.game != player.game != clearing.game:
-        raise ValueError(
+        raise UnavailableActionError(
             "Defender is not in the same game as the player and the clearing"
         )
     # check decree entry not used and matches clearing
     if decree_entry.fulfilled:
-        raise ValueError("This decree card has already been used")
+        raise IllegalActionError("This decree card has already been used")
     if decree_entry.column != DecreeEntry.Column.BATTLE:
-        raise ValueError("Decree card is not in the battle column")
+        raise IllegalActionError("Decree card is not in the battle column")
     decree_suit = (
         decree_entry.card.suit if type(decree_entry) == DecreeEntry else Suit.WILD
     )
     if decree_suit != clearing.suit and decree_suit != Suit.WILD:
-        raise ValueError("Decree suit does not match clearing suit")
+        raise IllegalActionError("Decree suit does not match clearing suit")
     # battle checks are in start_battle
-    battle = start_battle(player.game, Faction(player.faction), Faction(defender.faction), clearing)
+    battle = start_battle(
+        player.game, Faction(player.faction), Faction(defender.faction), clearing
+    )
     # use decree entry
     decree_entry.fulfilled = True
     decree_entry.save()
@@ -182,7 +209,7 @@ def bird_battle_action(
         player,
         "battle",
         clearing.clearing_number,
-        parent=get_current_phase_log(player.game, player)
+        parent=get_current_phase_log(player.game, player),
     )
 
     log_battle_start(battle, player, parent=parent)
@@ -202,23 +229,24 @@ def bird_build_action(
     validate_step(player, BirdDaylight.BirdDaylightSteps.BUILDING)
     # check that decree entry is in the correct column and that it has not been used
     if decree_entry.fulfilled:
-        raise ValueError("This decree card has already been used")
+        raise IllegalActionError("This decree card has already been used")
     if decree_entry.column != DecreeEntry.Column.BUILD:
-        raise ValueError("Decree card is not in the build column")
+        raise IllegalActionError("Decree card is not in the build column")
     # check that the decree suit matches the clearing suit
     decree_suit = (
         decree_entry.card.suit if type(decree_entry) == DecreeEntry else Suit.WILD
     )
     if decree_suit != clearing.suit and decree_suit != Suit.WILD:
-        raise ValueError("Decree suit does not match clearing suit")
+        raise IllegalActionError("Decree suit does not match clearing suit")
     # check that the clearing is in the right game
     if clearing.game != player.game:
-        raise ValueError("Clearing is not in the same game as player")
+        raise UnavailableActionError("Clearing is not in the same game as player")
     # check that player rules this clearing
     if determine_clearing_rule(clearing) != player:
-        raise ValueError("Player does not rule this clearing")
+        raise IllegalActionError("Player does not rule this clearing")
     # place roost (which checks fro free building slot and no other roost)
     from game.transactions.birds.birdsong import place_roost
+
     place_roost(player, clearing)
     # use decree entry
     decree_entry.fulfilled = True
@@ -226,7 +254,14 @@ def bird_build_action(
 
     from game.serializers.logs.birds import log_birds_decree_action
     from game.serializers.logs.general import get_current_phase_log
-    log_birds_decree_action(player.game, player, "build", clearing.clearing_number, parent=get_current_phase_log(player.game, player))
+
+    log_birds_decree_action(
+        player.game,
+        player,
+        "build",
+        clearing.clearing_number,
+        parent=get_current_phase_log(player.game, player),
+    )
 
     # check if turmoil or next_step
     build_turmoil_check(player)
@@ -321,7 +356,7 @@ def move_turmoil_check(player: Player):
                 validate_has_legal_moves(player, clearing)
                 # we have something legal to do, exit out
                 return
-            except ValueError as e:
+            except IllegalActionError as e:
                 pass
         # if we get here, no legal moves. turmoil
         turmoil(player)
@@ -335,7 +370,7 @@ def move_turmoil_check(player: Player):
             validate_has_legal_moves(player, clearing)
             # we have something legal to do, exit out
             return
-        except ValueError as e:
+        except IllegalActionError as e:
             pass
     # if we get here, no legal moves. turmoil
     turmoil(player)
