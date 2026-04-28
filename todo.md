@@ -1,4 +1,16 @@
 # Todo List
+- [ ] Critical Feature: Crafted items
+    - [ ] Frontend: display of crafted items box
+    - [ ] Backend: endpoint to get crafted items, with exhausted or not status
+- [ ] Bug, WA, Frontend: Bases are displaying on player board whether or not they are on the map (should not be on player board if on the map)
+- [ ] 
+- [ ] Cats turn queries
+  - [ ] add queries to validate timing, turn
+  - [ ] refactor transactions to use these validators 
+
+- [ ] review transaction file split refactors. code is in strange places
+- [ ] review all transactions to use validators
+  - [ ] perhaps we can make a timing decorator. maybe one to cross check that args are part of the same game too.
 
 Game Lobby:
 
