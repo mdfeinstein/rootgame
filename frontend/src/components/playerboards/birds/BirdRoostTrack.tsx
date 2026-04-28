@@ -12,8 +12,35 @@ interface BirdRoostTrackProps {
 
 export default function BirdRoostTrack({ roostsOnMap }: BirdRoostTrackProps) {
   return (
-    <Paper p="xs" radius="md" withBorder bg="white" shadow="sm">
-      <Stack gap={4}>
+    <div style={{ position: "relative", paddingTop: "6px" }}>
+      <div
+        style={{
+          border: "1px solid var(--mantine-color-gray-3)",
+          borderRadius: "8px",
+          padding: "12px",
+          backgroundColor: "white",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
+          position: "relative",
+        }}
+      >
+        <Text
+          size="xs"
+          fw={700}
+          c="dimmed"
+          tt="uppercase"
+          style={{
+            position: "absolute",
+            top: "-8px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            backgroundColor: "#fef6e4",
+            paddingRight: "6px",
+            paddingLeft: "6px",
+          }}
+        >
+          ROOSTS
+        </Text>
+
         <SimpleGrid cols={7} spacing="xs">
           {pointPerTurn.map((vp, index) => {
             const isFilled = index >= roostsOnMap;
@@ -69,10 +96,7 @@ export default function BirdRoostTrack({ roostsOnMap }: BirdRoostTrackProps) {
             );
           })}
         </SimpleGrid>
-        <Text size="xs" fw={800} ta="center" c="dimmed" tt="uppercase">
-          Roosts
-        </Text>
-      </Stack>
-    </Paper>
+      </div>
+    </div>
   );
 }

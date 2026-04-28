@@ -69,7 +69,10 @@ export default function WaPlayerBoard({ isOpen, onClose }: WaPlayerBoardProps) {
         <LoadingOverlay visible={isLoading} overlayProps={{ blur: 2 }} />
         {publicInfo && (
           <Stack gap="xs">
-            <WaHeaderSection warriorsInSupply={warriorsInSupply} />
+            <WaHeaderSection
+              warriorsInSupply={warriorsInSupply}
+              craftedItems={publicInfo?.crafted_items}
+            />
 
             <Grid gutter="xs" align="stretch">
               {/* Left Column: Turn Flow */}

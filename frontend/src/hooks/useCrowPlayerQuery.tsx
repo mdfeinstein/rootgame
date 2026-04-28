@@ -15,7 +15,14 @@ export type CrowPlayerInfo = {
     clearing_number: number | null;
   }[];
   reserve_plots_count: number;
-  // Add other fields if needed
+  crafted_items: {
+    readonly id: number;
+    item: {
+      value: "0" | "1" | "2" | "3" | "4" | "5" | "6";
+      label: "Bag" | "Boots" | "Coin" | "Crossbow" | "Hammer" | "Sword" | "Tea";
+    };
+    exhausted: boolean;
+  }[];
 };
 
 export type CrowPrivateInfo = {

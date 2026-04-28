@@ -1,11 +1,14 @@
 import { Group, Text, Tooltip, Stack, ThemeIcon } from "@mantine/core";
 import { IconShieldCheck, IconCross, IconUsers } from "@tabler/icons-react";
+import type { components } from "../../../api/types";
+import CraftedItemsBox from "../../board/CraftedItemsBox";
 
 interface CatHeaderSectionProps {
   warriorsInSupply: number;
+  craftedItems?: components["schemas"]["CraftedItemEntry"][];
 }
 
-export default function CatHeaderSection({ warriorsInSupply }: CatHeaderSectionProps) {
+export default function CatHeaderSection({ warriorsInSupply, craftedItems }: CatHeaderSectionProps) {
   return (
     <Group justify="space-between" align="center" px="md" mb="xs">
       <Stack gap={0}>
@@ -28,7 +31,7 @@ export default function CatHeaderSection({ warriorsInSupply }: CatHeaderSectionP
         </Group>
       </Stack>
 
-      <Group gap="xl">
+      <Group gap="xl" align="center">
         <Tooltip
           label="Only you can place pieces in the clearing with the keep token."
           multiline
@@ -61,6 +64,8 @@ export default function CatHeaderSection({ warriorsInSupply }: CatHeaderSectionP
             </Text>
           </Group>
         </Tooltip>
+
+        <CraftedItemsBox craftedItems={craftedItems} />
       </Group>
     </Group>
   );

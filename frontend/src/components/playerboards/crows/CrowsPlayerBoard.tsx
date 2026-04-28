@@ -55,7 +55,10 @@ export default function CrowsPlayerBoard({
         <LoadingOverlay visible={isLoading} overlayProps={{ blur: 2 }} />
         {publicInfo && (
           <Stack gap="xs">
-            <CrowsHeaderSection warriorsInSupply={warriorsInSupply} />
+            <CrowsHeaderSection
+              warriorsInSupply={warriorsInSupply}
+              craftedItems={publicInfo?.crafted_items}
+            />
 
             <Grid gutter="xs" align="stretch">
               {/* Left Column: Turn Flow */}

@@ -2244,6 +2244,25 @@ export interface components {
                 label: "Bag" | "Boots" | "Coin" | "Crossbow" | "Hammer" | "Sword" | "Tea";
             };
         };
+        CraftedItemEntry: {
+            readonly id: number;
+            item: {
+                /**
+                 * @description * `0` - 0
+                 *     * `1` - 1
+                 *     * `2` - 2
+                 *     * `3` - 3
+                 *     * `4` - 4
+                 *     * `5` - 5
+                 *     * `6` - 6
+                 * @enum {string}
+                 */
+                value: "0" | "1" | "2" | "3" | "4" | "5" | "6";
+                /** @enum {string} */
+                label: "Bag" | "Boots" | "Coin" | "Crossbow" | "Hammer" | "Sword" | "Tea";
+            };
+            exhausted: boolean;
+        };
         /** @description Serializer to provide all (public) information about crows */
         Crows: {
             player: components["schemas"]["PlayerPublic"];
@@ -2391,21 +2410,48 @@ export interface components {
          *     * `CRAFT` - Craft
          *     * `DRAW` - Draw
          *     * `DISCARD` - Discard
+         *     * `AMBUSH` - Ambush
+         *     * `DICE_ROLL` - Dice Roll
+         *     * `PIECE_REMOVAL` - Piece Removal
          *     * `CATS_BIRDS_FOR_HIRE` - Cats Birds for Hire
          *     * `CATS_MARCH` - Cats March
          *     * `CATS_WOOD_PLACEMENT` - Cats Wood Placement
          *     * `CATS_BUILD` - Cats Build
          *     * `CATS_OVERWORK` - Cats Overwork
          *     * `CATS_RECRUIT` - Cats Recruit
+         *     * `CATS_SETUP_PICK_CORNER` - Cats Setup Pick Corner
+         *     * `CATS_SETUP_PLACE_BUILDING` - Cats Setup Place Building
          *     * `BIRDS_ADD_TO_DECREE` - Birds Add To Decree
          *     * `BIRDS_EMERGENCY_ROOST` - Birds Emergency Roost
          *     * `BIRDS_DECREE_ACTION` - Birds Decree Action
          *     * `BIRDS_SCORE_ROOSTS` - Birds Score Roosts
          *     * `BIRDS_TURMOIL` - Birds Turmoil
          *     * `BIRDS_NEW_LEADER` - Birds New Leader
+         *     * `BIRDS_SETUP_PICK_CORNER` - Birds Setup Pick Corner
+         *     * `BIRDS_SETUP_CHOOSE_LEADER` - Birds Setup Choose Leader
+         *     * `WA_REVOLT` - Woodland Revolt
+         *     * `WA_SPREAD_SYMPATHY` - Woodland Spread Sympathy
+         *     * `WA_MOBILIZE` - Woodland Mobilize
+         *     * `WA_TRAIN` - Woodland Train
+         *     * `WA_ORGANIZE` - Woodland Organize
+         *     * `WA_MILITARY_OPERATION` - Woodland Military Operation
+         *     * `WA_OUTRAGE` - Woodland Outrage
+         *     * `WA_BASE_REMOVED` - Woodland Base Removed
+         *     * `WA_OFFICERS_LOST` - Woodland Officers Lost
+         *     * `WA_SUPPORTERS_LOST` - Woodland Supporters Lost
+         *     * `CROWS_PLOT` - Crows Plot
+         *     * `CROWS_FLIP` - Crows Flip
+         *     * `CROWS_RECRUIT` - Crows Recruit
+         *     * `CROWS_TRICK` - Crows Trick
+         *     * `CROWS_EXPOSURE` - Crows Exposure
+         *     * `CROWS_RAID` - Crows Raid
+         *     * `CROWS_SETUP_PLACE_WARRIOR` - Crows Setup Place Warrior
+         *     * `CROWS_EXTORTION_STOLE_CARD` - Crows Extortion Stole Card
+         *     * `CATS_FIELD_HOSPITALS` - Field Hospitals
+         *     * `CRAFTED_CARD_ACTION` - Crafted Card Action
          * @enum {string}
          */
-        LogTypeEnum: "TURN" | "PHASE" | "MOVE" | "BATTLE" | "CRAFT" | "DRAW" | "DISCARD" | "CATS_BIRDS_FOR_HIRE" | "CATS_MARCH" | "CATS_WOOD_PLACEMENT" | "CATS_BUILD" | "CATS_OVERWORK" | "CATS_RECRUIT" | "BIRDS_ADD_TO_DECREE" | "BIRDS_EMERGENCY_ROOST" | "BIRDS_DECREE_ACTION" | "BIRDS_SCORE_ROOSTS" | "BIRDS_TURMOIL" | "BIRDS_NEW_LEADER";
+        LogTypeEnum: "TURN" | "PHASE" | "MOVE" | "BATTLE" | "CRAFT" | "DRAW" | "DISCARD" | "AMBUSH" | "DICE_ROLL" | "PIECE_REMOVAL" | "CATS_BIRDS_FOR_HIRE" | "CATS_MARCH" | "CATS_WOOD_PLACEMENT" | "CATS_BUILD" | "CATS_OVERWORK" | "CATS_RECRUIT" | "CATS_SETUP_PICK_CORNER" | "CATS_SETUP_PLACE_BUILDING" | "BIRDS_ADD_TO_DECREE" | "BIRDS_EMERGENCY_ROOST" | "BIRDS_DECREE_ACTION" | "BIRDS_SCORE_ROOSTS" | "BIRDS_TURMOIL" | "BIRDS_NEW_LEADER" | "BIRDS_SETUP_PICK_CORNER" | "BIRDS_SETUP_CHOOSE_LEADER" | "WA_REVOLT" | "WA_SPREAD_SYMPATHY" | "WA_MOBILIZE" | "WA_TRAIN" | "WA_ORGANIZE" | "WA_MILITARY_OPERATION" | "WA_OUTRAGE" | "WA_BASE_REMOVED" | "WA_OFFICERS_LOST" | "WA_SUPPORTERS_LOST" | "CROWS_PLOT" | "CROWS_FLIP" | "CROWS_RECRUIT" | "CROWS_TRICK" | "CROWS_EXPOSURE" | "CROWS_RAID" | "CROWS_SETUP_PLACE_WARRIOR" | "CROWS_EXTORTION_STOLE_CARD" | "CATS_FIELD_HOSPITALS" | "CRAFTED_CARD_ACTION";
         NestedToken: {
             token: components["schemas"]["Token"];
         };
@@ -2437,6 +2483,7 @@ export interface components {
             turn_order: number;
             readonly card_count: number;
             readonly active_dominance: string;
+            readonly crafted_items: components["schemas"]["CraftedItemEntry"][];
         };
         Recruiter: {
             building: components["schemas"]["Building"];

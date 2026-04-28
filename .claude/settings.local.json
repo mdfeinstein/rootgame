@@ -33,7 +33,9 @@
       "Bash(python .agent/scripts/run_tests.py)",
       "Bash(python .agent/scripts/run_tests.py game.tests.transactions.outrage.test_outrage.OutrageTests.test_outrage_token_removal_with_card)",
       "Bash(tee test_single.txt)",
-      "Bash(python .agent/scripts/run_tests.py game.tests.action_views.general.test_birds_turn_flow.BirdTurnFlowTestCase.test_birds_charm_offensive_flow)"
+      "Bash(python .agent/scripts/run_tests.py game.tests.action_views.general.test_birds_turn_flow.BirdTurnFlowTestCase.test_birds_charm_offensive_flow)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:5173/)"
     ]
   }
 }

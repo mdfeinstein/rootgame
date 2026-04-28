@@ -1,12 +1,16 @@
 import { Group, Stack, Text, Tooltip, ThemeIcon } from "@mantine/core";
 import { IconShieldCheck, IconHandStop, IconUsers } from "@tabler/icons-react";
+import type { components } from "../../../api/types";
+import CraftedItemsBox from "../../board/CraftedItemsBox";
 
 interface WaHeaderSectionProps {
   warriorsInSupply: number;
+  craftedItems?: components["schemas"]["CraftedItemEntry"][];
 }
 
 export default function WaHeaderSection({
   warriorsInSupply,
+  craftedItems,
 }: WaHeaderSectionProps) {
   return (
     <Group justify="space-between" align="center" px="md" mb="xs">
@@ -30,7 +34,7 @@ export default function WaHeaderSection({
         </Group>
       </Stack>
 
-      <Group gap="lg">
+      <Group gap="lg" align="center">
         <Tooltip
           label="When a player removes sympathy or moves any warriors into a sympathetic clearing, they must add a matching card from their hand to your supporters. If they cannot, they show you their hand, and you draw a card and add it to your supporters."
           multiline
@@ -60,6 +64,8 @@ export default function WaHeaderSection({
             </Text>
           </Group>
         </Tooltip>
+
+        <CraftedItemsBox craftedItems={craftedItems} />
       </Group>
     </Group>
   );

@@ -5,13 +5,17 @@ import {
   IconFeather,
   IconUsers,
 } from "@tabler/icons-react";
+import type { components } from "../../../api/types";
+import CraftedItemsBox from "../../board/CraftedItemsBox";
 
 interface CrowsHeaderSectionProps {
   warriorsInSupply: number;
+  craftedItems?: components["schemas"]["CraftedItemEntry"][];
 }
 
 export default function CrowsHeaderSection({
   warriorsInSupply,
+  craftedItems,
 }: CrowsHeaderSectionProps) {
   return (
     <Group justify="space-between" align="center" px="md" mb="xs">
@@ -35,7 +39,7 @@ export default function CrowsHeaderSection({
         </Group>
       </Stack>
 
-      <Group gap="lg">
+      <Group gap="lg" align="center">
         <Tooltip
           label="Anytime before drawing cards in their Evening, an enemy player in a clearing with a facedown plot token may show you a matching card to guess the type of plot token. If correct, they remove the plot and ignore its effect. If incorrect, you say 'no,' and they give you that card."
           multiline
@@ -80,6 +84,8 @@ export default function CrowsHeaderSection({
             </Text>
           </Group>
         </Tooltip>
+
+        <CraftedItemsBox craftedItems={craftedItems} />
       </Group>
     </Group>
   );

@@ -401,3 +401,8 @@ def step_effect(player: Player):
             from game.transactions.birds import step_effect
 
             step_effect(player)
+
+        case Faction.CROWS:
+            from game.transactions.crows import step_effect
+
+            step_effect(player)
