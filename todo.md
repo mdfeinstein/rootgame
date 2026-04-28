@@ -1,8 +1,8 @@
 # Todo List
-- [ ] Critical Feature: Crafted items
-    - [ ] Frontend: display of crafted items box
-    - [ ] Backend: endpoint to get crafted items, with exhausted or not status
-- [ ] Bug, WA, Frontend: Bases are displaying on player board whether or not they are on the map (should not be on player board if on the map)
+- [x] Critical Feature: Crafted items
+    - [x] Frontend: display of crafted items box
+    - [x] Backend: endpoint to get crafted items, with exhausted or not status
+- [x] Bug, WA, Frontend: Bases are displaying on player board whether or not they are on the map (should not be on player board if on the map)
 - [ ] 
 - [ ] Cats turn queries
   - [ ] add queries to validate timing, turn
@@ -32,8 +32,8 @@ Game Lobby:
   - [x] Frontend display of revealed cards
 - [x] Discard Pile: Frontend display
 - [x] Items: Frontend display and backend implementation
-- [ ] Game Log
-- [ ] Custom Errors
+- [x] Game Log
+- [x] Custom Errors
 
 - [ ] New Factions
   - [ ] Moles
