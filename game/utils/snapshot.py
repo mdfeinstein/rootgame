@@ -20,6 +20,7 @@ from game.models.game_models import (
     CraftedItemEntry,
     CraftedCardEntry,
     HandEntry,
+    RevealedCardEntry,
     CoffinWarrior,
 )
 from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
@@ -40,6 +41,14 @@ from game.models.crows.setup import CrowsSimpleSetup
 from game.models.crows.tokens import PlotToken
 from game.models.crows.turn import CrowTurn, CrowBirdsong, CrowDaylight, CrowEvening
 from game.models.crows.exposure import ExposureRevealedCards, ExposureGuessedPlot
+
+from game.models.moles.burrow import Burrow
+from game.models.moles.crown import Crown
+from game.models.moles.tokens import Tunnel
+from game.models.moles.buildings import Citadel, Market
+from game.models.moles.ministers import Minister
+from game.models.moles.turn import MoleTurn, MoleBirdsong, MoleDaylight, MoleEvening
+from game.models.moles.setup import MolesSimpleSetup
 
 from game.models.events.event import Event
 from game.models.events.battle import Battle
@@ -74,6 +83,8 @@ def get_all_game_objects(game: Game):
     # 2. Static-ish components (depend on Game)
     objects.extend(FactionChoiceEntry.objects.filter(game=game))
     objects.extend(Clearing.objects.filter(game=game))
+    # Moles Burrows (special Clearing variant)
+    objects.extend(Burrow.objects.filter(game=game))
     # BuildingSlot depends on Clearing
     objects.extend(BuildingSlot.objects.filter(clearing__game=game))
 
@@ -98,6 +109,7 @@ def get_all_game_objects(game: Game):
     for player in players:
         # Player generic assets
         objects.extend(HandEntry.objects.filter(player=player))
+        objects.extend(RevealedCardEntry.objects.filter(player=player))
         objects.extend(CraftedItemEntry.objects.filter(player=player))
         objects.extend(CraftedCardEntry.objects.filter(player=player))
         objects.extend(ActiveDominanceEntry.objects.filter(player=player))
@@ -107,6 +119,7 @@ def get_all_game_objects(game: Game):
         objects.extend(CatsSimpleSetup.objects.filter(player=player))
         objects.extend(BirdsSimpleSetup.objects.filter(player=player))
         objects.extend(CrowsSimpleSetup.objects.filter(player=player))
+        objects.extend(MolesSimpleSetup.objects.filter(player=player))
 
         # Pieces (Warriors, Buildings, Tokens)
         # For MTI (Multi-Table Inheritance), we MUST serialize the base models as well
@@ -176,6 +189,20 @@ def get_all_game_objects(game: Game):
         objects.extend(PlotToken.objects.filter(player=player))
         objects.extend(ExposureRevealedCards.objects.filter(player=player))
         objects.extend(ExposureGuessedPlot.objects.filter(player=player))
+
+        # Moles
+        objects.extend(Crown.objects.filter(player=player))
+        objects.extend(Minister.objects.filter(player=player))
+        objects.extend(Tunnel.objects.filter(player=player))
+        objects.extend(Citadel.objects.filter(player=player))
+        objects.extend(Market.objects.filter(player=player))
+
+        # Turn History / State
+        mole_turns = MoleTurn.objects.filter(player=player)
+        objects.extend(mole_turns)
+        objects.extend(MoleBirdsong.objects.filter(turn__in=mole_turns))
+        objects.extend(MoleDaylight.objects.filter(turn__in=mole_turns))
+        objects.extend(MoleEvening.objects.filter(turn__in=mole_turns))
 
 
     # 4. Events

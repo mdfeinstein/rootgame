@@ -222,6 +222,33 @@ class GameSetupFactory(factory.django.DjangoModelFactory):
         
         return game
 
+class MolesGameSetupFactory(GameSetupFactory):
+    """Setup for Moles + Birds, both with complete setup."""
+    class Meta:
+        model = Game
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        # Create game with Moles + Birds
+        game = super()._create(model_class, *args, factions=[Faction.MOLES, Faction.BIRDS], **kwargs)
+
+        # Birds setup: pick corner 1, choose builder
+        birds_player = Player.objects.get(game=game, faction=Faction.BIRDS)
+        from game.transactions.birds_setup import pick_corner as birds_pick_corner, choose_leader_initial, confirm_completed_setup as birds_confirm
+        from game.models.birds.player import BirdLeader
+        birds_pick_corner(birds_player, Clearing.objects.get(game=game, clearing_number=1))
+        choose_leader_initial(birds_player, BirdLeader.BirdLeaders.BUILDER)
+        birds_confirm(birds_player)
+
+        # Moles setup: pick corner 3 (opposite of Birds)
+        moles_player = Player.objects.get(game=game, faction=Faction.MOLES)
+        from game.transactions.moles_setup import pick_corner as moles_pick_corner, confirm_completed_setup as moles_confirm
+        moles_pick_corner(moles_player, Clearing.objects.get(game=game, clearing_number=3))
+        moles_confirm(moles_player)
+
+        return game
+
+
 class GameSetupWithFactionsFactory(GameSetupFactory):
     class Meta:
         model = Game

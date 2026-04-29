@@ -23,6 +23,7 @@ from game.models.game_models import Faction
 from game.transactions.birds_setup import start_simple_birds_setup
 from game.transactions.cats_setup import start_simple_cats_setup
 from game.transactions.crows_setup import start_simple_crows_setup
+from game.transactions.moles_setup import start_simple_moles_setup
 from game.transactions.general import draw_card_from_deck_to_hand
 from game.transactions.setup_util import next_player_setup
 from game.transactions.wa_setup import wa_setup
@@ -222,6 +223,7 @@ def begin_faction_setup(game: Game):
         Faction.BIRDS: start_simple_birds_setup,
         Faction.WOODLAND_ALLIANCE: wa_setup,
         Faction.CROWS: start_simple_crows_setup,
+        Faction.MOLES: start_simple_moles_setup,
     }
     players = Player.objects.filter(game=game)
     for player in players:

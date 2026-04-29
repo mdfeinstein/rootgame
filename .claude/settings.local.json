@@ -35,7 +35,12 @@
       "Bash(tee test_single.txt)",
       "Bash(python .agent/scripts/run_tests.py game.tests.action_views.general.test_birds_turn_flow.BirdTurnFlowTestCase.test_birds_charm_offensive_flow)",
       "Bash(npm run *)",
-      "Bash(curl -s http://localhost:5173/)"
+      "Bash(curl -s http://localhost:5173/)",
+      "Bash(python -c \"from game.models import Burrow, Crown, Tunnel, Citadel, Market, RevealedCardEntry; print\\('All imports successful'\\)\")",
+      "Bash(python -m py_compile game/transactions/moles/daylight.py)",
+      "Bash(python -m py_compile game/transactions/moles/daylight/__init__.py game/transactions/moles/daylight/actions.py game/transactions/moles/daylight/minister_actions.py game/transactions/moles/daylight/sway_minister.py)",
+      "Bash(grep -E \"test.*\\\\.py$\")",
+      "Bash(python -c \"from game.game_data.cards.exiles_and_partisans import CardsEP; print\\([attr for attr in dir\\(CardsEP\\) if 'FOX' in attr or 'AMBUSH' in attr][:10]\\)\")"
     ]
   }
 }

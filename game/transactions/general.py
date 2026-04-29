@@ -309,6 +309,10 @@ def create_turn(player: Player):
         from game.transactions.crows.turn import create_crows_turn
 
         create_crows_turn(player)
+    elif player.faction == Faction.MOLES:
+        from game.transactions.moles.turn import create_moles_turn
+
+        create_moles_turn(player)
     else:
         raise InternalGameError(
             f"Faction {player.faction} not supported for turn creation"
@@ -384,6 +388,10 @@ def next_step(player: Player):
             from game.transactions.crows import next_step
 
             next_step(player)
+        case Faction.MOLES:
+            from game.transactions.moles import next_step
+
+            next_step(player)
 
 
 @transaction.atomic
@@ -404,5 +412,10 @@ def step_effect(player: Player):
 
         case Faction.CROWS:
             from game.transactions.crows import step_effect
+
+            step_effect(player)
+
+        case Faction.MOLES:
+            from game.transactions.moles import step_effect
 
             step_effect(player)

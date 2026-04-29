@@ -1,4 +1,5 @@
 # Todo List
+- [ ] Frontend typing: player boards should use types
 - [x] Critical Feature: Crafted items
     - [x] Frontend: display of crafted items box
     - [x] Backend: endpoint to get crafted items, with exhausted or not status

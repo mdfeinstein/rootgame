@@ -14,4 +14,8 @@ When tasked with adding a new faction to the game, follow these sequential steps
 6. **Frontend Integration (`/faction_frontend`)**: Create `[Faction]PlayerBoard.tsx`, map specific pieces physically on the `Clearing` components, and write user Prompts to handle complex inputs.
 7. **Demo Integration**: Register the new Faction inside `create_demo_game` within `game/views/setup_views/general.py`. Then update the frontend Demo components (`DevSignIn.tsx`, `DemoUserSwitch.tsx`, `DemoQuickStart.tsx`) so testers can instantly load into the faction.
 
-_Refer to the other faction-specific workflow guides using `view_file` on them to dive into the technical execution of each step._
+## Understanding the Turn State Machine
+
+Before implementing transactions, read [`faction_state_machine.md`](faction_state_machine.md) for a detailed breakdown of how turn phases and steps are managed across models, queries, and transactions. This is essential for understanding how the game loop coordinates faction turns and when effects trigger.
+
+_Refer to the other faction-specific workflow guides to dive into the technical execution of each step._

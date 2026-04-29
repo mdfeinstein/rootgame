@@ -365,3 +365,36 @@ class CraftedCardEntry(models.Model):
 class HandEntry(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
+
+
+class RevealedCardEntry(models.Model):
+    """
+    Represents a card that has been revealed/removed from a player's hand.
+    Used by factions (e.g., Moles) that reveal cards from hand for various effects.
+    The card is effectively out of play until it's either returned to hand or discarded.
+    """
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    card = models.ForeignKey(Card, on_delete=models.CASCADE)
+
+    @classmethod
+    def hand_to_revealed(cls, hand_entry: HandEntry) -> "RevealedCardEntry":
+        """Convert a HandEntry to a RevealedCardEntry, deleting the hand entry."""
+        card = hand_entry.card
+        player = hand_entry.player
+        hand_entry.delete()
+        return cls.objects.create(player=player, card=card)
+
+    def revealed_to_hand(self) -> HandEntry:
+        """Convert a RevealedCardEntry back to a HandEntry, deleting the revealed entry."""
+        card = self.card
+        player = self.player
+        self.delete()
+        return HandEntry.objects.create(player=player, card=card)
+
+    def revealed_to_discard(self) -> DiscardPileEntry:
+        """Convert a RevealedCardEntry to a DiscardPileEntry, deleting the revealed entry."""
+        card = self.card
+        game = self.player.game
+        self.delete()
+        spot = DiscardPileEntry.objects.filter(game=game).count()
+        return DiscardPileEntry.objects.create(game=game, card=card, spot=spot)

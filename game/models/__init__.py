@@ -3,6 +3,7 @@ from .game_models import *
 from .birds import *
 from .cats import *
 from .wa import *
+from .moles import *
 from .events import *
 from .checkpoint_models import Checkpoint, Action
 from .dominance import DominanceSupplyEntry, ActiveDominanceEntry
@@ -32,6 +33,7 @@ __all__ = [
     "CraftedItemEntry",
     "CraftedCardEntry",
     "HandEntry",
+    "RevealedCardEntry",
     "Checkpoint",
     "Action",
     "DominanceSupplyEntry",
