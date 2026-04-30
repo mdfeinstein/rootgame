@@ -24,6 +24,8 @@ from game.transactions.removal import (
     player_removes_building,
     player_removes_token,
     player_removes_warriors,
+    start_removal_event,
+    cleanup_removal_event,
 )
 from game.transactions.wa.supporters import discard_supporters, add_officer
 from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
@@ -69,62 +71,66 @@ def revolt(player: Player, clearing: Clearing):
         parent=get_current_phase_log(player.game, player),
     )
 
-    for player_ in Player.objects.filter(game=player.game):
-        if player_ != player:
-            faction_label = player_.get_faction_display()
-            count = Warrior.objects.filter(clearing=clearing, player=player_).count()
-            if count > 0:
-                player_removes_warriors(
-                    clearing, player_, player_, count, parent=revolt_log, skip_log=True
-                )
-                key = f"{faction_label} Warrior"
-                pieces_destroyed[key] = pieces_destroyed.get(key, 0) + count
+    start_removal_event(player.game)
+    try:
+        for player_ in Player.objects.filter(game=player.game):
+            if player_ != player:
+                faction_label = player_.get_faction_display()
+                count = Warrior.objects.filter(clearing=clearing, player=player_).count()
+                if count > 0:
+                    player_removes_warriors(
+                        clearing, player_, player_, count, parent=revolt_log, skip_log=True
+                    )
+                    key = f"{faction_label} Warrior"
+                    pieces_destroyed[key] = pieces_destroyed.get(key, 0) + count
 
-            for token in Token.objects.filter(clearing=clearing, player=player_):
-                from game.transactions.removal import get_piece_name
+                for token in Token.objects.filter(clearing=clearing, player=player_):
+                    from game.transactions.removal import get_piece_name
 
-                token_label = f"{faction_label} {get_piece_name(token)}"
-                player_removes_token(
-                    player.game, token, player, parent=revolt_log, skip_log=True
-                )
-                pieces_destroyed[token_label] = pieces_destroyed.get(token_label, 0) + 1
+                    token_label = f"{faction_label} {get_piece_name(token)}"
+                    player_removes_token(
+                        player.game, token, player, parent=revolt_log, skip_log=True
+                    )
+                    pieces_destroyed[token_label] = pieces_destroyed.get(token_label, 0) + 1
 
-            for building in Building.objects.filter(
-                building_slot__clearing=clearing, player=player_
-            ):
-                from game.transactions.removal import get_piece_name
+                for building in Building.objects.filter(
+                    building_slot__clearing=clearing, player=player_
+                ):
+                    from game.transactions.removal import get_piece_name
 
-                building_label = f"{faction_label} {get_piece_name(building)}"
-                player_removes_building(
-                    player.game, building, player, parent=revolt_log, skip_log=True
-                )
-                pieces_destroyed[building_label] = (
-                    pieces_destroyed.get(building_label, 0) + 1
-                )
+                    building_label = f"{faction_label} {get_piece_name(building)}"
+                    player_removes_building(
+                        player.game, building, player, parent=revolt_log, skip_log=True
+                    )
+                    pieces_destroyed[building_label] = (
+                        pieces_destroyed.get(building_label, 0) + 1
+                    )
 
-    base = WABase.objects.get(player=player, suit=clearing.suit)
-    place_piece_from_supply_into_clearing(base, clearing)
+        base = WABase.objects.get(player=player, suit=clearing.suit)
+        place_piece_from_supply_into_clearing(base, clearing)
 
-    matching_sympathy_count = WASympathy.objects.filter(
-        player=player, clearing__suit=clearing.suit
-    ).count()
-    troops_in_supply = Warrior.objects.filter(player=player, clearing=None).count()
-    place_warriors_into_clearing(
-        player, clearing, min(matching_sympathy_count, troops_in_supply)
-    )
-    add_officer(player)
+        matching_sympathy_count = WASympathy.objects.filter(
+            player=player, clearing__suit=clearing.suit
+        ).count()
+        troops_in_supply = Warrior.objects.filter(player=player, clearing=None).count()
+        place_warriors_into_clearing(
+            player, clearing, min(matching_sympathy_count, troops_in_supply)
+        )
+        add_officer(player)
 
-    player.refresh_from_db()
-    points_scored = player.score - score_before
+        player.refresh_from_db()
+        points_scored = player.score - score_before
 
-    from game.serializers.general_serializers import CardSerializer
+        from game.serializers.general_serializers import CardSerializer
 
-    revolt_log.details["supporters_spent"] = CardSerializer(
-        [s.card for s in supporters], many=True
-    ).data
-    revolt_log.details["points_scored"] = points_scored
-    revolt_log.details["pieces_destroyed"] = pieces_destroyed
-    revolt_log.save()
+        revolt_log.details["supporters_spent"] = CardSerializer(
+            [s.card for s in supporters], many=True
+        ).data
+        revolt_log.details["points_scored"] = points_scored
+        revolt_log.details["pieces_destroyed"] = pieces_destroyed
+        revolt_log.save()
+    finally:
+        cleanup_removal_event(player.game)
 
 
 @transaction.atomic

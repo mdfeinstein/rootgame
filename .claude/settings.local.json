@@ -40,7 +40,24 @@
       "Bash(python -m py_compile game/transactions/moles/daylight.py)",
       "Bash(python -m py_compile game/transactions/moles/daylight/__init__.py game/transactions/moles/daylight/actions.py game/transactions/moles/daylight/minister_actions.py game/transactions/moles/daylight/sway_minister.py)",
       "Bash(grep -E \"test.*\\\\.py$\")",
-      "Bash(python -c \"from game.game_data.cards.exiles_and_partisans import CardsEP; print\\([attr for attr in dir\\(CardsEP\\) if 'FOX' in attr or 'AMBUSH' in attr][:10]\\)\")"
+      "Bash(python -c \"from game.game_data.cards.exiles_and_partisans import CardsEP; print\\([attr for attr in dir\\(CardsEP\\) if 'FOX' in attr or 'AMBUSH' in attr][:10]\\)\")",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.moles.test_moles_daylight_actions)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.moles.test_moles_daylight_ministers)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.moles.test_moles_daylight_ministers.MolesDuchessTests)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.moles.test_moles_daylight_actions game.tests.transactions.moles.test_moles_daylight_ministers)",
+      "Bash(python .agent/scripts/run_tests.py game.tests)",
+      "Bash(tee test_output.txt)",
+      "Bash(python -m py_compile game/transactions/moles/evening.py game/queries/moles/crafting.py game/transactions/moles/turn.py)",
+      "Bash(python manage.py shell)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.moles.test_moles_birdsong.MolesBirdsongTests.test_place_burrow_warriors_with_2_citadels)",
+      "Bash(python manage.py test game.tests.transactions.moles.test_moles_setup.MolesSetupTests.test_initial_setup_object_counts -v 2)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.moles.test_moles_setup)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.moles.test_moles_birdsong)",
+      "Bash(python -m py_compile game/transactions/moles/daylight/actions.py game/transactions/moles/daylight/minister_actions.py game/transactions/moles/daylight/sway_minister.py game/transactions/moles/evening.py)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.moles)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.battle)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.moles.test_price_of_failure)",
+      "Bash(grep -q \"^OK$\\\\|^FAILED\" f:/rootGame/test_output.txt)"
     ]
   }
 }

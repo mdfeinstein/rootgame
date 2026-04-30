@@ -3,6 +3,7 @@ from typing import Set
 from game.models import Ruin
 from game.models.game_models import Suit
 from game.models import BirdEvening
+from game.models.moles.tokens import Tunnel
 from game.models.wa.turn import WAEvening
 from game.models import CatEvening
 from game.models import BirdDaylight
@@ -142,6 +143,7 @@ def get_current_player(game: Game) -> Player:
     """returns the player whose turn it is"""
     return Player.objects.get(game=game, turn_order=game.current_turn)
 
+
 def get_current_turn_number(game: Game) -> int:
     """Returns the turn_number of the currently active player's turn"""
     player = get_current_player(game)
@@ -150,6 +152,7 @@ def get_current_turn_number(game: Game) -> int:
         from game.models.birds.turn import BirdTurn
         from game.models.wa.turn import WATurn
         from game.models.crows.turn import CrowTurn
+
         turn_object_dict = {
             Faction.CATS: CatTurn,
             Faction.BIRDS: BirdTurn,
@@ -158,13 +161,16 @@ def get_current_turn_number(game: Game) -> int:
         }
     else:
         return 0
-    
+
     faction_model = turn_object_dict.get(Faction(player.faction))
     if faction_model is None:
         return 0
-    
-    turn_object = faction_model.objects.filter(player=player).order_by("-turn_number").first()
+
+    turn_object = (
+        faction_model.objects.filter(player=player).order_by("-turn_number").first()
+    )
     return turn_object.turn_number if turn_object else 0
+
 
 from game.models.crows.turn import CrowBirdsong, CrowDaylight, CrowEvening
 
@@ -189,7 +195,7 @@ def get_current_phase(player: Player):
         return get_cat_phase(player)
     elif player.faction == Faction.CROWS:
         from game.queries.crows.turn import get_phase as get_crows_phase
-        
+
         return get_crows_phase(player)
 
     return None
@@ -205,11 +211,17 @@ def is_phase(
     phase_obj = get_current_phase(player)
     match phase:
         case "Birdsong":
-            return isinstance(phase_obj, (CatBirdsong, WABirdsong, BirdBirdsong, CrowBirdsong))
+            return isinstance(
+                phase_obj, (CatBirdsong, WABirdsong, BirdBirdsong, CrowBirdsong)
+            )
         case "Daylight":
-            return isinstance(phase_obj, (CatDaylight, WADaylight, BirdDaylight, CrowDaylight))
+            return isinstance(
+                phase_obj, (CatDaylight, WADaylight, BirdDaylight, CrowDaylight)
+            )
         case "Evening":
-            return isinstance(phase_obj, (CatEvening, WAEvening, BirdEvening, CrowEvening))
+            return isinstance(
+                phase_obj, (CatEvening, WAEvening, BirdEvening, CrowEvening)
+            )
         case _:
             raise InternalGameError(
                 "Invalid phase argument provided. Must be 'Birdsong', 'Daylight', or 'Evening'"
@@ -244,7 +256,9 @@ def validate_player_has_card_in_hand(player: Player, card: CardsEP) -> HandEntry
         player=player, card__card_type=card.name
     ).first()
     if card_in_hand is None:
-        raise IllegalActionError(f"Player does not have card in hand. card name: {card.name}")
+        raise IllegalActionError(
+            f"Player does not have card in hand. card name: {card.name}"
+        )
     return card_in_hand
 
 
@@ -258,7 +272,9 @@ def validate_game_has_dominance_card_in_supply(game: Game, card: CardsEP):
         game=game, card__card_type=card.name
     ).first()
     if dominance_entry is None:
-        raise IllegalActionError(f"Dominance card not in supply. card name: {card.name}")
+        raise IllegalActionError(
+            f"Dominance card not in supply. card name: {card.name}"
+        )
     return dominance_entry
 
 
@@ -278,7 +294,9 @@ def validate_player_has_crafted_card(player: Player, card: CardsEP) -> CraftedCa
         player=player, card__card_type=card.name
     ).first()
     if crafted_card is None:
-        raise IllegalActionError(f"Player does not have crafted card. card name: {card.name}")
+        raise IllegalActionError(
+            f"Player does not have crafted card. card name: {card.name}"
+        )
     return crafted_card
 
 
@@ -298,7 +316,18 @@ def get_adjacent_clearings(player: Player, clearing: Clearing) -> set[Clearing]:
     accounting for passive effects like Boat Builders and Tunnels.
     """
     adjacent = set(clearing.connected_clearings.all())
-
+    # Moles: Tunnels are adjacent to burrow
+    if player.faction == Faction.MOLES:
+        if clearing.clearing_number == 0:  # is burrow...
+            placed_tunnels = Tunnel.objects.filter(
+                player=player, clearing__isnull=False
+            )
+            for tunnel in placed_tunnels:
+                adjacent.add(tunnel.clearing)
+        elif Tunnel.objects.filter(player=player, clearing=clearing).exists():
+            # this clearing has a tunnel, add burrow as adjacent
+            burrow_clearing = Clearing.objects.get(game=player.game, clearing_number=0)
+            adjacent.add(burrow_clearing)
     # Boat Builders: treat rivers as paths
     if CraftedCardEntry.objects.filter(
         player=player, card__card_type=CardsEP.BOAT_BUILDERS.name
@@ -369,8 +398,15 @@ def validate_legal_move(
     # check for Snare in origin
     if player.faction != Faction.CROWS:
         from game.models.crows.tokens import PlotToken
-        if PlotToken.objects.filter(clearing=clearing_start, plot_type=PlotToken.PlotType.SNARE, is_facedown=False).exists():
-            raise IllegalActionError("Cannot move out of a clearing with a face-up Snare")
+
+        if PlotToken.objects.filter(
+            clearing=clearing_start,
+            plot_type=PlotToken.PlotType.SNARE,
+            is_facedown=False,
+        ).exists():
+            raise IllegalActionError(
+                "Cannot move out of a clearing with a face-up Snare"
+            )
 
     # Corvid Planners: ignore rule while moving
     try:
@@ -383,7 +419,9 @@ def validate_legal_move(
     rule_target = determine_clearing_rule(clearing_end)
     rule_origin = determine_clearing_rule(clearing_start)
     if rule_target != player and rule_origin != player:
-        raise IllegalActionError("player does not control either origin or target clearing")
+        raise IllegalActionError(
+            "player does not control either origin or target clearing"
+        )
 
 
 def validate_has_legal_moves(player: Player, clearing: Clearing):
@@ -425,19 +463,38 @@ def validate_can_place_piece_in_clearing(player: Player, clearing: Clearing):
     Checks for:
     - Cat's Keep blocking non-cats
     - Face-up Snare blocking non-crows
+    - Only Mole warrior can be placed in burrow
     """
     from game.models.game_models import Faction
 
     # Check for Cat Keep
     if player.faction != Faction.CATS:
         from game.models.cats.tokens import CatKeep
+
         if CatKeep.objects.filter(clearing=clearing).exists():
             raise IllegalActionError("Cannot place non-cat piece in keep clearing")
 
     # Check for face-up Snare
     if player.faction != Faction.CROWS:
         from game.models.crows.tokens import PlotToken
+
         if PlotToken.objects.filter(
             clearing=clearing, plot_type=PlotToken.PlotType.SNARE, is_facedown=False
         ).exists():
-            raise IllegalActionError("Cannot place piece in clearing with a face-up Snare")
+            raise IllegalActionError(
+                "Cannot place piece in clearing with a face-up Snare"
+            )
+
+    if clearing.clearing_number == 0:
+        # Mole burrow
+        if player.faction != Faction.MOLES:
+            raise IllegalActionError("Only Mole warriors can be placed in burrow")
+
+
+def get_current_removal_tracker(game: Game):
+    """Get the current RemovalEventTracker for the game, if one exists."""
+    from game.models.removal_tracker import RemovalEventTracker
+    try:
+        return game.removal_tracker
+    except RemovalEventTracker.DoesNotExist:
+        return None

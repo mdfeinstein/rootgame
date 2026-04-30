@@ -32,6 +32,18 @@ from game.transactions.moles.turn import next_step
 
 
 @transaction.atomic
+def end_actions(player: Player):
+    """End the Actions step and advance to the next step.
+
+    Validates that it's the correct phase/step and the player is Moles.
+    """
+    validate_step(player, MoleDaylight.MoleDaylightSteps.ACTIONS)
+    if player.faction != Faction.MOLES:
+        raise UnavailableActionError("Not a Moles player")
+    next_step(player)
+
+
+@transaction.atomic
 def decrement_actions(player: Player):
     """Decrement actions_left and advance to next step if 0."""
     validate_step(player, MoleDaylight.MoleDaylightSteps.ACTIONS)
@@ -175,6 +187,10 @@ def dig(
 
     # Validate clearing for digging (no tunnel present, card valid for clearing)
     validate_dig_clearing(player, clearing, card)
+
+    # Validate max 4 warriors can be moved
+    if warriors_to_move > 4:
+        raise IllegalActionError("Can move a maximum of 4 warriors in one dig action")
 
     # Get burrow and validate warriors available
     burrow = Burrow.objects.get(player=player)

@@ -54,7 +54,6 @@ def step_effect(
     from game.transactions.crafted_cards.saboteurs import saboteurs_check
     from game.transactions.crafted_cards.eyrie_emigre import is_emigre
     from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
-    from game.transactions.crafted_cards.informants import informants_check
 
     match phase:
         case MoleBirdsong():
@@ -130,24 +129,16 @@ def step_effect(
                     if not check_charm_offensive(player):
                         next_step(player)
                 case MoleEvening.MoleEveningSteps.PROCESS_REVEALED_CARDS:
-                    next_step(player)
+                    from game.transactions.moles.evening import process_revealed_cards
+                    process_revealed_cards(player)
                 case MoleEvening.MoleEveningSteps.CRAFT:
                     pass
                 case MoleEvening.MoleEveningSteps.DRAW:
-                    from game.queries.general import get_hand_size_limit
-
-                    hand_size = HandEntry.objects.filter(player=player).count()
-                    hand_limit = get_hand_size_limit(player)
-                    if hand_size >= hand_limit:
-                        next_step(player)
-                    else:
-                        is_informants = informants_check(player)
-                        if not is_informants:
-                            next_step(player)
+                    from game.transactions.moles.evening import draw_cards
+                    draw_cards(player)
                 case MoleEvening.MoleEveningSteps.DISCARD:
                     hand_size = HandEntry.objects.filter(player=player).count()
-                    hand_limit = get_hand_size_limit(player)
-                    if hand_size <= hand_limit:
+                    if hand_size <= 5:
                         next_step(player)
                 case MoleEvening.MoleEveningSteps.BEFORE_END:
                     next_step(player)

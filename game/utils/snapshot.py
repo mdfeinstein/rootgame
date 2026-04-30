@@ -67,6 +67,8 @@ from game.models.events.crafted_cards import (
     SwapMeetEvent,
 )
 from game.models.events.crows import CrowRecruitEvent, CrowRaidEvent
+from game.models.events.moles import PriceOfFailureEvent
+from game.models.removal_tracker import RemovalEventTracker
 from game.models.game_log import GameLog
 
 
@@ -205,7 +207,12 @@ def get_all_game_objects(game: Game):
         objects.extend(MoleEvening.objects.filter(turn__in=mole_turns))
 
 
-    # 4. Events
+    # 4. Removal Tracker (depends on Game)
+    removal_tracker = RemovalEventTracker.objects.filter(game=game).first()
+    if removal_tracker:
+        objects.append(removal_tracker)
+
+    # 5. Events
     # Events depend on Game, but sub-events depend on Event + Players/Clearings
     events = Event.objects.filter(game=game)
     objects.extend(events)
@@ -222,8 +229,9 @@ def get_all_game_objects(game: Game):
     objects.extend(SwapMeetEvent.objects.filter(event__in=events))
     objects.extend(CrowRecruitEvent.objects.filter(event__in=events))
     objects.extend(CrowRaidEvent.objects.filter(event__in=events))
+    objects.extend(PriceOfFailureEvent.objects.filter(event__in=events))
 
-    # 5. Game Logs
+    # 6. Game Logs
     objects.extend(GameLog.objects.filter(game=game).order_by("created_at"))
 
     return objects

@@ -2,12 +2,25 @@ from django.db import transaction
 
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.game_models import Player, RevealedCardEntry
+from game.models.enums import Faction
 from game.models.moles.turn import MoleDaylight
 from game.models.moles.ministers import Minister
-from game.errors import IllegalActionError
+from game.errors import IllegalActionError, UnavailableActionError
 from game.queries.moles.turn import validate_step
 from game.transactions.general import raise_score
 from game.transactions.moles.turn import next_step
+
+
+@transaction.atomic
+def end_sway_minister(player: Player):
+    """End the Sway Minister step and advance to the next step.
+
+    Validates that it's the correct phase/step and the player is Moles.
+    """
+    validate_step(player, MoleDaylight.MoleDaylightSteps.SWAY_MINISTER)
+    if player.faction != Faction.MOLES:
+        raise UnavailableActionError("Not a Moles player")
+    next_step(player)
 
 
 @transaction.atomic

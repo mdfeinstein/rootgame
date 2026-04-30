@@ -1,3 +1,4 @@
+from django.db import transaction
 from game.models import Piece
 from game.models import CatKeep
 from game.models.events.battle import Battle
@@ -14,6 +15,7 @@ from game.models.game_models import (
 from game.transactions.cats import create_field_hospital_event
 from game.transactions.outrage import create_outrage_event
 from game.queries.crafted_cards import get_coffin_makers_player
+from game.errors import InternalGameError
 
 
 def get_piece_name(piece: Piece) -> str:
@@ -231,3 +233,33 @@ def player_removes_building(
         resolve_wa_base_removal(
             game, building.player, clearing, building, parent=parent
         )
+
+    # Check for Moles price of failure
+    from game.models.moles.buildings import Citadel, Market
+    if Citadel.objects.filter(pk=building.pk).exists() or Market.objects.filter(pk=building.pk).exists():
+        from game.transactions.moles.price_of_failure import trigger_price_of_failure
+        trigger_price_of_failure(building.player)
+
+
+@transaction.atomic
+def start_removal_event(game: Game):
+    """Create a RemovalEventTracker for the current removal event.
+
+    Raises InternalGameError if one already exists.
+    """
+    from game.models.removal_tracker import RemovalEventTracker
+    if RemovalEventTracker.objects.filter(game=game).exists():
+        raise InternalGameError("RemovalEventTracker already exists for this game")
+    RemovalEventTracker.objects.create(game=game)
+
+
+@transaction.atomic
+def cleanup_removal_event(game: Game):
+    """Delete the RemovalEventTracker after a removal event ends.
+
+    Safe to call even if no tracker exists (no-op in that case).
+    """
+    from game.models.removal_tracker import RemovalEventTracker
+    tracker = RemovalEventTracker.objects.filter(game=game).first()
+    if tracker:
+        tracker.delete()

@@ -28,6 +28,18 @@ from game.transactions.moles.turn import next_step
 from game.transactions.general import raise_score
 
 
+@transaction.atomic
+def end_minister_actions(player: Player):
+    """End the Minister Actions step and advance to the next step.
+
+    Validates that it's the correct phase/step and the player is Moles.
+    """
+    validate_step(player, MoleDaylight.MoleDaylightSteps.MINISTER_ACTIONS)
+    if player.faction != Faction.MOLES:
+        raise UnavailableActionError("Not a Moles player")
+    next_step(player)
+
+
 def check_all_ministers_used(player: Player):
     """Check if all swayed ministers have been used, advance to next step if so."""
     are_unused_ministers = Minister.objects.filter(
@@ -271,11 +283,11 @@ def use_duchess(player: Player):
     duchess.used = True
     duchess.save()
 
-    # Check if all tunnels are on map
-    tunnels_in_supply = Tunnel.objects.filter(
+    # Check if all tunnels are on map (score only if no tunnels in supply)
+    tunnels_in_supply_count = Tunnel.objects.filter(
         player=player, clearing__isnull=True
-    ).exists()
-    if not tunnels_in_supply:
+    ).count()
+    if tunnels_in_supply_count == 0:
         raise_score(player, 2)
 
     # Check if all swayed ministers are used

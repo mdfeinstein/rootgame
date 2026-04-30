@@ -8,6 +8,7 @@ from .events import *
 from .checkpoint_models import Checkpoint, Action
 from .dominance import DominanceSupplyEntry, ActiveDominanceEntry
 from .game_log import GameLog, LogType
+from .removal_tracker import RemovalEventTracker
 
 __all__ = [
     "Faction",
@@ -40,4 +41,5 @@ __all__ = [
     "ActiveDominanceEntry",
     "GameLog",
     "LogType",
+    "RemovalEventTracker",
 ]

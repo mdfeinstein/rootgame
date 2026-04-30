@@ -147,6 +147,10 @@ def place_piece_from_supply_into_clearing(piece: Piece, clearing: Clearing):
     from game.queries.general import validate_can_place_piece_in_clearing
 
     validate_can_place_piece_in_clearing(piece.player, clearing)
+    # if moles and clearing is burrow, check that piece is a warrior
+    if piece.player.faction == Faction.MOLES and clearing.clearing_number == 0:
+        if not isinstance(piece, Warrior):
+            raise IllegalActionError("Only Mole warriors can be placed in burrow")
 
     piece.clearing = clearing
     piece.save()

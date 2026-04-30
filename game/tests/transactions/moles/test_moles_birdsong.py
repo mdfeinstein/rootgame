@@ -65,10 +65,9 @@ class MolesBirdsongTests(MolesBirdsongBaseTestCase):
             self.game.clearing_set.get(clearing_number=2),
             self.game.clearing_set.get(clearing_number=3),
         ]
-        buildings = [
-            Citadel.objects.filter(player=self.player, building_slot__isnull=True).first(),
-            Citadel.objects.filter(player=self.player, building_slot__isnull=True).first(),
-        ]
+        buildings = list(
+            Citadel.objects.filter(player=self.player, building_slot__isnull=True)[:2]
+        )
 
         for i, clearing in enumerate(clearings):
             slot = clearing.buildingslot_set.first()
@@ -93,10 +92,9 @@ class MolesBirdsongTests(MolesBirdsongBaseTestCase):
             self.game.clearing_set.get(clearing_number=2),
             self.game.clearing_set.get(clearing_number=3),
         ]
-        buildings = [
-            Citadel.objects.filter(player=self.player, building_slot__isnull=True).first(),
-            Citadel.objects.filter(player=self.player, building_slot__isnull=True).first(),
-        ]
+        buildings = list(
+            Citadel.objects.filter(player=self.player, building_slot__isnull=True)[:2]
+        )
 
         for i, clearing in enumerate(clearings):
             slot = clearing.buildingslot_set.first()

@@ -4,6 +4,7 @@ from .setup import *
 from .crafted_cards import *
 from .crows import *
 from .wa import *
+from .moles import *
 
 __all__ = [
     "Battle",
@@ -16,5 +17,6 @@ __all__ = [
     "CharmOffensiveEvent",
     "CrowRecruitEvent",
     "OutrageEvent",
+    "PriceOfFailureEvent",
 ]
 

@@ -37,6 +37,8 @@ from game.transactions.removal import (
     player_removes_building,
     player_removes_token,
     player_removes_warriors,
+    start_removal_event,
+    cleanup_removal_event,
 )
 
 
@@ -187,6 +189,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
                 parent=get_battle_log(game, battle.pk),
             )
             # do i need to convey that attacker must choose one hit, or is this kind of guaranteed to only be one?
+            start_removal_event(game)
             battle.step = Battle.BattleSteps.ATTACKER_CHOOSE_AMBUSH_HITS
             battle.save()
             return
@@ -478,6 +481,7 @@ def apply_dice_hits(game: Game, battle: Battle):
         )
         if defender_hits_left_to_assign > 0 and pieces_left_to_hit > 0:
             if pieces_left_to_hit <= defender_hits_left_to_assign:
+                start_removal_event(game)
                 tokens = Token.objects.filter(
                     clearing=battle.clearing, player=defending_player
                 )
@@ -494,6 +498,7 @@ def apply_dice_hits(game: Game, battle: Battle):
                     )
 
             else:  # more pieces than hits, go to choice step
+                start_removal_event(game)
                 battle.step = Battle.BattleSteps.DEFENDER_CHOOSE_HITS
                 battle.save()
 
@@ -525,6 +530,7 @@ def apply_dice_hits(game: Game, battle: Battle):
         if attacking_hits_left_to_assign > 0 and attacking_pieces_count > 0:
             if attacking_pieces_count <= attacking_hits_left_to_assign:
                 # remove all pieces, don't need to do choice step
+                start_removal_event(game)
                 tokens = Token.objects.filter(
                     clearing=battle.clearing, player=attacking_player
                 )
@@ -541,6 +547,7 @@ def apply_dice_hits(game: Game, battle: Battle):
                     )
             else:  # more pieces than hits, go to choice step if not already on defender choice step
                 if battle.step != Battle.BattleSteps.DEFENDER_CHOOSE_HITS:
+                    start_removal_event(game)
                     battle.step = Battle.BattleSteps.ATTACKER_CHOOSE_HITS
 
     if battle.step == Battle.BattleSteps.ROLL_DICE:
@@ -589,6 +596,8 @@ def defender_chooses_hit(game: Game, battle: Battle, piece: Piece):
             battle.attacker_hits_taken - battle.attacker_hits_assigned
         )
         if attacking_hits_left_to_assign > 0 and attacking_pieces_count > 0:
+            cleanup_removal_event(game)
+            start_removal_event(game)
             battle.step = Battle.BattleSteps.ATTACKER_CHOOSE_HITS
         else:
             end_battle(game, battle)
@@ -633,6 +642,7 @@ def attacker_chooses_hit(game: Game, battle: Battle, piece: Piece):
 
 def end_battle(game: Game, battle: Battle):
     """ends the battle and updates the battle and event objects"""
+    cleanup_removal_event(game)
     # update battle
     battle.step = Battle.BattleSteps.COMPLETED
     battle.save()

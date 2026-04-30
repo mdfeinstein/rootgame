@@ -1,100 +1,128 @@
-from typing import Literal
 from django.db import transaction
 
-from game.models.game_models import Player, HandEntry
+from game.game_data.cards.exiles_and_partisans import CardsEP
+from game.models.game_models import Player, HandEntry, RevealedCardEntry
+from game.models.enums import Suit, Faction
 from game.models.moles.turn import MoleEvening
-from game.models.moles.buildings import Citadel, Market
+from game.models.moles.buildings import Market
 from game.queries.moles.turn import validate_step
-from game.errors import IllegalActionError
+from game.queries.moles.evening import validate_discard_card
+from game.queries.moles.crafting import validate_crafting_pieces_satisfy_requirements
+from game.queries.general import validate_player_has_card_in_hand, get_player_hand_size
+from game.errors import UnavailableActionError
+from game.transactions.general import (
+    draw_card_from_deck_to_hand,
+    discard_card_from_hand,
+)
 
 
 @transaction.atomic
 def process_revealed_cards(player: Player):
-    """Process revealed cards - move them to hand or discard.
+    """Process revealed cards at start of evening.
 
-    Currently a placeholder for future card effect processing.
+    Wild (Bird suit) cards go to discard; all others return to hand.
+    Auto-called from step_effect.
     """
     validate_step(player, MoleEvening.MoleEveningSteps.PROCESS_REVEALED_CARDS)
 
-    from game.transactions.moles.turn import next_step
+    revealed = RevealedCardEntry.objects.filter(player=player)
+    for entry in revealed:
+        card_suit = entry.card.enum.value.suit
+        if card_suit == Suit.WILD:
+            entry.revealed_to_discard()
+        else:
+            entry.revealed_to_hand()
 
+    from game.transactions.moles.turn import next_step
     next_step(player)
 
 
 @transaction.atomic
-def craft(player: Player, building: Literal["citadel", "market"]):
-    """Craft an item by spending a building.
+def craft_card(player: Player, card: CardsEP, buildings: list):
+    """Craft a card using citadels and/or markets as crafting pieces.
 
     Args:
         player: The Moles player
-        building: "citadel" or "market"
+        card: The card to craft from hand
+        buildings: List of Citadel/Market instances to use as crafting pieces
 
     Raises:
-        IllegalActionError if building not available or already used this turn
+        IllegalActionError if card not in hand, buildings don't satisfy cost, etc.
     """
     validate_step(player, MoleEvening.MoleEveningSteps.CRAFT)
 
-    # Get available building
-    if building == "citadel":
-        building_instance = Citadel.objects.filter(
-            player=player, building_slot__isnull=False, crafted_with=False
-        ).first()
-        if building_instance is None:
-            raise IllegalActionError("No available citadels to craft with")
-    else:  # building == "market"
-        building_instance = Market.objects.filter(
-            player=player, building_slot__isnull=False, crafted_with=False
-        ).first()
-        if building_instance is None:
-            raise IllegalActionError("No available markets to craft with")
+    card_in_hand = validate_player_has_card_in_hand(player, card)
+    validate_crafting_pieces_satisfy_requirements(player, card, buildings)
 
-    # Mark building as used for crafting this turn
-    building_instance.crafted_with = True
-    building_instance.save()
+    for b in buildings:
+        b.crafted_with = True
+        b.save()
+
+    from game.transactions.general import craft_card as general_craft_card
+    general_craft_card(card_in_hand, buildings)
 
 
 @transaction.atomic
-def draw(player: Player, count: int = 1):
-    """Draw cards from deck.
+def end_crafting(player: Player):
+    """End the Craft step and advance to the next step.
 
-    Args:
-        player: The Moles player
-        count: Number of cards to draw (default 1)
+    Validates that it's the correct phase/step and the player is Moles.
+    """
+    validate_step(player, MoleEvening.MoleEveningSteps.CRAFT)
+    if player.faction != Faction.MOLES:
+        raise UnavailableActionError("Not a Moles player")
 
-    Raises:
-        IllegalActionError if invalid count
+    from game.transactions.moles.turn import next_step
+    next_step(player)
+
+
+@transaction.atomic
+def draw_cards(player: Player):
+    """Draw cards at end of evening: 1 base + 1 per market on the board.
+
+    Auto-called from step_effect when entering DRAW step.
     """
     validate_step(player, MoleEvening.MoleEveningSteps.DRAW)
 
-    if count < 1:
-        raise IllegalActionError("Must draw at least 1 card")
+    markets_on_map = Market.objects.filter(player=player, building_slot__isnull=False).count()
+    count = 1 + markets_on_map
 
-    from game.queries.general import draw_cards
+    for _ in range(count):
+        draw_card_from_deck_to_hand(player)
 
-    draw_cards(player, count)
-
-    # Update cards drawn counter
-    phase = MoleEvening.objects.get(turn__player=player, turn__turn_number=player.turn_number)
-    phase.cards_drawn += count
-    phase.save()
+    from game.transactions.moles.turn import next_step
+    next_step(player)
 
 
 @transaction.atomic
-def discard(player: Player, card_entry: HandEntry):
-    """Discard a card from hand.
+def discard_card(player: Player, card_entry: HandEntry):
+    """Discard one card from hand during the Discard step.
 
-    Args:
-        player: The Moles player
-        card_entry: The HandEntry to discard
-
-    Raises:
-        IllegalActionError if card not in player's hand
+    Raises UnavailableActionError if hand is already at or below 5 cards.
+    Advances to next step if hand reaches 5 after discarding.
     """
     validate_step(player, MoleEvening.MoleEveningSteps.DISCARD)
 
-    if card_entry.player != player:
-        raise IllegalActionError("Card not in this player's hand")
+    if get_player_hand_size(player) <= 5:
+        raise UnavailableActionError("Hand is already at or below 5 cards")
 
-    from game.transactions.general import discard_card_from_hand
-
+    validate_discard_card(player, card_entry)
     discard_card_from_hand(player, card_entry)
+
+    if get_player_hand_size(player) <= 5:
+        from game.transactions.moles.turn import next_step
+        next_step(player)
+
+
+@transaction.atomic
+def end_discard(player: Player):
+    """End the Discard step and advance to the next step.
+
+    Validates that it's the correct phase/step and the player is Moles.
+    """
+    validate_step(player, MoleEvening.MoleEveningSteps.DISCARD)
+    if player.faction != Faction.MOLES:
+        raise UnavailableActionError("Not a Moles player")
+
+    from game.transactions.moles.turn import next_step
+    next_step(player)
