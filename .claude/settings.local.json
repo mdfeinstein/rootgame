@@ -64,7 +64,11 @@
       "Bash(python -m py_compile f:/rootGame/game/views/action_views/general.py)",
       "Bash(python -m py_compile f:/rootGame/game/queries/moles/daylight.py)",
       "Bash(python .agent/scripts/run_tests.py game.tests.action_views.moles.test_moles_daylight_actions)",
-      "Bash(python manage.py shell -c ' *)"
+      "Bash(python manage.py shell -c ' *)",
+      "Bash(python manage.py runserver --nothreading --noreload)",
+      "Bash(curl -s http://localhost:8000/api/health/)",
+      "Bash(pkill -f \"manage.py runserver\")",
+      "Bash(python .agent/scripts/run_tests.py game.tests.action_views.moles.test_moles_minister_actions)"
     ]
   }
 }

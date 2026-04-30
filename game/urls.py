@@ -38,6 +38,11 @@ from game.views.action_views.moles.daylight import (
     MolesDaylightActionsView, MolesMoveView, MolesBattleView,
     MolesDigView, MolesRecruitView, MolesBuildView,
 )
+from game.views.action_views.moles.minister_actions import (
+    MolesMinisterActionsView, MolesMinisterMayorView, MolesMinisterMarshalView, MolesMinisterCaptainView,
+    MolesMinisterForemoleView, MolesMinisterBrigadierView, MolesMinisterBankerView,
+    MolesMinisterDuchessView, MolesMinisterEarlView, MolesMinisterBaronView,
+)
 from game.views.action_views.setup.crows import (
     CrowsPickClearingView,
     CrowsConfirmCompletedSetupView,
@@ -411,6 +416,67 @@ register_action(
     "moles-daylight-build",
     MolesBuildView,
     "api/moles/daylight/actions/build/",
+    urlpatterns,
+)
+
+register_action(
+    "moles-minister-actions",
+    MolesMinisterActionsView,
+    "api/moles/daylight/minister-actions/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-mayor",
+    MolesMinisterMayorView,
+    "api/moles/daylight/minister-actions/mayor/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-marshal",
+    MolesMinisterMarshalView,
+    "api/moles/daylight/minister-actions/marshal/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-captain",
+    MolesMinisterCaptainView,
+    "api/moles/daylight/minister-actions/captain/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-foremole",
+    MolesMinisterForemoleView,
+    "api/moles/daylight/minister-actions/foremole/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-brigadier",
+    MolesMinisterBrigadierView,
+    "api/moles/daylight/minister-actions/brigadier/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-banker",
+    MolesMinisterBankerView,
+    "api/moles/daylight/minister-actions/banker/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-duchess",
+    MolesMinisterDuchessView,
+    "api/moles/daylight/minister-actions/duchess/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-earl",
+    MolesMinisterEarlView,
+    "api/moles/daylight/minister-actions/earl/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-baron",
+    MolesMinisterBaronView,
+    "api/moles/daylight/minister-actions/baron/",
     urlpatterns,
 )
 

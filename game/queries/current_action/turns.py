@@ -257,7 +257,9 @@ def get_moles_daylight_turn_action(phase: MoleDaylight):
     match phase.step:
         case MoleDaylight.MoleDaylightSteps.ACTIONS:
             return reverse("moles-daylight-actions")
-        case MoleDaylight.MoleDaylightSteps.MINISTER_ACTIONS | MoleDaylight.MoleDaylightSteps.SWAY_MINISTER | MoleDaylight.MoleDaylightSteps.BEFORE_END | MoleDaylight.MoleDaylightSteps.COMPLETED:
+        case MoleDaylight.MoleDaylightSteps.MINISTER_ACTIONS:
+            return reverse("moles-minister-actions")
+        case MoleDaylight.MoleDaylightSteps.SWAY_MINISTER | MoleDaylight.MoleDaylightSteps.BEFORE_END | MoleDaylight.MoleDaylightSteps.COMPLETED:
             return None
         case _:
             raise ValueError("Invalid moles daylight step")
