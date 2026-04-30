@@ -128,6 +128,31 @@ class GameActionView(APIView):
         serializer = GameActionStepSerializer(step)
         return Response(serializer.data)
 
+    def generate_redirect_step(self, new_base_route: str):
+        step = {"name": "redirect", "new_base_endpoint": new_base_route}
+        serializer = GameActionStepSerializer(step)
+        return Response(serializer.data)
+
+
+class SubGameActionView(GameActionView):
+    """Base class for sub-action views that delegate to parent validators."""
+    subroute: str = ""
+    parent_view: type[GameActionView] | None = None
+
+    def validate_player(self, request, game_id, route, *args, **kwargs):
+        """Inherit player validation from parent view if set."""
+        if self.parent_view is not None:
+            self.parent_view().validate_player(request, game_id, route, *args, **kwargs)
+        else:
+            super().validate_player(request, game_id, route, *args, **kwargs)
+
+    def validate_timing(self, request, game_id, route, *args, **kwargs):
+        """Inherit timing validation from parent view if set."""
+        if self.parent_view is not None:
+            self.parent_view().validate_timing(request, game_id, route, *args, **kwargs)
+        else:
+            super().validate_timing(request, game_id, route, *args, **kwargs)
+
 
 class MovePiecesView(GameActionView):
     action_name = "MOVE_PIECES"

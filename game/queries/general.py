@@ -440,7 +440,9 @@ def validate_has_legal_moves(player: Player, clearing: Clearing):
 def validate_enemy_pieces_in_clearing(
     player: Player, clearing: Clearing
 ) -> list[Player]:
-    """raises if no enemy pieces in the given clearing"""
+    """raises if no enemy pieces in the given clearing
+    Returns list of opposing players with pieces in the clearing
+    """
     # confirm clearing and player are in the same game
     players_with_pieces = []
     if player.game != clearing.game:
@@ -494,6 +496,7 @@ def validate_can_place_piece_in_clearing(player: Player, clearing: Clearing):
 def get_current_removal_tracker(game: Game):
     """Get the current RemovalEventTracker for the game, if one exists."""
     from game.models.removal_tracker import RemovalEventTracker
+
     try:
         return game.removal_tracker
     except RemovalEventTracker.DoesNotExist:

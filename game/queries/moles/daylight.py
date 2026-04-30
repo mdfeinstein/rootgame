@@ -1,5 +1,6 @@
 from typing import Literal
 
+from game.models.game_models import Player
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.enums import Suit
 from game.models.game_models import BuildingSlot, Clearing, HandEntry, Player
@@ -335,3 +336,21 @@ def validate_cards_can_sway_minister(
                 f"{card.value.title} does not match any clearings with moles pieces in it"
             )
     return hand_entries
+
+
+def get_actions_remaining(player: Player) -> int:
+    """Get the number of actions remaining in the current daylight phase.
+
+    Args:
+        player: The Moles player
+
+    Returns:
+        Number of actions remaining (0-2)
+    """
+    from game.models.moles.turn import MoleDaylight
+    from game.queries.moles.turn import get_phase
+
+    phase = get_phase(player)
+    if isinstance(phase, MoleDaylight):
+        return phase.actions_left
+    return 0

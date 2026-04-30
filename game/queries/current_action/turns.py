@@ -3,6 +3,7 @@ from game.models.game_models import CraftedCardEntry, Faction, Game, Player
 from game.models.events.event import Event, EventType
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.wa.turn import WABirdsong, WADaylight, WAEvening
+from game.models.moles.turn import MoleBirdsong, MoleDaylight, MoleEvening
 from game.queries.current_action.events import get_current_event_action
 from game.queries.general import get_current_player
 from game.queries.crows.turn import get_phase as get_crows_phase
@@ -12,6 +13,7 @@ from game.models.birds.turn import BirdBirdsong, BirdDaylight, BirdEvening
 from game.queries.cats.turn import get_phase as get_cats_phase
 from game.queries.birds.turn import get_phase as get_birds_phase
 from game.queries.wa.turn import get_phase as get_wa_phase
+from game.queries.moles.turn import get_phase as get_moles_phase
 
 
 def get_current_turn_action(game: Game) -> str | None:
@@ -35,6 +37,8 @@ def get_current_turn_action(game: Game) -> str | None:
             return get_wa_turn_action(player)
         case Faction.CROWS:
             return get_crows_turn_action(player)
+        case Faction.MOLES:
+            return get_moles_turn_action(player)
         case _:
             raise ValueError("Invalid faction")
 
@@ -223,3 +227,45 @@ def get_crows_evening_turn_action(phase: CrowEvening):
             return None
         case _:
             raise ValueError("Invalid crows evening step")
+
+
+def get_moles_turn_action(player: Player) -> str | None:
+    """Return the current moles turn action route for the player or raises if unexpected step"""
+    phase = get_moles_phase(player)
+    match phase:
+        case MoleBirdsong():
+            return get_moles_birdsong_turn_action(phase)
+        case MoleDaylight():
+            return get_moles_daylight_turn_action(phase)
+        case MoleEvening():
+            return get_moles_evening_turn_action(phase)
+        case _:
+            raise ValueError("Invalid moles phase")
+
+
+def get_moles_birdsong_turn_action(phase: MoleBirdsong):
+    match phase.step:
+        case MoleBirdsong.MoleBirdsongSteps.PLACE_WARRIORS:
+            return None
+        case MoleBirdsong.MoleBirdsongSteps.COMPLETED:
+            return None
+        case _:
+            raise ValueError(f"Invalid moles birdsong step: {phase.step}")
+
+
+def get_moles_daylight_turn_action(phase: MoleDaylight):
+    match phase.step:
+        case MoleDaylight.MoleDaylightSteps.ACTIONS:
+            return reverse("moles-daylight-actions")
+        case MoleDaylight.MoleDaylightSteps.MINISTER_ACTIONS | MoleDaylight.MoleDaylightSteps.SWAY_MINISTER | MoleDaylight.MoleDaylightSteps.BEFORE_END | MoleDaylight.MoleDaylightSteps.COMPLETED:
+            return None
+        case _:
+            raise ValueError("Invalid moles daylight step")
+
+
+def get_moles_evening_turn_action(phase: MoleEvening):
+    match phase.step:
+        case MoleEvening.MoleEveningSteps.COMPLETED:
+            return None
+        case _:
+            return None

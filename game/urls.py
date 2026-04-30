@@ -34,6 +34,10 @@ from game.views.action_views.crows.birdsong import (
 )
 from game.views.action_views.crows.daylight import CrowsDaylightActionsView
 from game.views.action_views.crows.evening import CrowsExertView, CrowsDiscardingView
+from game.views.action_views.moles.daylight import (
+    MolesDaylightActionsView, MolesMoveView, MolesBattleView,
+    MolesDigView, MolesRecruitView, MolesBuildView,
+)
 from game.views.action_views.setup.crows import (
     CrowsPickClearingView,
     CrowsConfirmCompletedSetupView,
@@ -370,6 +374,43 @@ register_action(
     "crows-discard-cards",
     CrowsDiscardingView,
     "api/crows/action/discard/",
+    urlpatterns,
+)
+
+register_action(
+    "moles-daylight-actions",
+    MolesDaylightActionsView,
+    "api/moles/daylight/actions/",
+    urlpatterns,
+)
+register_action(
+    "moles-daylight-move",
+    MolesMoveView,
+    "api/moles/daylight/actions/move/",
+    urlpatterns,
+)
+register_action(
+    "moles-daylight-battle",
+    MolesBattleView,
+    "api/moles/daylight/actions/battle/",
+    urlpatterns,
+)
+register_action(
+    "moles-daylight-dig",
+    MolesDigView,
+    "api/moles/daylight/actions/dig/",
+    urlpatterns,
+)
+register_action(
+    "moles-daylight-recruit",
+    MolesRecruitView,
+    "api/moles/daylight/actions/recruit/",
+    urlpatterns,
+)
+register_action(
+    "moles-daylight-build",
+    MolesBuildView,
+    "api/moles/daylight/actions/build/",
     urlpatterns,
 )
 

@@ -41,7 +41,9 @@ class RootGameClient(APIClient):
         try:
             self.base_route = response.json()["route"]
         except (KeyError, TypeError) as e:
-            print(f"Error getting current action: {response.status_code} {response.json()}")
+            print(
+                f"Error getting current action: {response.status_code} {response.json()}"
+            )
             raise e
         response = self.get(f"{self.base_route}?game_id={self.game_id}")
         self.step = response.json()
@@ -59,7 +61,15 @@ class RootGameClient(APIClient):
         step_route = f"{self.base_route}{self.game_id}/{self.step['endpoint']}/"
         response = self.post(step_route, data=data, format="json")
         if self.ok(response):
-            self.step = response.json()
+            response_data = response.json()
+            if response_data.get("new_base_endpoint"):
+                self.base_route = response_data["new_base_endpoint"]
+                get_response: Response = self.get(f"{self.base_route}?game_id={self.game_id}")
+                self.step = get_response.json()
+                self.last_get_response = get_response
+                self.last_post_response = response
+                return get_response
+            self.step = response_data
         self.last_post_response = response
         return response
 
@@ -73,10 +83,10 @@ class RootGameClient(APIClient):
         """
         if self.step is None:
             raise ValueError("No current action")
-        
+
         if "payload_details" not in self.step:
-             raise ValueError(f"Step has no payload_details: {self.step}")
-             
+            raise ValueError(f"Step has no payload_details: {self.step}")
+
         payload_details: list[dict] = self.step["payload_details"]
         # prepare data to post
         to_send = {}
@@ -91,14 +101,20 @@ class RootGameClient(APIClient):
             if payload_detail["type"] in data:
                 to_send[payload_detail["name"]] = data[payload_detail["type"]]
             else:
-                raise ValueError(f"{payload_detail} not found in submitted data. Available data keys: {list(data.keys())}")
+                raise ValueError(
+                    f"{payload_detail} not found in submitted data. Available data keys: {list(data.keys())}"
+                )
         # send data to endpoint
         response = self.post_action(to_send)
         if not self.ok(response):
             print("error: ", response.json())
             return response
         if response.json()["name"] == "completed":
-            self.get_action()
+            try:
+                self.get_action()
+            except Exception:
+                # If no next action available, that's ok (turn might be ending)
+                pass
         self.print_last_post_response()
         return response
 

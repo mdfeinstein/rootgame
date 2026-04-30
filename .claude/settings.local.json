@@ -57,7 +57,14 @@
       "Bash(python .agent/scripts/run_tests.py game.tests.transactions.moles)",
       "Bash(python .agent/scripts/run_tests.py game.tests.transactions.battle)",
       "Bash(python .agent/scripts/run_tests.py game.tests.transactions.moles.test_price_of_failure)",
-      "Bash(grep -q \"^OK$\\\\|^FAILED\" f:/rootGame/test_output.txt)"
+      "Bash(grep -q \"^OK$\\\\|^FAILED\" f:/rootGame/test_output.txt)",
+      "Bash(python -c \"from game.views.action_views.moles.daylight import MolesDaylightActionsView, MolesMoveView, MolesBattleView, MolesDigView, MolesRecruitView, MolesBuildView; print\\('All imports successful'\\)\")",
+      "Bash(python -m py_compile f:/rootGame/game/views/action_views/moles/daylight.py)",
+      "Bash(python -m py_compile f:/rootGame/game/urls.py)",
+      "Bash(python -m py_compile f:/rootGame/game/views/action_views/general.py)",
+      "Bash(python -m py_compile f:/rootGame/game/queries/moles/daylight.py)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.action_views.moles.test_moles_daylight_actions)",
+      "Bash(python manage.py shell -c ' *)"
     ]
   }
 }

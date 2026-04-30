@@ -382,6 +382,7 @@ class GameActionStepSerializer(serializers.Serializer):
     )
     accumulated_payload = serializers.JSONField(required=False)
     options = OptionSerializer(many=True, required=False)
+    new_base_endpoint = serializers.CharField(required=False, allow_null=True)
 
 
 class GameActionSerializer(serializers.Serializer):
