@@ -41,10 +41,11 @@ def create_moles_tunnels(player: Player):
 
 @transaction.atomic
 def create_moles_crowns(player: Player):
-    """create 3 crowns: one of each type (SQUIRE, NOBLE, LORD)"""
-    Crown.objects.create(player=player, type=Crown.CrownType.SQUIRE, used=False)
-    Crown.objects.create(player=player, type=Crown.CrownType.NOBLE, used=False)
-    Crown.objects.create(player=player, type=Crown.CrownType.LORD, used=False)
+    """create 9 crowns: three of each type (SQUIRE, NOBLE, LORD)"""
+    for _ in range(3):
+        Crown.objects.create(player=player, type=Crown.CrownType.SQUIRE, used=False)
+        Crown.objects.create(player=player, type=Crown.CrownType.NOBLE, used=False)
+        Crown.objects.create(player=player, type=Crown.CrownType.LORD, used=False)
 
 
 @transaction.atomic

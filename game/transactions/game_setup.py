@@ -82,6 +82,7 @@ def assign_turn_order(game: Game):
         Faction.BIRDS: 1,
         Faction.WOODLAND_ALLIANCE: 2,
         Faction.CROWS: 7,
+        Faction.MOLES: 8,
     }
     # rank players by faction turn order value
     # this will be useful when there are more factions

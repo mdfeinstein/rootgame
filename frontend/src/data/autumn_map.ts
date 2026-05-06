@@ -31,6 +31,9 @@ export const defaultPositions = [
   { x: 0.4, y: 0.6 },
 ];
 
+// Burrow position and size (Moles special off-map clearing)
+export const burrowPosition = { x: 0.09, y: 0.6, radiusScale: 0.075 };
+
 export const defaultLinks: { from: number; to: number }[] = [
   { from: 1, to: 10 },
   { from: 1, to: 5 },
@@ -104,6 +107,7 @@ export const buildingSlotMap: Record<number, SquareProps[]> = {
 };
 
 export const warriorSlotMap: Record<number, SquareProps[]> = {
+  0: [{ x: 0, y: 0, size: sq_size }],  // Burrow — single centered slot
   1: [
     { x: -0.4, y: -0.4, size: sq_size },
     { x: -0.4, y: 0.4, size: sq_size },

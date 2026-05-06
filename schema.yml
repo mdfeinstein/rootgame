@@ -4177,6 +4177,1977 @@ paths:
       responses:
         '200':
           description: No response body
+  /api/moles/daylight/actions/:
+    get:
+      operationId: moles_daylight_actions_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_actions_create
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/actions/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_actions_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_actions_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/actions/battle/:
+    get:
+      operationId: moles_daylight_actions_battle_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_actions_battle_create
+      description: Base class for sub-action views that delegate to parent validators.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/actions/battle/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_actions_battle_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_actions_battle_create_2
+      description: Base class for sub-action views that delegate to parent validators.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/actions/build/:
+    get:
+      operationId: moles_daylight_actions_build_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_actions_build_create
+      description: Base class for sub-action views that delegate to parent validators.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/actions/build/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_actions_build_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_actions_build_create_2
+      description: Base class for sub-action views that delegate to parent validators.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/actions/dig/:
+    get:
+      operationId: moles_daylight_actions_dig_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_actions_dig_create
+      description: Base class for sub-action views that delegate to parent validators.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/actions/dig/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_actions_dig_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_actions_dig_create_2
+      description: Base class for sub-action views that delegate to parent validators.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/actions/move/:
+    get:
+      operationId: moles_daylight_actions_move_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_actions_move_create
+      description: Base class for sub-action views that delegate to parent validators.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/actions/move/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_actions_move_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_actions_move_create_2
+      description: Base class for sub-action views that delegate to parent validators.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/actions/recruit/:
+    get:
+      operationId: moles_daylight_actions_recruit_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_actions_recruit_create
+      description: Base class for sub-action views that delegate to parent validators.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/actions/recruit/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_actions_recruit_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_actions_recruit_create_2
+      description: Base class for sub-action views that delegate to parent validators.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/:
+    get:
+      operationId: moles_daylight_minister_actions_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_create
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_minister_actions_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/banker/:
+    get:
+      operationId: moles_daylight_minister_actions_banker_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_banker_create
+      description: Base class for sub-action views that delegate to parent validators.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/banker/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_minister_actions_banker_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_banker_create_2
+      description: Base class for sub-action views that delegate to parent validators.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/baron/:
+    get:
+      operationId: moles_daylight_minister_actions_baron_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: moles_daylight_minister_actions_baron_create
+      description: Base class for sub-action views that delegate to parent validators.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/baron/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_minister_actions_baron_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: moles_daylight_minister_actions_baron_create_2
+      description: Base class for sub-action views that delegate to parent validators.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/brigadier/:
+    get:
+      operationId: moles_daylight_minister_actions_brigadier_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_brigadier_create
+      description: Base class for sub-action views that delegate to parent validators.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/brigadier/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_minister_actions_brigadier_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_brigadier_create_2
+      description: Base class for sub-action views that delegate to parent validators.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/captain/:
+    get:
+      operationId: moles_daylight_minister_actions_captain_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_captain_create
+      description: Base class for sub-action views that delegate to parent validators.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/captain/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_minister_actions_captain_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_captain_create_2
+      description: Base class for sub-action views that delegate to parent validators.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/duchess/:
+    get:
+      operationId: moles_daylight_minister_actions_duchess_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: moles_daylight_minister_actions_duchess_create
+      description: Base class for sub-action views that delegate to parent validators.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/duchess/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_minister_actions_duchess_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: moles_daylight_minister_actions_duchess_create_2
+      description: Base class for sub-action views that delegate to parent validators.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/earl/:
+    get:
+      operationId: moles_daylight_minister_actions_earl_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: moles_daylight_minister_actions_earl_create
+      description: Base class for sub-action views that delegate to parent validators.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/earl/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_minister_actions_earl_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: moles_daylight_minister_actions_earl_create_2
+      description: Base class for sub-action views that delegate to parent validators.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/foremole/:
+    get:
+      operationId: moles_daylight_minister_actions_foremole_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_foremole_create
+      description: Base class for sub-action views that delegate to parent validators.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/foremole/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_minister_actions_foremole_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_foremole_create_2
+      description: Base class for sub-action views that delegate to parent validators.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/marshal/:
+    get:
+      operationId: moles_daylight_minister_actions_marshal_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_marshal_create
+      description: Base class for sub-action views that delegate to parent validators.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/marshal/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_minister_actions_marshal_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_marshal_create_2
+      description: Base class for sub-action views that delegate to parent validators.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/mayor/:
+    get:
+      operationId: moles_daylight_minister_actions_mayor_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_mayor_create
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/minister-actions/mayor/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_minister_actions_mayor_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_minister_actions_mayor_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/sway-minister/:
+    get:
+      operationId: moles_daylight_sway_minister_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_sway_minister_create
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/daylight/sway-minister/{game_id}/{route}/:
+    get:
+      operationId: moles_daylight_sway_minister_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_daylight_sway_minister_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/evening/craft/:
+    get:
+      operationId: moles_evening_craft_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_evening_craft_create
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/evening/craft/{game_id}/{route}/:
+    get:
+      operationId: moles_evening_craft_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_evening_craft_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/evening/discard/:
+    get:
+      operationId: moles_evening_discard_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_evening_discard_create
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/evening/discard/{game_id}/{route}/:
+    get:
+      operationId: moles_evening_discard_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_evening_discard_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/player-info/{game_id}/:
+    get:
+      operationId: moles_player_info_retrieve
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Moles'
+          description: ''
+  /api/moles/price-of-failure/:
+    get:
+      operationId: moles_price_of_failure_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_price_of_failure_create
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/price-of-failure/{game_id}/{route}/:
+    get:
+      operationId: moles_price_of_failure_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_price_of_failure_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/setup/confirm-completed-setup/:
+    get:
+      operationId: moles_setup_confirm_completed_setup_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: moles_setup_confirm_completed_setup_create
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/setup/confirm-completed-setup/{game_id}/{route}/:
+    get:
+      operationId: moles_setup_confirm_completed_setup_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+    post:
+      operationId: moles_setup_confirm_completed_setup_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/setup/pick-corner/:
+    get:
+      operationId: moles_setup_pick_corner_retrieve
+      description: Return initial step data.
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_setup_pick_corner_create
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/moles/setup/pick-corner/{game_id}/{route}/:
+    get:
+      operationId: moles_setup_pick_corner_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: moles_setup_pick_corner_create_2
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - moles
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
   /api/outrage/:
     get:
       operationId: outrage_retrieve
@@ -5317,18 +7288,21 @@ components:
               - bi
               - wa
               - cr
+              - mo
               type: string
               description: |-
                 * `ca` - ca
                 * `bi` - bi
                 * `wa` - wa
                 * `cr` - cr
+                * `mo` - mo
             label:
               type: string
               enum:
               - Birds
               - Cats
               - Crows
+              - Moles
               - Woodland Alliance
           required:
           - value
@@ -5349,18 +7323,21 @@ components:
               - bi
               - wa
               - cr
+              - mo
               type: string
               description: |-
                 * `ca` - ca
                 * `bi` - bi
                 * `wa` - wa
                 * `cr` - cr
+                * `mo` - mo
             label:
               type: string
               enum:
               - Birds
               - Cats
               - Crows
+              - Moles
               - Woodland Alliance
           required:
           - value
@@ -5380,6 +7357,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Option'
+        new_base_endpoint:
+          type: string
+          nullable: true
       required:
       - name
     GameLog:
@@ -5510,6 +7490,7 @@ components:
               - WA
               - VB
               - CROW
+              - MOL
               - COMP
               type: string
               description: |-
@@ -5519,6 +7500,7 @@ components:
                 * `WA` - WA
                 * `VB` - VB
                 * `CROW` - CROW
+                * `MOL` - MOL
                 * `COMP` - COMP
             label:
               type: string
@@ -5528,6 +7510,7 @@ components:
               - Completed
               - Crows Setup
               - Initial Setup
+              - Moles Setup
               - Vagabond Setup
               - Woodland Alliance Setup
           required:
@@ -5607,6 +7590,7 @@ components:
       - CROWS_RAID
       - CROWS_SETUP_PLACE_WARRIOR
       - CROWS_EXTORTION_STOLE_CARD
+      - MOLES_SETUP_PICK_CORNER
       - CATS_FIELD_HOSPITALS
       - CRAFTED_CARD_ACTION
       type: string
@@ -5655,8 +7639,139 @@ components:
         * `CROWS_RAID` - Crows Raid
         * `CROWS_SETUP_PLACE_WARRIOR` - Crows Setup Place Warrior
         * `CROWS_EXTORTION_STOLE_CARD` - Crows Extortion Stole Card
+        * `MOLES_SETUP_PICK_CORNER` - Moles Setup Pick Corner
         * `CATS_FIELD_HOSPITALS` - Field Hospitals
         * `CRAFTED_CARD_ACTION` - Crafted Card Action
+    Moles:
+      type: object
+      description: Serializer to provide all (public) information about moles
+      properties:
+        player:
+          $ref: '#/components/schemas/PlayerPublic'
+        warriors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Warrior'
+        buildings:
+          $ref: '#/components/schemas/MolesBuildings'
+        tokens:
+          $ref: '#/components/schemas/MolesTokens'
+        ministers:
+          type: array
+          items:
+            $ref: '#/components/schemas/MolesMinister'
+        crowns:
+          type: array
+          items:
+            $ref: '#/components/schemas/MolesCrown'
+        burrow_warriors:
+          type: string
+          readOnly: true
+      required:
+      - buildings
+      - burrow_warriors
+      - crowns
+      - ministers
+      - player
+      - tokens
+      - warriors
+    MolesBuildings:
+      type: object
+      description: Serializer for moles buildings. collects lists of all buildings
+      properties:
+        citadels:
+          type: array
+          items:
+            $ref: '#/components/schemas/MolesCitadel'
+        markets:
+          type: array
+          items:
+            $ref: '#/components/schemas/MolesMarket'
+      required:
+      - citadels
+      - markets
+    MolesCitadel:
+      type: object
+      properties:
+        building:
+          $ref: '#/components/schemas/Building'
+        crafted_with:
+          type: boolean
+      required:
+      - building
+    MolesCrown:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        used:
+          type: boolean
+      required:
+      - id
+    MolesMarket:
+      type: object
+      properties:
+        building:
+          $ref: '#/components/schemas/Building'
+        crafted_with:
+          type: boolean
+      required:
+      - building
+    MolesMinister:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          $ref: '#/components/schemas/NameEnum'
+        swayed:
+          type: boolean
+        used:
+          type: boolean
+        crown_type:
+          type: string
+          description: Returns the crown type (rank) for this minister.
+          readOnly: true
+      required:
+      - crown_type
+      - id
+      - name
+    MolesTokens:
+      type: object
+      description: Serializer for moles tokens. collects lists of all tokens
+      properties:
+        tunnels:
+          type: array
+          items:
+            $ref: '#/components/schemas/NestedToken'
+      required:
+      - tunnels
+    NameEnum:
+      enum:
+      - marshal
+      - captain
+      - foremole
+      - brigadier
+      - mayor
+      - banker
+      - duchess
+      - earl
+      - baron
+      type: string
+      description: |-
+        * `marshal` - Marshal
+        * `captain` - Captain
+        * `foremole` - Foremole
+        * `brigadier` - Brigadier
+        * `mayor` - Mayor
+        * `banker` - Banker
+        * `duchess` - Duchess of Mud
+        * `earl` - Earl of Stone
+        * `baron` - Baron of Dirt
     NestedToken:
       type: object
       properties:
@@ -5705,18 +7820,21 @@ components:
               - bi
               - wa
               - cr
+              - mo
               type: string
               description: |-
                 * `ca` - ca
                 * `bi` - bi
                 * `wa` - wa
                 * `cr` - cr
+                * `mo` - mo
             label:
               type: string
               enum:
               - Birds
               - Cats
               - Crows
+              - Moles
               - Woodland Alliance
           required:
           - value
@@ -5768,18 +7886,21 @@ components:
               - bi
               - wa
               - cr
+              - mo
               type: string
               description: |-
                 * `ca` - ca
                 * `bi` - bi
                 * `wa` - wa
                 * `cr` - cr
+                * `mo` - mo
             label:
               type: string
               enum:
               - Birds
               - Cats
               - Crows
+              - Moles
               - Woodland Alliance
           required:
           - value
@@ -5856,6 +7977,16 @@ components:
       required:
       - access
       - refresh
+    TypeEnum:
+      enum:
+      - squire
+      - noble
+      - lord
+      type: string
+      description: |-
+        * `squire` - Squire
+        * `noble` - Noble
+        * `lord` - Lord
     UndoResponse:
       type: object
       properties:

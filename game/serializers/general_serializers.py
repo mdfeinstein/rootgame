@@ -27,6 +27,8 @@ from game.models.game_models import (
     CraftedItemEntry,
 )
 from game.models.wa.turn import WATurn
+from game.models.moles.setup import MolesSimpleSetup
+from game.models.moles.turn import MoleTurn
 from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
 from drf_spectacular.utils import extend_schema_field, Direction
 from drf_spectacular.extensions import OpenApiSerializerFieldExtension
@@ -422,6 +424,7 @@ class GameStatusSerializer(serializers.Serializer):
                 Faction.BIRDS: BirdsSimpleSetup,
                 Faction.WOODLAND_ALLIANCE: None,  #
                 Faction.CROWS: CrowsSimpleSetup,
+                Faction.MOLES: MolesSimpleSetup,
             }
         elif game.status == Game.GameStatus.SETUP_COMPLETED:
             turn_object_dict = {
@@ -429,6 +432,7 @@ class GameStatusSerializer(serializers.Serializer):
                 Faction.BIRDS: BirdTurn,
                 Faction.WOODLAND_ALLIANCE: WATurn,
                 Faction.CROWS: CrowTurn,
+                Faction.MOLES: MoleTurn,
             }
         if current_player is not None:
             faction = Faction(current_player.faction)

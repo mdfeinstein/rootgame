@@ -1,6 +1,6 @@
 {
   "typeCheckingMode": "basic",
-  // "reportMissingTypeStubs": true,
+  "pythonPath": "F:/python/envs/.venv_web/scripts/python.exe",
   "pythonVersion": "3.10",
   "include" : ["."],
   // "djangoSettingsModule": "rootGame.settings",

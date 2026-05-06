@@ -11,6 +11,7 @@ import {
   defaultPositions,
   defaultLinks,
   waterLinks,
+  burrowPosition,
 } from "../../data/autumn_map";
 import { Clearing, type ClearingProps } from "./Clearing";
 import { Path } from "./Path";
@@ -60,6 +61,8 @@ export default function SvgBoard({
     gameId as number,
     isGameStarted && isCrowsInGame,
   );
+
+  const isMolesInGame = factionList.includes("Moles");
 
   useEffect(() => {
     if (!turnInfo.data) return;
@@ -183,6 +186,26 @@ export default function SvgBoard({
     });
   }, [mapName, width, height]);
 
+  const burrowWarriorCount = isMolesInGame
+    ? warriorTable?.filter(
+        (e) => e.faction === "Moles" && e.clearing_number === 0,
+      ).length ?? 0
+    : 0;
+
+  const burrowClearingProp = isMolesInGame
+    ? {
+        clearingNumber: 0,
+        suit: "#d49d99",
+        circleProps: {
+          cx: width * burrowPosition.x,
+          cy: height * burrowPosition.y,
+          r: height * burrowPosition.radiusScale,
+        },
+        label: "B",
+        tooltip: "The Burrow — adjacent to all tunnel clearings",
+      }
+    : null;
+
   return (
     <Paper
       shadow="xl"
@@ -304,6 +327,22 @@ export default function SvgBoard({
               })}
             </Clearing>
           ))}
+          {isMolesInGame && burrowClearingProp && (
+            <Clearing {...burrowClearingProp}>
+              <WarriorSlot
+                {...warriorSlotMap[0][0]}
+                warriorInfo={{
+                  faction: "Moles",
+                  count: burrowWarriorCount,
+                }}
+                tooltip={
+                  burrowWarriorCount > 0
+                    ? `Moles Warriors (${burrowWarriorCount})`
+                    : undefined
+                }
+              />
+            </Clearing>
+          )}
         </g>
       </svg>
     </Paper>

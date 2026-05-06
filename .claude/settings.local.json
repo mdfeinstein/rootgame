@@ -1,4 +1,8 @@
 {
+  "env": {
+    "ENABLE_LSP_TOOL": "1",
+    "PATH": "F:/python/envs/.venv_web/scripts;$PATH"
+  },
   "permissions": {
     "allow": [
       "Bash(python .agent/scripts/run_tests.py game.tests.transactions.birds.test_birds_evening)",
@@ -107,7 +111,16 @@
       "Bash(python -c \"from game.serializers.moles_serializers import MolesSerializer, MoleTurnSerializer; print\\('✓ Imports successful'\\)\")",
       "Bash(python manage.py shell -c \"from game.serializers.moles_serializers import MolesSerializer, MoleTurnSerializer; print\\('✓ Serializers imported successfully'\\)\")",
       "Bash(python manage.py shell -c \"from game.serializers.moles_serializers import MolesSerializer, MoleTurnSerializer; print\\('OK'\\)\")",
-      "Bash(python manage.py shell -c \"from game.serializers.game_state_serializer import GameStateSerializer; print\\('OK'\\)\")"
+      "Bash(python manage.py shell -c \"from game.serializers.game_state_serializer import GameStateSerializer; print\\('OK'\\)\")",
+      "Bash(python .agent/scripts/run_tests.py game.tests.action_views.moles.test_moles_setup_flow)",
+      "Bash(python -m py_compile game/views/action_views/setup/moles.py game/queries/current_action/setup.py)",
+      "PowerShell(Get-Command node -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command npm -ErrorAction SilentlyContinue)",
+      "Bash(python manage.py spectacular --file schema.yml)"
     ]
+  },
+  "enabledPlugins": {
+    "pyright-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
   }
 }

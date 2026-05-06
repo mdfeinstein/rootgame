@@ -375,6 +375,8 @@ class RevealedCardEntry(models.Model):
     """
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
+    turn_revealed = models.IntegerField(default=0)
+    returned_to_hand = models.BooleanField(default=False)
 
     @classmethod
     def hand_to_revealed(cls, hand_entry: HandEntry) -> "RevealedCardEntry":

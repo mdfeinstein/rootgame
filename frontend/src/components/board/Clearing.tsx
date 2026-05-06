@@ -14,6 +14,7 @@ export type ClearingProps = {
   suit: string;
   circleProps: { cx: number; cy: number; r: number };
   tooltip?: string;
+  label?: string;
 };
 // Simple circle node
 export function Clearing({
@@ -23,6 +24,7 @@ export function Clearing({
   children,
   onClick,
   tooltip,
+  label,
 }: {
   clearingNumber: number;
   suit: string;
@@ -30,6 +32,7 @@ export function Clearing({
   children?: React.ReactNode;
   onClick?: (id: number) => void;
   tooltip?: string;
+  label?: string;
 }) {
   const { cx, cy, r } = circleProps;
   const { submitPayloadCallback } = useContext(GameActionContext);
@@ -69,7 +72,7 @@ export function Clearing({
                 fill="black"
                 style={{ pointerEvents: "none" }}
               >
-                {clearingNumber}
+                {label ?? clearingNumber}
               </text>
             </g>
           </Tooltip>

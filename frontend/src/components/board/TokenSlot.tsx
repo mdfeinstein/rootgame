@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { ClearingContext } from "./Clearing";
 import { Tooltip } from "@mantine/core";
 
-import { factionToColor } from "./WarriorTroop";
+import { factionToColor } from "../../utils/factionColors";
 import { type FactionLabel } from "../../utils/factionUtils";
 
 export type TokenInfo = {
@@ -33,7 +33,7 @@ export const TokenSlot = ({
   let text = "";
   let countText = "";
   if (tokenInfo) {
-    color = factionToColor[tokenInfo.faction];
+    color = factionToColor(tokenInfo.faction);
     text = tokenInfo.tokenType[0];
     countText = tokenInfo.count > 1 ? tokenInfo.count.toString() : "";
   }

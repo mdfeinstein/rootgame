@@ -2,6 +2,27 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Code Intelligence
+
+**Workflow: Grep to locate, LSP to navigate**
+
+1. Use **Grep** to find a symbol definition by pattern (e.g. `class GameActionView`, `def foo_bar`)
+2. Once you have the file & line, use **LSP** to explore:
+   - `findReferences` to see all usages across the codebase
+   - `goToDefinition` / `goToImplementation` to jump to source
+   - `documentSymbol` to list all symbols in a file
+   - `hover` for type info without reading
+   - `incomingCalls` / `outgoingCalls` for call hierarchy
+
+Before renaming or changing a function signature, use
+`findReferences` to find all call sites first.
+
+Use Grep/Glob only for text/pattern searches (comments,
+strings, config values) where LSP doesn't help.
+
+After writing or editing code, check LSP diagnostics before
+moving on. Fix any type errors or missing imports immediately.
+
 ## Project Overview
 
 A Django/React web adaptation of the board game *Root* by Cole Wehrle. Live at https://root.mattdf.net/

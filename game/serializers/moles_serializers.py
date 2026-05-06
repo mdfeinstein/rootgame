@@ -7,54 +7,60 @@ from game.models.moles.turn import MoleTurn, MoleBirdsong, MoleDaylight, MoleEve
 from game.models.moles.ministers import Minister
 from game.models.moles.crown import Crown
 from game.serializers.general_serializers import (
+    BuildingSerializer,
     PlayerPublicSerializer,
+    TokenSerializer,
     WarriorSerializer,
 )
 
 
 class MolesMinisterSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
     class Meta:
         model = Minister
-        fields = ["id", "name", "swayed", "used", "crown_type"]
+        fields = ["name", "swayed", "used", "crown_type"]
+
+    def get_name(self, obj):
+        return obj.get_name_display()
 
 
 class MolesCrownSerializer(serializers.ModelSerializer):
     class Meta:
         model = Crown
-        fields = ["id", "tier", "used", "minister"]
+        fields = ["type", "used"]
 
 
 class MolesCitadelSerializer(serializers.ModelSerializer):
-    clearing_number = serializers.SerializerMethodField()
+    building = BuildingSerializer()
 
     class Meta:
         model = Citadel
-        fields = ["id", "clearing_number", "crafted_with"]
-
-    def get_clearing_number(self, obj):
-        return obj.clearing.clearing_number if obj.clearing else None
+        fields = ["building", "crafted_with"]
 
 
 class MolesMarketSerializer(serializers.ModelSerializer):
-    clearing_number = serializers.SerializerMethodField()
+    building = BuildingSerializer()
 
     class Meta:
         model = Market
-        fields = ["id", "clearing_number", "crafted_with"]
-
-    def get_clearing_number(self, obj):
-        return obj.clearing.clearing_number if obj.clearing else None
+        fields = ["building", "crafted_with"]
 
 
-class MolesTunnelSerializer(serializers.ModelSerializer):
-    clearing_number = serializers.SerializerMethodField()
+class MolesBuildingsSerializer(serializers.Serializer):
+    """Serializer for moles buildings. collects lists of all buildings"""
 
-    class Meta:
-        model = Tunnel
-        fields = ["id", "clearing_number"]
+    citadels = MolesCitadelSerializer(many=True)
+    markets = MolesMarketSerializer(many=True)
 
-    def get_clearing_number(self, obj):
-        return obj.clearing.clearing_number if obj.clearing else None
+
+class MolesTokensSerializer(serializers.Serializer):
+    """Serializer for moles tokens. collects lists of all tokens"""
+
+    class NestedTokenSerializer(serializers.Serializer):
+        token = TokenSerializer()
+
+    tunnels = NestedTokenSerializer(many=True)
 
 
 class MolesBirdsongSerializer(serializers.ModelSerializer):
@@ -90,9 +96,8 @@ class MolesSerializer(serializers.Serializer):
 
     player = PlayerPublicSerializer()
     warriors = WarriorSerializer(many=True)
-    citadels = MolesCitadelSerializer(many=True)
-    markets = MolesMarketSerializer(many=True)
-    tunnels = MolesTunnelSerializer(many=True)
+    buildings = MolesBuildingsSerializer()
+    tokens = MolesTokensSerializer()
     ministers = MolesMinisterSerializer(many=True)
     crowns = MolesCrownSerializer(many=True)
     burrow_warriors = serializers.SerializerMethodField()
@@ -103,8 +108,18 @@ class MolesSerializer(serializers.Serializer):
         citadels = Citadel.objects.filter(player=player)
         markets = Market.objects.filter(player=player)
         tunnels = Tunnel.objects.filter(player=player)
+
+        buildings = {
+            "citadels": citadels,
+            "markets": markets,
+        }
+
+        tokens = {
+            "tunnels": tunnels,
+        }
+
         ministers = Minister.objects.filter(player=player)
-        crowns = Crown.objects.filter(minister__player=player)
+        crowns = Crown.objects.filter(player=player)
 
         # Count warriors in burrow (warriors with no clearing)
         burrow_count = Warrior.objects.filter(player=player, clearing__isnull=True).count()
@@ -113,9 +128,8 @@ class MolesSerializer(serializers.Serializer):
             instance={
                 "player": player,
                 "warriors": warriors,
-                "citadels": citadels,
-                "markets": markets,
-                "tunnels": tunnels,
+                "buildings": buildings,
+                "tokens": tokens,
                 "ministers": ministers,
                 "crowns": crowns,
                 "burrow_warriors": burrow_count,
