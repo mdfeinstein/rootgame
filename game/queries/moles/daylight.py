@@ -338,6 +338,58 @@ def validate_cards_can_sway_minister(
     return hand_entries
 
 
+def validate_cards_match_clearings(player: Player, cards: list[CardsEP]) -> bool:
+    """Validate that cards match clearings with moles pieces (no repeats).
+
+    Each card must match a clearing with moles pieces. No clearing can be matched twice.
+    Used for incremental validation during card selection.
+
+    Args:
+        player: The Moles player
+        cards: List of cards to validate
+
+    Returns:
+        True if cards are valid
+
+    Raises:
+        IllegalActionError if any card doesn't match a clearing with pieces or clears are reused
+    """
+    clearing_set: set[Clearing] = set()
+    for card in cards:
+        if card.value.suit == Suit.WILD:
+            continue
+        clearings = Clearing.objects.filter(game=player.game, suit=card.value.suit)
+        found = False
+        for clearing in clearings:
+            if clearing in clearing_set:
+                continue
+            if player_has_pieces_in_clearing(player, clearing):
+                clearing_set.add(clearing)
+                found = True
+                break
+        if not found:
+            raise IllegalActionError(
+                f"{card.value.title} does not match any clearings with moles pieces in it"
+            )
+    for card in cards:
+        if card.value.suit != Suit.WILD:
+            continue
+        clearings = Clearing.objects.filter(game=player.game)
+        found = False
+        for clearing in clearings:
+            if clearing in clearing_set:
+                continue
+            if player_has_pieces_in_clearing(player, clearing):
+                clearing_set.add(clearing)
+                found = True
+                break
+        if not found:
+            raise IllegalActionError(
+                f"{card.value.title} does not match any clearings with moles pieces in it"
+            )
+    return True
+
+
 def get_actions_remaining(player: Player) -> int:
     """Get the number of actions remaining in the current daylight phase.
 

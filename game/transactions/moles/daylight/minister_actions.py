@@ -427,7 +427,6 @@ def use_brigadier(player: Player, action: Literal["move", "battle"], *args):
         IllegalActionError if trying to mix actions or invalid action type
     """
     validate_step(player, MoleDaylight.MoleDaylightSteps.MINISTER_ACTIONS)
-    validate_no_brigadier_in_progress(player)
 
     phase = get_phase(player)
     if not isinstance(phase, MoleDaylight):

@@ -50,7 +50,4 @@ def validate_discard_card(player: Player, card_entry: HandEntry) -> HandEntry:
     if card_entry.player != player:
         raise IllegalActionError("Card not in this player's hand")
 
-    if card_entry.hand is None:
-        raise IllegalActionError("Card is not in hand")
-
     return card_entry

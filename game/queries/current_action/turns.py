@@ -259,7 +259,9 @@ def get_moles_daylight_turn_action(phase: MoleDaylight):
             return reverse("moles-daylight-actions")
         case MoleDaylight.MoleDaylightSteps.MINISTER_ACTIONS:
             return reverse("moles-minister-actions")
-        case MoleDaylight.MoleDaylightSteps.SWAY_MINISTER | MoleDaylight.MoleDaylightSteps.BEFORE_END | MoleDaylight.MoleDaylightSteps.COMPLETED:
+        case MoleDaylight.MoleDaylightSteps.SWAY_MINISTER:
+            return reverse("moles-sway-minister")
+        case MoleDaylight.MoleDaylightSteps.BEFORE_END | MoleDaylight.MoleDaylightSteps.COMPLETED:
             return None
         case _:
             raise ValueError("Invalid moles daylight step")
@@ -267,6 +269,16 @@ def get_moles_daylight_turn_action(phase: MoleDaylight):
 
 def get_moles_evening_turn_action(phase: MoleEvening):
     match phase.step:
+        case MoleEvening.MoleEveningSteps.PROCESS_REVEALED_CARDS:
+            return None
+        case MoleEvening.MoleEveningSteps.CRAFT:
+            return reverse("moles-craft")
+        case MoleEvening.MoleEveningSteps.DRAW:
+            return None
+        case MoleEvening.MoleEveningSteps.DISCARD:
+            return reverse("moles-discard")
+        case MoleEvening.MoleEveningSteps.BEFORE_END:
+            return None
         case MoleEvening.MoleEveningSteps.COMPLETED:
             return None
         case _:

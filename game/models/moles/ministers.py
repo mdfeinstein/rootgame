@@ -59,10 +59,10 @@ class Minister(models.Model):
         ]
 
         if self.name in squire_ministers:
-            return self.MinisterRank.SQUIRE
+            return self.MinisterRank.SQUIRE.value
         elif self.name in noble_ministers:
-            return self.MinisterRank.NOBLE
+            return self.MinisterRank.NOBLE.value
         elif self.name in lord_ministers:
-            return self.MinisterRank.LORD
+            return self.MinisterRank.LORD.value
         else:
             raise ValueError(f"Unknown minister name: {self.name}")

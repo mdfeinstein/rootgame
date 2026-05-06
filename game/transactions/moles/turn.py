@@ -184,6 +184,8 @@ def reset_moles_turn(player: Player):
     Market.objects.filter(player=player).update(crafted_with=False)
 
     # Reset brigadier action state for next turn
-    MoleDaylight.objects.filter(turn__player=player, turn__turn_number=player.turn_number).update(
-        brigadier_action=MoleDaylight.BrigadierAction.NONE
-    )
+    current_turn = MoleTurn.objects.filter(player=player).order_by('-turn_number').first()
+    if current_turn:
+        MoleDaylight.objects.filter(turn=current_turn).update(
+            brigadier_action=MoleDaylight.BrigadierAction.NONE
+        )

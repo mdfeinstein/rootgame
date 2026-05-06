@@ -1,0 +1,11 @@
+Name                                                Stmts   Miss Branch BrPart   Cover
+--------------------------------------------------------------------------------------
+game\views\action_views\moles\daylight.py             270     67     46      8  72.47%
+game\views\action_views\moles\evening.py              172     66     32      4  58.82%
+game\views\action_views\moles\minister_actions.py     488     45    144     21  88.92%
+game\views\action_views\moles\price_of_failure.py      69      5     22      4  90.11%
+game\views\action_views\moles\sway_minister.py        128     18     28      5  83.97%
+--------------------------------------------------------------------------------------
+TOTAL                                                1127    201    272     42  80.34%
+
+1 empty file skipped.

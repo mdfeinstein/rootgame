@@ -124,6 +124,14 @@ class MolesMoveTests(MolesDaylightActionBaseTestCase):
 
 
 class MolesRecruitTests(MolesDaylightActionBaseTestCase):
+    def test_recruit_empty_supply_raises(self):
+        """Recruit with no warriors in supply raises IllegalActionError."""
+        Warrior.objects.filter(player=self.player, clearing__isnull=True).update(
+            clearing=self.start_clearing
+        )
+        with self.assertRaises(IllegalActionError):
+            recruit(self.player)
+
     def test_recruit_places_warrior_in_burrow(self):
         """Recruit places 1 warrior from supply to burrow."""
         initial_supply = Warrior.objects.filter(
@@ -259,6 +267,108 @@ class MolesDigTests(MolesDaylightActionBaseTestCase):
         # Only 1 warrior in burrow initially (from birdsong)
         with self.assertRaises(IllegalActionError):
             dig(self.player, CardsEP.AMBUSH_RED, dig_clearing, warriors_to_move=4)
+
+    def test_dig_no_tunnels_in_supply_raises(self):
+        """Dig with no tunnels left in supply raises IllegalActionError."""
+        # Move all supply tunnels onto map
+        clearings = list(self.game.clearing_set.exclude(clearing_number=3)[:3])
+        tunnels = list(Tunnel.objects.filter(player=self.player, clearing__isnull=True))
+        for i, tunnel in enumerate(tunnels):
+            tunnel.clearing = clearings[i]
+            tunnel.save()
+
+        # Place warrior in burrow
+        warrior = Warrior.objects.filter(player=self.player, clearing__isnull=True).first()
+        assert warrior is not None
+        warrior.clearing = self.burrow
+        warrior.save()
+
+        self.clear_hand()
+        self.add_card_to_hand(CardsEP.AMBUSH_RED)
+        dig_clearing = self.start_clearing.connected_clearings.first()
+
+        with self.assertRaises(IllegalActionError):
+            dig(self.player, CardsEP.AMBUSH_RED, dig_clearing, warriors_to_move=1)
+
+    def test_dig_with_tunnel_relocation(self):
+        """Dig can move an existing tunnel from another clearing."""
+        # Setup: place the existing tunnel in a clearing, then dig uses that clearing
+        source_clearing = self.start_clearing.connected_clearings.first()
+        tunnel_on_map = Tunnel.objects.filter(
+            player=self.player, clearing=self.start_clearing
+        ).first()
+        if tunnel_on_map is None:
+            # place one from supply
+            tunnel_on_map = Tunnel.objects.filter(
+                player=self.player, clearing__isnull=True
+            ).first()
+            assert tunnel_on_map is not None
+            tunnel_on_map.clearing = source_clearing
+            tunnel_on_map.save()
+            source_clearing_actual = source_clearing
+        else:
+            source_clearing_actual = self.start_clearing
+
+        # Target clearing must not have a tunnel — pick a different connected clearing
+        target_clearing = self.game.clearing_set.exclude(
+            clearing_number=source_clearing_actual.clearing_number
+        ).exclude(
+            clearing_number=3
+        ).first()
+
+        # Place warrior in burrow
+        warrior = Warrior.objects.filter(player=self.player, clearing__isnull=True).first()
+        assert warrior is not None
+        warrior.clearing = self.burrow
+        warrior.save()
+
+        self.clear_hand()
+        self.add_card_to_hand(CardsEP.AMBUSH_RED)
+
+        # Ensure target has no tunnel
+        Tunnel.objects.filter(player=self.player, clearing=target_clearing).delete()
+
+        dig(
+            self.player,
+            CardsEP.AMBUSH_RED,
+            target_clearing,
+            warriors_to_move=1,
+            clearing_to_move_tunnel_from=source_clearing_actual,
+        )
+
+        # Tunnel is now in target clearing, not source
+        self.assertFalse(
+            Tunnel.objects.filter(player=self.player, clearing=source_clearing_actual).exists()
+        )
+        self.assertTrue(
+            Tunnel.objects.filter(player=self.player, clearing=target_clearing).exists()
+        )
+
+    def test_dig_invalid_source_clearing_raises(self):
+        """Dig with a source clearing that has no tunnel raises IllegalActionError."""
+        # Pick a clearing with no tunnel
+        no_tunnel_clearing = self.game.clearing_set.exclude(clearing_number=3).first()
+        Tunnel.objects.filter(player=self.player, clearing=no_tunnel_clearing).delete()
+
+        # Place warrior in burrow
+        warrior = Warrior.objects.filter(player=self.player, clearing__isnull=True).first()
+        assert warrior is not None
+        warrior.clearing = self.burrow
+        warrior.save()
+
+        self.clear_hand()
+        self.add_card_to_hand(CardsEP.AMBUSH_RED)
+
+        dig_clearing = self.start_clearing.connected_clearings.first()
+
+        with self.assertRaises(IllegalActionError):
+            dig(
+                self.player,
+                CardsEP.AMBUSH_RED,
+                dig_clearing,
+                warriors_to_move=1,
+                clearing_to_move_tunnel_from=no_tunnel_clearing,
+            )
 
 
 class MolesActionsLeftTests(MolesDaylightActionBaseTestCase):

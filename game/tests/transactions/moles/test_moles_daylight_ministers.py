@@ -12,7 +12,8 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.errors import UnavailableActionError, IllegalActionError
 from game.transactions.moles.daylight.minister_actions import (
     use_marshal, use_captain, use_foremole, use_banker,
-    use_duchess, use_baron, use_earl, check_all_ministers_used
+    use_duchess, use_baron, use_earl, check_all_ministers_used,
+    end_minister_actions, skip_brigadier, use_brigadier, use_mayor
 )
 
 
@@ -367,3 +368,337 @@ class MolesMinisterFactionTests(TestCase):
 
         with self.assertRaises(UnavailableActionError):
             use_banker(self.birds_player, [CardsEP.AMBUSH_RED])
+
+
+class MolesEndMinisterActionsTests(MolesMinisterActionBaseTestCase):
+    def test_end_minister_actions_advances_step(self):
+        """end_minister_actions advances from MINISTER_ACTIONS step."""
+        end_minister_actions(self.player)
+
+        self.daylight.refresh_from_db()
+        self.assertEqual(self.daylight.step, MoleDaylight.MoleDaylightSteps.SWAY_MINISTER)
+
+    def test_end_minister_actions_non_moles_raises(self):
+        """end_minister_actions with non-Moles player raises UnavailableActionError."""
+        birds_player = self.game.players.get(faction=Faction.BIRDS)
+        self.game.current_turn = birds_player.turn_order
+        self.game.save()
+
+        with self.assertRaises(UnavailableActionError):
+            end_minister_actions(birds_player)
+
+
+class MolesSkipBrigadierTests(MolesMinisterActionBaseTestCase):
+    def test_skip_brigadier_resets_action(self):
+        """skip_brigadier resets brigadier_action to NONE."""
+        self.daylight.brigadier_action = MoleDaylight.BrigadierAction.BATTLE
+        self.daylight.save()
+
+        skip_brigadier(self.player)
+
+        self.daylight.refresh_from_db()
+        self.assertEqual(self.daylight.brigadier_action, MoleDaylight.BrigadierAction.NONE)
+
+    def test_skip_brigadier_when_none_raises(self):
+        """skip_brigadier when no action in progress raises IllegalActionError."""
+        self.daylight.brigadier_action = MoleDaylight.BrigadierAction.NONE
+        self.daylight.save()
+
+        with self.assertRaises(IllegalActionError):
+            skip_brigadier(self.player)
+
+
+class MolesBrigadierStateMachineTests(MolesMinisterActionBaseTestCase):
+    def test_brigadier_move_then_battle_raises(self):
+        """Brigadier action: if first was move, can't do battle."""
+        # Sway multiple ministers so step doesn't advance after first action
+        self.sway_minister_for_test(Minister.MinisterName.BRIGADIER)
+        self.sway_minister_for_test(Minister.MinisterName.MARSHAL)
+
+        # First move
+        adjacent = self.start_clearing.connected_clearings.first()
+        use_brigadier(self.player, "move", self.start_clearing, adjacent, 1)
+
+        self.daylight.refresh_from_db()
+        self.assertEqual(self.daylight.brigadier_action, MoleDaylight.BrigadierAction.MOVE)
+
+        # Try to do battle next - should raise
+        with self.assertRaises(IllegalActionError):
+            use_brigadier(self.player, "battle", Faction.BIRDS, self.start_clearing)
+
+    def test_brigadier_battle_then_move_raises(self):
+        """Brigadier action: if first was battle, can't do move."""
+        # Sway multiple ministers so step doesn't advance after first action
+        self.sway_minister_for_test(Minister.MinisterName.BRIGADIER)
+        self.sway_minister_for_test(Minister.MinisterName.MARSHAL)
+
+        # Setup birds warrior for battle
+        birds_player = self.game.players.get(faction=Faction.BIRDS)
+        birds_warrior = Warrior.objects.filter(player=birds_player, clearing__isnull=True).first()
+        assert birds_warrior is not None
+        birds_warrior.clearing = self.start_clearing
+        birds_warrior.save()
+
+        # First battle
+        use_brigadier(self.player, "battle", Faction.BIRDS, self.start_clearing)
+
+        self.daylight.refresh_from_db()
+        self.assertEqual(self.daylight.brigadier_action, MoleDaylight.BrigadierAction.BATTLE)
+
+        # Try to do move next - should raise
+        adjacent = self.start_clearing.connected_clearings.first()
+        with self.assertRaises(IllegalActionError):
+            use_brigadier(self.player, "move", self.start_clearing, adjacent, 1)
+
+    def test_brigadier_two_moves_resets_state(self):
+        """Brigadier can do same action twice; second call resets state."""
+        # Sway multiple ministers so step doesn't advance after first action
+        self.sway_minister_for_test(Minister.MinisterName.BRIGADIER)
+        self.sway_minister_for_test(Minister.MinisterName.MARSHAL)
+
+        adjacent = self.start_clearing.connected_clearings.first()
+        another = adjacent.connected_clearings.exclude(clearing_number=self.start_clearing.clearing_number).first()
+        assert another is not None
+
+        # First move
+        use_brigadier(self.player, "move", self.start_clearing, adjacent, 1)
+
+        self.daylight.refresh_from_db()
+        self.assertEqual(self.daylight.brigadier_action, MoleDaylight.BrigadierAction.MOVE)
+
+        # Second move
+        use_brigadier(self.player, "move", adjacent, another, 1)
+
+        # State should reset to NONE after second action
+        self.daylight.refresh_from_db()
+        self.assertEqual(self.daylight.brigadier_action, MoleDaylight.BrigadierAction.NONE)
+
+    def test_brigadier_two_battles_resets_state(self):
+        """Brigadier can do battle twice; second call resets state."""
+        # Sway multiple ministers so step doesn't advance after first action
+        self.sway_minister_for_test(Minister.MinisterName.BRIGADIER)
+        self.sway_minister_for_test(Minister.MinisterName.MARSHAL)
+
+        # Place birds warriors in two clearings
+        birds_player = self.game.players.get(faction=Faction.BIRDS)
+        birds_warriors = list(Warrior.objects.filter(player=birds_player, clearing__isnull=True)[:2])
+        clearing_1 = self.start_clearing
+        clearing_2 = self.start_clearing.connected_clearings.first()
+        assert clearing_2 is not None
+
+        assert len(birds_warriors) >= 2
+        birds_warriors[0].clearing = clearing_1
+        birds_warriors[0].save()
+        birds_warriors[1].clearing = clearing_2
+        birds_warriors[1].save()
+
+        # First battle
+        use_brigadier(self.player, "battle", Faction.BIRDS, clearing_1)
+
+        self.daylight.refresh_from_db()
+        self.assertEqual(self.daylight.brigadier_action, MoleDaylight.BrigadierAction.BATTLE)
+
+        # Second battle
+        use_brigadier(self.player, "battle", Faction.BIRDS, clearing_2)
+
+        # State should reset to NONE after second action
+        self.daylight.refresh_from_db()
+        self.assertEqual(self.daylight.brigadier_action, MoleDaylight.BrigadierAction.NONE)
+
+
+class MolesBrigadierUsedFlagTests(MolesMinisterActionBaseTestCase):
+    def test_brigadier_marked_used_only_on_first_call(self):
+        """Brigadier is marked used only on first action, not on second."""
+        # Sway multiple ministers so step doesn't advance after first action
+        self.sway_minister_for_test(Minister.MinisterName.BRIGADIER)
+        self.sway_minister_for_test(Minister.MinisterName.MARSHAL)
+
+        adjacent = self.start_clearing.connected_clearings.first()
+        another = adjacent.connected_clearings.exclude(clearing_number=self.start_clearing.clearing_number).first()
+        assert another is not None
+
+        # First action
+        use_brigadier(self.player, "move", self.start_clearing, adjacent, 1)
+
+        brigadier = Minister.objects.get(player=self.player, name=Minister.MinisterName.BRIGADIER)
+        self.assertTrue(brigadier.used)
+
+        # Reset flag (should stay reset for second action)
+        brigadier.used = False
+        brigadier.save()
+
+        # Second action
+        use_brigadier(self.player, "move", adjacent, another, 1)
+
+        # Should still be False (not marked used again)
+        brigadier.refresh_from_db()
+        self.assertFalse(brigadier.used)
+
+
+class MolesMayorErrorCasesTests(MolesMinisterActionBaseTestCase):
+    def test_mayor_unswayed_minister_raises(self):
+        """Mayor copying unswayed minister raises IllegalActionError."""
+        self.sway_minister_for_test(Minister.MinisterName.MAYOR)
+
+        # Leave Marshal unswayed
+        marshal = Minister.objects.get(player=self.player, name=Minister.MinisterName.MARSHAL)
+        marshal.swayed = False
+        marshal.save()
+
+        adjacent = self.start_clearing.connected_clearings.first()
+
+        with self.assertRaises(IllegalActionError):
+            use_mayor(self.player, Minister.MinisterName.MARSHAL, self.start_clearing, adjacent, 1)
+
+    def test_mayor_cannot_copy_lords(self):
+        """Mayor cannot copy lord-rank ministers."""
+        self.sway_minister_for_test(Minister.MinisterName.MAYOR)
+
+        # Sway Duchess but Mayor should reject it
+        duchess = Minister.objects.get(player=self.player, name=Minister.MinisterName.DUCHESS_OF_MUD)
+        duchess.swayed = True
+        duchess.save()
+
+        with self.assertRaises(IllegalActionError):
+            use_mayor(self.player, Minister.MinisterName.DUCHESS_OF_MUD)
+
+
+class MolesMayorCopiesMarshalTests(MolesMinisterActionBaseTestCase):
+    def test_mayor_copies_marshal(self):
+        """Mayor can copy Marshal's move action."""
+        self.sway_minister_for_test(Minister.MinisterName.MAYOR)
+        self.sway_minister_for_test(Minister.MinisterName.MARSHAL)
+
+        adjacent = self.start_clearing.connected_clearings.first()
+        initial_start = Warrior.objects.filter(
+            player=self.player, clearing=self.start_clearing
+        ).count()
+
+        use_mayor(self.player, Minister.MinisterName.MARSHAL, self.start_clearing, adjacent, 1)
+
+        mayor = Minister.objects.get(player=self.player, name=Minister.MinisterName.MAYOR)
+        self.assertTrue(mayor.used)
+
+        # Marshal should NOT be marked used (Mayor action doesn't use the copied minister)
+        marshal = Minister.objects.get(player=self.player, name=Minister.MinisterName.MARSHAL)
+        self.assertFalse(marshal.used)
+
+        # Warriors should be moved
+        final_start = Warrior.objects.filter(
+            player=self.player, clearing=self.start_clearing
+        ).count()
+        self.assertEqual(final_start, initial_start - 1)
+
+
+class MolesMayorCopiesCaptainTests(MolesMinisterActionBaseTestCase):
+    def test_mayor_copies_captain(self):
+        """Mayor can copy Captain's battle action."""
+        self.sway_minister_for_test(Minister.MinisterName.MAYOR)
+        self.sway_minister_for_test(Minister.MinisterName.CAPTAIN)
+
+        # Place birds warrior for battle
+        birds_player = self.game.players.get(faction=Faction.BIRDS)
+        birds_warrior = Warrior.objects.filter(player=birds_player, clearing__isnull=True).first()
+        assert birds_warrior is not None
+        birds_warrior.clearing = self.start_clearing
+        birds_warrior.save()
+
+        initial_battles = Battle.objects.filter(event__game=self.game).count()
+
+        use_mayor(self.player, Minister.MinisterName.CAPTAIN, Faction.BIRDS, self.start_clearing)
+
+        final_battles = Battle.objects.filter(event__game=self.game).count()
+        self.assertEqual(final_battles, initial_battles + 1)
+
+        mayor = Minister.objects.get(player=self.player, name=Minister.MinisterName.MAYOR)
+        self.assertTrue(mayor.used)
+
+
+class MolesMayorCopiesForemoleTests(MolesMinisterActionBaseTestCase):
+    def test_mayor_copies_foremole(self):
+        """Mayor can copy Foremole's build action."""
+        self.sway_minister_for_test(Minister.MinisterName.MAYOR)
+        self.sway_minister_for_test(Minister.MinisterName.FOREMOLE)
+
+        self.clear_hand()
+        self.add_card_to_hand(CardsEP.RABBIT_PARTISANS)
+
+        initial_citadels = Citadel.objects.filter(
+            player=self.player, building_slot__isnull=False
+        ).count()
+
+        use_mayor(self.player, Minister.MinisterName.FOREMOLE, CardsEP.RABBIT_PARTISANS, self.start_clearing, "citadel")
+
+        final_citadels = Citadel.objects.filter(
+            player=self.player, building_slot__isnull=False
+        ).count()
+        self.assertEqual(final_citadels, initial_citadels + 1)
+
+        mayor = Minister.objects.get(player=self.player, name=Minister.MinisterName.MAYOR)
+        self.assertTrue(mayor.used)
+
+
+class MolesMayorCopiesBrigadierTests(MolesMinisterActionBaseTestCase):
+    def test_mayor_copies_brigadier_move(self):
+        """Mayor can copy Brigadier's move action."""
+        self.sway_minister_for_test(Minister.MinisterName.MAYOR)
+        self.sway_minister_for_test(Minister.MinisterName.BRIGADIER)
+
+        adjacent = self.start_clearing.connected_clearings.first()
+        initial_start = Warrior.objects.filter(
+            player=self.player, clearing=self.start_clearing
+        ).count()
+
+        use_mayor(self.player, Minister.MinisterName.BRIGADIER, "move", self.start_clearing, adjacent, 1)
+
+        mayor = Minister.objects.get(player=self.player, name=Minister.MinisterName.MAYOR)
+        self.assertTrue(mayor.used)
+
+        # Warriors should be moved
+        final_start = Warrior.objects.filter(
+            player=self.player, clearing=self.start_clearing
+        ).count()
+        self.assertEqual(final_start, initial_start - 1)
+
+    def test_mayor_copies_brigadier_battle(self):
+        """Mayor can copy Brigadier's battle action."""
+        self.sway_minister_for_test(Minister.MinisterName.MAYOR)
+        self.sway_minister_for_test(Minister.MinisterName.BRIGADIER)
+
+        # Place birds warrior for battle
+        birds_player = self.game.players.get(faction=Faction.BIRDS)
+        birds_warrior = Warrior.objects.filter(player=birds_player, clearing__isnull=True).first()
+        assert birds_warrior is not None
+        birds_warrior.clearing = self.start_clearing
+        birds_warrior.save()
+
+        initial_battles = Battle.objects.filter(event__game=self.game).count()
+
+        use_mayor(self.player, Minister.MinisterName.BRIGADIER, "battle", Faction.BIRDS, self.start_clearing)
+
+        final_battles = Battle.objects.filter(event__game=self.game).count()
+        self.assertEqual(final_battles, initial_battles + 1)
+
+        mayor = Minister.objects.get(player=self.player, name=Minister.MinisterName.MAYOR)
+        self.assertTrue(mayor.used)
+
+
+class MolesMayorCopiesBankerTests(MolesMinisterActionBaseTestCase):
+    def test_mayor_copies_banker(self):
+        """Mayor can copy Banker's craft action."""
+        self.sway_minister_for_test(Minister.MinisterName.MAYOR)
+        self.sway_minister_for_test(Minister.MinisterName.BANKER)
+
+        self.clear_hand()
+        for _ in range(3):
+            self.add_card_to_hand(CardsEP.AMBUSH_RED)
+
+        initial_score = self.player.score
+
+        use_mayor(self.player, Minister.MinisterName.BANKER, [CardsEP.AMBUSH_RED, CardsEP.AMBUSH_RED, CardsEP.AMBUSH_RED])
+
+        self.player.refresh_from_db()
+        self.assertEqual(self.player.score, initial_score + 3)
+
+        mayor = Minister.objects.get(player=self.player, name=Minister.MinisterName.MAYOR)
+        self.assertTrue(mayor.used)

@@ -43,6 +43,9 @@ from game.views.action_views.moles.minister_actions import (
     MolesMinisterForemoleView, MolesMinisterBrigadierView, MolesMinisterBankerView,
     MolesMinisterDuchessView, MolesMinisterEarlView, MolesMinisterBaronView,
 )
+from game.views.action_views.moles.sway_minister import MolesSwayMinisterView
+from game.views.action_views.moles.evening import MolesCraftingView, MolesDiscardView
+from game.views.action_views.moles.price_of_failure import MolesPriceOfFailureView
 from game.views.action_views.setup.crows import (
     CrowsPickClearingView,
     CrowsConfirmCompletedSetupView,
@@ -477,6 +480,34 @@ register_action(
     "moles-minister-baron",
     MolesMinisterBaronView,
     "api/moles/daylight/minister-actions/baron/",
+    urlpatterns,
+)
+
+register_action(
+    "moles-sway-minister",
+    MolesSwayMinisterView,
+    "api/moles/daylight/sway-minister/",
+    urlpatterns,
+)
+
+register_action(
+    "moles-craft",
+    MolesCraftingView,
+    "api/moles/evening/craft/",
+    urlpatterns,
+)
+
+register_action(
+    "moles-discard",
+    MolesDiscardView,
+    "api/moles/evening/discard/",
+    urlpatterns,
+)
+
+register_action(
+    "moles-price-of-failure",
+    MolesPriceOfFailureView,
+    "api/moles/price-of-failure/",
     urlpatterns,
 )
 
