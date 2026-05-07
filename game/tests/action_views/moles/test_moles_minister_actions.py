@@ -18,7 +18,9 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.moles_user = self.moles_player.user
         self.moles_user.set_password("p")
         self.moles_user.save()
-        self.moles_client = RootGameClient(user=self.moles_user, password="p", game_id=self.game.id)
+        self.moles_client = RootGameClient(
+            user=self.moles_user, password="p", game_id=self.game.id
+        )
 
         # Get clearings
         self.c1 = Clearing.objects.get(game=self.game, clearing_number=1)
@@ -87,13 +89,17 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["endpoint"], "origin")
 
         # 3. Select origin clearing (c3 has warriors)
-        response = self.moles_client.submit_action({"clearing_number": self.c3.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c3.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "marshal_destination")
         self.assertEqual(response.data["endpoint"], "destination")
 
         # 4. Select destination (c6 is adjacent to c3)
-        response = self.moles_client.submit_action({"clearing_number": self.c6.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c6.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "marshal_count")
         self.assertEqual(response.data["endpoint"], "count")
@@ -118,7 +124,9 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["endpoint"], "clearing")
 
         # 3. Select clearing with enemy
-        response = self.moles_client.submit_action({"clearing_number": self.c1.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c1.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "captain_faction")
         self.assertEqual(response.data["endpoint"], "faction")
@@ -163,7 +171,9 @@ class MolesMinisterActionsViewsTests(APITestCase):
     def test_banker_action_flow_single_card(self):
         """Test banker action with single card selection"""
         # Give Moles player cards
-        card1 = Card.objects.get(game=self.game, card_type=CardsEP.RABBIT_PARTISANS.name)
+        card1 = Card.objects.get(
+            game=self.game, card_type=CardsEP.RABBIT_PARTISANS.name
+        )
         HandEntry.objects.create(player=self.moles_player, card=card1)
 
         # 1. Get minister selection
@@ -175,15 +185,17 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["name"], "banker_select_card")
         self.assertEqual(response.data["endpoint"], "card")
 
-        # 3. Select a card (use "card_name" type as in payload_details)
-        response = self.moles_client.submit_action({"card_name": CardsEP.RABBIT_PARTISANS.name})
+        # 3. Select a card (use "card" type as in payload_details)
+        response = self.moles_client.submit_action(
+            {"card": CardsEP.RABBIT_PARTISANS.name}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "banker_select_card")
         # Should show 1 card selected
         self.assertIn("1 cards selected", response.data["prompt"])
 
         # 4. Submit (empty card name means done)
-        response = self.moles_client.submit_action({"card_name": ""})
+        response = self.moles_client.submit_action({"card": ""})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "completed")
 
@@ -203,26 +215,30 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # 3. Select first Fox card
-        response = self.moles_client.submit_action({"card_name": CardsEP.FOXFOLK_STEEL.name})
+        response = self.moles_client.submit_action({"card": CardsEP.FOXFOLK_STEEL.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("1 cards selected", response.data["prompt"])
 
         # 4. Select second Fox card (same suit, should work)
-        response = self.moles_client.submit_action({"card_name": CardsEP.FOX_PARTISANS.name})
+        response = self.moles_client.submit_action({"card": CardsEP.FOX_PARTISANS.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("2 cards selected", response.data["prompt"])
 
         # 5. Submit (empty card name means done)
-        response = self.moles_client.submit_action({"card_name": ""})
+        response = self.moles_client.submit_action({"card": ""})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "completed")
 
     def test_banker_action_rejects_mismatched_suit(self):
         """Test banker action rejects cards with mismatched suit"""
         # Give Moles player cards of different suits
-        rabbit_card = Card.objects.get(game=self.game, card_type=CardsEP.RABBIT_PARTISANS.name)
+        rabbit_card = Card.objects.get(
+            game=self.game, card_type=CardsEP.RABBIT_PARTISANS.name
+        )
         HandEntry.objects.create(player=self.moles_player, card=rabbit_card)
-        fox_card = Card.objects.get(game=self.game, card_type=CardsEP.FOX_PARTISANS.name)
+        fox_card = Card.objects.get(
+            game=self.game, card_type=CardsEP.FOX_PARTISANS.name
+        )
         HandEntry.objects.create(player=self.moles_player, card=fox_card)
 
         # 1. Get minister selection
@@ -233,11 +249,13 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # 3. Select first Rabbit card
-        response = self.moles_client.submit_action({"card_name": CardsEP.RABBIT_PARTISANS.name})
+        response = self.moles_client.submit_action(
+            {"card": CardsEP.RABBIT_PARTISANS.name}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # 4. Try to select Fox card (different suit, should be rejected)
-        response = self.moles_client.submit_action({"card_name": CardsEP.FOX_PARTISANS.name})
+        response = self.moles_client.submit_action({"card": CardsEP.FOX_PARTISANS.name})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Should have error about suit mismatch
         self.assertIn("same suit", str(response.data))
@@ -264,13 +282,17 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["endpoint"], "clearing")
 
         # 4. Select clearing (c3 has moles pieces and is ruled by player)
-        response = self.moles_client.submit_action({"clearing_number": self.c3.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c3.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "foremole_card")
         self.assertEqual(response.data["endpoint"], "card")
 
         # 5. Select card to build with
-        response = self.moles_client.submit_action({"card_name": CardsEP.RABBIT_PARTISANS.name})
+        response = self.moles_client.submit_action(
+            {"card": CardsEP.RABBIT_PARTISANS.name}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "completed")
 
@@ -292,13 +314,17 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["endpoint"], "origin")
 
         # 4. Select origin clearing (c3 has warriors)
-        response = self.moles_client.submit_action({"clearing_number": self.c3.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c3.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "brigadier_destination")
         self.assertEqual(response.data["endpoint"], "destination")
 
         # 5. Select destination (c6 is adjacent to c3)
-        response = self.moles_client.submit_action({"clearing_number": self.c6.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c6.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "brigadier_count")
         self.assertEqual(response.data["endpoint"], "count")
@@ -328,7 +354,9 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["endpoint"], "clearing")
 
         # 4. Select clearing with enemy
-        response = self.moles_client.submit_action({"clearing_number": self.c1.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c1.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "brigadier_faction")
         self.assertEqual(response.data["endpoint"], "faction")
@@ -359,7 +387,9 @@ class MolesMinisterActionsViewsTests(APITestCase):
     def test_mayor_select_unswayed_minister_rejects(self):
         """Test that Mayor cannot copy an unswayed minister"""
         # Unsway Marshal only, keep Mayor and other ministers swayed
-        marshal = Minister.objects.get(player=self.moles_player, name=Minister.MinisterName.MARSHAL)
+        marshal = Minister.objects.get(
+            player=self.moles_player, name=Minister.MinisterName.MARSHAL
+        )
         marshal.swayed = False
         marshal.save()
 
@@ -405,12 +435,16 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["name"], "marshal_origin")
 
         # 4. Select origin clearing
-        response = self.moles_client.submit_action({"clearing_number": self.c3.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c3.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "marshal_destination")
 
         # 5. Select destination
-        response = self.moles_client.submit_action({"clearing_number": self.c6.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c6.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "marshal_count")
 
@@ -420,11 +454,15 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["name"], "completed")
 
         # Verify Mayor is marked as used
-        mayor = Minister.objects.get(player=self.moles_player, name=Minister.MinisterName.MAYOR)
+        mayor = Minister.objects.get(
+            player=self.moles_player, name=Minister.MinisterName.MAYOR
+        )
         self.assertTrue(mayor.used)
 
         # Verify Marshal is NOT marked as used
-        marshal = Minister.objects.get(player=self.moles_player, name=Minister.MinisterName.MARSHAL)
+        marshal = Minister.objects.get(
+            player=self.moles_player, name=Minister.MinisterName.MARSHAL
+        )
         self.assertFalse(marshal.used)
 
     def test_mayor_copies_captain(self):
@@ -446,7 +484,9 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["name"], "captain_clearing")
 
         # 4. Select clearing with enemy
-        response = self.moles_client.submit_action({"clearing_number": self.c1.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c1.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "captain_faction")
 
@@ -456,11 +496,15 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["name"], "completed")
 
         # Verify Mayor is marked as used
-        mayor = Minister.objects.get(player=self.moles_player, name=Minister.MinisterName.MAYOR)
+        mayor = Minister.objects.get(
+            player=self.moles_player, name=Minister.MinisterName.MAYOR
+        )
         self.assertTrue(mayor.used)
 
         # Verify Captain is NOT marked as used
-        captain = Minister.objects.get(player=self.moles_player, name=Minister.MinisterName.CAPTAIN)
+        captain = Minister.objects.get(
+            player=self.moles_player, name=Minister.MinisterName.CAPTAIN
+        )
         self.assertFalse(captain.used)
 
     def test_mayor_copies_foremole(self):
@@ -488,21 +532,29 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["name"], "foremole_clearing")
 
         # 5. Select clearing (c3 has moles pieces and is ruled by player)
-        response = self.moles_client.submit_action({"clearing_number": self.c3.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c3.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "foremole_card")
 
         # 6. Select card to build with
-        response = self.moles_client.submit_action({"card_name": CardsEP.RABBIT_PARTISANS.name})
+        response = self.moles_client.submit_action(
+            {"card": CardsEP.RABBIT_PARTISANS.name}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "completed")
 
         # Verify Mayor is marked as used
-        mayor = Minister.objects.get(player=self.moles_player, name=Minister.MinisterName.MAYOR)
+        mayor = Minister.objects.get(
+            player=self.moles_player, name=Minister.MinisterName.MAYOR
+        )
         self.assertTrue(mayor.used)
 
         # Verify Foremole is NOT marked as used
-        foremole = Minister.objects.get(player=self.moles_player, name=Minister.MinisterName.FOREMOLE)
+        foremole = Minister.objects.get(
+            player=self.moles_player, name=Minister.MinisterName.FOREMOLE
+        )
         self.assertFalse(foremole.used)
 
     def test_mayor_copies_brigadier_move(self):
@@ -526,12 +578,16 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["name"], "brigadier_origin")
 
         # 5. Select origin clearing (c3 has warriors)
-        response = self.moles_client.submit_action({"clearing_number": self.c3.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c3.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "brigadier_destination")
 
         # 6. Select destination (c6 is adjacent to c3)
-        response = self.moles_client.submit_action({"clearing_number": self.c6.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c6.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "brigadier_count")
 
@@ -541,11 +597,15 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["name"], "completed")
 
         # Verify Mayor is marked as used
-        mayor = Minister.objects.get(player=self.moles_player, name=Minister.MinisterName.MAYOR)
+        mayor = Minister.objects.get(
+            player=self.moles_player, name=Minister.MinisterName.MAYOR
+        )
         self.assertTrue(mayor.used)
 
         # Verify Brigadier is NOT marked as used
-        brigadier = Minister.objects.get(player=self.moles_player, name=Minister.MinisterName.BRIGADIER)
+        brigadier = Minister.objects.get(
+            player=self.moles_player, name=Minister.MinisterName.BRIGADIER
+        )
         self.assertFalse(brigadier.used)
 
     def test_mayor_copies_brigadier_battle(self):
@@ -572,7 +632,9 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["name"], "brigadier_clearing")
 
         # 5. Select clearing with enemy
-        response = self.moles_client.submit_action({"clearing_number": self.c1.clearing_number})
+        response = self.moles_client.submit_action(
+            {"clearing_number": self.c1.clearing_number}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "brigadier_faction")
 
@@ -582,11 +644,15 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["name"], "completed")
 
         # Verify Mayor is marked as used
-        mayor = Minister.objects.get(player=self.moles_player, name=Minister.MinisterName.MAYOR)
+        mayor = Minister.objects.get(
+            player=self.moles_player, name=Minister.MinisterName.MAYOR
+        )
         self.assertTrue(mayor.used)
 
         # Verify Brigadier is NOT marked as used
-        brigadier = Minister.objects.get(player=self.moles_player, name=Minister.MinisterName.BRIGADIER)
+        brigadier = Minister.objects.get(
+            player=self.moles_player, name=Minister.MinisterName.BRIGADIER
+        )
         self.assertFalse(brigadier.used)
 
     def test_mayor_copies_banker(self):
@@ -611,28 +677,32 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["name"], "banker_select_card")
 
         # 4. Select first card
-        response = self.moles_client.submit_action({"card_name": CardsEP.FOXFOLK_STEEL.name})
+        response = self.moles_client.submit_action({"card": CardsEP.FOXFOLK_STEEL.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "banker_select_card")
         self.assertIn("1 cards selected", response.data["prompt"])
 
         # 5. Select second card (same suit)
-        response = self.moles_client.submit_action({"card_name": CardsEP.FOX_PARTISANS.name})
+        response = self.moles_client.submit_action({"card": CardsEP.FOX_PARTISANS.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "banker_select_card")
         self.assertIn("2 cards selected", response.data["prompt"])
 
         # 6. Submit (empty card name means done)
-        response = self.moles_client.submit_action({"card_name": ""})
+        response = self.moles_client.submit_action({"card": ""})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "completed")
 
         # Verify Mayor is marked as used
-        mayor = Minister.objects.get(player=self.moles_player, name=Minister.MinisterName.MAYOR)
+        mayor = Minister.objects.get(
+            player=self.moles_player, name=Minister.MinisterName.MAYOR
+        )
         self.assertTrue(mayor.used)
 
         # Verify Banker is NOT marked as used
-        banker = Minister.objects.get(player=self.moles_player, name=Minister.MinisterName.BANKER)
+        banker = Minister.objects.get(
+            player=self.moles_player, name=Minister.MinisterName.BANKER
+        )
         self.assertFalse(banker.used)
 
     def test_api_request_rejection_when_brigadier_mid_action(self):

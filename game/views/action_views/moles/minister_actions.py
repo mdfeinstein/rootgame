@@ -81,32 +81,61 @@ class MolesMinisterActionsView(GameActionView):
             options = []
             for minister in available_ministers:
                 minister_labels = {
-                    Minister.MinisterName.MARSHAL: ("Marshal", "Move warriors between clearings."),
+                    Minister.MinisterName.MARSHAL: (
+                        "Marshal",
+                        "Move warriors between clearings.",
+                    ),
                     Minister.MinisterName.CAPTAIN: ("Captain", "Initiate combat."),
-                    Minister.MinisterName.FOREMOLE: ("Foremole", "Build without suit restriction."),
-                    Minister.MinisterName.BRIGADIER: ("Brigadier", "Move or battle (up to twice)."),
-                    Minister.MinisterName.BANKER: ("Banker", "Select cards for points."),
-                    Minister.MinisterName.DUCHESS_OF_MUD: ("Duchess of Mud", "Gain points if all tunnels on map."),
-                    Minister.MinisterName.EARL_OF_STONE: ("Earl of Stone", "Gain points from citadels."),
-                    Minister.MinisterName.BARON_OF_DIRT: ("Baron of Dirt", "Gain points from markets."),
+                    Minister.MinisterName.FOREMOLE: (
+                        "Foremole",
+                        "Build without suit restriction.",
+                    ),
+                    Minister.MinisterName.BRIGADIER: (
+                        "Brigadier",
+                        "Move or battle (up to twice).",
+                    ),
+                    Minister.MinisterName.BANKER: (
+                        "Banker",
+                        "Select cards for points.",
+                    ),
+                    Minister.MinisterName.DUCHESS_OF_MUD: (
+                        "Duchess of Mud",
+                        "Gain points if all tunnels on map.",
+                    ),
+                    Minister.MinisterName.EARL_OF_STONE: (
+                        "Earl of Stone",
+                        "Gain points from citadels.",
+                    ),
+                    Minister.MinisterName.BARON_OF_DIRT: (
+                        "Baron of Dirt",
+                        "Gain points from markets.",
+                    ),
                 }
                 label, info = minister_labels.get(
                     minister.name, (minister.name.replace("_", " ").title(), "")
                 )
-                options.append({
-                    "value": minister.name,
-                    "label": label,
-                    "info": info,
-                })
+                options.append(
+                    {
+                        "value": minister.name,
+                        "label": label,
+                        "info": info,
+                    }
+                )
             # Check if Mayor is swayed and unused
-            mayor = Minister.objects.filter(player=player, name=Minister.MinisterName.MAYOR).first()
+            mayor = Minister.objects.filter(
+                player=player, name=Minister.MinisterName.MAYOR
+            ).first()
             if mayor and mayor.swayed and not mayor.used:
-                options.append({
-                    "value": "mayor",
-                    "label": "Mayor",
-                    "info": "Copy any swayed minister's action.",
-                })
-            options.append({"value": "", "label": "Done", "info": "Finish minister actions."})
+                options.append(
+                    {
+                        "value": "mayor",
+                        "label": "Mayor",
+                        "info": "Copy any swayed minister's action.",
+                    }
+                )
+            options.append(
+                {"value": "", "label": "Done", "info": "Finish minister actions."}
+            )
             self.first_step["options"] = options
 
         return super().get(request)
@@ -190,9 +219,7 @@ class MolesMinisterMayorView(GameActionView):
         self.first_step = dict(self.first_step)
 
         # Get all swayed ministers (including already used ones)
-        swayed_ministers = Minister.objects.filter(
-            player=player, swayed=True
-        )
+        swayed_ministers = Minister.objects.filter(player=player, swayed=True)
 
         # Filter out lords (only show ministers that can be copied)
         copyable_ministers = swayed_ministers.exclude(
@@ -205,26 +232,41 @@ class MolesMinisterMayorView(GameActionView):
 
         if not copyable_ministers.exists():
             self.first_step["prompt"] = "No swayed ministers available to copy."
-            self.first_step["options"] = [{"value": "", "label": "Done", "info": "Finish minister actions."}]
+            self.first_step["options"] = [
+                {"value": "", "label": "Done", "info": "Finish minister actions."}
+            ]
         else:
             options = []
             for minister in copyable_ministers:
                 minister_labels = {
                     Minister.MinisterName.MARSHAL: ("Marshal", "Copy Marshal (move)."),
-                    Minister.MinisterName.CAPTAIN: ("Captain", "Copy Captain (battle)."),
-                    Minister.MinisterName.FOREMOLE: ("Foremole", "Copy Foremole (build)."),
-                    Minister.MinisterName.BRIGADIER: ("Brigadier", "Copy Brigadier (move or battle)."),
+                    Minister.MinisterName.CAPTAIN: (
+                        "Captain",
+                        "Copy Captain (battle).",
+                    ),
+                    Minister.MinisterName.FOREMOLE: (
+                        "Foremole",
+                        "Copy Foremole (build).",
+                    ),
+                    Minister.MinisterName.BRIGADIER: (
+                        "Brigadier",
+                        "Copy Brigadier (move or battle).",
+                    ),
                     Minister.MinisterName.BANKER: ("Banker", "Copy Banker (cards)."),
                 }
                 label, info = minister_labels.get(
                     minister.name, (minister.name.replace("_", " ").title(), "")
                 )
-                options.append({
-                    "value": minister.name,
-                    "label": label,
-                    "info": info,
-                })
-            options.append({"value": "", "label": "Done", "info": "Finish minister actions."})
+                options.append(
+                    {
+                        "value": minister.name,
+                        "label": label,
+                        "info": info,
+                    }
+                )
+            options.append(
+                {"value": "", "label": "Done", "info": "Finish minister actions."}
+            )
             self.first_step["options"] = options
 
         return super().get(request)
@@ -355,7 +397,10 @@ class MolesMinisterMarshalView(SubGameActionView):
 
         validate_legal_move(player, origin_clearing, dest_clearing)
 
-        accumulated = {"origin_clearing": origin_num, "destination_clearing": destination_num}
+        accumulated = {
+            "origin_clearing": origin_num,
+            "destination_clearing": destination_num,
+        }
         if request.data.get("is_mayor"):
             accumulated["is_mayor"] = True
 
@@ -379,7 +424,9 @@ class MolesMinisterMarshalView(SubGameActionView):
         dest = Clearing.objects.get(game=game, clearing_number=dest_num)
 
         if is_mayor:
-            atomic_game_action(use_mayor)(player, Minister.MinisterName.MARSHAL, origin, dest, count)
+            atomic_game_action(use_mayor)(
+                player, Minister.MinisterName.MARSHAL, origin, dest, count
+            )
         else:
             atomic_game_action(use_marshal)(player, origin, dest, count)
         return self.generate_completed_step()
@@ -448,12 +495,18 @@ class MolesMinisterCaptainView(SubGameActionView):
         game = self.game(game_id)
         clearing_number = request.data["clearing_number"]
         defender_faction_str = request.data["defender_faction"]
-        defender_faction = Faction(defender_faction_str) if isinstance(defender_faction_str, str) else defender_faction_str
+        defender_faction = (
+            Faction(defender_faction_str)
+            if isinstance(defender_faction_str, str)
+            else defender_faction_str
+        )
         is_mayor = request.data.get("is_mayor", False)
         clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
 
         if is_mayor:
-            atomic_game_action(use_mayor)(player, Minister.MinisterName.CAPTAIN, defender_faction, clearing)
+            atomic_game_action(use_mayor)(
+                player, Minister.MinisterName.CAPTAIN, defender_faction, clearing
+            )
         else:
             atomic_game_action(use_captain)(player, defender_faction, clearing)
         return self.generate_completed_step()
@@ -523,7 +576,10 @@ class MolesMinisterForemoleView(SubGameActionView):
         clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
         validate_foremole_clearing(player, clearing)
 
-        accumulated = {"building_type": building_type, "clearing_number": clearing_number}
+        accumulated = {
+            "building_type": building_type,
+            "clearing_number": clearing_number,
+        }
         if request.data.get("is_mayor"):
             accumulated["is_mayor"] = True
 
@@ -531,7 +587,7 @@ class MolesMinisterForemoleView(SubGameActionView):
             "foremole_card",
             "Select card to use for building.",
             "card",
-            [{"type": "card_name", "name": "card_name"}],
+            [{"type": "card", "name": "card_name"}],
             accumulated,
         )
 
@@ -550,9 +606,17 @@ class MolesMinisterForemoleView(SubGameActionView):
         validate_foremole_clearing(player, clearing)
 
         if is_mayor:
-            atomic_game_action(use_mayor)(player, Minister.MinisterName.FOREMOLE, card, clearing, building_type.lower())
+            atomic_game_action(use_mayor)(
+                player,
+                Minister.MinisterName.FOREMOLE,
+                card,
+                clearing,
+                building_type.lower(),
+            )
         else:
-            atomic_game_action(use_foremole)(player, card, clearing, building_type.lower())
+            atomic_game_action(use_foremole)(
+                player, card, clearing, building_type.lower()
+            )
         return self.generate_completed_step()
 
 
@@ -585,7 +649,9 @@ class MolesMinisterBrigadierView(SubGameActionView):
                 "name": "brigadier_clearing",
                 "prompt": "Select clearing to battle in.",
                 "endpoint": "clearing",
-                "payload_details": [{"type": "clearing_number", "name": "clearing_number"}],
+                "payload_details": [
+                    {"type": "clearing_number", "name": "clearing_number"}
+                ],
             }
         else:  # MOVE
             self.first_step = {
@@ -593,7 +659,9 @@ class MolesMinisterBrigadierView(SubGameActionView):
                 "name": "brigadier_origin",
                 "prompt": "Select origin clearing.",
                 "endpoint": "origin",
-                "payload_details": [{"type": "clearing_number", "name": "clearing_number"}],
+                "payload_details": [
+                    {"type": "clearing_number", "name": "clearing_number"}
+                ],
             }
 
         if is_mayor:
@@ -706,7 +774,9 @@ class MolesMinisterBrigadierView(SubGameActionView):
         dest = Clearing.objects.get(game=game, clearing_number=dest_num)
 
         if is_mayor:
-            atomic_game_action(use_mayor)(player, Minister.MinisterName.BRIGADIER, "move", origin, dest, count)
+            atomic_game_action(use_mayor)(
+                player, Minister.MinisterName.BRIGADIER, "move", origin, dest, count
+            )
         else:
             atomic_game_action(use_brigadier)(player, "move", origin, dest, count)
         return self.generate_completed_step()
@@ -746,14 +816,26 @@ class MolesMinisterBrigadierView(SubGameActionView):
         game = self.game(game_id)
         clearing_number = request.data["clearing_number"]
         defender_faction_str = request.data["defender_faction"]
-        defender_faction = Faction(defender_faction_str) if isinstance(defender_faction_str, str) else defender_faction_str
+        defender_faction = (
+            Faction(defender_faction_str)
+            if isinstance(defender_faction_str, str)
+            else defender_faction_str
+        )
         is_mayor = request.data.get("is_mayor", False)
         clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
 
         if is_mayor:
-            atomic_game_action(use_mayor)(player, Minister.MinisterName.BRIGADIER, "battle", defender_faction, clearing)
+            atomic_game_action(use_mayor)(
+                player,
+                Minister.MinisterName.BRIGADIER,
+                "battle",
+                defender_faction,
+                clearing,
+            )
         else:
-            atomic_game_action(use_brigadier)(player, "battle", defender_faction, clearing)
+            atomic_game_action(use_brigadier)(
+                player, "battle", defender_faction, clearing
+            )
         return self.generate_completed_step()
 
 
@@ -766,13 +848,15 @@ class MolesMinisterBankerView(SubGameActionView):
         "name": "banker_select_card",
         "prompt": "Select a card or choose Done to submit.",
         "endpoint": "card",
-        "payload_details": [{"type": "card_name", "name": "card_name"}],
+        "payload_details": [{"type": "card", "name": "card_name"}],
     }
 
     def get(self, request):
         is_mayor = request.GET.get("is_mayor") == "true"
         self.first_step = dict(self.first_step)
-        self.first_step["prompt"] = "Select a card or choose Done to submit. (0 cards selected)"
+        self.first_step["prompt"] = (
+            "Select a card or choose Done to submit. (0 cards selected)"
+        )
         if is_mayor:
             self.first_step["accumulated_payload"] = {"is_mayor": True}
         return super().get(request)
@@ -797,7 +881,9 @@ class MolesMinisterBankerView(SubGameActionView):
                 raise ValidationError("Must select at least one card")
             cards = [CardsEP[name] for name in accumulated]
             if is_mayor:
-                atomic_game_action(use_mayor)(player, Minister.MinisterName.BANKER, cards)
+                atomic_game_action(use_mayor)(
+                    player, Minister.MinisterName.BANKER, cards
+                )
             else:
                 atomic_game_action(use_banker)(player, cards)
             return self.generate_completed_step()
@@ -825,10 +911,12 @@ class MolesMinisterBankerView(SubGameActionView):
             card_suit = card_option.value.suit
             if unique_suits and card_suit != "Wild" and card_suit not in unique_suits:
                 continue
-            options.append({
-                "value": card_option.name,
-                "label": card_option.value.title,
-            })
+            options.append(
+                {
+                    "value": card_option.name,
+                    "label": card_option.value.title,
+                }
+            )
 
         # Add Done option
         options.append({"value": "", "label": "Done"})
@@ -841,7 +929,7 @@ class MolesMinisterBankerView(SubGameActionView):
             "banker_select_card",
             f"Select a card or choose Done to submit. ({len(new_list)} cards selected)",
             "card",
-            [{"type": "card_name", "name": "card_name"}],
+            [{"type": "card", "name": "card_name"}],
             accumulated_payload,
             options=options,
         )

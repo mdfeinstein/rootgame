@@ -33,6 +33,7 @@ def get_available_building_from_supply(
     Raises:
         IllegalActionError if no buildings of that type in supply
     """
+    building_type = building_type.lower()
     if building_type == "citadel":
         building = Citadel.objects.filter(
             player=player, building_slot__isnull=True
@@ -47,6 +48,8 @@ def get_available_building_from_supply(
         if building is None:
             raise IllegalActionError("No markets left in supply")
         return building
+    else:
+        raise IllegalActionError("Building Type not recognized")
 
 
 def validate_card_in_hand(player: Player, card: CardsEP) -> HandEntry:

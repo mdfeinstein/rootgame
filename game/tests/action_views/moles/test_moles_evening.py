@@ -101,8 +101,8 @@ class MolesCraftingViewTests(MolesEveningViewBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "completed")
 
-    def test_crafting_select_card_shows_building_options(self):
-        """Test that selecting a card shows building options."""
+    def test_crafting_select_card_shows_clearing_options(self):
+        """Test that selecting a card shows clearing options."""
         self.add_card_to_hand(CardsEP.RABBIT_PARTISANS)
         building1 = self.get_building_by_clearing(1, "citadel")
         building2 = self.get_building_by_clearing(2, "citadel")
@@ -112,8 +112,8 @@ class MolesCraftingViewTests(MolesEveningViewBaseTestCase):
             {"card": CardsEP.RABBIT_PARTISANS.name}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["name"], "select_building")
-        self.assertEqual(response.data["endpoint"], "building")
+        self.assertEqual(response.data["name"], "select_clearing")
+        self.assertEqual(response.data["endpoint"], "clearing")
         self.assertIn("options", response.data)
 
     def test_crafting_invalid_card_raises(self):

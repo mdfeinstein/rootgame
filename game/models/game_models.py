@@ -377,20 +377,34 @@ class RevealedCardEntry(models.Model):
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
     turn_revealed = models.IntegerField(default=0)
     returned_to_hand = models.BooleanField(default=False)
+    turn_revealed = models.IntegerField(default=0)
+    returned_to_hand = models.BooleanField(default=False)
 
     @classmethod
     def hand_to_revealed(cls, hand_entry: HandEntry) -> "RevealedCardEntry":
         """Convert a HandEntry to a RevealedCardEntry, deleting the hand entry."""
+        from game.queries.general import get_current_turn_number
+
         card = hand_entry.card
         player = hand_entry.player
+        turn_number = get_current_turn_number(player.game)
         hand_entry.delete()
-        return cls.objects.create(player=player, card=card)
+        return cls.objects.create(
+            player=player,
+            card=card,
+            turn_revealed=turn_number
+        )
 
     def revealed_to_hand(self) -> HandEntry:
-        """Convert a RevealedCardEntry back to a HandEntry, deleting the revealed entry."""
+        """Convert a RevealedCardEntry back to a HandEntry, marking as returned instead of deleting."""
+        if self.returned_to_hand:
+            raise ValueError(
+                f"RevealedCardEntry {self.pk} is already marked as returned."
+            )
         card = self.card
         player = self.player
-        self.delete()
+        self.returned_to_hand = True
+        self.save(update_fields=["returned_to_hand"])
         return HandEntry.objects.create(player=player, card=card)
 
     def revealed_to_discard(self) -> DiscardPileEntry:

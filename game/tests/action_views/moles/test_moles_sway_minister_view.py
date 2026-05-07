@@ -95,9 +95,7 @@ class MolesSwayMinisterSelectMinisterTests(MolesSwayMinisterViewBaseTestCase):
             self.add_card_to_hand(CardsEP.RABBIT_PARTISANS)
 
         # Mark all squire crowns as used
-        for crown in Crown.objects.filter(
-            player=self.moles_player, type="squire"
-        ):
+        for crown in Crown.objects.filter(player=self.moles_player, type="squire"):
             crown.used = True
             crown.save()
 
@@ -205,7 +203,9 @@ class MolesSwayMinisterSelectCardTests(MolesSwayMinisterViewBaseTestCase):
 
         # Try to select a MOUSE card (clearing 4) - we don't have pieces there
         c4 = Clearing.objects.get(game=self.game, clearing_number=4)
-        mouse_card = CardsEP.AMBUSH_WILD  # Wild will try to match c4 but we don't have pieces there
+        mouse_card = (
+            CardsEP.AMBUSH_WILD
+        )  # Wild will try to match c4 but we don't have pieces there
 
         # The validation happens when we try to match clearing_set
         # For now, we'll test by verifying the options don't include an impossible card
@@ -226,9 +226,7 @@ class MolesSwayMinisterSelectCardTests(MolesSwayMinisterViewBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select first card (WILD)
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.AMBUSH_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.AMBUSH_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["endpoint"], "card")
         # Should still be on card selection since we need 2 cards
@@ -249,15 +247,11 @@ class MolesSwayMinisterSelectCardTests(MolesSwayMinisterViewBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select first card (WILD - matches c1 with FOX suit)
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.AMBUSH_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.AMBUSH_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select second card (CROSSBOW - matches FOX clearing)
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.CROSSBOW_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.CROSSBOW_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "confirm")
         self.assertEqual(response.data["endpoint"], "confirm")
@@ -279,20 +273,16 @@ class MolesSwayMinisterSelectCardTests(MolesSwayMinisterViewBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select first card
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.AMBUSH_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.AMBUSH_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select second card
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.CROSSBOW_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.CROSSBOW_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select third card - should advance to confirm
         response = self.moles_client.submit_action(
-            {"card_name": CardsEP.DOMINANCE_WILD.name}
+            {"card": CardsEP.DOMINANCE_WILD.name}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "confirm")
@@ -315,26 +305,22 @@ class MolesSwayMinisterSelectCardTests(MolesSwayMinisterViewBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select first card
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.AMBUSH_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.AMBUSH_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select second card
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.CROSSBOW_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.CROSSBOW_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select third card
         response = self.moles_client.submit_action(
-            {"card_name": CardsEP.DOMINANCE_WILD.name}
+            {"card": CardsEP.DOMINANCE_WILD.name}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select fourth card - should advance to confirm
         response = self.moles_client.submit_action(
-            {"card_name": CardsEP.RABBIT_PARTISANS.name}
+            {"card": CardsEP.RABBIT_PARTISANS.name}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "confirm")
@@ -357,15 +343,11 @@ class MolesSwayMinisterCardValidationTests(MolesSwayMinisterViewBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select first CROSSBOW
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.CROSSBOW_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.CROSSBOW_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Try to select second CROSSBOW - should fail because it would use the same FOX clearing
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.CROSSBOW_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.CROSSBOW_WILD.name})
         # This should either raise an error or not allow the duplicate
         # The validation happens in validate_cards_match_clearings
 
@@ -385,14 +367,12 @@ class MolesSwayMinisterCardValidationTests(MolesSwayMinisterViewBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select first wild card
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.AMBUSH_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.AMBUSH_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select second wild card - should work if different clearings available
         response = self.moles_client.submit_action(
-            {"card_name": CardsEP.DOMINANCE_WILD.name}
+            {"card": CardsEP.DOMINANCE_WILD.name}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "confirm")
@@ -415,15 +395,11 @@ class MolesSwayMinisterConfirmTests(MolesSwayMinisterViewBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select first card
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.AMBUSH_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.AMBUSH_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select second card
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.CROSSBOW_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.CROSSBOW_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Confirm
@@ -447,15 +423,11 @@ class MolesSwayMinisterConfirmTests(MolesSwayMinisterViewBaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select first card
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.AMBUSH_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.AMBUSH_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Select second card
-        response = self.moles_client.submit_action(
-            {"card_name": CardsEP.CROSSBOW_WILD.name}
-        )
+        response = self.moles_client.submit_action({"card": CardsEP.CROSSBOW_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Cancel (confirmed = "no")

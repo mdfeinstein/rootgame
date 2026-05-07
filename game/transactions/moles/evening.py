@@ -25,7 +25,7 @@ def process_revealed_cards(player: Player):
     """
     validate_step(player, MoleEvening.MoleEveningSteps.PROCESS_REVEALED_CARDS)
 
-    revealed = RevealedCardEntry.objects.filter(player=player)
+    revealed = RevealedCardEntry.objects.filter(player=player, returned_to_hand=False)
     for entry in revealed:
         card_suit = entry.card.enum.value.suit
         if card_suit == Suit.WILD:
@@ -53,10 +53,6 @@ def craft_card(player: Player, card: CardsEP, buildings: list):
 
     card_in_hand = validate_player_has_card_in_hand(player, card)
     validate_crafting_pieces_satisfy_requirements(player, card, buildings)
-
-    for b in buildings:
-        b.crafted_with = True
-        b.save()
 
     from game.transactions.general import craft_card as general_craft_card
     general_craft_card(card_in_hand, buildings)

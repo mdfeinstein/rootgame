@@ -5,13 +5,20 @@ from game.decorators.transaction_decorator import atomic_game_action
 from game.errors import IllegalActionError, UnavailableActionError
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.game_models import Faction
-from game.models.moles.buildings import Citadel, Market
 from game.models.moles.turn import MoleEvening
-from game.queries.general import get_player_hand_size
-from game.queries.moles.crafting import validate_crafting_pieces_satisfy_requirements
-from game.queries.moles.evening import validate_discard_card
+from game.queries.general import get_player_hand_size, is_card_craftable_for_player
+from game.queries.moles.crafting import (
+    get_craftable_clearing_options,
+    get_buildings_from_clearing_numbers,
+    validate_crafting_pieces_satisfy_requirements,
+)
 from game.queries.moles.turn import validate_step
-from game.transactions.moles.evening import craft_card, discard_card, end_crafting, end_discard
+from game.transactions.moles.evening import (
+    craft_card,
+    discard_card,
+    end_crafting,
+    end_discard,
+)
 from game.views.action_views.general import GameActionView
 
 
@@ -40,17 +47,18 @@ class MolesCraftingView(GameActionView):
         return super().get(request)
 
     def _get_card_options(self, player):
-        """Get cards in hand as options."""
+        """Get craftable cards in hand as options."""
         from game.models.game_models import HandEntry
-        cards = HandEntry.objects.filter(player=player).values_list("card__card_type", flat=True)
+
+        cards = HandEntry.objects.filter(player=player).values_list(
+            "card__card_type", flat=True
+        )
         options = []
         for card_type in cards:
             try:
                 card_enum = CardsEP[card_type]
-                options.append({
-                    "value": card_enum.name,
-                    "label": card_enum.value.title,
-                })
+                if is_card_craftable_for_player(player, card_enum):
+                    options.append({"value": card_enum.name, "label": card_enum.value.title})
             except KeyError:
                 pass
         options.append({"value": "", "label": "Done Crafting"})
@@ -60,8 +68,8 @@ class MolesCraftingView(GameActionView):
         match route:
             case "card":
                 return self.post_card(request, game_id)
-            case "building":
-                return self.post_building(request, game_id)
+            case "clearing":
+                return self.post_clearing(request, game_id)
             case _:
                 raise ValidationError("Invalid route", code=status.HTTP_404_NOT_FOUND)
 
@@ -87,52 +95,21 @@ class MolesCraftingView(GameActionView):
         cost_labels = [c.label for c in cost]
 
         return self.generate_step(
-            "select_building",
-            f"Select {len(cost)} buildings to craft {card_enum.value.title}. Needed: {cost_labels}.",
-            "building",
-            [{"type": "building_id", "name": "building_id"}],
-            accumulated_payload={"card_to_craft": card_name, "building_ids": []},
-            options=self._get_building_options(player),
+            "select_clearing",
+            f"Select {len(cost)} clearing(s) to craft {card_enum.value.title}. Needed: {cost_labels}.",
+            "clearing",
+            [{"type": "clearing_number", "name": "clearing_number"}],
+            accumulated_payload={"card_to_craft": card_name, "clearing_numbers": []},
+            options=get_craftable_clearing_options(player),
         )
 
-    def _get_building_options(self, player):
-        """Get available buildings for crafting."""
-        options = []
-
-        # Get citadels
-        citadels = Citadel.objects.filter(
-            player=player, building_slot__isnull=False, crafted_with=False
-        )
-        for building in citadels:
-            clearing = building.building_slot.clearing
-            suit = clearing.suit.label
-            options.append({
-                "value": str(building.id),
-                "label": f"Citadel in clearing {clearing.clearing_number} ({suit})",
-            })
-
-        # Get markets
-        markets = Market.objects.filter(
-            player=player, building_slot__isnull=False, crafted_with=False
-        )
-        for building in markets:
-            clearing = building.building_slot.clearing
-            suit = clearing.suit.label
-            options.append({
-                "value": str(building.id),
-                "label": f"Market in clearing {clearing.clearing_number} ({suit})",
-            })
-
-        options.append({"value": "", "label": "Back to card selection"})
-        return options
-
-    def post_building(self, request, game_id: int):
+    def post_clearing(self, request, game_id: int):
         player = self.player(request, game_id)
         validate_step(player, MoleEvening.MoleEveningSteps.CRAFT)
 
         card_name = request.data.get("card_to_craft", "")
-        building_ids_str = request.data.get("building_ids", [])
-        new_building_id = request.data.get("building_id", "")
+        clearing_numbers_str = request.data.get("clearing_numbers", [])
+        new_clearing_number = request.data.get("clearing_number", "")
 
         if not card_name:
             raise ValidationError("Card not set")
@@ -146,7 +123,7 @@ class MolesCraftingView(GameActionView):
         cost_labels = [c.label for c in cost]
 
         # If empty string, go back to card selection
-        if new_building_id == "":
+        if new_clearing_number == "":
             return self.generate_step(
                 "select_card",
                 "Select a card to craft or Done to end crafting.",
@@ -155,32 +132,25 @@ class MolesCraftingView(GameActionView):
                 options=self._get_card_options(player),
             )
 
-        # Add building to list
+        # Add clearing number to list
         try:
-            building_ids = building_ids_str + [int(new_building_id)]
+            clearing_numbers = clearing_numbers_str + [int(new_clearing_number)]
         except (ValueError, TypeError):
-            raise ValidationError("Invalid building ID")
+            raise ValidationError("Invalid clearing number")
 
-        # Fetch building objects
+        # Fetch buildings from clearing numbers
         try:
-            buildings = []
-            for bid in building_ids:
-                citadel = Citadel.objects.filter(id=bid, player=player).first()
-                market = Market.objects.filter(id=bid, player=player).first()
-                b = citadel or market
-                if not b:
-                    raise ValidationError(f"Building {bid} not found")
-                buildings.append(b)
-        except ValidationError:
-            raise
-        except Exception as e:
-            raise ValidationError(str(e))
+            buildings = get_buildings_from_clearing_numbers(player, clearing_numbers)
+        except IllegalActionError as e:
+            raise ValidationError({"detail": str(e)})
 
         # Check if requirements are satisfied
         try:
-            all_satisfied = validate_crafting_pieces_satisfy_requirements(player, card_enum, buildings)
-        except Exception as e:
-            raise ValidationError(str(e))
+            all_satisfied = validate_crafting_pieces_satisfy_requirements(
+                player, card_enum, buildings
+            )
+        except IllegalActionError as e:
+            raise ValidationError({"detail": str(e)})
 
         if all_satisfied:
             # Craft the card
@@ -190,18 +160,21 @@ class MolesCraftingView(GameActionView):
                 raise ValidationError({"detail": str(e)})
             return self.generate_completed_step()
 
-        # Continue selecting buildings
+        # Continue selecting clearings
         selected_suits = [
-            b.building_slot.clearing.suit.label for b in buildings
+            CardsEP[card_name].value.cost[i].label for i in range(len(buildings))
         ]
-        prompt = f"Select more buildings. Needed: {cost_labels}. Selected so far: {selected_suits}."
+        prompt = f"Select more clearing(s). Needed: {cost_labels}. Selected so far: {selected_suits}."
         return self.generate_step(
-            "select_building",
+            "select_clearing",
             prompt,
-            "building",
-            [{"type": "building_id", "name": "building_id"}],
-            accumulated_payload={"card_to_craft": card_name, "building_ids": building_ids},
-            options=self._get_building_options(player),
+            "clearing",
+            [{"type": "clearing_number", "name": "clearing_number"}],
+            accumulated_payload={
+                "card_to_craft": card_name,
+                "clearing_numbers": clearing_numbers,
+            },
+            options=get_craftable_clearing_options(player),
         )
 
 
@@ -237,15 +210,18 @@ class MolesDiscardView(GameActionView):
     def _get_card_options(self, player):
         """Get cards in hand as discard options."""
         from game.models.game_models import HandEntry
+
         cards = HandEntry.objects.filter(player=player)
         options = []
         for entry in cards:
             try:
                 card_enum = CardsEP[entry.card.card_type]
-                options.append({
-                    "value": str(entry.id),
-                    "label": card_enum.value.title,
-                })
+                options.append(
+                    {
+                        "value": str(entry.id),
+                        "label": card_enum.value.title,
+                    }
+                )
             except KeyError:
                 pass
         return options

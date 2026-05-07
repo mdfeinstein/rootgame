@@ -53,7 +53,9 @@ def sway_minister(
     minister.save()
 
     # Mark crown as used
-    crown = Crown.objects.get(player=player, type=minister.crown_type, used=False)
+    crown = Crown.objects.filter(player=player, type=minister.crown_type, used=False).first()
+    if crown is None:
+        raise IllegalActionError(f"No crown of type {minister.crown_type} available")
     crown.used = True
     crown.save()
 

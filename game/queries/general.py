@@ -152,12 +152,14 @@ def get_current_turn_number(game: Game) -> int:
         from game.models.birds.turn import BirdTurn
         from game.models.wa.turn import WATurn
         from game.models.crows.turn import CrowTurn
+        from game.models.moles.turn import MoleTurn
 
         turn_object_dict = {
             Faction.CATS: CatTurn,
             Faction.BIRDS: BirdTurn,
             Faction.WOODLAND_ALLIANCE: WATurn,
             Faction.CROWS: CrowTurn,
+            Faction.MOLES: MoleTurn,
         }
     else:
         return 0
@@ -298,6 +300,26 @@ def validate_player_has_crafted_card(player: Player, card: CardsEP) -> CraftedCa
             f"Player does not have crafted card. card name: {card.name}"
         )
     return crafted_card
+
+
+def is_card_craftable_for_player(player: Player, card: CardsEP) -> bool:
+    """Returns True if the card can currently be crafted by the player.
+
+    Checks: card is marked craftable, item (if any) is still in the pool,
+    and non-item cards haven't already been crafted by this player.
+    """
+    from game.models import CraftableItemEntry
+
+    card_details = card.value
+    if not card_details.craftable:
+        return False
+    item = card_details.item
+    if item is not None:
+        return CraftableItemEntry.objects.filter(item__item_type=item.value).exists()
+    else:
+        return not CraftedCardEntry.objects.filter(
+            player=player, card__card_type=card.name
+        ).exists()
 
 
 def card_matches_clearing(card: CardsEP, clearing: Clearing) -> bool:

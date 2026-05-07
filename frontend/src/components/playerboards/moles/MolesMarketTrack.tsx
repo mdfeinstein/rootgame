@@ -41,7 +41,7 @@ export default function MolesMarketTrack({ marketCount }: MolesMarketTrackProps)
 
         <SimpleGrid cols={3} spacing="xs">
           {[0, 1, 2].map((index) => {
-            const isFilled = index < marketCount;
+            const isFilled = index >= 3 - marketCount;
 
             return (
               <Stack key={index} align="center" gap={4}>

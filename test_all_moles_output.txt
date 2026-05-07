@@ -1,0 +1,2 @@
+Running tests: game.tests.action_views.moles
+Output will be redirected to test_output.txt

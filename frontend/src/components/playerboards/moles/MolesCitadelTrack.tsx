@@ -41,7 +41,7 @@ export default function MolesCitadelTrack({ citadelCount }: MolesCitadelTrackPro
 
         <SimpleGrid cols={3} spacing="xs">
           {CITADEL_BONUSES.map((bonus, index) => {
-            const isFilled = index < citadelCount;
+            const isFilled = index >= CITADEL_BONUSES.length - citadelCount;
 
             return (
               <Stack key={index} align="center" gap={4}>

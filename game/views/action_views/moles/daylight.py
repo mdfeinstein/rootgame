@@ -271,6 +271,7 @@ class MolesRecruitView(SubGameActionView):
         "prompt": "Recruit a warrior to your burrow.",
         "endpoint": "confirm",
         "payload_details": [{"type": "confirm", "name": "confirm"}],
+        "options": [{"value": "true", "label": "Confirm", "info": "Build a Market."}],
     }
 
     def get(self, request):
@@ -306,8 +307,8 @@ class MolesBuildView(SubGameActionView):
         "endpoint": "type",
         "payload_details": [{"type": "building_type", "name": "building_type"}],
         "options": [
-            {"value": "Citadel", "label": "Citadel", "info": "Build a Citadel."},
-            {"value": "Market", "label": "Market", "info": "Build a Market."},
+            {"value": "citadel", "label": "Citadel", "info": "Build a Citadel."},
+            {"value": "market", "label": "Market", "info": "Build a Market."},
         ],
     }
 
@@ -362,7 +363,7 @@ class MolesBuildView(SubGameActionView):
             "build_card",
             "Select card to use for building.",
             "card",
-            [{"type": "card_name", "name": "card_name"}],
+            [{"type": "card", "name": "card_name"}],
             {"building_type": building_type, "clearing_number": clearing_number},
         )
 
@@ -441,7 +442,7 @@ class MolesDigView(SubGameActionView):
                 "dig_card",
                 "Select card to use for digging.",
                 "card",
-                [{"type": "card_name", "name": "card_name"}],
+                [{"type": "card", "name": "card_name"}],
                 {"target_clearing": clearing_number, "tunnel_source_clearing": None},
             )
 
@@ -464,7 +465,7 @@ class MolesDigView(SubGameActionView):
             "dig_card",
             "Select card to use for digging.",
             "card",
-            [{"type": "card_name", "name": "card_name"}],
+            [{"type": "card", "name": "card_name"}],
             {
                 "target_clearing": target_clearing_num,
                 "tunnel_source_clearing": tunnel_source_clearing,

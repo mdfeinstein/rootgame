@@ -84,7 +84,9 @@ class MolesSwayMinisterView(GameActionView):
 
         minister_name_str = request.data.get("minister", "")
         if not minister_name_str:
-            raise ValidationError("Minister is required", code=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError(
+                "Minister is required", code=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
             minister_enum = Minister.MinisterName(minister_name_str)
@@ -102,7 +104,7 @@ class MolesSwayMinisterView(GameActionView):
             "select_card",
             f"Select {required_cards} cards to sway {minister_obj.get_name_display()}.",
             "card",
-            [{"type": "card_name", "name": "card"}],
+            [{"type": "card", "name": "card"}],
             accumulated_payload={"minister": minister_name_str, "cards": []},
             options=self.get_card_options(player, []),
         )
@@ -210,7 +212,7 @@ class MolesSwayMinisterView(GameActionView):
                 "select_card",
                 f"Selected: {', '.join(selected_display)}. Select {required_cards - len(new_cards_list)} more cards.",
                 "card",
-                [{"type": "card_name", "name": "card"}],
+                [{"type": "card", "name": "card"}],
                 accumulated_payload=accumulated,
                 options=self.get_card_options(player, new_cards_list),
             )
@@ -243,7 +245,7 @@ class MolesSwayMinisterView(GameActionView):
                 "select_card",
                 f"Select {required_cards} cards to sway {minister_obj.get_name_display()}.",
                 "card",
-                [{"type": "card_name", "name": "card"}],
+                [{"type": "card", "name": "card"}],
                 accumulated_payload=accumulated,
                 options=self.get_card_options(player, selected_cards_str),
             )

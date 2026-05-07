@@ -116,7 +116,14 @@
       "Bash(python -m py_compile game/views/action_views/setup/moles.py game/queries/current_action/setup.py)",
       "PowerShell(Get-Command node -ErrorAction SilentlyContinue)",
       "PowerShell(Get-Command npm -ErrorAction SilentlyContinue)",
-      "Bash(python manage.py spectacular --file schema.yml)"
+      "Bash(python manage.py spectacular --file schema.yml)",
+      "Bash(python manage.py makemigrations)",
+      "Bash(xargs ls -la)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.action_views.moles)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.action_views.moles.test_moles_crafting_view)",
+      "Bash(tee test_crafting_output.txt)",
+      "Bash(tee test_all_moles_output.txt)",
+      "Bash(tee test_all_output.txt)"
     ]
   },
   "enabledPlugins": {

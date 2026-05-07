@@ -7702,15 +7702,10 @@ components:
     MolesCrown:
       type: object
       properties:
-        id:
-          type: integer
-          readOnly: true
         type:
           $ref: '#/components/schemas/TypeEnum'
         used:
           type: boolean
-      required:
-      - id
     MolesMarket:
       type: object
       properties:
@@ -7723,11 +7718,9 @@ components:
     MolesMinister:
       type: object
       properties:
-        id:
-          type: integer
-          readOnly: true
         name:
-          $ref: '#/components/schemas/NameEnum'
+          type: string
+          readOnly: true
         swayed:
           type: boolean
         used:
@@ -7738,7 +7731,6 @@ components:
           readOnly: true
       required:
       - crown_type
-      - id
       - name
     MolesTokens:
       type: object
@@ -7750,28 +7742,6 @@ components:
             $ref: '#/components/schemas/NestedToken'
       required:
       - tunnels
-    NameEnum:
-      enum:
-      - marshal
-      - captain
-      - foremole
-      - brigadier
-      - mayor
-      - banker
-      - duchess
-      - earl
-      - baron
-      type: string
-      description: |-
-        * `marshal` - Marshal
-        * `captain` - Captain
-        * `foremole` - Foremole
-        * `brigadier` - Brigadier
-        * `mayor` - Mayor
-        * `banker` - Banker
-        * `duchess` - Duchess of Mud
-        * `earl` - Earl of Stone
-        * `baron` - Baron of Dirt
     NestedToken:
       type: object
       properties:
