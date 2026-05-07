@@ -14,6 +14,14 @@ from game.transactions.general import (
     draw_card_from_deck_to_hand,
     discard_card_from_hand,
 )
+from game.serializers.general_serializers import CardSerializer
+from game.serializers.logs.general import (
+    get_current_phase_log,
+    log_craft,
+    log_draw,
+    log_discard,
+)
+from game.serializers.logs.moles import log_moles_evening_process_revealed
 
 
 @transaction.atomic
@@ -26,12 +34,26 @@ def process_revealed_cards(player: Player):
     validate_step(player, MoleEvening.MoleEveningSteps.PROCESS_REVEALED_CARDS)
 
     revealed = RevealedCardEntry.objects.filter(player=player, returned_to_hand=False)
+    returned_cards = []
+    discarded_cards = []
     for entry in revealed:
         card_suit = entry.card.enum.value.suit
         if card_suit == Suit.WILD:
+            discarded_cards.append(entry.card)
             entry.revealed_to_discard()
         else:
+            returned_cards.append(entry.card)
             entry.revealed_to_hand()
+
+    # Log the action
+    phase_log = get_current_phase_log(player.game, player)
+    log_moles_evening_process_revealed(
+        player.game,
+        player,
+        CardSerializer(returned_cards, many=True).data,
+        CardSerializer(discarded_cards, many=True).data,
+        parent=phase_log,
+    )
 
     from game.transactions.moles.turn import next_step
     next_step(player)
@@ -54,8 +76,15 @@ def craft_card(player: Player, card: CardsEP, buildings: list):
     card_in_hand = validate_player_has_card_in_hand(player, card)
     validate_crafting_pieces_satisfy_requirements(player, card, buildings)
 
+    # Capture card before it's marked as crafted
+    card_model = card_in_hand.card
+
     from game.transactions.general import craft_card as general_craft_card
     general_craft_card(card_in_hand, buildings)
+
+    # Log the action
+    phase_log = get_current_phase_log(player.game, player)
+    log_craft(player.game, player, card_model, parent=phase_log)
 
 
 @transaction.atomic
@@ -83,8 +112,14 @@ def draw_cards(player: Player):
     markets_on_map = Market.objects.filter(player=player, building_slot__isnull=False).count()
     count = 1 + markets_on_map
 
+    drawn = []
     for _ in range(count):
-        draw_card_from_deck_to_hand(player)
+        hand_entry = draw_card_from_deck_to_hand(player)
+        drawn.append(hand_entry.card)
+
+    # Log the action
+    phase_log = get_current_phase_log(player.game, player)
+    log_draw(player.game, player, drawn, parent=phase_log)
 
     from game.transactions.moles.turn import next_step
     next_step(player)
@@ -103,7 +138,15 @@ def discard_card(player: Player, card_entry: HandEntry):
         raise UnavailableActionError("Hand is already at or below 5 cards")
 
     validate_discard_card(player, card_entry)
+
+    # Capture card before discarding
+    card_model = card_entry.card
+
     discard_card_from_hand(player, card_entry)
+
+    # Log the action
+    phase_log = get_current_phase_log(player.game, player)
+    log_discard(player.game, player, card_model, parent=phase_log)
 
     if get_player_hand_size(player) <= 5:
         from game.transactions.moles.turn import next_step

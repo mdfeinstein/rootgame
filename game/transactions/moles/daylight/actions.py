@@ -29,6 +29,13 @@ from game.transactions.general import (
 )
 from game.transactions.battle import start_battle
 from game.transactions.moles.turn import next_step
+from game.serializers.general_serializers import CardSerializer
+from game.serializers.logs.general import get_current_phase_log
+from game.serializers.logs.moles import (
+    log_moles_build,
+    log_moles_recruit,
+    log_moles_dig,
+)
 
 
 @transaction.atomic
@@ -96,8 +103,22 @@ def build(
     building_instance.building_slot = building_slot
     building_instance.save()
 
+    # Capture card before revealing (for logging)
+    card_model = card_entry.card
+
     # Convert card to revealed
     RevealedCardEntry.hand_to_revealed(card_entry)
+
+    # Log the action
+    phase_log = get_current_phase_log(player.game, player)
+    log_moles_build(
+        player.game,
+        player,
+        building,
+        clearing.clearing_number,
+        CardSerializer(card_model).data,
+        parent=phase_log,
+    )
 
     # Decrement actions
     decrement_actions(player)
@@ -135,6 +156,10 @@ def recruit(player: Player):
     burrow = Burrow.objects.get(player=player)
     warrior.clearing = burrow
     warrior.save()
+
+    # Log the action
+    phase_log = get_current_phase_log(player.game, player)
+    log_moles_recruit(player.game, player, parent=phase_log)
 
     # Decrement actions
     decrement_actions(player)
@@ -185,6 +210,9 @@ def dig(
     # Validate card is in hand
     card_entry = validate_card_in_hand(player, card)
 
+    # Capture card before discarding (for logging)
+    card_model = card_entry.card
+
     # Validate clearing for digging (no tunnel present, card valid for clearing)
     validate_dig_clearing(player, clearing, card)
 
@@ -223,6 +251,23 @@ def dig(
 
     # Discard card
     discard_card_from_hand(player, card_entry)
+
+    # Log the action
+    tunnel_from_cn = (
+        clearing_to_move_tunnel_from.clearing_number
+        if clearing_to_move_tunnel_from
+        else None
+    )
+    phase_log = get_current_phase_log(player.game, player)
+    log_moles_dig(
+        player.game,
+        player,
+        clearing.clearing_number,
+        CardSerializer(card_model).data,
+        warriors_to_move,
+        tunnel_from_cn,
+        parent=phase_log,
+    )
 
     # Decrement actions
     decrement_actions(player)

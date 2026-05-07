@@ -12,6 +12,9 @@ from game.queries.moles.price_of_failure import (
     validate_minister_is_highest_rank,
 )
 from game.transactions.general import discard_card_from_hand
+from game.serializers.general_serializers import CardSerializer
+from game.serializers.logs.general import get_current_phase_log
+from game.serializers.logs.moles import log_moles_price_of_failure
 
 
 @transaction.atomic
@@ -94,7 +97,7 @@ def resolve_price_of_failure(
     event.save()
 
 
-def _perform_price_of_failure(player: Player, minister: Minister):
+def _perform_price_of_failure(player: Player, minister: Minister | None):
     """Perform the actual price of failure action.
 
     - Returns minister to unswayed
@@ -103,7 +106,7 @@ def _perform_price_of_failure(player: Player, minister: Minister):
 
     Args:
         player: The Moles player
-        minister: The Minister instance to return
+        minister: The Minister instance to return (or None)
     """
     if minister is not None:
         # Return minister to unswayed
@@ -114,4 +117,15 @@ def _perform_price_of_failure(player: Player, minister: Minister):
     hand_entries = HandEntry.objects.filter(player=player)
     if hand_entries.exists():
         card_entry = random.choice(list(hand_entries))
+        card_model = card_entry.card
         discard_card_from_hand(player, card_entry)
+
+        # Log the action
+        phase_log = get_current_phase_log(player.game, player)
+        log_moles_price_of_failure(
+            player.game,
+            player,
+            CardSerializer(card_model).data,
+            minister.name if minister else "",
+            parent=phase_log,
+        )

@@ -6,6 +6,8 @@ from game.models.moles.burrow import Burrow
 from game.models.moles.turn import MoleBirdsong
 from game.queries.moles.turn import validate_step
 from game.errors import UnavailableActionError
+from game.serializers.logs.general import get_current_phase_log
+from game.serializers.logs.moles import log_moles_birdsong_place_warriors
 
 
 @transaction.atomic
@@ -43,6 +45,12 @@ def place_burrow_warriors(player: Player):
     for warrior in available_warriors:
         warrior.clearing = burrow
     Warrior.objects.bulk_update(available_warriors, ["clearing"])
+
+    # Log the action
+    phase_log = get_current_phase_log(player.game, player)
+    log_moles_birdsong_place_warriors(
+        player.game, player, len(available_warriors), parent=phase_log
+    )
 
     # Move to next step - import here to avoid circular imports
     from game.transactions.moles.turn import next_step

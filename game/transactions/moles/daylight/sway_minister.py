@@ -9,6 +9,9 @@ from game.errors import IllegalActionError, UnavailableActionError
 from game.queries.moles.turn import validate_step
 from game.transactions.general import raise_score
 from game.transactions.moles.turn import next_step
+from game.serializers.general_serializers import CardSerializer
+from game.serializers.logs.general import get_current_phase_log
+from game.serializers.logs.moles import log_moles_sway_minister
 
 
 @transaction.atomic
@@ -69,8 +72,24 @@ def sway_minister(
     score = tier_scores[crown_type]
     raise_score(player, score)
 
+    # Capture card objects before revealing
+    card_objects = [e.card for e in hand_entries]
+
     # Reveal cards
     for hand_entry in hand_entries:
         RevealedCardEntry.hand_to_revealed(hand_entry)
+
+    # Log the action
+    phase_log = get_current_phase_log(player.game, player)
+    log_moles_sway_minister(
+        player.game,
+        player,
+        minister_name.value,
+        minister.crown_type,
+        score,
+        CardSerializer(card_objects, many=True).data,
+        parent=phase_log,
+    )
+
     # move to next step
     next_step(player)

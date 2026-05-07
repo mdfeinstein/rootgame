@@ -112,7 +112,9 @@ class MolesSwayMinisterSelectMinisterTests(MolesSwayMinisterViewBaseTestCase):
         # Don't add any cards to hand
         response = self.moles_client.get_action()
         options = response.data.get("options", [])
-        self.assertEqual(len(options), 0)
+        # Should only have Skip option when no eligible ministers
+        self.assertEqual(len(options), 1)
+        self.assertEqual(options[0]["value"], "")  # Skip option has empty value
 
     def test_select_squire_minister_requires_two_cards(self):
         """Test that squire ministers require 2 cards."""

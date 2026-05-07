@@ -60,6 +60,22 @@ class LogType(models.TextChoices):
 
     # Moles specific action logs
     MOLES_SETUP_PICK_CORNER = "MOLES_SETUP_PICK_CORNER", "Moles Setup Pick Corner"
+    MOLES_BIRDSONG_PLACE_WARRIORS = "MOLES_BIRDSONG_PLACE_WARRIORS", "Moles Birdsong Place Warriors"
+    MOLES_BUILD = "MOLES_BUILD", "Moles Build"
+    MOLES_RECRUIT = "MOLES_RECRUIT", "Moles Recruit"
+    MOLES_DIG = "MOLES_DIG", "Moles Dig"
+    MOLES_SWAY_MINISTER = "MOLES_SWAY_MINISTER", "Moles Sway Minister"
+    MOLES_MINISTER_MARSHAL = "MOLES_MINISTER_MARSHAL", "Moles Minister Marshal"
+    MOLES_MINISTER_CAPTAIN = "MOLES_MINISTER_CAPTAIN", "Moles Minister Captain"
+    MOLES_MINISTER_FOREMOLE = "MOLES_MINISTER_FOREMOLE", "Moles Minister Foremole"
+    MOLES_MINISTER_BANKER = "MOLES_MINISTER_BANKER", "Moles Minister Banker"
+    MOLES_MINISTER_DUCHESS = "MOLES_MINISTER_DUCHESS", "Moles Minister Duchess of Mud"
+    MOLES_MINISTER_BARON = "MOLES_MINISTER_BARON", "Moles Minister Baron of Dirt"
+    MOLES_MINISTER_EARL = "MOLES_MINISTER_EARL", "Moles Minister Earl of Stone"
+    MOLES_MINISTER_BRIGADIER = "MOLES_MINISTER_BRIGADIER", "Moles Minister Brigadier"
+    MOLES_MINISTER_MAYOR = "MOLES_MINISTER_MAYOR", "Moles Minister Mayor"
+    MOLES_EVENING_PROCESS_REVEALED = "MOLES_EVENING_PROCESS_REVEALED", "Moles Evening Process Revealed Cards"
+    MOLES_PRICE_OF_FAILURE = "MOLES_PRICE_OF_FAILURE", "Moles Price of Failure"
 
     # Event response logs
     CATS_FIELD_HOSPITALS = "CATS_FIELD_HOSPITALS", "Field Hospitals"

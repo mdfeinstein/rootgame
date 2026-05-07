@@ -11,7 +11,7 @@ from game.queries.moles.daylight import (
     validate_card_in_hand,
     validate_cards_match_clearings,
 )
-from game.transactions.moles.daylight.sway_minister import sway_minister
+from game.transactions.moles.daylight.sway_minister import sway_minister, end_sway_minister
 from game.decorators.transaction_decorator import atomic_game_action
 from game.views.action_views.general import GameActionView
 
@@ -57,6 +57,9 @@ class MolesSwayMinisterView(GameActionView):
                         "info": f"Crown: {crown_type.capitalize()}",
                     }
                 )
+
+        # Add option to skip sway minister step
+        available.append({"value": "", "label": "Skip"})
         return available
 
     def get(self, request):
@@ -83,10 +86,11 @@ class MolesSwayMinisterView(GameActionView):
         validate_step(player, MoleDaylight.MoleDaylightSteps.SWAY_MINISTER)
 
         minister_name_str = request.data.get("minister", "")
-        if not minister_name_str:
-            raise ValidationError(
-                "Minister is required", code=status.HTTP_400_BAD_REQUEST
-            )
+
+        # If empty string, skip sway minister step
+        if minister_name_str == "":
+            atomic_game_action(end_sway_minister)(player)
+            return self.generate_completed_step()
 
         try:
             minister_enum = Minister.MinisterName(minister_name_str)

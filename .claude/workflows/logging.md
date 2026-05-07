@@ -14,7 +14,6 @@ When introducing new log models to the `GameLog` infrastructure, follow this pro
    - Open `game/serializers/logs/<faction>.py` (or `general.py` for global actions).
    - Create `{Action}LogDetailsSerializer(serializers.Serializer)`.
    - You MUST define `text = serializers.SerializerMethodField('get_text')` returning the formatted, human-readable sentence (using `def get_text(self, obj):`). This keeps the frontend generic.
-   - For `Card` objects, map the field using `card = serializers.DictField()`. Avoid `CardSerializer()` directly inside your DetailsSerializer to avoid triggering internal DRF string-validations recursively!
    - Update `game/serializers/logs/main.py` -> `GameLogSerializer.get_details` to mount your new LogType and serializer.
 
 3. **Log Factory Method**
