@@ -128,3 +128,78 @@ class CraftingLogicTests(TestCase):
 
         with self.assertRaises(IllegalActionError):
             craft_card(hand_entry, [])
+
+    def test_craftable_item_removed_from_pool_after_crafting(self):
+        # When a player crafts an item, it should be removed from the pool.
+        # Start with 2 boots in the pool, craft 1, expect 1 remaining.
+        card_type = CardsEP.TRAVEL_GEAR_RED
+        item_type = ItemTypes.BOOTS
+
+        # Create 2 boots in the pool
+        boot1 = Item.objects.create(game=self.game, item_type=item_type)
+        boot2 = Item.objects.create(game=self.game, item_type=item_type)
+        CraftableItemEntry.objects.create(game=self.game, item=boot1)
+        CraftableItemEntry.objects.create(game=self.game, item=boot2)
+
+        # Verify 2 are in pool initially
+        self.assertEqual(
+            CraftableItemEntry.objects.filter(game=self.game, item__item_type=item_type).count(),
+            2,
+        )
+
+        # Craft the card
+        card_in_hand = Card.objects.create(game=self.game, card_type=card_type.name)
+        hand_entry = HandEntry.objects.create(player=self.player, card=card_in_hand)
+        craft_card(hand_entry, [])
+
+        # Verify only 1 is in pool after crafting
+        self.assertEqual(
+            CraftableItemEntry.objects.filter(game=self.game, item__item_type=item_type).count(),
+            1,
+        )
+
+        # Verify the player now has 1 crafted boot
+        self.assertEqual(
+            CraftedItemEntry.objects.filter(player=self.player, item__item_type=item_type).count(),
+            1,
+        )
+
+    def test_can_craft_second_duplicate_item_after_first_removed_from_pool(self):
+        # After crafting the first boot from the pool, a player should be able to craft a second
+        # boot if there's another one available in the pool.
+        card_type = CardsEP.TRAVEL_GEAR_RED
+        item_type = ItemTypes.BOOTS
+
+        # Create 2 boots in the pool
+        boot1 = Item.objects.create(game=self.game, item_type=item_type)
+        boot2 = Item.objects.create(game=self.game, item_type=item_type)
+        CraftableItemEntry.objects.create(game=self.game, item=boot1)
+        CraftableItemEntry.objects.create(game=self.game, item=boot2)
+
+        # Craft first boot
+        card1 = Card.objects.create(game=self.game, card_type=card_type.name)
+        hand_entry1 = HandEntry.objects.create(player=self.player, card=card1)
+        craft_card(hand_entry1, [])
+
+        # Verify 1 boot is left in pool
+        self.assertEqual(
+            CraftableItemEntry.objects.filter(game=self.game, item__item_type=item_type).count(),
+            1,
+        )
+
+        # Craft second boot
+        card2 = Card.objects.create(game=self.game, card_type=card_type.name)
+        hand_entry2 = HandEntry.objects.create(player=self.player, card=card2)
+        craft_card(hand_entry2, [])
+
+        # Verify 0 boots are left in pool
+        self.assertEqual(
+            CraftableItemEntry.objects.filter(game=self.game, item__item_type=item_type).count(),
+            0,
+        )
+
+        # Verify the player now has 2 crafted boots
+        self.assertEqual(
+            CraftedItemEntry.objects.filter(player=self.player, item__item_type=item_type).count(),
+            2,
+        )

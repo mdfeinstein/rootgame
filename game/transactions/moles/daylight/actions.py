@@ -134,6 +134,16 @@ def move(player: Player, origin: Clearing, target: Clearing, count: int):
 
     move_warriors(player, origin, target, count)
 
+    from game.serializers.logs.general import log_move
+    log_move(
+        player.game,
+        player,
+        origin.clearing_number,
+        target.clearing_number,
+        count,
+        parent=get_current_phase_log(player.game, player),
+    )
+
     # Decrement actions
     decrement_actions(player)
 
@@ -173,11 +183,18 @@ def battle(player: Player, defender: Faction, clearing: Clearing):
     """
     validate_step(player, MoleDaylight.MoleDaylightSteps.ACTIONS)
 
-    start_battle(
+    battle_obj = start_battle(
         player.game,
         attacker=Faction(player.faction),
         defender=Faction(defender),
         clearing=clearing,
+    )
+
+    from game.transactions.battle import log_battle_start
+    log_battle_start(
+        battle_obj,
+        player,
+        parent=get_current_phase_log(player.game, player),
     )
 
     # Decrement actions

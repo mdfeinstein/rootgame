@@ -137,34 +137,22 @@ class MolesMinisterActionsViewsTests(APITestCase):
         self.assertEqual(response.data["name"], "completed")
 
     def test_duchess_action_flow(self):
-        """Test duchess action: confirm -> completed"""
+        """Test duchess action: completed"""
         # 1. Get minister selection
         self.moles_client.get_action()
 
-        # 2. Select duchess action
+        # 2. Select duchess action (executes immediately)
         response = self.moles_client.submit_action({"action": "duchess"})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["name"], "duchess_confirm")
-        self.assertEqual(response.data["endpoint"], "confirm")
-
-        # 3. Confirm
-        response = self.moles_client.submit_action({"confirm": True})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "completed")
 
     def test_baron_action_flow(self):
-        """Test baron action: confirm -> completed"""
+        """Test baron action: completed"""
         # 1. Get minister selection
         self.moles_client.get_action()
 
-        # 2. Select baron action
+        # 2. Select baron action (executes immediately)
         response = self.moles_client.submit_action({"action": "baron"})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["name"], "baron_confirm")
-        self.assertEqual(response.data["endpoint"], "confirm")
-
-        # 3. Confirm
-        response = self.moles_client.submit_action({"confirm": True})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "completed")
 

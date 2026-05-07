@@ -98,7 +98,8 @@ class MolesDaylightActionsView(GameActionView):
             case "dig":
                 return self.generate_redirect_step(reverse("moles-daylight-dig"))
             case "recruit":
-                return self.generate_redirect_step(reverse("moles-daylight-recruit"))
+                atomic_game_action(recruit)(player)
+                return self.generate_completed_step()
             case "build":
                 return self.generate_redirect_step(reverse("moles-daylight-build"))
             case _:
@@ -261,41 +262,6 @@ class MolesBattleView(SubGameActionView):
         return self.generate_completed_step()
 
 
-class MolesRecruitView(SubGameActionView):
-    subroute = "recruit"
-    parent_view = MolesDaylightActionsView
-    faction = Faction.MOLES
-    first_step = {
-        "faction": Faction.MOLES.label,
-        "name": "recruit_confirm",
-        "prompt": "Recruit a warrior to your burrow.",
-        "endpoint": "confirm",
-        "payload_details": [{"type": "confirm", "name": "confirm"}],
-        "options": [{"value": "true", "label": "Confirm", "info": "Build a Market."}],
-    }
-
-    def get(self, request):
-        player = self.player(request, int(request.GET.get("game_id")))
-        actions_left = get_actions_remaining(player)
-        self.first_step = dict(self.first_step)
-        self.first_step["prompt"] = (
-            f"Recruit a warrior to your burrow. ({actions_left} actions remaining)"
-        )
-        return super().get(request)
-
-    def route_post(self, request, game_id: int, route: str):
-        match route:
-            case "confirm":
-                return self.post_confirm(request, game_id)
-            case _:
-                raise ValidationError("Invalid route", code=status.HTTP_404_NOT_FOUND)
-
-    def post_confirm(self, request, game_id: int):
-        player = self.player(request, game_id)
-        atomic_game_action(recruit)(player)
-        return self.generate_completed_step()
-
-
 class MolesBuildView(SubGameActionView):
     subroute = "build"
     parent_view = MolesDaylightActionsView
@@ -429,7 +395,7 @@ class MolesDigView(SubGameActionView):
             player=player, clearing__isnull=True
         ).exists()
 
-        if tunnels_in_supply:
+        if not tunnels_in_supply:
             return self.generate_step(
                 "dig_tunnel_source",
                 "Select clearing with tunnel to move.",
@@ -503,6 +469,7 @@ class MolesDigView(SubGameActionView):
         player = self.player(request, game_id)
         game = self.game(game_id)
         card_name = request.data["card_name"]
+        card = CardsEP[card_name]
         target_clearing_num = request.data["target_clearing"]
         tunnel_source_clearing_num = request.data.get("tunnel_source_clearing")
         count = int(request.data["count"])
@@ -518,7 +485,7 @@ class MolesDigView(SubGameActionView):
 
         atomic_game_action(dig)(
             player,
-            card_name,
+            card,
             target_clearing,
             count,
             clearing_to_move_tunnel_from=tunnel_source_clearing,

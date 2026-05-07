@@ -59,16 +59,17 @@ class MolesMinisterActionsView(GameActionView):
 
         # Brigadier mid-sequence: only brigadier or skip allowed
         if phase.brigadier_action != MoleDaylight.BrigadierAction.NONE:
-            self.first_step["prompt"] = "Continue Brigadier action or skip."
+            action_type = "battling" if phase.brigadier_action == MoleDaylight.BrigadierAction.BATTLE else "moving"
+            self.first_step["prompt"] = f"Continue Brigadier {action_type} or end."
             self.first_step["options"] = [
                 {
                     "value": "brigadier",
-                    "label": "Brigadier (continue)",
-                    "info": "Use Brigadier's second action.",
+                    "label": f"Brigadier: second {action_type}",
+                    "info": f"Use Brigadier's second {action_type} action.",
                 },
                 {
                     "value": "skip_brigadier",
-                    "label": "Skip second Brigadier action",
+                    "label": f"End Brigadier {action_type}",
                     "info": "End Brigadier's effects.",
                 },
                 {"value": "", "label": "Done", "info": "Finish minister actions."},
@@ -181,11 +182,14 @@ class MolesMinisterActionsView(GameActionView):
             case "banker":
                 return self.generate_redirect_step(reverse("moles-minister-banker"))
             case "duchess":
-                return self.generate_redirect_step(reverse("moles-minister-duchess"))
+                atomic_game_action(use_duchess)(player)
+                return self.generate_completed_step()
             case "earl":
-                return self.generate_redirect_step(reverse("moles-minister-earl"))
+                atomic_game_action(use_earl)(player)
+                return self.generate_completed_step()
             case "baron":
-                return self.generate_redirect_step(reverse("moles-minister-baron"))
+                atomic_game_action(use_baron)(player)
+                return self.generate_completed_step()
             case "mayor":
                 return self.generate_redirect_step(reverse("moles-minister-mayor"))
             case _:
@@ -935,76 +939,3 @@ class MolesMinisterBankerView(SubGameActionView):
         )
 
 
-class MolesMinisterDuchessView(SubGameActionView):
-    subroute = "duchess"
-    parent_view = MolesMinisterActionsView
-    faction = Faction.MOLES
-    first_step = {
-        "faction": Faction.MOLES.label,
-        "name": "duchess_confirm",
-        "prompt": "Duchess of Mud: Gain 2 points if all tunnels are on map.",
-        "endpoint": "confirm",
-        "payload_details": [{"type": "confirm", "name": "confirm"}],
-    }
-
-    def route_post(self, request, game_id: int, route: str):
-        match route:
-            case "confirm":
-                return self.post_confirm(request, game_id)
-            case _:
-                raise ValidationError("Invalid route", code=status.HTTP_404_NOT_FOUND)
-
-    def post_confirm(self, request, game_id: int):
-        player = self.player(request, game_id)
-        atomic_game_action(use_duchess)(player)
-        return self.generate_completed_step()
-
-
-class MolesMinisterEarlView(SubGameActionView):
-    subroute = "earl"
-    parent_view = MolesMinisterActionsView
-    faction = Faction.MOLES
-    first_step = {
-        "faction": Faction.MOLES.label,
-        "name": "earl_confirm",
-        "prompt": "Earl of Stone: Gain 1 point per citadel on map.",
-        "endpoint": "confirm",
-        "payload_details": [{"type": "confirm", "name": "confirm"}],
-    }
-
-    def route_post(self, request, game_id: int, route: str):
-        match route:
-            case "confirm":
-                return self.post_confirm(request, game_id)
-            case _:
-                raise ValidationError("Invalid route", code=status.HTTP_404_NOT_FOUND)
-
-    def post_confirm(self, request, game_id: int):
-        player = self.player(request, game_id)
-        atomic_game_action(use_earl)(player)
-        return self.generate_completed_step()
-
-
-class MolesMinisterBaronView(SubGameActionView):
-    subroute = "baron"
-    parent_view = MolesMinisterActionsView
-    faction = Faction.MOLES
-    first_step = {
-        "faction": Faction.MOLES.label,
-        "name": "baron_confirm",
-        "prompt": "Baron of Dirt: Gain 1 point per market on map.",
-        "endpoint": "confirm",
-        "payload_details": [{"type": "confirm", "name": "confirm"}],
-    }
-
-    def route_post(self, request, game_id: int, route: str):
-        match route:
-            case "confirm":
-                return self.post_confirm(request, game_id)
-            case _:
-                raise ValidationError("Invalid route", code=status.HTTP_404_NOT_FOUND)
-
-    def post_confirm(self, request, game_id: int):
-        player = self.player(request, game_id)
-        atomic_game_action(use_baron)(player)
-        return self.generate_completed_step()

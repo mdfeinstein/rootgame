@@ -252,11 +252,10 @@ class MolesSwayMinisterSelectCardTests(MolesSwayMinisterViewBaseTestCase):
         response = self.moles_client.submit_action({"card": CardsEP.AMBUSH_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # Select second card (CROSSBOW - matches FOX clearing)
+        # Select second card (CROSSBOW - matches FOX clearing) - should complete
         response = self.moles_client.submit_action({"card": CardsEP.CROSSBOW_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["name"], "confirm")
-        self.assertEqual(response.data["endpoint"], "confirm")
+        self.assertEqual(response.data["name"], "completed")
 
     def test_select_noble_cards_need_three(self):
         """Test that selecting 3 cards for a noble minister advances to confirm."""
@@ -282,12 +281,12 @@ class MolesSwayMinisterSelectCardTests(MolesSwayMinisterViewBaseTestCase):
         response = self.moles_client.submit_action({"card": CardsEP.CROSSBOW_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # Select third card - should advance to confirm
+        # Select third card - should complete
         response = self.moles_client.submit_action(
             {"card": CardsEP.DOMINANCE_WILD.name}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["name"], "confirm")
+        self.assertEqual(response.data["name"], "completed")
 
     def test_select_lord_cards_need_four(self):
         """Test that selecting 4 cards for a lord minister advances to confirm."""
@@ -320,12 +319,12 @@ class MolesSwayMinisterSelectCardTests(MolesSwayMinisterViewBaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # Select fourth card - should advance to confirm
+        # Select fourth card - should complete
         response = self.moles_client.submit_action(
             {"card": CardsEP.RABBIT_PARTISANS.name}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["name"], "confirm")
+        self.assertEqual(response.data["name"], "completed")
 
 
 class MolesSwayMinisterCardValidationTests(MolesSwayMinisterViewBaseTestCase):
@@ -372,67 +371,9 @@ class MolesSwayMinisterCardValidationTests(MolesSwayMinisterViewBaseTestCase):
         response = self.moles_client.submit_action({"card": CardsEP.AMBUSH_WILD.name})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # Select second wild card - should work if different clearings available
+        # Select second wild card - should complete
         response = self.moles_client.submit_action(
             {"card": CardsEP.DOMINANCE_WILD.name}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["name"], "confirm")
-
-
-class MolesSwayMinisterConfirmTests(MolesSwayMinisterViewBaseTestCase):
-    def test_confirm_completes_sway(self):
-        """Test that confirming completes the sway action."""
-        # Add 2 cards
-        self.add_card_to_hand(CardsEP.AMBUSH_WILD)
-        self.add_card_to_hand(CardsEP.CROSSBOW_WILD)
-
-        # Get the action first
-        self.moles_client.get_action()
-
-        # Select marshal
-        response = self.moles_client.submit_action(
-            {"minister_name": Minister.MinisterName.MARSHAL.value}
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Select first card
-        response = self.moles_client.submit_action({"card": CardsEP.AMBUSH_WILD.name})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Select second card
-        response = self.moles_client.submit_action({"card": CardsEP.CROSSBOW_WILD.name})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Confirm
-        response = self.moles_client.submit_action({"confirmed": "yes"})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "completed")
-
-    def test_cancel_goes_back_to_card_selection(self):
-        """Test that canceling goes back to card selection."""
-        # Add 2 cards
-        self.add_card_to_hand(CardsEP.AMBUSH_WILD)
-        self.add_card_to_hand(CardsEP.CROSSBOW_WILD)
-
-        # Get the action first
-        self.moles_client.get_action()
-
-        # Select marshal
-        response = self.moles_client.submit_action(
-            {"minister_name": Minister.MinisterName.MARSHAL.value}
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Select first card
-        response = self.moles_client.submit_action({"card": CardsEP.AMBUSH_WILD.name})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Select second card
-        response = self.moles_client.submit_action({"card": CardsEP.CROSSBOW_WILD.name})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Cancel (confirmed = "no")
-        response = self.moles_client.submit_action({"confirmed": "no"})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["name"], "select_card")

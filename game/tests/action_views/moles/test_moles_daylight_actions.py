@@ -108,16 +108,10 @@ class MolesDaylightActionViewsTests(APITestCase):
         self.assertEqual(response.data["name"], "completed")
 
     def test_recruit_action_flow(self):
-        """Test recruit action: confirm -> completed"""
-        # 1. Select recruit action
+        """Test recruit action: completed"""
+        # 1. Select recruit action (executes immediately)
         self.moles_client.get_action()
         response = self.moles_client.submit_action({"action_type": "recruit"})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["name"], "recruit_confirm")
-        self.assertEqual(response.data["endpoint"], "confirm")
-
-        # 2. Confirm recruit
-        response = self.moles_client.submit_action({"confirm": True})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "completed")
 

@@ -36,12 +36,11 @@ from game.views.action_views.crows.daylight import CrowsDaylightActionsView
 from game.views.action_views.crows.evening import CrowsExertView, CrowsDiscardingView
 from game.views.action_views.moles.daylight import (
     MolesDaylightActionsView, MolesMoveView, MolesBattleView,
-    MolesDigView, MolesRecruitView, MolesBuildView,
+    MolesDigView, MolesBuildView,
 )
 from game.views.action_views.moles.minister_actions import (
     MolesMinisterActionsView, MolesMinisterMayorView, MolesMinisterMarshalView, MolesMinisterCaptainView,
     MolesMinisterForemoleView, MolesMinisterBrigadierView, MolesMinisterBankerView,
-    MolesMinisterDuchessView, MolesMinisterEarlView, MolesMinisterBaronView,
 )
 from game.views.action_views.moles.sway_minister import MolesSwayMinisterView
 from game.views.action_views.moles.evening import MolesCraftingView, MolesDiscardView
@@ -432,12 +431,6 @@ register_action(
     urlpatterns,
 )
 register_action(
-    "moles-daylight-recruit",
-    MolesRecruitView,
-    "api/moles/daylight/actions/recruit/",
-    urlpatterns,
-)
-register_action(
     "moles-daylight-build",
     MolesBuildView,
     "api/moles/daylight/actions/build/",
@@ -486,25 +479,6 @@ register_action(
     "api/moles/daylight/minister-actions/banker/",
     urlpatterns,
 )
-register_action(
-    "moles-minister-duchess",
-    MolesMinisterDuchessView,
-    "api/moles/daylight/minister-actions/duchess/",
-    urlpatterns,
-)
-register_action(
-    "moles-minister-earl",
-    MolesMinisterEarlView,
-    "api/moles/daylight/minister-actions/earl/",
-    urlpatterns,
-)
-register_action(
-    "moles-minister-baron",
-    MolesMinisterBaronView,
-    "api/moles/daylight/minister-actions/baron/",
-    urlpatterns,
-)
-
 register_action(
     "moles-sway-minister",
     MolesSwayMinisterView,

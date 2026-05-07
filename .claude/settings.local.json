@@ -123,7 +123,8 @@
       "Bash(python .agent/scripts/run_tests.py game.tests.action_views.moles.test_moles_crafting_view)",
       "Bash(tee test_crafting_output.txt)",
       "Bash(tee test_all_moles_output.txt)",
-      "Bash(tee test_all_output.txt)"
+      "Bash(tee test_all_output.txt)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.general.test_crafting.CraftingLogicTests)"
     ]
   },
   "enabledPlugins": {

@@ -55,11 +55,16 @@ def end_minister_actions(player: Player):
 
 
 def check_all_ministers_used(player: Player):
-    """Check if all swayed ministers have been used, advance to next step if so."""
+    """Check if all swayed ministers have been used AND not in the middle of a brigadier action
+    advance to next step if so.
+    """
     are_unused_ministers = Minister.objects.filter(
         player=player, swayed=True, used=False
     ).exists()
-    if not are_unused_ministers:
+    phase = get_phase(player)
+    assert isinstance(phase, MoleDaylight)
+    in_middle_of_brigadier = phase.brigadier_action != MoleDaylight.BrigadierAction.NONE
+    if not are_unused_ministers and not in_middle_of_brigadier:
         next_step(player)
 
 
@@ -542,7 +547,9 @@ def use_brigadier(player: Player, action: Literal["move", "battle"], *args):
     validate_brigadier_action(phase, action_type)
 
     # Determine action number (1st or 2nd)
-    action_number = 1 if phase.brigadier_action == MoleDaylight.BrigadierAction.NONE else 2
+    action_number = (
+        1 if phase.brigadier_action == MoleDaylight.BrigadierAction.NONE else 2
+    )
 
     # on first action, Validate brigadier unused and mark as used
     if phase.brigadier_action == MoleDaylight.BrigadierAction.NONE:
@@ -579,7 +586,12 @@ def use_brigadier(player: Player, action: Literal["move", "battle"], *args):
         execute_brigadier_battle(player, *args)
         # Get the battle object from the last battle created
         from game.models.events.battle import Battle
-        battle = Battle.objects.filter(event__game=player.game, clearing=clearing).order_by("-event__created_at").first()
+
+        battle = (
+            Battle.objects.filter(event__game=player.game, clearing=clearing)
+            .order_by("-event__created_at")
+            .first()
+        )
         if battle:
             log_battle_start(battle, player, parent=brigadier_log)
 
@@ -686,7 +698,12 @@ def use_mayor(player: Player, minister_name: Minister.MinisterName, *args):
             defender, clearing = remaining_args
             execute_brigadier_battle(player, *remaining_args)
             from game.models.events.battle import Battle
-            battle = Battle.objects.filter(event__game=player.game, clearing=clearing).order_by("-event__created_at").first()
+
+            battle = (
+                Battle.objects.filter(event__game=player.game, clearing=clearing)
+                .order_by("-event__created_at")
+                .first()
+            )
             if battle:
                 log_battle_start(battle, player, parent=brigadier_log)
         else:
