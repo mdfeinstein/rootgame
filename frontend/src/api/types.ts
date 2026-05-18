@@ -3153,9 +3153,12 @@ export interface components {
             /** @description Returns the crown type (rank) for this minister. */
             readonly crown_type: string;
         };
+        MolesNestedToken: {
+            token: components["schemas"]["Token"];
+        };
         /** @description Serializer for moles tokens. collects lists of all tokens */
         MolesTokens: {
-            tunnels: components["schemas"]["NestedToken"][];
+            tunnels: components["schemas"]["MolesNestedToken"][];
         };
         NestedToken: {
             token: components["schemas"]["Token"];

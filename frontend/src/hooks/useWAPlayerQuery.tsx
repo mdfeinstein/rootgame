@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { gameKeys } from "../api/queryKeys";
 import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
+import type { components } from "../api/types";
 import { PlayerContext } from "../contexts/PlayerProvider";
 import { UserContext } from "../contexts/UserProvider";
 import { useContext } from "react";
@@ -12,8 +13,12 @@ const useWAPlayerQuery = (gameId: number, enabled: boolean = true) => {
     isLoading,
     isError,
     isSuccess,
-  } = useQuery(
-    getFactionPlayerInfoQueryOptions(gameId, "woodland-alliance", enabled),
+  } = useQuery<components["schemas"]["WA"]>(
+    getFactionPlayerInfoQueryOptions<components["schemas"]["WA"]>(
+      gameId,
+      "woodland-alliance",
+      enabled,
+    ),
   );
   const { faction } = useContext(PlayerContext);
   const { username } = useContext(UserContext);

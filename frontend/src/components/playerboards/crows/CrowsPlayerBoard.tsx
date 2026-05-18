@@ -57,7 +57,7 @@ export default function CrowsPlayerBoard({
           <Stack gap="xs">
             <CrowsHeaderSection
               warriorsInSupply={warriorsInSupply}
-              craftedItems={publicInfo?.crafted_items}
+              craftedItems={publicInfo?.player?.crafted_items}
             />
 
             <Grid gutter="xs" align="stretch">

@@ -25,7 +25,7 @@ export default function MolesPlayerBoard({
 
   const warriors = publicInfo?.warriors ?? [];
   const warriorsInSupply = warriors.filter(
-    (w: any) => w.clearing_number === null,
+    (w) => w.clearing_number === null,
   ).length;
 
   const molesBuildingsOnBoard = buildingTable.filter(
@@ -39,8 +39,7 @@ export default function MolesPlayerBoard({
     (b) => b.buildingType === "markets",
   ).length;
 
-  const tokens = publicInfo?.tokens ?? {};
-  const tunnels = tokens.tunnels ?? [];
+  const tunnels = publicInfo?.tokens?.tunnels ?? [];
   const tunnelsInSupply = tunnels.filter(
     (tunnel) => tunnel.token.clearing_number === null,
   ).length;

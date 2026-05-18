@@ -7388,6 +7388,13 @@ components:
       required:
       - crown_type
       - name
+    MolesNestedToken:
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/Token'
+      required:
+      - token
     MolesTokens:
       type: object
       description: Serializer for moles tokens. collects lists of all tokens
@@ -7395,7 +7402,7 @@ components:
         tunnels:
           type: array
           items:
-            $ref: '#/components/schemas/NestedToken'
+            $ref: '#/components/schemas/MolesNestedToken'
       required:
       - tunnels
     NestedToken:

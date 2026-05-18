@@ -54,13 +54,14 @@ class MolesBuildingsSerializer(serializers.Serializer):
     markets = MolesMarketSerializer(many=True)
 
 
+class MolesNestedTokenSerializer(serializers.Serializer):
+    token = TokenSerializer()
+
+
 class MolesTokensSerializer(serializers.Serializer):
     """Serializer for moles tokens. collects lists of all tokens"""
 
-    class NestedTokenSerializer(serializers.Serializer):
-        token = TokenSerializer()
-
-    tunnels = NestedTokenSerializer(many=True)
+    tunnels = MolesNestedTokenSerializer(many=True)
 
 
 class MolesBirdsongSerializer(serializers.ModelSerializer):

@@ -1,22 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { gameKeys } from "../api/queryKeys";
 import { getFactionPlayerInfoQueryOptions } from "./useFactionPlayerInfoQuery";
+import type { components } from "../api/types";
 import { useContext } from "react";
 import { PlayerContext } from "../contexts/PlayerProvider";
 import { UserContext } from "../contexts/UserProvider";
-
-export type CrowPlayerInfo = {
-  player: {
-    score: number;
-    faction: string;
-    username: string;
-  };
-  warriors: {
-    clearing_number: number | null;
-  }[];
-  reserve_plots_count: number;
-  crafted_items: any[];
-};
 
 export type CrowPrivateInfo = {
   reserve_plots: {
@@ -42,9 +30,13 @@ export const useCrowPlayerQuery = (gameId: number, enabled: boolean = true) => {
     isLoading: isPublicLoading,
     isError: isPublicError,
     isSuccess: isPublicSuccess,
-  } = useQuery<CrowPlayerInfo>({
-    ...getFactionPlayerInfoQueryOptions(gameId, "crows", enabled),
-  });
+  } = useQuery<components["schemas"]["Crows"]>(
+    getFactionPlayerInfoQueryOptions<components["schemas"]["Crows"]>(
+      gameId,
+      "crows",
+      enabled,
+    ),
+  );
 
   const { faction } = useContext(PlayerContext);
   const { username } = useContext(UserContext);

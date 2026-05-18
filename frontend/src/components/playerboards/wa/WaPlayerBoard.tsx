@@ -41,7 +41,7 @@ export default function WaPlayerBoard({ isOpen, onClose }: WaPlayerBoardProps) {
   const warriors = publicInfo?.warriors ?? [];
 
   const warriorsInSupply = warriors.filter(
-    (w: any) => w.clearing_number === null,
+    (w) => w.clearing_number === null,
   ).length;
 
   return (
@@ -71,7 +71,7 @@ export default function WaPlayerBoard({ isOpen, onClose }: WaPlayerBoardProps) {
           <Stack gap="xs">
             <WaHeaderSection
               warriorsInSupply={warriorsInSupply}
-              craftedItems={publicInfo?.crafted_items}
+              craftedItems={publicInfo?.player?.crafted_items}
             />
 
             <Grid gutter="xs" align="stretch">

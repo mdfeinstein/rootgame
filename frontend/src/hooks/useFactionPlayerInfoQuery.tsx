@@ -4,11 +4,11 @@ import { type FactionValue } from "../utils/factionUtils";
 
 const apiUrl = import.meta.env.VITE_API_URL || "/api";
 
-export const getFactionPlayerInfoQueryOptions = (
+export const getFactionPlayerInfoQueryOptions = <T = any,>(
   gameId: number,
   faction: FactionValue | undefined,
   enabled: boolean = true,
-): UseQueryOptions<any, Error> => ({
+): UseQueryOptions<T, Error> => ({
   queryKey: gameKeys.faction(gameId, faction as FactionValue),
   queryFn: async () => {
     if (!faction) throw new Error("Faction is required for player info query");
