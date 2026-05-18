@@ -25,7 +25,7 @@ const CraftedCardPrompter = () => {
     : undefined;
 
   const { craftedCards } = useCraftedCardsQuery(gameId, factionRouteValue);
-  const usableCards = craftedCards?.filter((c: any) => c.can_be_used) || [];
+  const usableCards = craftedCards?.filter((c) => c.can_be_used) || [];
 
   if (usableCards.length === 0) return null;
 

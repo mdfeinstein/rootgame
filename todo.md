@@ -1,45 +1,46 @@
 # Todo List
-- [ ] Frontend typing: player boards should use types
-- [x] Critical Feature: Crafted items
-    - [x] Frontend: display of crafted items box
-    - [x] Backend: endpoint to get crafted items, with exhausted or not status
-- [x] Bug, WA, Frontend: Bases are displaying on player board whether or not they are on the map (should not be on player board if on the map)
-- [ ] 
+
+## Frontend
+- [ ] Frontend typing: 
+  - [x] player boards should use types
+  - [ ] look for uses of ": any" and see if there is a schema generated type instead
+- [ ] Animations (movement, placement)
+- [ ] Choice Highlighting
+  - [ ] clearings
+  - [ ] cards
+- [ ] Appearance
+  - [ ] icons for warriors, tokens, buildings
+  - [x] better way to display token counts for wood
+
+## Refactoring
 - [ ] Cats turn queries
   - [ ] add queries to validate timing, turn
   - [ ] refactor transactions to use these validators 
+
+- [ ] Use SubGameActionViews to split monoliths for cats, WA, crows when they have choices between actions
+- [ ] Make use of "redirect" to simplify the crafted card action selection 
 
 - [ ] review transaction file split refactors. code is in strange places
 - [ ] review all transactions to use validators
   - [ ] perhaps we can make a timing decorator. maybe one to cross check that args are part of the same game too.
 
-Game Lobby:
 
-- [x] Reduce Unnessecary API calls
-  - [x] During setup: calls to turn-info
-  - [x] Fewer than all factions: calls to player-info for factions not in game
-
-- [x] More instructions for the player
-  - [x] actions prompts: tooltips on the option buttons providing relevant info
-  - [x] Playerboards: as much info as actual playerbaords. use tooltips to conserve space
-  - [x] tooltips for board components.
-
-- [ ] Appearance
-  - [ ] icons for warriors, tokens, buildings
-  - [x] better way to display token counts for wood
-
-- [x] Revealed Cards Functionality
-  - [x] Endpoint and serializer to package revealed cards and the events that reveal them
-  - [x] Frontend display of revealed cards
-- [x] Discard Pile: Frontend display
-- [x] Items: Frontend display and backend implementation
-- [x] Game Log
-- [x] Custom Errors
-
+## Factions
 - [ ] New Factions
-  - [ ] Moles
+  - [x] Moles
+  - [ ] Rats
+  - [ ] Lizards
+  - [ ] Otters
+  - [ ] Badgers
+  - [ ] VB
+  - [ ] Frogs
+  - [ ] Bats
+  - [ ] Knaves
 
+## Features
 - [ ] owners can delete games
+
+## Completed
 
 - [x] Undo/checkpoints/replay
 - [x] add ruins to the board and the frontend display
@@ -49,4 +50,12 @@ Game Lobby:
 - [x] Crafted Cards
 - [x] Game Browser
 - [x] Login Screen
-- [ ] Manual refresh button within game.
+- [x] Critical Feature: Crafted items
+- [x] Bug, WA, Frontend: Bases are displaying on player board whether or not they are on the map
+- [x] Reduce Unnecessary API calls
+- [x] More instructions for the player
+- [x] Revealed Cards Functionality
+- [x] Discard Pile: Frontend display
+- [x] Items: Frontend display and backend implementation
+- [x] Game Log
+- [x] Custom Errors

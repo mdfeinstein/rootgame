@@ -53,8 +53,9 @@ const LobbyPage = () => {
     );
   };
 
-  const handleJoinGame = (gameId: number) => {
-    joinGameMutation.mutate(gameId);
+  const handleJoinGame = async (gameId: number) => {
+    await joinGameMutation.mutateAsync(gameId);
+    navigate(`/game/${gameId}`);
   };
 
   const GameTable = ({
