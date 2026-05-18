@@ -39,7 +39,8 @@ export default function MolesPlayerBoard({
     (b) => b.buildingType === "markets",
   ).length;
 
-  // const tokens = publicInfo?.tokens ?? {};
+  const tokens = publicInfo?.tokens ?? {};
+  const tunnelsInSupply = (tokens.tunnels ?? []).length;
 
   const crowns = publicInfo?.crowns ?? [];
   const ministers = publicInfo?.ministers ?? [];
@@ -75,6 +76,7 @@ export default function MolesPlayerBoard({
             {/* Header Section */}
             <MolesHeaderSection
               warriorsInSupply={warriorsInSupply}
+              tunnelsInSupply={tunnelsInSupply}
               craftedItems={publicInfo?.player?.crafted_items}
             />
 

@@ -1,15 +1,22 @@
 import { Group, Text, Tooltip, Stack, ThemeIcon } from "@mantine/core";
-import { IconHome, IconAlertTriangle, IconUsers } from "@tabler/icons-react";
+import {
+  IconHome,
+  IconAlertTriangle,
+  IconUsers,
+  IconArrowsSplit2,
+} from "@tabler/icons-react";
 import type { components } from "../../../api/types";
 import CraftedItemsBox from "../../board/CraftedItemsBox";
 
 interface MolesHeaderSectionProps {
   warriorsInSupply: number;
+  tunnelsInSupply: number;
   craftedItems?: components["schemas"]["CraftedItemEntry"][];
 }
 
 export default function MolesHeaderSection({
   warriorsInSupply,
+  tunnelsInSupply,
   craftedItems,
 }: MolesHeaderSectionProps) {
   return (
@@ -24,13 +31,23 @@ export default function MolesHeaderSection({
         >
           Underground Duchy
         </Text>
-        <Group gap={6} mt={4}>
-          <ThemeIcon color="#d49d99" variant="light" size="sm">
-            <IconUsers size={14} />
-          </ThemeIcon>
-          <Text size="xs" fw={700} c="#8B6F47">
-            {warriorsInSupply} WARRIORS IN BURROW
-          </Text>
+        <Group gap="md" mt={4}>
+          <Group gap={6}>
+            <ThemeIcon color="#d49d99" variant="light" size="sm">
+              <IconUsers size={14} />
+            </ThemeIcon>
+            <Text size="xs" fw={700} c="#8B6F47">
+              {warriorsInSupply} WARRIORS IN BURROW
+            </Text>
+          </Group>
+          <Group gap={6}>
+            <ThemeIcon color="#d49d99" variant="light" size="sm">
+              <IconArrowsSplit2 size={14} />
+            </ThemeIcon>
+            <Text size="xs" fw={700} c="#8B6F47">
+              {tunnelsInSupply} TUNNELS IN SUPPLY
+            </Text>
+          </Group>
         </Group>
       </Stack>
 
