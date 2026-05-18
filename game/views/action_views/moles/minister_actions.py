@@ -8,19 +8,22 @@ from game.models.moles.ministers import Minister
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.queries.moles.turn import validate_step, get_phase
 from game.queries.moles.daylight import (
-    validate_card_in_hand,
+    get_available_ministers,
+    get_copyable_ministers_for_mayor,
     validate_build_clearing,
     validate_foremole_clearing,
     validate_banker_cards,
     validate_minister_unused,
     validate_brigadier_action,
     validate_no_brigadier_in_progress,
+    validate_minister_is_swayed,
 )
 from game.queries.general import (
     get_enemy_factions_in_clearing,
     validate_legal_move,
     validate_has_legal_moves,
     validate_enemy_pieces_in_clearing,
+    validate_player_has_card_in_hand,
 )
 from game.transactions.moles.daylight.minister_actions import (
     use_marshal,
@@ -76,9 +79,7 @@ class MolesMinisterActionsView(GameActionView):
             ]
         else:
             # Normal case: show all available ministers and Mayor
-            available_ministers = Minister.objects.filter(
-                player=player, swayed=True, used=False
-            )
+            available_ministers = get_available_ministers(player)
             options = []
             for minister in available_ministers:
                 minister_labels = {
@@ -123,10 +124,8 @@ class MolesMinisterActionsView(GameActionView):
                     }
                 )
             # Check if Mayor is swayed and unused
-            mayor = Minister.objects.filter(
-                player=player, name=Minister.MinisterName.MAYOR
-            ).first()
-            if mayor and mayor.swayed and not mayor.used:
+            try:
+                validate_minister_unused(player, Minister.MinisterName.MAYOR)
                 options.append(
                     {
                         "value": "mayor",
@@ -134,6 +133,8 @@ class MolesMinisterActionsView(GameActionView):
                         "info": "Copy any swayed minister's action.",
                     }
                 )
+            except (ValidationError, Exception):
+                pass
             options.append(
                 {"value": "", "label": "Done", "info": "Finish minister actions."}
             )
@@ -222,19 +223,10 @@ class MolesMinisterMayorView(GameActionView):
 
         self.first_step = dict(self.first_step)
 
-        # Get all swayed ministers (including already used ones)
-        swayed_ministers = Minister.objects.filter(player=player, swayed=True)
+        # Get all swayed ministers that Mayor can copy
+        copyable_ministers = get_copyable_ministers_for_mayor(player)
 
-        # Filter out lords (only show ministers that can be copied)
-        copyable_ministers = swayed_ministers.exclude(
-            name__in=[
-                Minister.MinisterName.DUCHESS_OF_MUD,
-                Minister.MinisterName.EARL_OF_STONE,
-                Minister.MinisterName.BARON_OF_DIRT,
-            ]
-        )
-
-        if not copyable_ministers.exists():
+        if not copyable_ministers:
             self.first_step["prompt"] = "No swayed ministers available to copy."
             self.first_step["options"] = [
                 {"value": "", "label": "Done", "info": "Finish minister actions."}
@@ -308,11 +300,10 @@ class MolesMinisterMayorView(GameActionView):
             raise ValidationError("Mayor cannot copy lords")
 
         # Validate that the selected minister is swayed
-        minister = Minister.objects.filter(player=player, name=minister_name).first()
-        if minister is None:
-            raise ValidationError("Minister not found")
-        if not minister.swayed:
-            raise ValidationError("Minister is not swayed")
+        try:
+            validate_minister_is_swayed(player, minister_name)
+        except Exception as e:
+            raise ValidationError(str(e))
 
         # Route to the appropriate minister view with is_mayor=true
         minister_routes = {
@@ -604,7 +595,7 @@ class MolesMinisterForemoleView(SubGameActionView):
         is_mayor = request.data.get("is_mayor", False)
 
         card = CardsEP[card_name]
-        validate_card_in_hand(player, card)
+        validate_player_has_card_in_hand(player, card)
 
         clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
         validate_foremole_clearing(player, clearing)
@@ -894,7 +885,7 @@ class MolesMinisterBankerView(SubGameActionView):
 
         # Add card to accumulated list
         card = CardsEP[card_name]
-        validate_card_in_hand(player, card)
+        validate_player_has_card_in_hand(player, card)
 
         # Validate suit matching
         new_list = accumulated + [card_name]

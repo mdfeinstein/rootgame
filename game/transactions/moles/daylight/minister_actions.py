@@ -12,13 +12,13 @@ from game.errors import IllegalActionError, UnavailableActionError
 from game.queries.moles.turn import validate_step, get_phase
 from game.queries.moles.daylight import (
     get_available_building_from_supply,
-    validate_card_in_hand,
     validate_foremole_clearing,
     validate_banker_cards,
     validate_brigadier_action,
     validate_no_brigadier_in_progress,
     validate_minister_unused,
 )
+from game.queries.general import validate_player_has_card_in_hand
 from game.transactions.general import (
     move_warriors,
     discard_card_from_hand,
@@ -222,7 +222,7 @@ def execute_foremole_build(
         building_type: "citadel" or "market"
     """
     # Validate card is in hand and get card entry
-    card_entry = validate_card_in_hand(player, card)
+    card_entry = validate_player_has_card_in_hand(player, card)
 
     # Validate clearing is ruled and has building slot (card doesn't need to match for Foremole)
     building_slot = validate_foremole_clearing(player, clearing)
@@ -260,7 +260,7 @@ def use_foremole(
     foremole = validate_minister_unused(player, Minister.MinisterName.FOREMOLE)
 
     # Capture card before it's revealed
-    card_entry = validate_card_in_hand(player, card)
+    card_entry = validate_player_has_card_in_hand(player, card)
     card_model = card_entry.card
 
     # Use the minister
@@ -661,7 +661,7 @@ def use_mayor(player: Player, minister_name: Minister.MinisterName, *args):
         log_battle_start(battle, player, parent=mayor_log)
     elif minister_name == Minister.MinisterName.FOREMOLE:
         card, clearing, building_type = args
-        card_entry = validate_card_in_hand(player, card)
+        card_entry = validate_player_has_card_in_hand(player, card)
         card_model = card_entry.card
         execute_foremole_build(player, *args)
         log_moles_minister_foremole(

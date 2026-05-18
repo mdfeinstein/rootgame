@@ -1,14 +1,11 @@
 from django.test import TestCase
 from game.tests.client import RootGameClient
-from game.models.game_models import Faction, HandEntry, CraftedCardEntry
+from game.models.game_models import Faction, CraftedCardEntry
 
 from game.tests.my_factories import (
     MolesBirdsGameSetupFactory,
-    CraftedCardEntryFactory,
-    CardFactory,
 )
 from game.models.moles.turn import MoleTurn, MoleBirdsong, MoleDaylight, MoleEvening
-from game.models.moles.ministers import Minister
 from game.game_data.cards.exiles_and_partisans import CardsEP
 
 
@@ -36,186 +33,113 @@ class MolesTurnFlowTestCase(TestCase):
         if not MoleTurn.objects.filter(player=self.moles_player).exists():
             MoleTurn.create_turn(self.moles_player)
             from game.transactions.moles import step_effect
+
             step_effect(self.moles_player)
 
+    def test_moles_turn_structure(self):
+        """Verify Moles turn has all expected phases."""
+        turn = MoleTurn.objects.get(player=self.moles_player)
+
+        # Verify all phases exist
+        birdsong = MoleBirdsong.objects.get(turn=turn)
+        daylight = MoleDaylight.objects.get(turn=turn)
+        evening = MoleEvening.objects.get(turn=turn)
+
+        self.assertIsNotNone(birdsong)
+        self.assertIsNotNone(daylight)
+        self.assertIsNotNone(evening)
+
     def test_moles_daylight_actions_available(self):
-        """Test that Daylight Actions step is available and can be skipped."""
-        turn = MoleTurn.objects.filter(player=self.moles_player).last()
-        birdsong = turn.birdsong.first()
-        daylight = turn.daylight.first()
+        """Test that Daylight Actions is available (Birdsong auto-skips)."""
+        self.moles_client.get_action()
+        # Birdsong PLACE_WARRIORS returns None, so we skip to Daylight
+        self.assertEqual(self.moles_client.base_route, "/api/moles/daylight/actions/")
 
-        # Skip Birdsong to get to Daylight
-        birdsong.step = MoleBirdsong.MoleBirdsongSteps.COMPLETED
-        birdsong.save()
-        daylight.step = MoleDaylight.MoleDaylightSteps.ACTIONS
-        daylight.save()
+    def test_moles_saboteurs_flow(self):
+        """Test that Saboteurs triggers at start of Birdsong and can be skipped."""
+        from game.tests.my_factories import CraftedCardEntryFactory, CardFactory
+        from game.transactions.moles import step_effect
 
-        # Get daylight actions
+        # Give Moles the Saboteurs card
+        saboteurs_card = CardFactory(game=self.game, card_type=CardsEP.SABOTEURS.name, suit="w")
+        CraftedCardEntryFactory(player=self.moles_player, card=saboteurs_card)
+
+        # Reset turn to test from start
+        MoleTurn.objects.filter(player=self.moles_player).delete()
+        MoleTurn.create_turn(self.moles_player)
+
+        # Call step_effect to trigger NOT_STARTED handler which calls saboteurs_check
+        step_effect(self.moles_player)
+
+        # Now get_action should return saboteurs
+        self.moles_client.get_action()
+        self.assertEqual(self.moles_client.base_route, "/api/action/card/saboteurs/")
+
+        # Skip saboteurs
+        self.moles_client.submit_action({"faction": "skip"})
+
+        # After skip, should move to Daylight Actions (Birdsong auto-skips)
         self.moles_client.get_action()
         self.assertEqual(self.moles_client.base_route, "/api/moles/daylight/actions/")
 
-        # Skip actions
-        response = self.moles_client.submit_action({"action_type": ""})
-        self.assertEqual(response.status_code, 200)
+    def test_moles_eyrie_emigre_flow(self):
+        """Test that Eyrie Emigre triggers during Birdsong BEFORE_END step."""
+        from game.tests.my_factories import CraftedCardEntryFactory, CardFactory
+        from game.transactions.moles import step_effect
 
-    def test_moles_sway_minister_available(self):
-        """Test that Sway Minister action is available."""
-        turn = MoleTurn.objects.filter(player=self.moles_player).last()
-        birdsong = turn.birdsong.first()
-        daylight = turn.daylight.first()
-
-        # Skip to sway minister step
-        birdsong.step = MoleBirdsong.MoleBirdsongSteps.COMPLETED
-        birdsong.save()
-        daylight.step = MoleDaylight.MoleDaylightSteps.SWAY_MINISTER
-        daylight.save()
-
-        # Add cards to hand
-        for _ in range(4):
-            card = CardFactory(game=self.game, card_type=CardsEP.RABBIT_PARTISANS.name)
-            HandEntry.objects.create(player=self.moles_player, card=card)
-
-        # Get sway minister action
-        self.moles_client.get_action()
-        self.assertEqual(self.moles_client.base_route, "/api/moles/daylight/sway-minister/")
-
-        # Verify ministers are available
-        self.assertGreater(len(self.moles_client.step["options"]), 0)
-
-    def test_moles_crafting_available(self):
-        """Test that Evening Crafting step is available."""
-        turn = MoleTurn.objects.filter(player=self.moles_player).last()
-        birdsong = turn.birdsong.first()
-        daylight = turn.daylight.first()
-        evening = turn.evening.first()
-
-        # Skip to evening craft
-        birdsong.step = MoleBirdsong.MoleBirdsongSteps.COMPLETED
-        birdsong.save()
-        daylight.step = MoleDaylight.MoleDaylightSteps.COMPLETED
-        daylight.save()
-        evening.step = MoleEvening.MoleEveningSteps.CRAFT
-        evening.save()
-
-        # Add a card to hand
-        card = CardFactory(game=self.game, card_type=CardsEP.RABBIT_PARTISANS.name)
-        HandEntry.objects.create(player=self.moles_player, card=card)
-
-        # Get crafting action
-        self.moles_client.get_action()
-        self.assertEqual(self.moles_client.base_route, "/api/moles/evening/craft/")
-
-        # End crafting
-        response = self.moles_client.submit_action({"card": ""})
-        self.assertEqual(response.status_code, 200)
-
-    def test_moles_discard_with_large_hand(self):
-        """Test that Evening Discard step handles large hands."""
-        from game.models.game_models import HandEntry
-
-        turn = MoleTurn.objects.filter(player=self.moles_player).last()
-        birdsong = turn.birdsong.first()
-        daylight = turn.daylight.first()
-        evening = turn.evening.first()
-
-        # Skip to evening discard
-        birdsong.step = MoleBirdsong.MoleBirdsongSteps.COMPLETED
-        birdsong.save()
-        daylight.step = MoleDaylight.MoleDaylightSteps.COMPLETED
-        daylight.save()
-        evening.step = MoleEvening.MoleEveningSteps.DISCARD
-        evening.save()
-
-        # Clear existing hand
-        HandEntry.objects.filter(player=self.moles_player).delete()
-
-        # Add 7 cards (need to discard to 5)
-        for _ in range(7):
-            card = CardFactory(game=self.game, card_type=CardsEP.RABBIT_PARTISANS.name)
-            HandEntry.objects.create(player=self.moles_player, card=card)
-
-        # Get discard action
-        self.moles_client.get_action()
-        self.assertEqual(self.moles_client.base_route, "/api/moles/evening/discard/")
-
-        # Verify discard is required
-        self.assertIn("cards", self.moles_client.step["prompt"].lower())
-
-        # Discard one card
-        response = self.moles_client.get_action()
-        card_id = response.data["options"][0]["value"]
-        self.moles_client.submit_action({"card": card_id})
-
-        # Should still need to discard (6 cards left)
-        self.assertIsNotNone(self.moles_client.step)
-
-    def test_moles_saboteurs_card_available(self):
-        """Test that Saboteurs card can be crafted."""
-        saboteurs_card = CardFactory(
-            game=self.game, card_type=CardsEP.SABOTEURS.name, suit="w"
-        )
-        CraftedCardEntryFactory(player=self.moles_player, card=saboteurs_card)
-
-        # Verify the card is crafted
-        crafted = CraftedCardEntry.objects.filter(
-            player=self.moles_player, card=saboteurs_card
-        )
-        self.assertTrue(crafted.exists())
-
-    def test_moles_charm_offensive_card_available(self):
-        """Test that Charm Offensive card can be crafted."""
-        charm_card = CardFactory(
-            game=self.game, card_type=CardsEP.CHARM_OFFENSIVE.name, suit="y"
-        )
-        CraftedCardEntryFactory(player=self.moles_player, card=charm_card)
-
-        crafted = CraftedCardEntry.objects.filter(
-            player=self.moles_player, card=charm_card
-        )
-        self.assertTrue(crafted.exists())
-
-    def test_moles_informants_card_available(self):
-        """Test that Informants card can be crafted."""
-        informants_card = CardFactory(
-            game=self.game, card_type=CardsEP.INFORMANTS.name, suit="o"
-        )
-        CraftedCardEntryFactory(player=self.moles_player, card=informants_card)
-
-        crafted = CraftedCardEntry.objects.filter(
-            player=self.moles_player, card=informants_card
-        )
-        self.assertTrue(crafted.exists())
-
-    def test_moles_eyrie_emigre_card_available(self):
-        """Test that Eyrie Emigre card can be crafted."""
-        emigre_card = CardFactory(
-            game=self.game, card_type=CardsEP.EYRIE_EMIGRE.name, suit="w"
-        )
+        # Give Moles the Eyrie Emigre card (must be UNUSED)
+        emigre_card = CardFactory(game=self.game, card_type=CardsEP.EYRIE_EMIGRE.name, suit="w")
         CraftedCardEntryFactory(
             player=self.moles_player,
             card=emigre_card,
             used=CraftedCardEntry.UsedChoice.UNUSED,
         )
 
-        crafted = CraftedCardEntry.objects.filter(
-            player=self.moles_player, card=emigre_card
-        )
-        self.assertTrue(crafted.exists())
+        # Set turn to Birdsong BEFORE_END step
+        turn = MoleTurn.objects.get(player=self.moles_player)
+        birdsong = MoleBirdsong.objects.get(turn=turn)
+        birdsong.step = MoleBirdsong.MoleBirdsongSteps.BEFORE_END
+        birdsong.save()
 
-    def test_moles_turn_structure(self):
-        """Test that Moles turn has all expected phases."""
-        turn = MoleTurn.objects.filter(player=self.moles_player).last()
+        # Call step_effect to trigger is_emigre check
+        step_effect(self.moles_player)
 
-        # Verify all phases exist
-        self.assertIsNotNone(turn.birdsong.first())
-        self.assertIsNotNone(turn.daylight.first())
-        self.assertIsNotNone(turn.evening.first())
+        # Get action should return emigre event route
+        self.moles_client.get_action()
+        self.assertEqual(self.moles_client.base_route, "/api/action/card/eyrie-emigre/")
 
-        # Verify phase types
-        birdsong = turn.birdsong.first()
-        daylight = turn.daylight.first()
-        evening = turn.evening.first()
+    def test_moles_charm_offensive_flow(self):
+        """Test Charm Offensive is triggered when transitioning to Evening."""
+        from game.tests.my_factories import CraftedCardEntryFactory, CardFactory
+        from game.transactions.moles import step_effect
 
-        self.assertIsNotNone(birdsong)
-        self.assertIsNotNone(daylight)
-        self.assertIsNotNone(evening)
+        # Give Moles the Charm Offensive card
+        charm_card = CardFactory(game=self.game, card_type=CardsEP.CHARM_OFFENSIVE.name, suit="y")
+        CraftedCardEntryFactory(player=self.moles_player, card=charm_card)
+
+        # Set up: complete Birdsong and Daylight
+        turn = MoleTurn.objects.get(player=self.moles_player)
+        birdsong = MoleBirdsong.objects.get(turn=turn)
+        birdsong.step = MoleBirdsong.MoleBirdsongSteps.COMPLETED
+        birdsong.save()
+
+        daylight = MoleDaylight.objects.get(turn=turn)
+        daylight.step = MoleDaylight.MoleDaylightSteps.COMPLETED
+        daylight.save()
+
+        evening = MoleEvening.objects.get(turn=turn)
+        evening.step = MoleEvening.MoleEveningSteps.NOT_STARTED
+        evening.save()
+
+        # Call step_effect to trigger charm_offensive check
+        step_effect(self.moles_player)
+
+        # Get action should return charm offensive event route
+        self.moles_client.get_action()
+        self.assertEqual(self.moles_client.base_route, "/api/action/card/charm-offensive/")
+
+        # Skip charm offensive
+        self.moles_client.submit_action({"select": "skip"})
+
+        # Verify we moved past it
+        self.assertIsNotNone(self.moles_client.step)

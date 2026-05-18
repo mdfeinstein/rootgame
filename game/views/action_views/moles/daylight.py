@@ -7,7 +7,7 @@ from game.models.moles.turn import MoleDaylight
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.queries.moles.turn import validate_step
 from game.queries.moles.daylight import (
-    validate_card_in_hand,
+    has_tunnels_in_supply,
     validate_build_clearing,
     validate_dig_clearing,
     validate_tunnel_source_clearing,
@@ -18,6 +18,7 @@ from game.queries.general import (
     validate_legal_move,
     validate_has_legal_moves,
     validate_enemy_pieces_in_clearing,
+    validate_player_has_card_in_hand,
 )
 from game.transactions.moles.daylight.actions import (
     move,
@@ -341,7 +342,7 @@ class MolesBuildView(SubGameActionView):
         card_name = request.data["card_name"]
 
         card = CardsEP[card_name]
-        validate_card_in_hand(player, card)
+        validate_player_has_card_in_hand(player, card)
 
         clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
         validate_build_clearing(player, clearing, card)
@@ -389,13 +390,7 @@ class MolesDigView(SubGameActionView):
         clearing_number = int(request.data["clearing_number"])
 
         # Check if any tunnels exist in supply (need to move one)
-        from game.models.moles.tokens import Tunnel
-
-        tunnels_in_supply = Tunnel.objects.filter(
-            player=player, clearing__isnull=True
-        ).exists()
-
-        if not tunnels_in_supply:
+        if not has_tunnels_in_supply(player):
             return self.generate_step(
                 "dig_tunnel_source",
                 "Select clearing with tunnel to move.",
@@ -446,7 +441,7 @@ class MolesDigView(SubGameActionView):
         tunnel_source_clearing_num = request.data.get("tunnel_source_clearing")
 
         card = CardsEP[card_name]
-        validate_card_in_hand(player, card)
+        validate_player_has_card_in_hand(player, card)
 
         target_clearing = Clearing.objects.get(
             game=game, clearing_number=target_clearing_num

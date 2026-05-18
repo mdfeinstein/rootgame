@@ -1,8 +1,9 @@
+from game.models.game_models import Player
 from game.models.moles.ministers import Minister
 from game.errors import IllegalActionError
 
 
-def get_highest_rank_swayed_ministers(player):
+def get_highest_rank_swayed_ministers(player: Player) -> list[Minister]:
     """Get all swayed ministers of the highest rank.
 
     Rank order: LORD > NOBLE > SQUIRE
@@ -12,20 +13,35 @@ def get_highest_rank_swayed_ministers(player):
     if not swayed.exists():
         return []
 
-    # Group by rank
-    lord_count = sum(1 for m in swayed if m.crown_type == Minister.MinisterRank.LORD)
-    noble_count = sum(1 for m in swayed if m.crown_type == Minister.MinisterRank.NOBLE)
-    squire_count = sum(1 for m in swayed if m.crown_type == Minister.MinisterRank.SQUIRE)
+    # group by tier, starting from highest. return first non-empty tier
+    lords = [
+        minister
+        for minister in swayed
+        if minister.crown_type == Minister.MinisterRank.LORD
+    ]
+    if len(lords) > 0:
+        return lords
+    nobles = [
+        minister
+        for minister in swayed
+        if minister.crown_type == Minister.MinisterRank.NOBLE
+    ]
+    if len(nobles) > 0:
+        return nobles
+    squires = [
+        minister
+        for minister in swayed
+        if minister.crown_type == Minister.MinisterRank.SQUIRE
+    ]
+    if len(squires) > 0:
+        return squires
+    # jsut to satisfy type checker...
+    return []
 
-    if lord_count > 0:
-        return [m for m in swayed if m.crown_type == Minister.MinisterRank.LORD]
-    elif noble_count > 0:
-        return [m for m in swayed if m.crown_type == Minister.MinisterRank.NOBLE]
-    else:
-        return [m for m in swayed if m.crown_type == Minister.MinisterRank.SQUIRE]
 
-
-def validate_minister_is_highest_rank(player, minister_name):
+def validate_minister_is_highest_rank(
+    player: Player, minister_name: Minister.MinisterName
+):
     """Validate that the given minister is swayed and of the highest rank.
 
     Raises IllegalActionError if minister is not of highest rank.

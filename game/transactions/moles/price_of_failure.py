@@ -59,9 +59,7 @@ def trigger_price_of_failure(player: Player):
 
 
 @transaction.atomic
-def resolve_price_of_failure(
-    player: Player, minister_name: Minister.MinisterName | None
-):
+def resolve_price_of_failure(player: Player, minister_name: Minister.MinisterName):
     """Resolve price of failure by returning a minister to unswayed.
 
     Args:

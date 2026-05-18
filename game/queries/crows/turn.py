@@ -57,12 +57,8 @@ def validate_step(
         | CrowDaylight.CrowDaylightSteps
         | CrowEvening.CrowEveningSteps
     ),
-) -> (
-    CrowBirdsong.CrowBirdsongSteps
-    | CrowDaylight.CrowDaylightSteps
-    | CrowEvening.CrowEveningSteps
-):
-    """returns the step if it is the given step, else raises UnavailableActionError"""
+) -> None:
+    """Validate player is in the given step, raise UnavailableActionError if not."""
     player_phase = get_phase(player)
     if step != player_phase.step:
         # Avoid collisions between different phases with same step values
@@ -90,4 +86,3 @@ def validate_step(
             raise UnavailableActionError(evening_mapper.get(step, "Invalid Evening step"))
         else:
             raise UnavailableActionError("Invalid phase")
-    return player_phase.step

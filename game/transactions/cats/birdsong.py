@@ -7,6 +7,7 @@ from game.queries.cats.wood import (
     count_wood_tokens_in_supply,
     get_unused_sawmills,
 )
+from game.transactions.cats.turn import next_step
 from game.transactions.general import place_piece_from_supply_into_clearing
 from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 
@@ -43,8 +44,6 @@ def produce_wood(player: Player, sawmill: Sawmill):
     if not Sawmill.objects.filter(
         player=player, used=False, building_slot__isnull=False
     ).exists():
-        from game.transactions.cats.turn import next_step
-
         next_step(player)
 
 
@@ -52,6 +51,8 @@ def produce_wood(player: Player, sawmill: Sawmill):
 def cat_produce_all_wood(player: Player):
     """produces wood at all available sawmills"""
     sawmills = get_unused_sawmills(player)
+    if len(sawmills) == 0:
+        next_step(player)
     for sawmill in sawmills:
         produce_wood(player, sawmill)
 

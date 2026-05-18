@@ -1,12 +1,11 @@
 from django.db import transaction
 
 from game.game_data.cards.exiles_and_partisans import CardsEP
-from game.models.game_models import Player, HandEntry, RevealedCardEntry
+from game.models.game_models import Player, HandEntry, RevealedCardEntry, Piece
 from game.models.enums import Suit, Faction
 from game.models.moles.turn import MoleEvening
 from game.models.moles.buildings import Market
 from game.queries.moles.turn import validate_step
-from game.queries.moles.evening import validate_discard_card
 from game.queries.moles.crafting import validate_crafting_pieces_satisfy_requirements
 from game.queries.general import validate_player_has_card_in_hand, get_player_hand_size
 from game.errors import UnavailableActionError
@@ -56,11 +55,12 @@ def process_revealed_cards(player: Player):
     )
 
     from game.transactions.moles.turn import next_step
+
     next_step(player)
 
 
 @transaction.atomic
-def craft_card(player: Player, card: CardsEP, buildings: list):
+def craft_card(player: Player, card: CardsEP, buildings: list[Piece]):
     """Craft a card using citadels and/or markets as crafting pieces.
 
     Args:
@@ -80,6 +80,7 @@ def craft_card(player: Player, card: CardsEP, buildings: list):
     card_model = card_in_hand.card
 
     from game.transactions.general import craft_card as general_craft_card
+
     general_craft_card(card_in_hand, buildings)
 
     # Log the action
@@ -98,6 +99,7 @@ def end_crafting(player: Player):
         raise UnavailableActionError("Not a Moles player")
 
     from game.transactions.moles.turn import next_step
+
     next_step(player)
 
 
@@ -109,7 +111,9 @@ def draw_cards(player: Player):
     """
     validate_step(player, MoleEvening.MoleEveningSteps.DRAW)
 
-    markets_on_map = Market.objects.filter(player=player, building_slot__isnull=False).count()
+    markets_on_map = Market.objects.filter(
+        player=player, building_slot__isnull=False
+    ).count()
     count = 1 + markets_on_map
 
     drawn = []
@@ -122,6 +126,7 @@ def draw_cards(player: Player):
     log_draw(player.game, player, drawn, parent=phase_log)
 
     from game.transactions.moles.turn import next_step
+
     next_step(player)
 
 
@@ -137,8 +142,6 @@ def discard_card(player: Player, card_entry: HandEntry):
     if get_player_hand_size(player) <= 5:
         raise UnavailableActionError("Hand is already at or below 5 cards")
 
-    validate_discard_card(player, card_entry)
-
     # Capture card before discarding
     card_model = card_entry.card
 
@@ -150,6 +153,7 @@ def discard_card(player: Player, card_entry: HandEntry):
 
     if get_player_hand_size(player) <= 5:
         from game.transactions.moles.turn import next_step
+
         next_step(player)
 
 
@@ -164,4 +168,5 @@ def end_discard(player: Player):
         raise UnavailableActionError("Not a Moles player")
 
     from game.transactions.moles.turn import next_step
+
     next_step(player)

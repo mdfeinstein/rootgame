@@ -17,11 +17,11 @@ from game.errors import IllegalActionError, UnavailableActionError
 from game.queries.moles.turn import validate_step, get_phase
 from game.queries.moles.daylight import (
     get_available_building_from_supply,
-    validate_card_in_hand,
     validate_build_clearing,
     validate_dig_clearing,
     validate_tunnel_source_clearing,
 )
+from game.queries.general import validate_player_has_card_in_hand
 from game.transactions.general import (
     move_warriors,
     place_piece_from_supply_into_clearing,
@@ -91,7 +91,7 @@ def build(
     validate_step(player, MoleDaylight.MoleDaylightSteps.ACTIONS)
 
     # Validate card is in hand
-    card_entry = validate_card_in_hand(player, card)
+    card_entry = validate_player_has_card_in_hand(player, card)
 
     # Validate clearing is ruled and has building slot
     building_slot = validate_build_clearing(player, clearing, card)
@@ -225,7 +225,7 @@ def dig(
     validate_step(player, MoleDaylight.MoleDaylightSteps.ACTIONS)
 
     # Validate card is in hand
-    card_entry = validate_card_in_hand(player, card)
+    card_entry = validate_player_has_card_in_hand(player, card)
 
     # Capture card before discarding (for logging)
     card_model = card_entry.card

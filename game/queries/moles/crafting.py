@@ -1,11 +1,11 @@
 from collections import Counter
 from game.game_data.cards.exiles_and_partisans import CardsEP
-from game.models.game_models import Player, Suit
+from game.models.game_models import Building, Player, Suit
 from game.models.moles.buildings import Citadel, Market
 from game.errors import IllegalActionError
 
 
-def get_all_unused_mole_buildings(player: Player) -> list:
+def get_all_unused_mole_buildings(player: Player) -> list[Building]:
     """Returns all citadels and markets on map that haven't been crafted with this turn."""
     citadels = list(
         Citadel.objects.filter(
@@ -23,21 +23,23 @@ def get_all_unused_mole_buildings(player: Player) -> list:
 def get_craftable_clearing_options(player: Player) -> list[dict]:
     """Returns clearing options for crafting: clearing_number with suit label."""
     buildings = get_all_unused_mole_buildings(player)
-    seen = set()
-    options = []
+    clearing_number_set = set()
+    clearing_suit: dict[int, Suit] = {}
     for b in buildings:
         cn = b.building_slot.clearing.clearing_number
-        if cn not in seen:
-            seen.add(cn)
-            suit = Suit(b.building_slot.clearing.suit).label
-            options.append({"value": str(cn), "label": f"Clearing {cn} ({suit})"})
+        clearing_number_set.add(cn)
+        clearing_suit[cn] = Suit(b.building_slot.clearing.suit)
+    options = [
+        {"value": str(cn), "label": f"Clearing {cn} ({clearing_suit[cn]})"}
+        for cn in clearing_number_set
+    ]
     return options
 
 
 def get_buildings_from_clearing_numbers(
     player: Player, clearing_numbers: list[int]
 ) -> list[Citadel | Market]:
-    """Fetches unused buildings from a list of clearing numbers.
+    """Fetches unused (re. crafting) buildings from a list of clearing numbers.
 
     Raises IllegalActionError if a clearing has no unused building.
     """

@@ -122,7 +122,9 @@ class MolesSerializer(serializers.Serializer):
         crowns = Crown.objects.filter(player=player)
 
         # Count warriors in burrow (warriors with no clearing)
-        burrow_count = Warrior.objects.filter(player=player, clearing__isnull=True).count()
+        burrow_count = Warrior.objects.filter(
+            player=player, clearing__isnull=False, clearing__clearing_number=0
+        ).count()
 
         return cls(
             instance={

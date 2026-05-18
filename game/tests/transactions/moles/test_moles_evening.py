@@ -8,7 +8,9 @@ from game.tests.my_factories import MolesGameSetupFactory, CardFactory
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.errors import UnavailableActionError
 from game.transactions.moles.evening import (
-    process_revealed_cards, draw_cards, discard_card
+    process_revealed_cards,
+    draw_cards,
+    discard_card,
 )
 from game.transactions.moles.turn import reset_moles_turn
 
@@ -80,7 +82,9 @@ class MolesProcessRevealedCardsTests(MolesEveningBaseTestCase):
         final_hand = HandEntry.objects.filter(player=self.player).count()
         self.assertEqual(final_hand, 1)
 
-        final_revealed = RevealedCardEntry.objects.filter(player=self.player).count()
+        final_revealed = RevealedCardEntry.objects.filter(
+            player=self.player, returned_to_hand=False
+        ).count()
         self.assertEqual(final_revealed, 0)
 
     def test_process_revealed_wrong_step_raises(self):
@@ -111,7 +115,9 @@ class MolesDrawCardsTests(MolesEveningBaseTestCase):
             clearing = self.game.clearing_set.get(clearing_number=2)
             empty_slot = clearing.buildingslot_set.filter(building__isnull=True).first()
 
-        market = Market.objects.filter(player=self.player, building_slot__isnull=True).first()
+        market = Market.objects.filter(
+            player=self.player, building_slot__isnull=True
+        ).first()
         assert market is not None
         market.building_slot = empty_slot
         market.save()
@@ -214,8 +220,12 @@ class MolesResetMinisterTests(TestCase):
 
     def test_reset_moles_turn_ministers_used_false(self):
         """reset_moles_turn sets all ministers used=False."""
-        marshal = Minister.objects.get(player=self.player, name=Minister.MinisterName.MARSHAL)
-        captain = Minister.objects.get(player=self.player, name=Minister.MinisterName.CAPTAIN)
+        marshal = Minister.objects.get(
+            player=self.player, name=Minister.MinisterName.MARSHAL
+        )
+        captain = Minister.objects.get(
+            player=self.player, name=Minister.MinisterName.CAPTAIN
+        )
 
         marshal.used = True
         captain.used = True

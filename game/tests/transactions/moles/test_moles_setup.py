@@ -36,20 +36,40 @@ class MolesSetupBaseTestCase(TestCase):
 class MolesInitialSetupTests(MolesSetupBaseTestCase):
     def test_initial_object_counts(self):
         self.assertEqual(Warrior.objects.filter(player=self.player).count(), 20)
-        self.assertEqual(Warrior.objects.filter(player=self.player, clearing__isnull=True).count(), 20)
+        self.assertEqual(
+            Warrior.objects.filter(player=self.player, clearing__isnull=True).count(),
+            20,
+        )
         self.assertEqual(Tunnel.objects.filter(player=self.player).count(), 3)
-        self.assertEqual(Tunnel.objects.filter(player=self.player, clearing__isnull=True).count(), 3)
+        self.assertEqual(
+            Tunnel.objects.filter(player=self.player, clearing__isnull=True).count(), 3
+        )
         self.assertEqual(Citadel.objects.filter(player=self.player).count(), 3)
         self.assertEqual(Market.objects.filter(player=self.player).count(), 3)
         self.assertEqual(Minister.objects.filter(player=self.player).count(), 9)
-        self.assertEqual(Crown.objects.filter(player=self.player).count(), 3)
-        self.assertEqual(Crown.objects.filter(player=self.player, type=Crown.CrownType.SQUIRE).count(), 1)
-        self.assertEqual(Crown.objects.filter(player=self.player, type=Crown.CrownType.NOBLE).count(), 1)
-        self.assertEqual(Crown.objects.filter(player=self.player, type=Crown.CrownType.LORD).count(), 1)
+        self.assertEqual(Crown.objects.filter(player=self.player).count(), 9)
+        self.assertEqual(
+            Crown.objects.filter(
+                player=self.player, type=Crown.CrownType.SQUIRE
+            ).count(),
+            3,
+        )
+        self.assertEqual(
+            Crown.objects.filter(
+                player=self.player, type=Crown.CrownType.NOBLE
+            ).count(),
+            3,
+        )
+        self.assertEqual(
+            Crown.objects.filter(player=self.player, type=Crown.CrownType.LORD).count(),
+            3,
+        )
         self.assertEqual(Burrow.objects.filter(player=self.player).count(), 1)
 
     def test_all_ministers_created_unswayed(self):
-        self.assertEqual(Minister.objects.filter(player=self.player, swayed=False).count(), 9)
+        self.assertEqual(
+            Minister.objects.filter(player=self.player, swayed=False).count(), 9
+        )
         expected_names = {
             Minister.MinisterName.MARSHAL,
             Minister.MinisterName.CAPTAIN,
@@ -61,7 +81,9 @@ class MolesInitialSetupTests(MolesSetupBaseTestCase):
             Minister.MinisterName.EARL_OF_STONE,
             Minister.MinisterName.BARON_OF_DIRT,
         }
-        actual_names = set(Minister.objects.filter(player=self.player).values_list("name", flat=True))
+        actual_names = set(
+            Minister.objects.filter(player=self.player).values_list("name", flat=True)
+        )
         self.assertEqual(actual_names, expected_names)
 
 
@@ -70,18 +92,27 @@ class MolesPickCornerTests(MolesSetupBaseTestCase):
         c1 = Clearing.objects.get(game=self.game, clearing_number=1)
         pick_corner(self.player, c1)
 
-        self.assertEqual(Warrior.objects.filter(player=self.player, clearing=c1).count(), 2)
-        self.assertEqual(Tunnel.objects.filter(player=self.player, clearing=c1).count(), 1)
-        self.assertEqual(Tunnel.objects.filter(player=self.player, clearing__isnull=True).count(), 2)
+        self.assertEqual(
+            Warrior.objects.filter(player=self.player, clearing=c1).count(), 2
+        )
+        self.assertEqual(
+            Tunnel.objects.filter(player=self.player, clearing=c1).count(), 1
+        )
+        self.assertEqual(
+            Tunnel.objects.filter(player=self.player, clearing__isnull=True).count(), 2
+        )
 
         for adj in c1.connected_clearings.all():
             self.assertEqual(
-                Warrior.objects.filter(player=self.player, clearing=adj).count(), 2,
-                f"Expected 2 warriors in clearing {adj.clearing_number}"
+                Warrior.objects.filter(player=self.player, clearing=adj).count(),
+                2,
+                f"Expected 2 warriors in clearing {adj.clearing_number}",
             )
 
         self.moles_setup.refresh_from_db()
-        self.assertEqual(self.moles_setup.step, MolesSimpleSetup.Steps.PENDING_CONFIRMATION)
+        self.assertEqual(
+            self.moles_setup.step, MolesSimpleSetup.Steps.PENDING_CONFIRMATION
+        )
 
     def test_pick_corner_non_corner_raises(self):
         c5 = Clearing.objects.get(game=self.game, clearing_number=5)
@@ -115,7 +146,9 @@ class MolesConfirmSetupTests(MolesSetupBaseTestCase):
         self.moles_setup.refresh_from_db()
         self.assertEqual(self.moles_setup.step, MolesSimpleSetup.Steps.COMPLETED)
         self.game_setup.refresh_from_db()
-        self.assertNotEqual(self.game_setup.status, GameSimpleSetup.GameSetupStatus.MOLES_SETUP)
+        self.assertNotEqual(
+            self.game_setup.status, GameSimpleSetup.GameSetupStatus.MOLES_SETUP
+        )
 
     def test_confirm_wrong_step_raises(self):
         self.moles_setup.step = MolesSimpleSetup.Steps.PICKING_CORNER

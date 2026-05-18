@@ -3,6 +3,7 @@ from game.models.birds.turn import BirdBirdsong, BirdDaylight, BirdEvening
 from game.models.wa.turn import WABirdsong, WADaylight, WAEvening
 from game.models.cats.turn import CatBirdsong, CatDaylight, CatEvening
 from game.models.crows.turn import CrowBirdsong, CrowDaylight, CrowEvening
+from game.models.moles.turn import MoleBirdsong, MoleDaylight, MoleEvening
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.queries.general import get_current_phase, is_start_of_phase, is_phase
 
@@ -38,6 +39,8 @@ def can_use_card(player: Player, card_entry: CraftedCardEntry) -> bool:
                 return is_start_of_phase(player, CatBirdsong)
             elif player.faction == Faction.CROWS:
                 return is_start_of_phase(player, CrowBirdsong)
+            elif player.faction == Faction.MOLES:
+                return is_start_of_phase(player, MoleBirdsong)
 
         case CardsEP.EYRIE_EMIGRE | CardsEP.FALSE_ORDERS | CardsEP.SWAP_MEET:
             # "At end of Birdsong" or "In Birdsong" or "Once in Birdsong"
@@ -58,7 +61,7 @@ def can_use_card(player: Player, card_entry: CraftedCardEntry) -> bool:
                 return phase.step == CrowEvening.CrowEveningSteps.DRAWING
 
         case CardsEP.CHARM_OFFENSIVE:
-            # "At start of Evening"
+            # "At start of Evening" for most, "At end of Daylight" for Crows
             if player.faction == Faction.BIRDS:
                 return is_start_of_phase(player, BirdEvening)
             elif player.faction == Faction.WOODLAND_ALLIANCE:
@@ -66,7 +69,11 @@ def can_use_card(player: Player, card_entry: CraftedCardEntry) -> bool:
             elif player.faction == Faction.CATS:
                 return is_start_of_phase(player, CatEvening)
             elif player.faction == Faction.CROWS:
-                return is_start_of_phase(player, CrowEvening)
+                if not is_phase(player, "Daylight"):
+                    return False
+                return phase.step == CrowDaylight.CrowDaylightSteps.BEFORE_END
+            elif player.faction == Faction.MOLES:
+                return is_start_of_phase(player, MoleEvening)
 
         case CardsEP.LEAGUE_OF_ADVENTURERS:
             # "Once in Daylight" AND has available items

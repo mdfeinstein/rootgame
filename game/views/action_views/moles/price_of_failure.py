@@ -6,6 +6,7 @@ from game.errors import IllegalActionError, UnavailableActionError
 from game.models.game_models import Faction
 from game.models.moles.ministers import Minister
 from game.queries.current_action.events import get_current_event
+from game.queries.moles.price_of_failure import get_highest_rank_swayed_ministers
 from game.transactions.moles.price_of_failure import resolve_price_of_failure
 from game.views.action_views.general import GameActionView
 
@@ -38,31 +39,10 @@ class MolesPriceOfFailureView(GameActionView):
 
     def _get_minister_options(self, player):
         """Get swayed ministers of the highest available rank."""
-        swayed = Minister.objects.filter(player=player, swayed=True)
+        ministers = get_highest_rank_swayed_ministers(player)
 
-        if not swayed.exists():
-            return []
-
-        # Determine highest rank among swayed ministers
-        ranks = {}
-        for minister in swayed:
-            rank = minister.crown_type
-            if rank not in ranks:
-                ranks[rank] = []
-            ranks[rank].append(minister)
-
-        # Get highest rank (lord > noble > squire)
-        highest_rank = None
-        if "lord" in ranks:
-            highest_rank = "lord"
-        elif "noble" in ranks:
-            highest_rank = "noble"
-        else:
-            highest_rank = "squire"
-
-        # Build options for ministers of highest rank
         options = []
-        for minister in ranks.get(highest_rank, []):
+        for minister in ministers:
             options.append({
                 "value": minister.name,
                 "label": minister.get_name_display(),

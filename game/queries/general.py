@@ -180,7 +180,7 @@ from game.models.crows.turn import CrowBirdsong, CrowDaylight, CrowEvening
 def get_current_phase(player: Player):
     """
     Returns the current active phase model instance for the player.
-    Supports Birds, WA, Cats.
+    Supports Birds, WA, Cats, Crows, Moles.
     Returns None if no phase is active or faction not supported.
     """
     if player.faction == Faction.BIRDS:
@@ -199,6 +199,10 @@ def get_current_phase(player: Player):
         from game.queries.crows.turn import get_phase as get_crows_phase
 
         return get_crows_phase(player)
+    elif player.faction == Faction.MOLES:
+        from game.queries.moles.turn import get_phase as get_moles_phase
+
+        return get_moles_phase(player)
 
     return None
 
@@ -523,3 +527,48 @@ def get_current_removal_tracker(game: Game):
         return game.removal_tracker
     except RemovalEventTracker.DoesNotExist:
         return None
+
+
+def cards_over_hand_limit(player: Player) -> int:
+    """Get the number of cards a player must discard to reach the 5-card hand limit.
+
+    Args:
+        player: The player
+
+    Returns:
+        Number of cards that must be discarded (0 if hand is at or below 5)
+    """
+    hand_size = get_player_hand_size(player)
+    return max(0, hand_size - 5)
+
+
+def get_craftable_cards_for_player(player: Player) -> list:
+    """Get list of craftable cards in the player's hand.
+
+    A card is craftable if it's in the player's hand and either:
+    - It's a non-item card that hasn't been crafted yet, or
+    - It's an item card that's available in the pool.
+
+    Args:
+        player: The player
+
+    Returns:
+        List of CardsEP values that can be crafted
+    """
+    from game.game_data.cards.exiles_and_partisans import CardsEP
+    from game.models.game_models import HandEntry
+
+    cards = HandEntry.objects.filter(player=player).values_list(
+        "card__card_type", flat=True
+    )
+
+    craftable = []
+    for card_type in cards:
+        try:
+            card_enum = CardsEP[card_type]
+            if is_card_craftable_for_player(player, card_enum):
+                craftable.append(card_enum)
+        except KeyError:
+            pass
+
+    return craftable

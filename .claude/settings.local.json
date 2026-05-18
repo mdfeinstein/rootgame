@@ -124,7 +124,14 @@
       "Bash(tee test_crafting_output.txt)",
       "Bash(tee test_all_moles_output.txt)",
       "Bash(tee test_all_output.txt)",
-      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.general.test_crafting.CraftingLogicTests)"
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.general.test_crafting.CraftingLogicTests)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.action_views.general.test_crows_turn_flow game.tests.action_views.general.test_moles_turn_flow)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.action_views.general.test_moles_turn_flow game.tests.action_views.general.test_crows_turn_flow)",
+      "Bash(gh pr *)",
+      "PowerShell(Get-Command gh -ErrorAction SilentlyContinue)",
+      "PowerShell(gh auth status)",
+      "PowerShell(&\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" auth status)",
+      "PowerShell(&\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" pr list --state open)"
     ]
   },
   "enabledPlugins": {

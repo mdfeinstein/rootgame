@@ -6,7 +6,7 @@ from game.errors import IllegalActionError, UnavailableActionError
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.game_models import Faction
 from game.models.moles.turn import MoleEvening
-from game.queries.general import get_player_hand_size, is_card_craftable_for_player
+from game.queries.general import cards_over_hand_limit, get_craftable_cards_for_player, get_player_hand_size, is_card_craftable_for_player
 from game.queries.moles.crafting import (
     get_craftable_clearing_options,
     get_buildings_from_clearing_numbers,
@@ -48,19 +48,10 @@ class MolesCraftingView(GameActionView):
 
     def _get_card_options(self, player):
         """Get craftable cards in hand as options."""
-        from game.models.game_models import HandEntry
-
-        cards = HandEntry.objects.filter(player=player).values_list(
-            "card__card_type", flat=True
-        )
+        cards = get_craftable_cards_for_player(player)
         options = []
-        for card_type in cards:
-            try:
-                card_enum = CardsEP[card_type]
-                if is_card_craftable_for_player(player, card_enum):
-                    options.append({"value": card_enum.name, "label": card_enum.value.title})
-            except KeyError:
-                pass
+        for card_enum in cards:
+            options.append({"value": card_enum.name, "label": card_enum.value.title})
         options.append({"value": "", "label": "Done Crafting"})
         return options
 
@@ -187,16 +178,14 @@ class MolesDiscardView(GameActionView):
         player = self.player(request, game_id)
         validate_step(player, MoleEvening.MoleEveningSteps.DISCARD)
 
-        hand_size = get_player_hand_size(player)
-        if hand_size <= 5:
+        need_to_discard = cards_over_hand_limit(player)
+        if need_to_discard == 0:
             # Auto-complete if no discards needed
             try:
                 atomic_game_action(end_discard)(player)
             except (IllegalActionError, UnavailableActionError):
                 pass
             return self.generate_completed_step()
-
-        need_to_discard = hand_size - 5
         self.first_step = {
             "faction": Faction.MOLES.label,
             "name": "select_card",
@@ -254,15 +243,13 @@ class MolesDiscardView(GameActionView):
             raise ValidationError({"detail": str(e)})
 
         # Check if we need to discard more
-        hand_size = get_player_hand_size(player)
-        if hand_size <= 5:
+        need_to_discard = cards_over_hand_limit(player)
+        if need_to_discard == 0:
             try:
                 atomic_game_action(end_discard)(player)
             except (IllegalActionError, UnavailableActionError):
                 pass
             return self.generate_completed_step()
-
-        need_to_discard = hand_size - 5
         return self.generate_step(
             "select_card",
             f"Select {need_to_discard} more cards to discard.",

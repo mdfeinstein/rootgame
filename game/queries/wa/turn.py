@@ -57,8 +57,8 @@ def validate_step(
         | WADaylight.WADaylightSteps
         | WAEvening.WAEveningSteps
     ),
-) -> WABirdsong.WABirdsongSteps | WADaylight.WADaylightSteps | WAEvening.WAEveningSteps:
-    """returns the step if it is the given step, else raises UnavailableActionError"""
+) -> None:
+    """Validate player is in the given step, raise UnavailableActionError if not."""
     mapper = {
         WABirdsong.WABirdsongSteps.REVOLT: "Not Revolt step",
         WABirdsong.WABirdsongSteps.SPREAD_SYMPATHY: "Not Spread Sympathy step",
@@ -73,4 +73,3 @@ def validate_step(
     player_phase = get_phase(player)
     if step != player_phase.step:
         raise UnavailableActionError(mapper[step])
-    return player_phase.step

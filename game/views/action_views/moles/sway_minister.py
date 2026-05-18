@@ -8,10 +8,11 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.game_data.moles.ministers_data import MINISTERS
 from game.queries.moles.turn import validate_step
 from game.queries.moles.daylight import (
+    get_swayable_ministers,
     validate_can_sway_minister,
-    validate_card_in_hand,
     validate_cards_match_clearings,
 )
+from game.queries.general import validate_player_has_card_in_hand
 from game.transactions.moles.daylight.sway_minister import sway_minister, end_sway_minister
 from game.decorators.transaction_decorator import atomic_game_action
 from game.views.action_views.general import GameActionView
@@ -31,35 +32,21 @@ class MolesSwayMinisterView(GameActionView):
 
     def get_available_ministers(self, player):
         """Get list of swayable ministers with their crown requirements."""
-        from game.models.moles.crown import Crown
+        swayable = get_swayable_ministers(player)
 
         available = []
-        required_cards_map = {"squire": 2, "noble": 3, "lord": 4}
-        hand_size = HandEntry.objects.filter(player=player).count()
-
-        for minister in Minister.objects.filter(player=player, swayed=False):
-            crown_type = minister.crown_type
-            cost = required_cards_map.get(crown_type, 0)
-
-            # Check if player has enough cards for this minister's cost
-            if hand_size < cost:
-                continue
-
-            # Check if a crown of this type is available
-            crown_available = Crown.objects.filter(
-                player=player, type=crown_type, used=False
-            ).exists()
-
-            if crown_available:
-                minister_data = MINISTERS.get(minister.name, {})
-                info_text = minister_data.get("description", f"Crown: {crown_type.capitalize()}")
-                available.append(
-                    {
-                        "value": minister.name,
-                        "label": f"{minister.get_name_display()} ({cost} cards)",
-                        "info": info_text,
-                    }
-                )
+        for item in swayable:
+            minister = item["minister"]
+            cost = item["cost"]
+            minister_data = MINISTERS.get(minister.name, {})
+            info_text = minister_data.get("description", f"Crown: {minister.crown_type.capitalize()}")
+            available.append(
+                {
+                    "value": minister.name,
+                    "label": f"{minister.get_name_display()} ({cost} cards)",
+                    "info": info_text,
+                }
+            )
 
         # Add option to skip sway minister step
         available.append({"value": "", "label": "Skip"})
@@ -177,7 +164,7 @@ class MolesSwayMinisterView(GameActionView):
         except KeyError:
             raise ValidationError(f"Invalid card: {card_name}")
 
-        validate_card_in_hand(player, card_enum)
+        validate_player_has_card_in_hand(player, card_enum)
 
         # Validate card can be added (matches clearing with pieces, no duplicates)
         new_cards_list = selected_cards_str + [card_enum.name]

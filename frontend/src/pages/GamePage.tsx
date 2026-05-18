@@ -14,6 +14,7 @@ import {
   Paper,
   Badge,
   Select,
+  Container,
 } from "@mantine/core";
 import PlayerRow from "../components/player/PlayerRow";
 import { PlayerProvider } from "../contexts/PlayerProvider";
@@ -76,7 +77,7 @@ const GamePage = () => {
     session?.owner_username.toLowerCase() === username?.toLowerCase();
 
   return (
-    <div style={{ paddingTop: "100px" }}>
+    <Container size="xl" pt={100} style={{}}>
       <Stack gap="xs">
         {/* Pre-Game Setup Info */}
         {!isGameStarted && session && (
@@ -187,18 +188,14 @@ const GamePage = () => {
         {isGameStarted && (
           <PlayerProvider>
             <GameActionProvider>
-              <Stack
-                gap="sm"
-                align="flex-start"
-                style={{ paddingBottom: "80px" }}
-              >
+              <Stack gap="sm" align="center" style={{ paddingBottom: "80px" }}>
                 {/* Top Row: Player Row */}
                 <PlayerRow />
 
                 {/* Main Content Row */}
                 <Group
                   align="flex-start"
-                  justify="flex-start"
+                  justify="center"
                   gap="xl"
                   wrap="nowrap"
                   w="100%"
@@ -242,7 +239,7 @@ const GamePage = () => {
           </PlayerProvider>
         )}
       </Stack>
-    </div>
+    </Container>
   );
 };
 

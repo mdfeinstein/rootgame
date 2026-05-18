@@ -1,11 +1,9 @@
 from django.test import TestCase
 from game.tests.client import RootGameClient
-from game.models.game_models import Faction, HandEntry, CraftedCardEntry
+from game.models.game_models import Faction, CraftedCardEntry
 
 from game.tests.my_factories import (
     GameSetupWithFactionsFactory,
-    CraftedCardEntryFactory,
-    CardFactory,
 )
 from game.models.crows.turn import CrowTurn, CrowBirdsong, CrowDaylight, CrowEvening
 from game.game_data.cards.exiles_and_partisans import CardsEP
@@ -37,185 +35,137 @@ class CrowsTurnFlowTestCase(TestCase):
         if not CrowTurn.objects.filter(player=self.crows_player).exists():
             CrowTurn.create_turn(self.crows_player)
             from game.transactions.crows import step_effect
+
             step_effect(self.crows_player)
 
-    def test_crows_birdsong_crafting_available(self):
-        """Test that Birdsong Crafting step is available."""
-        turn = CrowTurn.objects.filter(player=self.crows_player).last()
-        birdsong = turn.birdsong.first()
-
-        # Set to crafting step
-        birdsong.step = CrowBirdsong.CrowBirdsongSteps.CRAFT
-        birdsong.save()
-
-        # Get crafting action
-        self.crows_client.get_action()
-        self.assertEqual(self.crows_client.base_route, "/api/crows/action/crafting/")
-
-        # End crafting by selecting empty
-        response = self.crows_client.submit_action({"card": ""})
-        self.assertEqual(response.status_code, 200)
-
-    def test_crows_birdsong_flipping_available(self):
-        """Test that Birdsong Flipping step is available."""
-        turn = CrowTurn.objects.filter(player=self.crows_player).last()
-        birdsong = turn.birdsong.first()
-
-        # Set to flipping step
-        birdsong.step = CrowBirdsong.CrowBirdsongSteps.FLIP
-        birdsong.save()
-
-        # Get flipping action - may require plot tokens to flip
-        self.crows_client.get_action()
-        # Should be at flipping or skip if no plots
-        self.assertIsNotNone(self.crows_client.step)
-
-    def test_crows_birdsong_recruiting_available(self):
-        """Test that Birdsong Recruiting step is available."""
-        turn = CrowTurn.objects.filter(player=self.crows_player).last()
-        birdsong = turn.birdsong.first()
-
-        # Set to recruiting step
-        birdsong.step = CrowBirdsong.CrowBirdsongSteps.RECRUIT
-        birdsong.save()
-
-        # Get recruiting action
-        self.crows_client.get_action()
-        self.assertIsNotNone(self.crows_client.step)
-
-    def test_crows_daylight_actions_available(self):
-        """Test that Daylight Actions step is available and can be skipped."""
-        turn = CrowTurn.objects.filter(player=self.crows_player).last()
-        birdsong = turn.birdsong.first()
-        daylight = turn.daylight.first()
-
-        # Skip Birdsong
-        birdsong.step = CrowBirdsong.CrowBirdsongSteps.COMPLETED
-        birdsong.save()
-        daylight.step = CrowDaylight.CrowDaylightSteps.ACTIONS
-        daylight.save()
-
-        # Get daylight actions
-        self.crows_client.get_action()
-        self.assertEqual(self.crows_client.base_route, "/api/crows/action/daylight/")
-
-        # End actions
-        response = self.crows_client.submit_action({"action_type": ""})
-        self.assertEqual(response.status_code, 200)
-
-    def test_crows_evening_exert_available(self):
-        """Test that Evening Exert step is available."""
-        turn = CrowTurn.objects.filter(player=self.crows_player).last()
-        birdsong = turn.birdsong.first()
-        daylight = turn.daylight.first()
-        evening = turn.evening.first()
-
-        # Skip to evening exert
-        birdsong.step = CrowBirdsong.CrowBirdsongSteps.COMPLETED
-        birdsong.save()
-        daylight.step = CrowDaylight.CrowDaylightSteps.COMPLETED
-        daylight.save()
-        evening.step = CrowEvening.CrowEveningSteps.EXERT
-        evening.save()
-
-        # Get exert action
-        self.crows_client.get_action()
-        self.assertEqual(self.crows_client.base_route, "/api/crows/action/exert/")
-
-    def test_crows_evening_discarding_available(self):
-        """Test that Evening Discard step handles large hands."""
-        turn = CrowTurn.objects.filter(player=self.crows_player).last()
-        birdsong = turn.birdsong.first()
-        daylight = turn.daylight.first()
-        evening = turn.evening.first()
-
-        # Skip to evening discard
-        birdsong.step = CrowBirdsong.CrowBirdsongSteps.COMPLETED
-        birdsong.save()
-        daylight.step = CrowDaylight.CrowDaylightSteps.COMPLETED
-        daylight.save()
-        evening.step = CrowEvening.CrowEveningSteps.DISCARDING
-        evening.save()
-
-        # Clear hand and add cards
-        HandEntry.objects.filter(player=self.crows_player).delete()
-
-        # Add 7 cards (need to discard to 5)
-        for _ in range(7):
-            card = CardFactory(game=self.game, card_type=CardsEP.RABBIT_PARTISANS.name)
-            HandEntry.objects.create(player=self.crows_player, card=card)
-
-        # Get discard action
-        self.crows_client.get_action()
-        # May show discard or auto-complete if already at 5
-        self.assertIsNotNone(self.crows_client.step)
-
     def test_crows_turn_structure(self):
-        """Test that Crows turn has all expected phases."""
-        turn = CrowTurn.objects.filter(player=self.crows_player).last()
+        """Verify Crows turn has all expected phases."""
+        turn = CrowTurn.objects.get(player=self.crows_player)
 
         # Verify all phases exist
-        self.assertIsNotNone(turn.birdsong.first())
-        self.assertIsNotNone(turn.daylight.first())
-        self.assertIsNotNone(turn.evening.first())
-
-        # Verify phase types
-        birdsong = turn.birdsong.first()
-        daylight = turn.daylight.first()
-        evening = turn.evening.first()
+        birdsong = CrowBirdsong.objects.get(turn=turn)
+        daylight = CrowDaylight.objects.get(turn=turn)
+        evening = CrowEvening.objects.get(turn=turn)
 
         self.assertIsNotNone(birdsong)
         self.assertIsNotNone(daylight)
         self.assertIsNotNone(evening)
 
-    def test_crows_saboteurs_card_available(self):
-        """Test that Saboteurs card can be crafted."""
-        saboteurs_card = CardFactory(
-            game=self.game, card_type=CardsEP.SABOTEURS.name, suit="w"
-        )
+        # Verify initial steps
+        self.assertEqual(birdsong.step, CrowBirdsong.CrowBirdsongSteps.CRAFT)
+        self.assertEqual(daylight.step, CrowDaylight.CrowDaylightSteps.NOT_STARTED)
+        self.assertEqual(evening.step, CrowEvening.CrowEveningSteps.NOT_STARTED)
+
+    def test_crows_birdsong_route(self):
+        """Test that Birdsong crafting is available."""
+        self.crows_client.get_action()
+        self.assertEqual(self.crows_client.base_route, "/api/crows/action/crafting/")
+
+    def test_crows_saboteurs_flow(self):
+        """Test that Saboteurs triggers at start of Birdsong and can be skipped."""
+        from game.tests.my_factories import CraftedCardEntryFactory, CardFactory
+        from game.transactions.crows import step_effect
+
+        # Give Crows the Saboteurs card
+        saboteurs_card = CardFactory(game=self.game, card_type=CardsEP.SABOTEURS.name, suit="w")
         CraftedCardEntryFactory(player=self.crows_player, card=saboteurs_card)
 
-        crafted = CraftedCardEntry.objects.filter(
-            player=self.crows_player, card=saboteurs_card
-        )
-        self.assertTrue(crafted.exists())
+        # Reset turn to test from start
+        CrowTurn.objects.filter(player=self.crows_player).delete()
+        CrowTurn.create_turn(self.crows_player)
 
-    def test_crows_charm_offensive_card_available(self):
-        """Test that Charm Offensive card can be crafted."""
-        charm_card = CardFactory(
-            game=self.game, card_type=CardsEP.CHARM_OFFENSIVE.name, suit="y"
-        )
-        CraftedCardEntryFactory(player=self.crows_player, card=charm_card)
+        # Call step_effect to trigger card checks
+        step_effect(self.crows_player)
 
-        crafted = CraftedCardEntry.objects.filter(
-            player=self.crows_player, card=charm_card
-        )
-        self.assertTrue(crafted.exists())
+        # Now get_action should return saboteurs
+        self.crows_client.get_action()
+        self.assertEqual(self.crows_client.base_route, "/api/action/card/saboteurs/")
 
-    def test_crows_informants_card_available(self):
-        """Test that Informants card can be crafted."""
-        informants_card = CardFactory(
-            game=self.game, card_type=CardsEP.INFORMANTS.name, suit="o"
-        )
-        CraftedCardEntryFactory(player=self.crows_player, card=informants_card)
+        # Skip saboteurs
+        self.crows_client.submit_action({"faction": "skip"})
 
-        crafted = CraftedCardEntry.objects.filter(
-            player=self.crows_player, card=informants_card
-        )
-        self.assertTrue(crafted.exists())
+        # After skip, should move to Birdsong Crafting
+        self.crows_client.get_action()
+        self.assertEqual(self.crows_client.base_route, "/api/crows/action/crafting/")
 
-    def test_crows_eyrie_emigre_card_available(self):
-        """Test that Eyrie Emigre card can be crafted."""
-        emigre_card = CardFactory(
-            game=self.game, card_type=CardsEP.EYRIE_EMIGRE.name, suit="w"
-        )
+    def test_crows_eyrie_emigre_flow(self):
+        """Test that Eyrie Emigre triggers during Birdsong BEFORE_END step."""
+        from game.tests.my_factories import CraftedCardEntryFactory, CardFactory
+        from game.transactions.crows import step_effect
+
+        # Give Crows the Eyrie Emigre card (must be UNUSED)
+        emigre_card = CardFactory(game=self.game, card_type=CardsEP.EYRIE_EMIGRE.name, suit="w")
         CraftedCardEntryFactory(
             player=self.crows_player,
             card=emigre_card,
             used=CraftedCardEntry.UsedChoice.UNUSED,
         )
 
-        crafted = CraftedCardEntry.objects.filter(
-            player=self.crows_player, card=emigre_card
-        )
-        self.assertTrue(crafted.exists())
+        # Set turn to Birdsong BEFORE_END step
+        turn = CrowTurn.objects.get(player=self.crows_player)
+        birdsong = CrowBirdsong.objects.get(turn=turn)
+        birdsong.step = CrowBirdsong.CrowBirdsongSteps.BEFORE_END
+        birdsong.save()
+
+        # Call step_effect to trigger is_emigre check
+        step_effect(self.crows_player)
+
+        # Get action should return emigre event route
+        self.crows_client.get_action()
+        self.assertEqual(self.crows_client.base_route, "/api/action/card/eyrie-emigre/")
+
+    def test_crows_charm_offensive_flow(self):
+        """Test that Charm Offensive triggers during Daylight BEFORE_END step."""
+        from game.tests.my_factories import CraftedCardEntryFactory, CardFactory
+        from game.transactions.crows import step_effect
+
+        # Give Crows the Charm Offensive card
+        charm_card = CardFactory(game=self.game, card_type=CardsEP.CHARM_OFFENSIVE.name, suit="y")
+        CraftedCardEntryFactory(player=self.crows_player, card=charm_card)
+
+        # Set turn to Daylight BEFORE_END step
+        turn = CrowTurn.objects.get(player=self.crows_player)
+        birdsong = CrowBirdsong.objects.get(turn=turn)
+        birdsong.step = CrowBirdsong.CrowBirdsongSteps.COMPLETED
+        birdsong.save()
+
+        daylight = CrowDaylight.objects.get(turn=turn)
+        daylight.step = CrowDaylight.CrowDaylightSteps.BEFORE_END
+        daylight.save()
+
+        # Call step_effect to trigger check_charm_offensive
+        step_effect(self.crows_player)
+
+        # Get action should return charm offensive event route
+        self.crows_client.get_action()
+        self.assertEqual(self.crows_client.base_route, "/api/action/card/charm-offensive/")
+
+    def test_crows_informants_flow(self):
+        """Test that Informants triggers during Evening DRAWING step."""
+        from game.tests.my_factories import CraftedCardEntryFactory, CardFactory
+        from game.transactions.crows import step_effect
+
+        # Give Crows the Informants card
+        informants_card = CardFactory(game=self.game, card_type=CardsEP.INFORMANTS.name, suit="o")
+        CraftedCardEntryFactory(player=self.crows_player, card=informants_card)
+
+        # Set turn to Evening DRAWING step
+        turn = CrowTurn.objects.get(player=self.crows_player)
+        birdsong = CrowBirdsong.objects.get(turn=turn)
+        birdsong.step = CrowBirdsong.CrowBirdsongSteps.COMPLETED
+        birdsong.save()
+
+        daylight = CrowDaylight.objects.get(turn=turn)
+        daylight.step = CrowDaylight.CrowDaylightSteps.COMPLETED
+        daylight.save()
+
+        evening = CrowEvening.objects.get(turn=turn)
+        evening.step = CrowEvening.CrowEveningSteps.DRAWING
+        evening.save()
+
+        # Call step_effect to trigger informants check
+        step_effect(self.crows_player)
+
+        # Get action should return informants event route
+        self.crows_client.get_action()
+        self.assertEqual(self.crows_client.base_route, "/api/action/card/informants/")

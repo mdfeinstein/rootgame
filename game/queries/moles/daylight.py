@@ -8,6 +8,7 @@ from game.models.moles.buildings import Citadel, Market
 from game.models.moles.crown import Crown
 from game.models.moles.ministers import Minister
 from game.models.moles.tokens import Tunnel
+from game.models.moles.turn import MoleDaylight
 from game.errors import IllegalActionError, UnavailableActionError
 from game.queries.general import (
     card_matches_clearing,
@@ -50,20 +51,6 @@ def get_available_building_from_supply(
         return building
     else:
         raise IllegalActionError("Building Type not recognized")
-
-
-def validate_card_in_hand(player: Player, card: CardsEP) -> HandEntry:
-    """Validate player has card in hand, return the HandEntry.
-
-    Raises:
-        IllegalActionError if card not in hand
-    """
-    card_entry = HandEntry.objects.filter(
-        player=player, card__card_type=card.name
-    ).first()
-    if card_entry is None:
-        raise IllegalActionError(f"Card {card.value.title} not in hand")
-    return card_entry
 
 
 def validate_build_clearing(
@@ -174,7 +161,7 @@ def validate_no_brigadier_in_progress(player: Player) -> None:
         )
 
 
-def validate_brigadier_action(phase, action_type) -> None:
+def validate_brigadier_action(phase: MoleDaylight, action_type: MoleDaylight.BrigadierAction) -> None:
     """Validate Brigadier action state and that we're not mixing actions.
 
     Args:
@@ -218,7 +205,7 @@ def validate_banker_cards(player: Player, cards: list[CardsEP]) -> list[HandEntr
 
     card_entries = []
     for card in cards:
-        entry = validate_card_in_hand(player, card)
+        entry = validate_player_has_card_in_hand(player, card)
         card_entries.append(entry)
 
     # Check all cards are same suit (Wild matches any suit)
@@ -409,3 +396,112 @@ def get_actions_remaining(player: Player) -> int:
     if isinstance(phase, MoleDaylight):
         return phase.actions_left
     return 0
+
+
+def get_available_ministers(player: Player) -> list[Minister]:
+    """Get all swayed, unused ministers for the player.
+
+    Args:
+        player: The Moles player
+
+    Returns:
+        List of Minister instances that are swayed and not yet used this turn
+    """
+    return list(Minister.objects.filter(player=player, swayed=True, used=False))
+
+
+def get_copyable_ministers_for_mayor(player: Player) -> list[Minister]:
+    """Get swayed ministers that Mayor can copy (excludes LORD-tier ministers).
+
+    Mayor cannot copy Duchess of Mud, Earl of Stone, or Baron of Dirt.
+
+    Args:
+        player: The Moles player
+
+    Returns:
+        List of swayed Minister instances (used or unused) that are copyable
+    """
+    return list(
+        Minister.objects.filter(player=player, swayed=True).exclude(
+            name__in=[
+                Minister.MinisterName.DUCHESS_OF_MUD,
+                Minister.MinisterName.EARL_OF_STONE,
+                Minister.MinisterName.BARON_OF_DIRT,
+            ]
+        )
+    )
+
+
+def has_tunnels_in_supply(player: Player) -> bool:
+    """Check if the player has any tunnels left in supply (unplaced).
+
+    Args:
+        player: The Moles player
+
+    Returns:
+        True if at least one tunnel is in supply, False otherwise
+    """
+    from game.models.moles.tokens import Tunnel
+
+    return Tunnel.objects.filter(player=player, clearing__isnull=True).exists()
+
+
+def get_swayable_ministers(player: Player) -> list[dict]:
+    """Get list of ministers the player can currently sway, with their costs.
+
+    A minister is swayable if: unswayed, a crown of the correct tier is available,
+    and the player has enough cards in hand.
+
+    Args:
+        player: The Moles player
+
+    Returns:
+        List of dicts with keys: 'minister' (Minister instance), 'cost' (int)
+    """
+    from game.models.moles.crown import Crown
+    from game.queries.general import get_player_hand_size
+
+    swayable = []
+    required_cards_map = {"squire": 2, "noble": 3, "lord": 4}
+    hand_size = get_player_hand_size(player)
+
+    for minister in Minister.objects.filter(player=player, swayed=False):
+        crown_type = minister.crown_type
+        cost = required_cards_map.get(crown_type, 0)
+
+        # Check if player has enough cards for this minister's cost
+        if hand_size < cost:
+            continue
+
+        # Check if a crown of this type is available
+        crown_available = Crown.objects.filter(
+            player=player, type=crown_type, used=False
+        ).exists()
+
+        if crown_available:
+            swayable.append({"minister": minister, "cost": cost})
+
+    return swayable
+
+
+def validate_minister_is_swayed(player: Player, minister_name: Minister.MinisterName) -> Minister:
+    """Validate that a minister is swayed and return it.
+
+    Args:
+        player: The Moles player
+        minister_name: The MinisterName enum value
+
+    Returns:
+        The Minister instance
+
+    Raises:
+        IllegalActionError if minister not found or not swayed
+    """
+    minister = Minister.objects.filter(player=player, name=minister_name).first()
+    if minister is None:
+        raise IllegalActionError(f"Minister {minister_name} not found")
+
+    if not minister.swayed:
+        raise IllegalActionError(f"Minister {minister_name} is not swayed")
+
+    return minister
