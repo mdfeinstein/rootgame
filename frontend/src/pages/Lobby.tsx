@@ -41,11 +41,12 @@ const LobbyPage = () => {
 
   const [map, setMap] = useState("0");
 
-  const handleCreateGame = () => {
+  const handleCreateGame = async () => {
     createGameMutation.mutate(
       { map_label: map },
       {
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
+          await joinGameMutation.mutateAsync(data.game_id);
           navigate(`/game/${data.game_id}`);
         },
       },
