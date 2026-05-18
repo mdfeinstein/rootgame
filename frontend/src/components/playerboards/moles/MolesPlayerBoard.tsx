@@ -40,7 +40,10 @@ export default function MolesPlayerBoard({
   ).length;
 
   const tokens = publicInfo?.tokens ?? {};
-  const tunnelsInSupply = (tokens.tunnels ?? []).length;
+  const tunnels = tokens.tunnels ?? [];
+  const tunnelsInSupply = tunnels.filter(
+    (tunnel) => tunnel.token.clearing_number === null,
+  ).length;
 
   const crowns = publicInfo?.crowns ?? [];
   const ministers = publicInfo?.ministers ?? [];
