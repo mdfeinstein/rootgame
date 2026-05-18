@@ -52,7 +52,7 @@ export default function MolesBuildingTrack({
                     All on map
                   </Text>
                 ) : (
-                  citadelsNotOnMap.map((citadel, i) => (
+                  citadelsNotOnMap.map((_, i) => (
                     <Tooltip
                       key={i}
                       label="Citadel in supply"
@@ -95,7 +95,7 @@ export default function MolesBuildingTrack({
                     All on map
                   </Text>
                 ) : (
-                  marketsNotOnMap.map((market, i) => (
+                  marketsNotOnMap.map((_, i) => (
                     <Tooltip
                       key={i}
                       label="Market in supply"

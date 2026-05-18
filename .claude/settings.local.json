@@ -131,7 +131,9 @@
       "PowerShell(Get-Command gh -ErrorAction SilentlyContinue)",
       "PowerShell(gh auth status)",
       "PowerShell(&\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" auth status)",
-      "PowerShell(&\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" pr list --state open)"
+      "PowerShell(&\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" pr list --state open)",
+      "Skill(openapi)",
+      "Skill(openapi:*)"
     ]
   },
   "enabledPlugins": {

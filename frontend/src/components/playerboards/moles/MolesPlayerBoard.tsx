@@ -1,4 +1,4 @@
-import { Modal, Stack, Paper, LoadingOverlay, Grid, Group, Text } from "@mantine/core";
+import { Modal, Stack, Paper, LoadingOverlay, Grid } from "@mantine/core";
 import { useContext } from "react";
 import { GameContext } from "../../../contexts/GameProvider";
 import useMolesPlayerQuery from "../../../hooks/useMolesPlayerQuery";
@@ -39,8 +39,7 @@ export default function MolesPlayerBoard({
     (b) => b.buildingType === "markets",
   ).length;
 
-  const tokens = publicInfo?.tokens ?? {};
-  const tunnels = (tokens.tunnels ?? []).length;
+  // const tokens = publicInfo?.tokens ?? {};
 
   const crowns = publicInfo?.crowns ?? [];
   const ministers = publicInfo?.ministers ?? [];
@@ -53,7 +52,7 @@ export default function MolesPlayerBoard({
       centered
       padding={0}
       withCloseButton={false}
-      styles={{ content: { background: 'transparent', boxShadow: 'none' } }}
+      styles={{ content: { background: "transparent", boxShadow: "none" } }}
       overlayProps={{
         backgroundOpacity: 0.55,
         blur: 3,
@@ -83,7 +82,14 @@ export default function MolesPlayerBoard({
             <Grid gutter="md" align="stretch">
               {/* Left Column: Turn Flow */}
               <Grid.Col span={{ base: 12, md: 4 }}>
-                <Paper withBorder p="xs" radius="md" bg="white" shadow="sm" style={{ flex: 1 }}>
+                <Paper
+                  withBorder
+                  p="xs"
+                  radius="md"
+                  bg="white"
+                  shadow="sm"
+                  style={{ flex: 1 }}
+                >
                   <MolesTurnFlow />
                 </Paper>
               </Grid.Col>

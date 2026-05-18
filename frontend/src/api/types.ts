@@ -1955,42 +1955,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/moles/daylight/actions/recruit/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Return initial step data. */
-        get: operations["moles_daylight_actions_recruit_retrieve"];
-        put?: never;
-        /** @description Base class for sub-action views that delegate to parent validators. */
-        post: operations["moles_daylight_actions_recruit_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/moles/daylight/actions/recruit/{game_id}/{route}/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Return initial step data. */
-        get: operations["moles_daylight_actions_recruit_retrieve_2"];
-        put?: never;
-        /** @description Base class for sub-action views that delegate to parent validators. */
-        post: operations["moles_daylight_actions_recruit_create_2"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/moles/daylight/minister-actions/": {
         parameters: {
             query?: never;
@@ -2055,42 +2019,6 @@ export interface paths {
         put?: never;
         /** @description Base class for sub-action views that delegate to parent validators. */
         post: operations["moles_daylight_minister_actions_banker_create_2"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/moles/daylight/minister-actions/baron/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Return initial step data. */
-        get: operations["moles_daylight_minister_actions_baron_retrieve"];
-        put?: never;
-        /** @description Base class for sub-action views that delegate to parent validators. */
-        post: operations["moles_daylight_minister_actions_baron_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/moles/daylight/minister-actions/baron/{game_id}/{route}/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Return initial step data. */
-        get: operations["moles_daylight_minister_actions_baron_retrieve_2"];
-        put?: never;
-        /** @description Base class for sub-action views that delegate to parent validators. */
-        post: operations["moles_daylight_minister_actions_baron_create_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2163,78 +2091,6 @@ export interface paths {
         put?: never;
         /** @description Base class for sub-action views that delegate to parent validators. */
         post: operations["moles_daylight_minister_actions_captain_create_2"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/moles/daylight/minister-actions/duchess/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Return initial step data. */
-        get: operations["moles_daylight_minister_actions_duchess_retrieve"];
-        put?: never;
-        /** @description Base class for sub-action views that delegate to parent validators. */
-        post: operations["moles_daylight_minister_actions_duchess_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/moles/daylight/minister-actions/duchess/{game_id}/{route}/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Return initial step data. */
-        get: operations["moles_daylight_minister_actions_duchess_retrieve_2"];
-        put?: never;
-        /** @description Base class for sub-action views that delegate to parent validators. */
-        post: operations["moles_daylight_minister_actions_duchess_create_2"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/moles/daylight/minister-actions/earl/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Return initial step data. */
-        get: operations["moles_daylight_minister_actions_earl_retrieve"];
-        put?: never;
-        /** @description Base class for sub-action views that delegate to parent validators. */
-        post: operations["moles_daylight_minister_actions_earl_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/moles/daylight/minister-actions/earl/{game_id}/{route}/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Return initial step data. */
-        get: operations["moles_daylight_minister_actions_earl_retrieve_2"];
-        put?: never;
-        /** @description Base class for sub-action views that delegate to parent validators. */
-        post: operations["moles_daylight_minister_actions_earl_create_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3242,11 +3098,27 @@ export interface components {
          *     * `CROWS_SETUP_PLACE_WARRIOR` - Crows Setup Place Warrior
          *     * `CROWS_EXTORTION_STOLE_CARD` - Crows Extortion Stole Card
          *     * `MOLES_SETUP_PICK_CORNER` - Moles Setup Pick Corner
+         *     * `MOLES_BIRDSONG_PLACE_WARRIORS` - Moles Birdsong Place Warriors
+         *     * `MOLES_BUILD` - Moles Build
+         *     * `MOLES_RECRUIT` - Moles Recruit
+         *     * `MOLES_DIG` - Moles Dig
+         *     * `MOLES_SWAY_MINISTER` - Moles Sway Minister
+         *     * `MOLES_MINISTER_MARSHAL` - Moles Minister Marshal
+         *     * `MOLES_MINISTER_CAPTAIN` - Moles Minister Captain
+         *     * `MOLES_MINISTER_FOREMOLE` - Moles Minister Foremole
+         *     * `MOLES_MINISTER_BANKER` - Moles Minister Banker
+         *     * `MOLES_MINISTER_DUCHESS` - Moles Minister Duchess of Mud
+         *     * `MOLES_MINISTER_BARON` - Moles Minister Baron of Dirt
+         *     * `MOLES_MINISTER_EARL` - Moles Minister Earl of Stone
+         *     * `MOLES_MINISTER_BRIGADIER` - Moles Minister Brigadier
+         *     * `MOLES_MINISTER_MAYOR` - Moles Minister Mayor
+         *     * `MOLES_EVENING_PROCESS_REVEALED` - Moles Evening Process Revealed Cards
+         *     * `MOLES_PRICE_OF_FAILURE` - Moles Price of Failure
          *     * `CATS_FIELD_HOSPITALS` - Field Hospitals
          *     * `CRAFTED_CARD_ACTION` - Crafted Card Action
          * @enum {string}
          */
-        LogTypeEnum: "TURN" | "PHASE" | "MOVE" | "BATTLE" | "CRAFT" | "DRAW" | "DISCARD" | "AMBUSH" | "DICE_ROLL" | "PIECE_REMOVAL" | "CATS_BIRDS_FOR_HIRE" | "CATS_MARCH" | "CATS_WOOD_PLACEMENT" | "CATS_BUILD" | "CATS_OVERWORK" | "CATS_RECRUIT" | "CATS_SETUP_PICK_CORNER" | "CATS_SETUP_PLACE_BUILDING" | "BIRDS_ADD_TO_DECREE" | "BIRDS_EMERGENCY_ROOST" | "BIRDS_DECREE_ACTION" | "BIRDS_SCORE_ROOSTS" | "BIRDS_TURMOIL" | "BIRDS_NEW_LEADER" | "BIRDS_SETUP_PICK_CORNER" | "BIRDS_SETUP_CHOOSE_LEADER" | "WA_REVOLT" | "WA_SPREAD_SYMPATHY" | "WA_MOBILIZE" | "WA_TRAIN" | "WA_ORGANIZE" | "WA_MILITARY_OPERATION" | "WA_OUTRAGE" | "WA_BASE_REMOVED" | "WA_OFFICERS_LOST" | "WA_SUPPORTERS_LOST" | "CROWS_PLOT" | "CROWS_FLIP" | "CROWS_RECRUIT" | "CROWS_TRICK" | "CROWS_EXPOSURE" | "CROWS_RAID" | "CROWS_SETUP_PLACE_WARRIOR" | "CROWS_EXTORTION_STOLE_CARD" | "MOLES_SETUP_PICK_CORNER" | "CATS_FIELD_HOSPITALS" | "CRAFTED_CARD_ACTION";
+        LogTypeEnum: "TURN" | "PHASE" | "MOVE" | "BATTLE" | "CRAFT" | "DRAW" | "DISCARD" | "AMBUSH" | "DICE_ROLL" | "PIECE_REMOVAL" | "CATS_BIRDS_FOR_HIRE" | "CATS_MARCH" | "CATS_WOOD_PLACEMENT" | "CATS_BUILD" | "CATS_OVERWORK" | "CATS_RECRUIT" | "CATS_SETUP_PICK_CORNER" | "CATS_SETUP_PLACE_BUILDING" | "BIRDS_ADD_TO_DECREE" | "BIRDS_EMERGENCY_ROOST" | "BIRDS_DECREE_ACTION" | "BIRDS_SCORE_ROOSTS" | "BIRDS_TURMOIL" | "BIRDS_NEW_LEADER" | "BIRDS_SETUP_PICK_CORNER" | "BIRDS_SETUP_CHOOSE_LEADER" | "WA_REVOLT" | "WA_SPREAD_SYMPATHY" | "WA_MOBILIZE" | "WA_TRAIN" | "WA_ORGANIZE" | "WA_MILITARY_OPERATION" | "WA_OUTRAGE" | "WA_BASE_REMOVED" | "WA_OFFICERS_LOST" | "WA_SUPPORTERS_LOST" | "CROWS_PLOT" | "CROWS_FLIP" | "CROWS_RECRUIT" | "CROWS_TRICK" | "CROWS_EXPOSURE" | "CROWS_RAID" | "CROWS_SETUP_PLACE_WARRIOR" | "CROWS_EXTORTION_STOLE_CARD" | "MOLES_SETUP_PICK_CORNER" | "MOLES_BIRDSONG_PLACE_WARRIORS" | "MOLES_BUILD" | "MOLES_RECRUIT" | "MOLES_DIG" | "MOLES_SWAY_MINISTER" | "MOLES_MINISTER_MARSHAL" | "MOLES_MINISTER_CAPTAIN" | "MOLES_MINISTER_FOREMOLE" | "MOLES_MINISTER_BANKER" | "MOLES_MINISTER_DUCHESS" | "MOLES_MINISTER_BARON" | "MOLES_MINISTER_EARL" | "MOLES_MINISTER_BRIGADIER" | "MOLES_MINISTER_MAYOR" | "MOLES_EVENING_PROCESS_REVEALED" | "MOLES_PRICE_OF_FAILURE" | "CATS_FIELD_HOSPITALS" | "CRAFTED_CARD_ACTION";
         /** @description Serializer to provide all (public) information about moles */
         Moles: {
             player: components["schemas"]["PlayerPublic"];
@@ -3267,7 +3139,6 @@ export interface components {
             crafted_with?: boolean;
         };
         MolesCrown: {
-            readonly id: number;
             type?: components["schemas"]["TypeEnum"];
             used?: boolean;
         };
@@ -3276,8 +3147,7 @@ export interface components {
             crafted_with?: boolean;
         };
         MolesMinister: {
-            readonly id: number;
-            name: components["schemas"]["NameEnum"];
+            readonly name: string;
             swayed?: boolean;
             used?: boolean;
             /** @description Returns the crown type (rank) for this minister. */
@@ -3287,19 +3157,6 @@ export interface components {
         MolesTokens: {
             tunnels: components["schemas"]["NestedToken"][];
         };
-        /**
-         * @description * `marshal` - Marshal
-         *     * `captain` - Captain
-         *     * `foremole` - Foremole
-         *     * `brigadier` - Brigadier
-         *     * `mayor` - Mayor
-         *     * `banker` - Banker
-         *     * `duchess` - Duchess of Mud
-         *     * `earl` - Earl of Stone
-         *     * `baron` - Baron of Dirt
-         * @enum {string}
-         */
-        NameEnum: "marshal" | "captain" | "foremole" | "brigadier" | "mayor" | "banker" | "duchess" | "earl" | "baron";
         NestedToken: {
             token: components["schemas"]["Token"];
         };
@@ -8422,102 +8279,6 @@ export interface operations {
             };
         };
     };
-    moles_daylight_actions_recruit_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    moles_daylight_actions_recruit_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationError"];
-                };
-            };
-        };
-    };
-    moles_daylight_actions_recruit_retrieve_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                game_id: number;
-                route: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    moles_daylight_actions_recruit_create_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                game_id: number;
-                route: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationError"];
-                };
-            };
-        };
-    };
     moles_daylight_minister_actions_retrieve: {
         parameters: {
             query?: never;
@@ -8710,104 +8471,6 @@ export interface operations {
             };
         };
     };
-    moles_daylight_minister_actions_baron_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-        };
-    };
-    moles_daylight_minister_actions_baron_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationError"];
-                };
-            };
-        };
-    };
-    moles_daylight_minister_actions_baron_retrieve_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                game_id: number;
-                route: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-        };
-    };
-    moles_daylight_minister_actions_baron_create_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                game_id: number;
-                route: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationError"];
-                };
-            };
-        };
-    };
     moles_daylight_minister_actions_brigadier_retrieve: {
         parameters: {
             query?: never;
@@ -8971,202 +8634,6 @@ export interface operations {
         };
     };
     moles_daylight_minister_actions_captain_create_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                game_id: number;
-                route: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationError"];
-                };
-            };
-        };
-    };
-    moles_daylight_minister_actions_duchess_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-        };
-    };
-    moles_daylight_minister_actions_duchess_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationError"];
-                };
-            };
-        };
-    };
-    moles_daylight_minister_actions_duchess_retrieve_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                game_id: number;
-                route: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-        };
-    };
-    moles_daylight_minister_actions_duchess_create_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                game_id: number;
-                route: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationError"];
-                };
-            };
-        };
-    };
-    moles_daylight_minister_actions_earl_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-        };
-    };
-    moles_daylight_minister_actions_earl_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationError"];
-                };
-            };
-        };
-    };
-    moles_daylight_minister_actions_earl_retrieve_2: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                game_id: number;
-                route: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameActionStep"];
-                };
-            };
-        };
-    };
-    moles_daylight_minister_actions_earl_create_2: {
         parameters: {
             query?: never;
             header?: never;

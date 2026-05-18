@@ -15,7 +15,7 @@ export type CrowPlayerInfo = {
     clearing_number: number | null;
   }[];
   reserve_plots_count: number;
-  // Add other fields if needed
+  crafted_items: any[];
 };
 
 export type CrowPrivateInfo = {
