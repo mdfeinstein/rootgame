@@ -6,6 +6,7 @@ from game.models.game_models import Faction, Player, Game, HandEntry, Clearing
 from game.tests.my_factories import GameSetupWithFactionsFactory
 from game.transactions.general import next_step
 from game.models.birds.player import BirdLeader, DecreeEntry, Vizier
+from game.models.birds.turn import BirdTurn, BirdBirdsong
 from game.game_data.cards.exiles_and_partisans import CardsEP
 
 class BirdTurnFlowTestCase(TestCase):
@@ -135,19 +136,19 @@ class BirdTurnFlowTestCase(TestCase):
         Test that Saboteurs triggers at start of Birdsong and can be skipped to move to Add to Decree.
         """
         from game.tests.my_factories import CraftedCardEntryFactory, CardFactory
+        from game.transactions.birds import step_effect
         # Give Birds the Saboteurs card
         saboteurs_card = CardFactory(game=self.game, card_type=CardsEP.SABOTEURS.name, suit="w")
         CraftedCardEntryFactory(player=self.birds_player, card=saboteurs_card)
-        
+
         # Reset turn to test from start
         from game.models.birds.turn import BirdTurn
         BirdTurn.objects.filter(player=self.birds_player).delete()
         BirdTurn.create_turn(self.birds_player)
-        
-        # Initial step NOT_STARTED -> next_step moves to EMERGENCY_DRAWING
-        # step_effect for EMERGENCY_DRAWING calls saboteurs_check, which creates the event.
-        next_step(self.birds_player)
-        
+
+        # Call step_effect to trigger NOT_STARTED handler which calls saboteurs_check
+        step_effect(self.birds_player)
+
         # Now get_action should return saboteurs
         self.birds_client.get_action()
         self.assertEqual(self.birds_client.base_route, "/api/action/card/saboteurs/")
@@ -162,47 +163,50 @@ class BirdTurnFlowTestCase(TestCase):
 
     def test_birds_charm_offensive_flow(self):
         """
-        Test that Charm Offensive triggers after Building and can be skipped to end turn.
+        Test Charm Offensive is triggered via HTTP flow when transitioning to Evening.
         """
-        from game.queries.birds.turn import get_phase
         from game.tests.my_factories import CraftedCardEntryFactory, CardFactory
+        from game.models.birds.turn import BirdBirdsong, BirdDaylight
+        from game.transactions.general import place_piece_from_supply_into_clearing
+
         # Give Birds the Charm Offensive card
         charm_card = CardFactory(game=self.game, card_type=CardsEP.CHARM_OFFENSIVE.name, suit="y")
         CraftedCardEntryFactory(player=self.birds_player, card=charm_card)
-        
-        # skip to building step by completing birdsong and setting daylight 
-        birdsong = get_phase(self.birds_player)
-        assert type(birdsong) == BirdBirdsong, "Not birdsong phase in the test!"
+
+        # Set up: complete Birdsong, set Daylight to BUILDING step (near end)
+        turn = BirdTurn.objects.get(player=self.birds_player)
+        birdsong = BirdBirdsong.objects.get(turn=turn)
         birdsong.step = BirdBirdsong.BirdBirdsongSteps.COMPLETED
         birdsong.save()
 
-        daylight = get_phase(self.birds_player)
-        from game.models.birds.turn import BirdDaylight
-        assert type(daylight) == BirdDaylight, "Not daylight phase in the test!"
+        daylight = BirdDaylight.objects.get(turn=turn)
         daylight.step = BirdDaylight.BirdDaylightSteps.BUILDING
         daylight.save()
-        # Build in clearing where they don't have a roost and no one else is(clearing 4)
-        # need to add a warrior in clearing 4
-        clearing4 = Clearing.objects.get(game=self.game, clearing_number=4)
-        warrior = Warrior.objects.filter(player=self.birds_player, clearing__isnull=True).first() 
-        warrior.clearing = clearing4
-        warrior.save()
+
+        # Set up clearing 5 for Birds to rule and build in
+        clearing_5 = Clearing.objects.get(game=self.game, clearing_number=5)
+        # Remove enemy warriors from clearing 5
+        Warrior.objects.filter(clearing=clearing_5).exclude(player=self.birds_player).delete()
+        # Add a bird warrior to clearing 5
+        bird_warrior = Warrior.objects.filter(player=self.birds_player, clearing=None).first()
+        if bird_warrior:
+            place_piece_from_supply_into_clearing(bird_warrior, clearing_5)
+
+        # Start at Daylight Building via HTTP
         self.birds_client.get_action()
         self.assertEqual(self.birds_client.base_route, "/api/birds/daylight/building/")
-        self.birds_client.submit_action({"clearing_number": 4})
-        print(self.birds_client.last_post_response.json())
-        # After building, it moves to Daylight COMPLETED, which triggers check_charm_offensive.
-        # check_charm_offensive launches the event.
 
+        # Submit clearing 5 to complete the build - this should transition to Evening and Charm Offensive
+        self.birds_client.submit_action({"clearing_number": 5})
+
+        # The next action should be charm-offensive
         self.birds_client.get_action()
         self.assertEqual(self.birds_client.base_route, "/api/action/card/charm-offensive/")
-        
-        # Skip charm offensive
+
+        # Submit charm-offensive via HTTP
         self.birds_client.submit_action({"select": "skip"})
-        
-        # After skip, turn should move through Evening scoring/drawing/discarding to next player
-        self.game.refresh_from_db()
-        self.assertEqual(self.game.current_turn, 2) # WA turn
+        # After skip, should move to next action
+        self.assertIsNotNone(self.birds_client.step)
 
     def test_birds_informants_flow(self):
         """

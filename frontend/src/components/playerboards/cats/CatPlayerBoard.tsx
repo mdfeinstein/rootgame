@@ -64,7 +64,10 @@ export default function CatPlayerBoard({
         <LoadingOverlay visible={isLoading} overlayProps={{ blur: 2 }} />
         {publicInfo && (
           <Stack gap="xs">
-            <CatHeaderSection warriorsInSupply={warriorsInSupply} />
+            <CatHeaderSection
+              warriorsInSupply={warriorsInSupply}
+              craftedItems={publicInfo?.crafted_items}
+            />
 
             <Grid gutter="xs">
               {/* Left Column: Turn Flow */}

@@ -1,0 +1,92 @@
+[run]
+branch = True
+source = game
+omit =
+    # Python standard library and virtual environment
+    */python*/site-packages/*
+    */site-packages/*
+
+    # Django migrations and project setup
+    */migrations/*
+    */management/commands/*
+    manage.py
+    wsgi.py
+    asgi.py
+
+    # Settings and configuration
+    */settings.py
+    */settings/*
+    */config.py
+
+    # Frontend and build artifacts
+    frontend/*
+    */node_modules/*
+    */dist/*
+    */build/*
+
+    # Tests (optional - set to False if you want to include test coverage)
+    */tests/*
+    */test_*.py
+    *_test.py
+
+    # Development and utility scripts
+    .agent/*
+    */scripts/*
+    setup.py
+
+    # Third-party integrations
+    */vendor/*
+
+    # Type hints and stubs
+    py.typed
+
+[report]
+# Fail if coverage is below this percentage
+fail_under = 70
+
+# Skip covered lines in report
+skip_covered = False
+
+# Skip empty files
+skip_empty = True
+
+# Precision for coverage numbers
+precision = 2
+
+exclude_lines =
+    # Standard pragma
+    pragma: no cover
+
+    # Don't complain about missing debug code
+    def __repr__
+    def __str__
+
+    # Don't complain if tests don't hit defensive assertion code
+    raise AssertionError
+    raise NotImplementedError
+
+    # Don't complain if non-runnable code isn't run
+    if 0:
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+
+    # Django-specific
+    if django.VERSION
+
+    # Defensive programming
+    except ImportError:
+    except KeyError:
+
+    # Abstract methods
+    @abstractmethod
+    @abc.abstractmethod
+
+[html]
+directory = htmlcov
+title = Root Game Coverage Report
+
+[xml]
+output = coverage.xml
+
+[json]
+output = coverage.json

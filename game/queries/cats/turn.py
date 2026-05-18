@@ -1,5 +1,6 @@
 from game.models.cats.turn import CatBirdsong, CatDaylight, CatEvening, CatTurn
 from game.models.game_models import Player
+from game.errors import InternalGameError
 
 
 def get_turn(player: Player) -> CatTurn:
@@ -7,7 +8,7 @@ def get_turn(player: Player) -> CatTurn:
     # get most recent turn
     cat_turn = CatTurn.objects.filter(player=player).order_by("-turn_number").first()
     if cat_turn is None:
-        raise ValueError("No turns found")
+        raise InternalGameError("No turns found")
     return cat_turn
 
 

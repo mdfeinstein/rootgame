@@ -47,7 +47,7 @@ export default function WaBasesAndOfficers({
               {["r", "y", "o"].map((suit) => {
                 const config = SUIT_CONFIG[suit as SuitValue];
                 const SuitIcon = config.icon;
-                const baseOnMap = bases?.find((b: any) => b.suit.value === suit);
+                const baseOnMap = bases?.find((b: any) => b.suit === suit && b.building.clearing_number !== null);
                 const isOnPlayerBoard = !baseOnMap;
 
                 return (

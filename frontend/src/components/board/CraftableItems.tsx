@@ -8,45 +8,15 @@ import {
   Tooltip,
   ActionIcon,
 } from "@mantine/core";
-import {
-  IconShoe,
-  IconBriefcase,
-  IconCrosshair,
-  IconHammer,
-  IconSword,
-  IconCoffee,
-  IconCoin,
-  IconTools,
-} from "@tabler/icons-react";
+import { IconTools } from "@tabler/icons-react";
 import useCraftableItemsQuery from "../../hooks/useCraftableItemsQuery";
-import type { CraftableItemType } from "../../hooks/useCraftableItemsQuery";
+import { getItemIcon } from "../../utils/itemIcons";
 
 interface CraftableItemsProps {
   gameId: number;
   isOpen: boolean;
   onToggle: () => void;
 }
-
-const getItemIcon = (item: CraftableItemType) => {
-  switch (item.item.label) {
-    case "Boots": // BOOTS
-      return <IconShoe size={36} color="#5c5c5c" />;
-    case "Bag": // BAG
-      return <IconBriefcase size={36} color="#5c5c5c" />;
-    case "Crossbow": // CROSSBOW
-      return <IconCrosshair size={36} color="#333" />;
-    case "Hammer": // HAMMER
-      return <IconHammer size={36} color="#4a4a4a" />;
-    case "Sword": // SWORD
-      return <IconSword size={36} color="#b0b0b0" />;
-    case "Tea": // TEA
-      return <IconCoffee size={36} color="#7a5c40" />;
-    case "Coin": // COIN
-      return <IconCoin size={36} color="#d4af37" />;
-    default:
-      return <IconTools size={36} color="black" />;
-  }
-};
 
 const CraftableItems: React.FC<CraftableItemsProps> = ({
   gameId,
@@ -134,7 +104,7 @@ const CraftableItems: React.FC<CraftableItemsProps> = ({
                         e.currentTarget.style.transform = "scale(1)";
                       }}
                     >
-                      {getItemIcon(craftable)}
+                      {getItemIcon(craftable.item.label)}
                     </Paper>
                   </Tooltip>
                 ))}

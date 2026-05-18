@@ -2,6 +2,7 @@ from django.urls import reverse
 from game.models.birds.setup import BirdsSimpleSetup
 from game.models.cats.setup import CatsSimpleSetup
 from game.models.crows.setup import CrowsSimpleSetup
+from game.models.moles.setup import MolesSimpleSetup
 from game.models.events.setup import GameSimpleSetup
 from game.models.game_models import Faction, Game, Player
 
@@ -25,6 +26,8 @@ def get_setup_action(game: Game) -> str | None:
             return None
         case GameSimpleSetup.GameSetupStatus.CROWS_SETUP:
             return get_crows_setup_action(game)
+        case GameSimpleSetup.GameSetupStatus.MOLES_SETUP:
+            return get_moles_setup_action(game)
         case GameSimpleSetup.GameSetupStatus.COMPLETED:
             return None
         case _:
@@ -59,6 +62,8 @@ def get_birds_setup_action(game: Game) -> str | None:
             return reverse("birds-setup-confirm-completed-setup")
         case _:
             raise ValueError("Invalid birds setup step")
+
+
 def get_crows_setup_action(game: Game) -> str | None:
     """Return the current crows setup action route for the game or raises if unexpected step"""
     crow_player = Player.objects.get(game=game, faction=Faction.CROWS)
@@ -70,3 +75,16 @@ def get_crows_setup_action(game: Game) -> str | None:
             return reverse("crows-setup-confirm-completed-setup")
         case _:
             raise ValueError("Invalid crows setup step")
+
+
+def get_moles_setup_action(game: Game) -> str | None:
+    """Return the current moles setup action route for the game or raises if unexpected step"""
+    moles_player = Player.objects.get(game=game, faction=Faction.MOLES)
+    moles_setup = MolesSimpleSetup.objects.get(player=moles_player)
+    match moles_setup.step:
+        case MolesSimpleSetup.Steps.PICKING_CORNER:
+            return reverse("moles-setup-pick-corner")
+        case MolesSimpleSetup.Steps.PENDING_CONFIRMATION:
+            return reverse("moles-setup-confirm-completed-setup")
+        case _:
+            raise ValueError("Invalid moles setup step")

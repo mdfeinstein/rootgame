@@ -169,6 +169,25 @@ def log_phase(
     )
 
 
+def get_or_log_phase(
+    game: Game, player: Player, phase: str, parent: GameLog | None = None
+) -> GameLog:
+    """Get existing phase log or create it if it doesn't exist.
+    Used when a phase might be re-entered (e.g., after event resolution)."""
+    # Check if phase log already exists for this turn/phase
+    turn_log = get_current_turn_log(game, player)
+    existing = GameLog.objects.filter(
+        game=game,
+        player=player,
+        log_type=LogType.PHASE,
+        parent=turn_log,
+        details__phase=phase
+    ).first()
+    if existing:
+        return existing
+    return log_phase(game, player, phase, parent)
+
+
 def log_move(
     game: Game,
     player: Player,

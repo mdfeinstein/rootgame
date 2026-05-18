@@ -30,6 +30,7 @@ class BirdBirdsong(models.Model):
         EMERGENCY_DRAWING = "1", "Emergency drawing"
         ADD_TO_DECREE = "2", "Add to Decree"
         EMERGENCY_ROOSTING = "3", "Emergency roosting"
+        BEFORE_END = "z", "Before End"
         COMPLETED = "4", "Completed"
 
     turn = models.ForeignKey(
@@ -47,12 +48,13 @@ class BirdBirdsong(models.Model):
 
 class BirdDaylight(models.Model):
     class BirdDaylightSteps(models.TextChoices):
-        # NOT_STARTED = "0", "Not Started"
+        NOT_STARTED = "0", "Not Started"
         CRAFTING = "1", "Crafting"
         RECRUITING = "2", "Recruiting"
         MOVING = "3", "Moving"
         BATTLING = "4", "Battling"
         BUILDING = "5", "Building"
+        BEFORE_END = "z", "Before End"
         COMPLETED = "6", "Completed"
         # turmoil steps
         HUMILIATE = "a", "Humiliate"
@@ -65,23 +67,24 @@ class BirdDaylight(models.Model):
     step = models.CharField(
         max_length=1,
         choices=BirdDaylightSteps.choices,
-        default=BirdDaylightSteps.CRAFTING,
+        default=BirdDaylightSteps.NOT_STARTED,
     )
     # decree model will track which cards have been used
 
 
 class BirdEvening(models.Model):
     class BirdEveningSteps(models.TextChoices):
-        # NOT_STARTED = "0", "Not Started"
+        NOT_STARTED = "0", "Not Started"
         SCORING = "1", "Scoring"
         DRAWING = "2", "Drawing Cards"
         DISCARDING = "3", "Discarding Cards"
+        BEFORE_END = "z", "Before End"
         COMPLETED = "4", "Completed"
 
     turn = models.ForeignKey(BirdTurn, on_delete=models.CASCADE, related_name="evening")
     step = models.CharField(
         max_length=1,
         choices=BirdEveningSteps.choices,
-        default=BirdEveningSteps.SCORING,
+        default=BirdEveningSteps.NOT_STARTED,
     )
     cards_drawn = models.IntegerField(default=0)

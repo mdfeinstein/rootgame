@@ -1,0 +1,90 @@
+{
+  "ministers": [
+    {
+      "name": "Marshal",
+      "enum_name": "marshal",
+      "crown_type": "squire",
+      "required_cards": 2,
+      "description": "Take a move.",
+      "action_description": "Move warriors between clearings."
+    },
+    {
+      "name": "Captain",
+      "enum_name": "captain",
+      "crown_type": "squire",
+      "required_cards": 2,
+      "description": "Initiate a battle.",
+      "action_description": "Initiate combat."
+    },
+    {
+      "name": "Foremole",
+      "enum_name": "foremole",
+      "crown_type": "squire",
+      "required_cards": 2,
+      "description": "Reveal any card to place a citadel or market in any clearing (matching or not) you rule.",
+      "action_description": "Build without suit restriction."
+    },
+    {
+      "name": "Banker",
+      "enum_name": "banker",
+      "crown_type": "noble",
+      "required_cards": 3,
+      "description": "Spend any number of cards (even one) of the same suit to score victory points in equal number.",
+      "action_description": "Select cards for points."
+    },
+    {
+      "name": "Brigadier",
+      "enum_name": "brigadier",
+      "crown_type": "noble",
+      "required_cards": 3,
+      "description": "Take up to two moves or initiate up to two battles.",
+      "action_description": "Move or battle (up to twice)."
+    },
+    {
+      "name": "Mayor",
+      "enum_name": "mayor",
+      "crown_type": "lord",
+      "required_cards": 4,
+      "description": "Take the action of any swayed noble or squire.",
+      "action_description": "Copy any swayed minister's action."
+    },
+    {
+      "name": "Duchess of Mud",
+      "enum_name": "duchess",
+      "crown_type": "lord",
+      "required_cards": 4,
+      "description": "Score two victory points if all three tunnels are on the map.",
+      "action_description": "Gain points if all tunnels on map."
+    },
+    {
+      "name": "Earl of Stone",
+      "enum_name": "earl",
+      "crown_type": "lord",
+      "required_cards": 4,
+      "description": "Score one victory point per citadel on the map.",
+      "action_description": "Gain points from citadels."
+    },
+    {
+      "name": "Baron of Dirt",
+      "enum_name": "baron",
+      "crown_type": "lord",
+      "required_cards": 4,
+      "description": "Score one victory point per market on the map.",
+      "action_description": "Gain points from markets."
+    }
+  ],
+  "crown_types": {
+    "squire": {
+      "display_name": "Squire",
+      "required_cards": 2
+    },
+    "noble": {
+      "display_name": "Noble",
+      "required_cards": 3
+    },
+    "lord": {
+      "display_name": "Lord",
+      "required_cards": 4
+    }
+  }
+}

@@ -24,8 +24,11 @@ from game.models.game_models import (
     Suit,
     ItemTypes,
     CraftableItemEntry,
+    CraftedItemEntry,
 )
 from game.models.wa.turn import WATurn
+from game.models.moles.setup import MolesSimpleSetup
+from game.models.moles.turn import MoleTurn
 from game.models.dominance import DominanceSupplyEntry, ActiveDominanceEntry
 from drf_spectacular.utils import extend_schema_field, Direction
 from drf_spectacular.extensions import OpenApiSerializerFieldExtension
@@ -120,6 +123,15 @@ class CraftableItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CraftableItemEntry
         fields = ["item"]
+
+
+class CraftedItemEntrySerializer(serializers.ModelSerializer):
+    item = LabeledChoiceField(choices=ItemTypes.choices, source="item.item_type")
+    exhausted = serializers.BooleanField()
+
+    class Meta:
+        model = CraftedItemEntry
+        fields = ["id", "item", "exhausted"]
 
 
 class DominanceSupplyEntrySerializer(serializers.ModelSerializer):
@@ -265,6 +277,7 @@ class PlayerPublicSerializer(serializers.ModelSerializer):
     turn_order = serializers.IntegerField()
     card_count = serializers.SerializerMethodField()
     active_dominance = serializers.SerializerMethodField()
+    crafted_items = serializers.SerializerMethodField()
 
     class Meta:
         model = Player
@@ -275,6 +288,7 @@ class PlayerPublicSerializer(serializers.ModelSerializer):
             "turn_order",
             "card_count",
             "active_dominance",
+            "crafted_items",
         ]
 
     def get_active_dominance(self, player: Player):
@@ -286,6 +300,11 @@ class PlayerPublicSerializer(serializers.ModelSerializer):
 
     def get_card_count(self, player: Player) -> int:
         return HandEntry.objects.filter(player=player).count()
+
+    @extend_schema_field(serializers.ListField(child=CraftedItemEntrySerializer()))
+    def get_crafted_items(self, player: Player):
+        crafted_items = CraftedItemEntry.objects.filter(player=player)
+        return CraftedItemEntrySerializer(crafted_items, many=True).data
 
 
 class PlayerPrivateSerializer(serializers.ModelSerializer):
@@ -365,6 +384,7 @@ class GameActionStepSerializer(serializers.Serializer):
     )
     accumulated_payload = serializers.JSONField(required=False)
     options = OptionSerializer(many=True, required=False)
+    new_base_endpoint = serializers.CharField(required=False, allow_null=True)
 
 
 class GameActionSerializer(serializers.Serializer):
@@ -404,6 +424,7 @@ class GameStatusSerializer(serializers.Serializer):
                 Faction.BIRDS: BirdsSimpleSetup,
                 Faction.WOODLAND_ALLIANCE: None,  #
                 Faction.CROWS: CrowsSimpleSetup,
+                Faction.MOLES: MolesSimpleSetup,
             }
         elif game.status == Game.GameStatus.SETUP_COMPLETED:
             turn_object_dict = {
@@ -411,6 +432,7 @@ class GameStatusSerializer(serializers.Serializer):
                 Faction.BIRDS: BirdTurn,
                 Faction.WOODLAND_ALLIANCE: WATurn,
                 Faction.CROWS: CrowTurn,
+                Faction.MOLES: MoleTurn,
             }
         if current_player is not None:
             faction = Faction(current_player.faction)

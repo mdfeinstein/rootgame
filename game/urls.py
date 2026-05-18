@@ -34,9 +34,24 @@ from game.views.action_views.crows.birdsong import (
 )
 from game.views.action_views.crows.daylight import CrowsDaylightActionsView
 from game.views.action_views.crows.evening import CrowsExertView, CrowsDiscardingView
+from game.views.action_views.moles.daylight import (
+    MolesDaylightActionsView, MolesMoveView, MolesBattleView,
+    MolesDigView, MolesBuildView,
+)
+from game.views.action_views.moles.minister_actions import (
+    MolesMinisterActionsView, MolesMinisterMayorView, MolesMinisterMarshalView, MolesMinisterCaptainView,
+    MolesMinisterForemoleView, MolesMinisterBrigadierView, MolesMinisterBankerView,
+)
+from game.views.action_views.moles.sway_minister import MolesSwayMinisterView
+from game.views.action_views.moles.evening import MolesCraftingView, MolesDiscardView
+from game.views.action_views.moles.price_of_failure import MolesPriceOfFailureView
 from game.views.action_views.setup.crows import (
     CrowsPickClearingView,
     CrowsConfirmCompletedSetupView,
+)
+from game.views.action_views.setup.moles import (
+    MolesPickCornerView,
+    MolesConfirmCompletedSetupView,
 )
 from game.views.gamestate_views import (
     get_bird_player_public,
@@ -45,6 +60,7 @@ from game.views.gamestate_views import (
     get_discard_pile,
     get_player_hand,
     get_wa_player_public,
+    get_moles_player_public,
 )
 from game.views.gamestate_views.crows import (
     get_crows_player_public,
@@ -115,6 +131,7 @@ urlpatterns = [
     path("api/crows/player-info/<int:game_id>/", get_crows_player_public),
     path("api/crows/player-private-info/<int:game_id>/", get_crows_player_private),
     path("api/birds/player-info/<int:game_id>/", get_bird_player_public),
+    path("api/moles/player-info/<int:game_id>/", get_moles_player_public),
     path("api/clearings/<int:game_id>/", get_clearings),
     path("api/discard-pile/<int:game_id>/", get_discard_pile),
     path("api/player-hand/<int:game_id>/", get_player_hand),
@@ -218,6 +235,22 @@ register_action(
     "api/crows/setup/confirm-completed-setup/",
     urlpatterns,
 )
+
+# Moles setup
+register_action(
+    "moles-setup-pick-corner",
+    MolesPickCornerView,
+    "api/moles/setup/pick-corner/",
+    urlpatterns,
+)
+
+register_action(
+    "moles-setup-confirm-completed-setup",
+    MolesConfirmCompletedSetupView,
+    "api/moles/setup/confirm-completed-setup/",
+    urlpatterns,
+)
+
 register_action(
     "cats-birdsong-place-wood",
     CatPlaceWoodView,
@@ -370,6 +403,107 @@ register_action(
     "crows-discard-cards",
     CrowsDiscardingView,
     "api/crows/action/discard/",
+    urlpatterns,
+)
+
+register_action(
+    "moles-daylight-actions",
+    MolesDaylightActionsView,
+    "api/moles/daylight/actions/",
+    urlpatterns,
+)
+register_action(
+    "moles-daylight-move",
+    MolesMoveView,
+    "api/moles/daylight/actions/move/",
+    urlpatterns,
+)
+register_action(
+    "moles-daylight-battle",
+    MolesBattleView,
+    "api/moles/daylight/actions/battle/",
+    urlpatterns,
+)
+register_action(
+    "moles-daylight-dig",
+    MolesDigView,
+    "api/moles/daylight/actions/dig/",
+    urlpatterns,
+)
+register_action(
+    "moles-daylight-build",
+    MolesBuildView,
+    "api/moles/daylight/actions/build/",
+    urlpatterns,
+)
+
+register_action(
+    "moles-minister-actions",
+    MolesMinisterActionsView,
+    "api/moles/daylight/minister-actions/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-mayor",
+    MolesMinisterMayorView,
+    "api/moles/daylight/minister-actions/mayor/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-marshal",
+    MolesMinisterMarshalView,
+    "api/moles/daylight/minister-actions/marshal/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-captain",
+    MolesMinisterCaptainView,
+    "api/moles/daylight/minister-actions/captain/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-foremole",
+    MolesMinisterForemoleView,
+    "api/moles/daylight/minister-actions/foremole/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-brigadier",
+    MolesMinisterBrigadierView,
+    "api/moles/daylight/minister-actions/brigadier/",
+    urlpatterns,
+)
+register_action(
+    "moles-minister-banker",
+    MolesMinisterBankerView,
+    "api/moles/daylight/minister-actions/banker/",
+    urlpatterns,
+)
+register_action(
+    "moles-sway-minister",
+    MolesSwayMinisterView,
+    "api/moles/daylight/sway-minister/",
+    urlpatterns,
+)
+
+register_action(
+    "moles-craft",
+    MolesCraftingView,
+    "api/moles/evening/craft/",
+    urlpatterns,
+)
+
+register_action(
+    "moles-discard",
+    MolesDiscardView,
+    "api/moles/evening/discard/",
+    urlpatterns,
+)
+
+register_action(
+    "moles-price-of-failure",
+    MolesPriceOfFailureView,
+    "api/moles/price-of-failure/",
     urlpatterns,
 )
 

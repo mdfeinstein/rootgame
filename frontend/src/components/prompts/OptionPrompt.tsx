@@ -4,13 +4,7 @@ import useGameActionQuery from "../../hooks/useGameActionQuery";
 import { GameContext } from "../../contexts/GameProvider";
 import type { Option } from "../../hooks/useGameActionQuery";
 import { Button, Group, Tooltip } from "@mantine/core";
-
-const factionColorMap = {
-  Cats: "orange",
-  Birds: "blue",
-  WoodlandAlliance: "green",
-  Crows: "#4B0082",
-};
+import { factionToMantineColor } from "../../utils/factionColors";
 
 const OptionPrompt = () => {
   const { gameId } = useContext(GameContext);
@@ -42,7 +36,7 @@ const OptionPrompt = () => {
         >
           <Button
             onClick={() => onSelect(option)}
-            bg={factionColorMap[faction as keyof typeof factionColorMap]}
+            bg={factionToMantineColor(faction as any)}
             styles={{
               root: {
                 "&:hover": {

@@ -35,9 +35,9 @@ def create_crows_turn(player: Player):
     # create turn
     turn = CrowTurn.create_turn(player)
 
-    from game.serializers.logs.general import log_turn, log_phase
-    turn_log = log_turn(player.game, player, turn_number=turn.turn_number + 1)
-    log_phase(player.game, player, "Birdsong", parent=turn_log)
+    from game.serializers.logs.general import log_turn
+    log_turn(player.game, player, turn_number=turn.turn_number + 1)
+    # Birdsong log will be created in CrowBirdsong.NOT_STARTED step_effect
 
 
 @transaction.atomic
@@ -55,50 +55,72 @@ def step_effect(
         case CrowBirdsong():
             match phase.step:
                 case CrowBirdsong.CrowBirdsongSteps.NOT_STARTED:
-                    pass
+                    from game.serializers.logs.general import get_or_log_phase, get_current_turn_log
+                    from game.transactions.crafted_cards.saboteurs import saboteurs_check
+                    get_or_log_phase(
+                        player.game,
+                        player,
+                        "Birdsong",
+                        parent=get_current_turn_log(player.game, player),
+                    )
+                    if not saboteurs_check(player):
+                        next_step(player)
                 case CrowBirdsong.CrowBirdsongSteps.CRAFT:
                     from game.queries.crafted_cards import get_coffin_makers_player
                     from game.transactions.crafted_cards.coffin_makers import score_coffins, release_warriors
-                    from game.transactions.crafted_cards.saboteurs import saboteurs_check
-                    
+
                     coffin_player = get_coffin_makers_player(player.game)
                     if coffin_player == player:
                         score_coffins(player)
                         release_warriors(player.game)
-                        
-                    saboteurs_check(player)
                 case CrowBirdsong.CrowBirdsongSteps.FLIP:
                     pass
                 case CrowBirdsong.CrowBirdsongSteps.RECRUIT:
                     pass
-                case CrowBirdsong.CrowBirdsongSteps.COMPLETED:
+                case CrowBirdsong.CrowBirdsongSteps.BEFORE_END:
                     from game.transactions.crafted_cards.eyrie_emigre import is_emigre
                     if not is_emigre(player):
-                        from game.serializers.logs.general import log_phase, get_current_turn_log
-                        turn_log = get_current_turn_log(player.game, player)
-                        log_phase(player.game, player, "Daylight", parent=turn_log)
-                        step_effect(player, None)
+                        next_step(player)
+                case CrowBirdsong.CrowBirdsongSteps.COMPLETED:
+                    step_effect(player)
                 case _:
                     raise ValueError(
                         f"Invalid step in step_effect for Crows Birdsong: {phase.step}"
                     )
         case CrowDaylight():
             match phase.step:
+                case CrowDaylight.CrowDaylightSteps.NOT_STARTED:
+                    from game.serializers.logs.general import get_or_log_phase, get_current_turn_log
+                    get_or_log_phase(
+                        player.game,
+                        player,
+                        "Daylight",
+                        parent=get_current_turn_log(player.game, player),
+                    )
+                    next_step(player)
                 case CrowDaylight.CrowDaylightSteps.ACTIONS:
                     pass
-                case CrowDaylight.CrowDaylightSteps.COMPLETED:
+                case CrowDaylight.CrowDaylightSteps.BEFORE_END:
                     from game.transactions.crafted_cards.charm_offensive import check_charm_offensive
                     if not check_charm_offensive(player):
-                        from game.serializers.logs.general import log_phase, get_current_turn_log
-                        turn_log = get_current_turn_log(player.game, player)
-                        log_phase(player.game, player, "Evening", parent=turn_log)
-                        step_effect(player, None)
+                        next_step(player)
+                case CrowDaylight.CrowDaylightSteps.COMPLETED:
+                    step_effect(player)
                 case _:
                     raise ValueError(
                         f"Invalid step in step_effect for Crows Daylight: {phase.step}"
                     )
         case CrowEvening():
             match phase.step:
+                case CrowEvening.CrowEveningSteps.NOT_STARTED:
+                    from game.serializers.logs.general import get_or_log_phase, get_current_turn_log
+                    get_or_log_phase(
+                        player.game,
+                        player,
+                        "Evening",
+                        parent=get_current_turn_log(player.game, player),
+                    )
+                    next_step(player)
                 case CrowEvening.CrowEveningSteps.EXERT:
                     pass
                 case CrowEvening.CrowEveningSteps.DRAWING:
@@ -113,16 +135,18 @@ def step_effect(
                             drawn_cards = []
                             for _ in range(amount):
                                 drawn_cards.append(draw_card_from_deck_to_hand(player))
-                            
+
                             from game.serializers.logs.general import log_draw, get_current_phase_log
                             log_draw(player.game, player, [d.card for d in drawn_cards], parent=get_current_phase_log(player.game, player))
-                            
+
                             phase.cards_drawn = amount
                             phase.save()
                             next_step(player)
                 case CrowEvening.CrowEveningSteps.DISCARDING:
                     from game.transactions.crows.evening import check_discard_step
                     check_discard_step(player)
+                case CrowEvening.CrowEveningSteps.BEFORE_END:
+                    next_step(player)
                 case CrowEvening.CrowEveningSteps.COMPLETED:
                     end_crows_turn(player)
                 case _:

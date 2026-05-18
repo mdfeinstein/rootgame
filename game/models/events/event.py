@@ -18,6 +18,7 @@ class EventType(models.TextChoices):
     SWAP_MEET = "swap_meet"
     CROW_RECRUIT = "crow_recruit"
     PLACE_RAID_WARRIORS = "place_raid_warriors"
+    PRICE_OF_FAILURE = "price_of_failure"
 
 
 class Event(models.Model):

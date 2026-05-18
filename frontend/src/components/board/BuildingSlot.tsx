@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { ClearingContext } from "./Clearing";
-import { factionToColor } from "./WarriorTroop";
+import { factionToColor } from "../../utils/factionColors";
 import { type FactionLabel } from "../../utils/factionUtils";
 import { Tooltip } from "@mantine/core";
 
@@ -10,7 +10,9 @@ export type BuildingType =
   | "workshops"
   | "recruiters"
   | "base"
-  | "ruin";
+  | "ruin"
+  | "citadels"
+  | "markets";
 
 export type BuildingInfo = {
   buildingType: BuildingType;
@@ -43,7 +45,7 @@ export const BuildingSlot = ({
       color = "#808080"; // Grey for ruins
       text = "R";
     } else {
-      color = factionToColor[buildingInfo.faction];
+      color = factionToColor(buildingInfo.faction);
       text = buildingInfo.buildingType[0];
     }
   }

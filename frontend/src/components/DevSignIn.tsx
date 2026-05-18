@@ -1,6 +1,18 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../contexts/UserProvider";
 import { GameContext } from "../contexts/GameProvider";
+import { FACTION_CONFIG } from "../data/factionConfig";
+
+const FACTION_VALUE_TO_KEY: Record<
+  string,
+  keyof typeof FACTION_CONFIG
+> = {
+  ca: "cats",
+  bi: "birds",
+  wa: "woodland-alliance",
+  cr: "crows",
+  mo: "moles",
+};
 
 export default function DevSignIn() {
   const { signInMutation: signIn, username } = useContext(UserContext);
@@ -14,31 +26,13 @@ export default function DevSignIn() {
       const currentPlayer = session.players.find(
         (p: any) => p.username.toLowerCase() === username.toLowerCase(),
       );
-      if (currentPlayer?.faction?.value) {
-        const factionMap: Record<string, string> = {
-          ca: "Cats",
-          bi: "Birds",
-          wa: "Woodland Alliance",
-          cr: "Crows",
-        };
-        setActiveButton(factionMap[currentPlayer.faction.value] || null);
+      if (currentPlayer?.faction?.label) {
+        setActiveButton(currentPlayer.faction.label);
       } else {
         setActiveButton(null);
       }
     }
   }, [session, username]);
-
-  const signInByFaction = (factionCode: string, label: string) => {
-    const players = session?.players || [];
-    const player = players.find((p: any) => p.faction?.value === factionCode);
-
-    if (player) {
-      signIn.mutate({ username: player.username, password: "password" });
-      setActiveButton(label);
-    } else {
-      console.log(`No player has picked ${label} yet.`);
-    }
-  };
 
   return (
     <div
@@ -49,39 +43,26 @@ export default function DevSignIn() {
         justifyContent: "center",
       }}
     >
-      <button
-        onClick={() => signInByFaction("ca", "Cats")}
-        style={{
-          background: activeButton === "Cats" ? "orange" : "white",
-        }}
-      >
-        Cats
-      </button>
-      <button
-        onClick={() => signInByFaction("bi", "Birds")}
-        style={{
-          background: activeButton === "Birds" ? "blue" : "white",
-        }}
-      >
-        Birds
-      </button>
-      <button
-        onClick={() => signInByFaction("wa", "Woodland Alliance")}
-        style={{
-          background: activeButton === "Woodland Alliance" ? "green" : "white",
-        }}
-      >
-        WA
-      </button>
-      <button
-        onClick={() => signInByFaction("cr", "Crows")}
-        style={{
-          background: activeButton === "Crows" ? "indigo" : "white",
-          color: activeButton === "Crows" ? "white" : "black",
-        }}
-      >
-        Crows
-      </button>
+      {(session?.players ?? []).map((player) => {
+        const configKey = FACTION_VALUE_TO_KEY[player.faction.value];
+        const config = configKey ? FACTION_CONFIG[configKey] : null;
+        const isActive = activeButton === player.faction.label;
+        return (
+          <button
+            key={player.faction.value}
+            onClick={() => {
+              signIn.mutate({ username: player.username, password: "password" });
+              setActiveButton(player.faction.label);
+            }}
+            style={{
+              background: isActive ? (config?.svgColor ?? "gray") : "white",
+              color: isActive ? "white" : "black",
+            }}
+          >
+            {player.faction.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

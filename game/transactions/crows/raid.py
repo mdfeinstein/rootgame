@@ -1,4 +1,5 @@
 from django.db import transaction
+from game.errors import IllegalActionError
 from game.models.game_models import Player, Clearing, Warrior, Faction
 from game.models.crows.tokens import PlotToken
 from game.models.events.event import Event, EventType
@@ -23,7 +24,7 @@ def trigger_raid_effect(player: Player, clearing: Clearing, **kwargs):
         try:
             validate_can_place_piece_in_clearing(player, adj)
             valid_clearings.append(adj)
-        except ValueError:
+        except IllegalActionError:
             continue
             
     if not valid_clearings:

@@ -1,18 +1,19 @@
 from game.models.game_models import Faction, Player
 from game.models.crows.turn import CrowBirdsong, CrowDaylight, CrowEvening, CrowTurn
 from game.queries.general import get_current_player
+from game.errors import UnavailableActionError, InternalGameError
 
 
 def validate_turn(player: Player) -> CrowTurn:
-    """returns the turn if it is the player's turn, else raises ValueError"""
+    """returns the turn if it is the player's turn, else raises error"""
     current_player = get_current_player(player.game)
     if current_player != player:
-        raise ValueError("Not this player's turn")
+        raise UnavailableActionError("Not this player's turn")
     if current_player.faction != Faction.CROWS:
-        raise ValueError("This player is not Corvid Conspiracy")
+        raise UnavailableActionError("This player is not Corvid Conspiracy")
     crow_turn = CrowTurn.objects.filter(player=player).order_by("-turn_number").first()
     if crow_turn is None:
-        raise ValueError("No turns found for this Corvid Conspiracy player")
+        raise InternalGameError("No turns found for this Corvid Conspiracy player")
     return crow_turn
 
 
@@ -37,9 +38,7 @@ def get_phase(player: Player) -> CrowBirdsong | CrowDaylight | CrowEvening:
 def validate_phase(
     player: Player, phase_type: type[CrowBirdsong | CrowDaylight | CrowEvening]
 ) -> CrowBirdsong | CrowDaylight | CrowEvening:
-    """returns the phase if it is the given phase, else raises ValueError
-    also validates turn and player
-    """
+    """returns the phase if it is the given phase, else raises UnavailableActionError"""
     mapper = {
         CrowBirdsong: "Not Birdsong phase",
         CrowDaylight: "Not Daylight phase",
@@ -47,7 +46,7 @@ def validate_phase(
     }
     player_phase = get_phase(player)
     if phase_type != type(player_phase):
-        raise ValueError(mapper[phase_type])
+        raise UnavailableActionError(mapper[phase_type])
     return player_phase
 
 
@@ -58,14 +57,8 @@ def validate_step(
         | CrowDaylight.CrowDaylightSteps
         | CrowEvening.CrowEveningSteps
     ),
-) -> (
-    CrowBirdsong.CrowBirdsongSteps
-    | CrowDaylight.CrowDaylightSteps
-    | CrowEvening.CrowEveningSteps
-):
-    """returns the step if it is the given step, else raises ValueError
-    also validates turn and player
-    """
+) -> None:
+    """Validate player is in the given step, raise UnavailableActionError if not."""
     player_phase = get_phase(player)
     if step != player_phase.step:
         # Avoid collisions between different phases with same step values
@@ -76,13 +69,13 @@ def validate_step(
                 CrowBirdsong.CrowBirdsongSteps.RECRUIT: "Not Recruit step",
                 CrowBirdsong.CrowBirdsongSteps.COMPLETED: "Not Birdsong Completed step",
             }
-            raise ValueError(birdsong_mapper.get(step, "Invalid Birdsong step"))
+            raise UnavailableActionError(birdsong_mapper.get(step, "Invalid Birdsong step"))
         elif isinstance(player_phase, CrowDaylight):
             daylight_mapper = {
                 CrowDaylight.CrowDaylightSteps.ACTIONS: "Not Daylight actions step",
                 CrowDaylight.CrowDaylightSteps.COMPLETED: "Not Daylight completed step",
             }
-            raise ValueError(daylight_mapper.get(step, "Invalid Daylight step"))
+            raise UnavailableActionError(daylight_mapper.get(step, "Invalid Daylight step"))
         elif isinstance(player_phase, CrowEvening):
             evening_mapper = {
                 CrowEvening.CrowEveningSteps.EXERT: "Not Exert step",
@@ -90,7 +83,6 @@ def validate_step(
                 CrowEvening.CrowEveningSteps.DISCARDING: "Not Discarding step",
                 CrowEvening.CrowEveningSteps.COMPLETED: "Not Evening completed step",
             }
-            raise ValueError(evening_mapper.get(step, "Invalid Evening step"))
+            raise UnavailableActionError(evening_mapper.get(step, "Invalid Evening step"))
         else:
-            raise ValueError("Invalid phase")
-    return player_phase.step
+            raise UnavailableActionError("Invalid phase")

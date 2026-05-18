@@ -1,5 +1,7 @@
-import { Group, Paper, Stack, Text, Tooltip, rem, ThemeIcon } from "@mantine/core";
+import { Group, Stack, Text, Tooltip, rem, ThemeIcon, Paper } from "@mantine/core";
 import { IconCrown, IconCoins, IconUsers } from "@tabler/icons-react";
+import type { components } from "../../../api/types";
+import CraftedItemsBox from "../../board/CraftedItemsBox";
 
 export type Leader = "Builder" | "Charismatic" | "Commander" | "Despot";
 export const leaderTextMapper: Record<Leader, string> = {
@@ -15,14 +17,16 @@ export const leaderTextMapper: Record<Leader, string> = {
 interface BirdHeaderSectionProps {
   activeLeader: any;
   warriorsInSupply: number;
+  craftedItems?: components["schemas"]["CraftedItemEntry"][];
 }
 
 export default function BirdHeaderSection({
   activeLeader,
   warriorsInSupply,
+  craftedItems,
 }: BirdHeaderSectionProps) {
   return (
-    <Group justify="space-between" align="center" px="md" mb="xs">
+    <Group justify="space-between" align="center" px="xs" gap="sm">
       <Stack gap={0}>
         <Text
           size="1.5rem"
@@ -43,7 +47,60 @@ export default function BirdHeaderSection({
         </Group>
       </Stack>
 
-      <Group gap="xl">
+      <Group gap="md" align="center">
+        {activeLeader ? (
+          <Tooltip
+            label={leaderTextMapper[activeLeader.leader_display as Leader] || ""}
+            multiline
+            w={220}
+            withArrow
+            position="bottom"
+            transitionProps={{ duration: 200, transition: "fade" }}
+          >
+            <Paper
+              withBorder
+              px="md"
+              py={4}
+              radius="sm"
+              style={{
+                borderColor: "var(--mantine-color-blue-6)",
+                backgroundColor: "var(--mantine-color-blue-6)",
+                color: "white",
+                cursor: "help",
+              }}
+            >
+              <Stack gap={0} align="center">
+                <Text
+                  size="10px"
+                  tt="uppercase"
+                  fw={800}
+                  style={{ letterSpacing: rem(0.5) }}
+                >
+                  Current Leader
+                </Text>
+                <Text size="md" fw={900}>
+                  {activeLeader.leader_display.toUpperCase()}
+                </Text>
+              </Stack>
+            </Paper>
+          </Tooltip>
+        ) : (
+          <Paper
+            withBorder
+            px="md"
+            py={4}
+            radius="sm"
+            style={{
+              borderColor: "var(--mantine-color-gray-4)",
+              backgroundColor: "var(--mantine-color-gray-1)",
+            }}
+          >
+            <Text size="sm" c="dimmed" fw={700} fs="italic">
+              No Active Leader
+            </Text>
+          </Paper>
+        )}
+
         <Tooltip
           label="You rule any clearings where you are tied in presence."
           multiline
@@ -73,60 +130,9 @@ export default function BirdHeaderSection({
             </Text>
           </Group>
         </Tooltip>
-      </Group>
 
-      {activeLeader ? (
-        <Tooltip
-          label={leaderTextMapper[activeLeader.leader_display as Leader] || ""}
-          multiline
-          w={220}
-          withArrow
-          position="bottom"
-          transitionProps={{ duration: 200, transition: "fade" }}
-        >
-          <Paper
-            withBorder
-            px="md"
-            py={4}
-            radius="sm"
-            style={{
-              borderColor: "var(--mantine-color-blue-6)",
-              backgroundColor: "var(--mantine-color-blue-6)",
-              color: "white",
-              cursor: "help",
-            }}
-          >
-            <Stack gap={0} align="center">
-              <Text
-                size="10px"
-                tt="uppercase"
-                fw={800}
-                style={{ letterSpacing: rem(0.5) }}
-              >
-                Current Leader
-              </Text>
-              <Text size="md" fw={900}>
-                {activeLeader.leader_display.toUpperCase()}
-              </Text>
-            </Stack>
-          </Paper>
-        </Tooltip>
-      ) : (
-        <Paper
-          withBorder
-          px="md"
-          py={4}
-          radius="sm"
-          style={{
-            borderColor: "var(--mantine-color-gray-4)",
-            backgroundColor: "var(--mantine-color-gray-1)",
-          }}
-        >
-          <Text size="sm" c="dimmed" fw={700} fs="italic">
-            No Active Leader
-          </Text>
-        </Paper>
-      )}
+        <CraftedItemsBox craftedItems={craftedItems} />
+      </Group>
     </Group>
   );
 }

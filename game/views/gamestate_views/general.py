@@ -224,6 +224,29 @@ def get_revealed_cards(request, game_id: int):
 
     revealed_cards_data = []
 
+    # Add RevealedCardEntry data (visible to all players)
+    from game.models.game_models import RevealedCardEntry
+    entries = RevealedCardEntry.objects.filter(
+        player__game=game
+    ).select_related("card", "player")
+    for entry in entries:
+        # Dynamically determine event_type based on the revealing faction
+        if entry.player.faction == Faction.MOLES.value:
+            event_type = "Moles Daylight"
+        else:
+            # Placeholder for future factions
+            event_type = "Revealed"
+
+        turns_ago = max(0, current_turn - entry.turn_revealed)
+        revealed_cards_data.append(
+            {
+                "card": entry.card,
+                "faction": entry.player.faction,
+                "event_type": event_type,
+                "turns_ago": turns_ago,
+            }
+        )
+
     if player.faction == Faction.WOODLAND_ALLIANCE.value:
         # Fetch outrage events where cards were shown
         outrage_events = OutrageEvent.objects.filter(event__game=game, hand_shown=True)

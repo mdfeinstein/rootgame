@@ -69,6 +69,7 @@ export default function BirdPlayerBoard({
             <BirdHeaderSection
               activeLeader={activeLeader}
               warriorsInSupply={warriorsInSupply}
+              craftedItems={publicInfo?.crafted_items}
             />
 
             <Grid gutter="xs" align="stretch">

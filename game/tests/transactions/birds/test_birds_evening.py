@@ -27,11 +27,13 @@ from game.transactions.birds import (
     draw_cards,
     check_discard_step,
     discard_card,
-    begin_evening,
+    step_effect,
+    next_step,
 )
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.tests.logging_mixin import LoggingTestMixin
 from game.models.game_log import LogType
+from game.errors import InternalGameError, IllegalActionError, UnavailableActionError
 
 logger = logging.getLogger(__name__)
 
@@ -213,7 +215,7 @@ class BirdEveningDiscardTests(BirdEveningBaseTestCase):
         self.evening.step = BirdEvening.BirdEveningSteps.DISCARDING
         self.evening.save()
         
-        with self.assertRaisesRegex(ValueError, "Player must have more than 5 cards to discard"):
+        with self.assertRaises(UnavailableActionError):
             discard_card(self.player, CardsEP[cards[0].card_type])
 
 class BirdEveningFullAutomationTests(BirdEveningBaseTestCase):
@@ -221,8 +223,11 @@ class BirdEveningFullAutomationTests(BirdEveningBaseTestCase):
         # Starting hand is small (usually 3ish from factory)
         # 1 roost => scores 0, draws 1 => total hand size reflects that
         initial_hand = HandEntry.objects.filter(player=self.player).count()
-        begin_evening(self.player)
-        
+
+        # Trigger the evening flow through step_effect
+        # SCORING -> next_step -> DRAWING -> next_step -> DISCARDING -> next_step -> BEFORE_END -> next_step -> COMPLETED
+        step_effect(self.player)  # SCORING handler
+
         self.evening.refresh_from_db()
         self.assertEqual(self.evening.step, BirdEvening.BirdEveningSteps.COMPLETED)
         self.assertEqual(HandEntry.objects.filter(player=self.player).count(), initial_hand + 1)
@@ -232,9 +237,10 @@ class BirdEveningFullAutomationTests(BirdEveningBaseTestCase):
         # Give player many cards
         for _ in range(5):
             HandEntry.objects.create(player=self.player, card=CardFactory(game=self.game))
-            
+
         # 1 roost => scores 0, draws 1 => hand size will be > 5
-        begin_evening(self.player)
-        
+        # This should pause at DISCARDING since hand size > 5
+        step_effect(self.player)  # SCORING handler
+
         self.evening.refresh_from_db()
         self.assertEqual(self.evening.step, BirdEvening.BirdEveningSteps.DISCARDING)

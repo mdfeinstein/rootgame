@@ -24,7 +24,10 @@ class OutrageTests(TestCase):
     def test_outrage_token_removal_with_card(self):
         # Setup: WA sympathy in C1 (Fox/Red)
         sympathy = WASympathy.objects.create(player=self.wa, clearing=self.c1)
-        
+
+        # Clear Cats hand to ensure only our test card is present
+        HandEntry.objects.filter(player=self.cats).delete()
+
         # Cats have a Fox card
         fox_card = CardFactory(game=self.game, card_type=CardsEP.AMBUSH_RED.name)
         HandEntry.objects.create(player=self.cats, card=fox_card)
@@ -52,10 +55,13 @@ class OutrageTests(TestCase):
     def test_outrage_move_into_with_card(self):
         # Setup: WA sympathy in C2 (Mouse)
         WASympathy.objects.create(player=self.wa, clearing=self.c2)
-        
+
+        # Clear Cats hand to ensure only our test card is present
+        HandEntry.objects.filter(player=self.cats).delete()
+
         # Cats in C1 (Fox)
         WarriorFactory.create_batch(2, player=self.cats, clearing=self.c1)
-        
+
         # Cats have a Mouse card
         mouse_card = CardFactory(game=self.game, card_type=CardsEP.AMBUSH_ORANGE.name)
         HandEntry.objects.create(player=self.cats, card=mouse_card)

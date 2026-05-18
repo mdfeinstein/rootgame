@@ -1,3 +1,5 @@
+from game.errors.action_errors import IllegalActionError
+from game.errors.system_errors import InternalGameError
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.birds.player import DecreeEntry, Vizier
 from game.models.birds.turn import BirdBirdsong
@@ -28,9 +30,9 @@ def validate_card_to_decree(player: Player, card: CardsEP):
     """
     validate_player_has_card_in_hand(player, card)
     if get_number_added_to_decree(player) >= 2:
-        raise ValueError("Two cards already added to decree! Critical Error")
+        raise InternalGameError("Two cards already added to decree! Critical Error")
     if get_bird_added_to_decree(player) and card.value.suit == Suit.WILD:
-        raise ValueError("Bird card already added to decree")
+        raise IllegalActionError("Bird card already added to decree")
 
 
 def get_decree_entry_to_use(
@@ -53,4 +55,4 @@ def get_decree_entry_to_use(
     vizier_to_use = viziers.first()
     if vizier_to_use is not None:
         return vizier_to_use
-    raise ValueError("No decree entry to use")
+    raise IllegalActionError("No decree entry to use")

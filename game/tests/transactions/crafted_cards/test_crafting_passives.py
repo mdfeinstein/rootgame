@@ -3,7 +3,7 @@ from game.models.game_models import Faction, Card, CraftedCardEntry, HandEntry, 
 from game.tests.my_factories import GameSetupWithFactionsFactory
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.transactions.general import craft_card
-from game.game_data.general.game_enums import ItemTypes
+from game.models.game_models import ItemTypes
 
 class CraftingPassivesTestCase(TestCase):
     def setUp(self):

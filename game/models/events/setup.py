@@ -11,6 +11,7 @@ class GameSimpleSetup(models.Model):
         WA_SETUP = "WA", "Woodland Alliance Setup"
         VB_SETUP = "VB", "Vagabond Setup"
         CROWS_SETUP = "CROW", "Crows Setup"
+        MOLES_SETUP = "MOL", "Moles Setup"
         COMPLETED = "COMP", "Completed"
 
     game = models.ForeignKey(

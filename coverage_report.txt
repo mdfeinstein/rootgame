@@ -1,0 +1,13 @@
+Name                                                   Stmts   Miss Branch BrPart   Cover
+-----------------------------------------------------------------------------------------
+game\transactions\moles\__init__.py                        2      0      0      0 100.00%
+game\transactions\moles\birdsong.py                       23      1      4      1  92.59%
+game\transactions\moles\daylight\__init__.py               4      0      0      0 100.00%
+game\transactions\moles\daylight\actions.py               87      6     18      2  90.48%
+game\transactions\moles\daylight\minister_actions.py     188      9     48      9  92.37%
+game\transactions\moles\daylight\sway_minister.py         35      1      4      1  94.87%
+game\transactions\moles\evening.py                        66     18     16      0  70.73%
+game\transactions\moles\price_of_failure.py               46      0     12      0 100.00%
+game\transactions\moles\turn.py                          119     19     60     12  81.56%
+-----------------------------------------------------------------------------------------
+TOTAL                                                    570     54    162     25  87.84%

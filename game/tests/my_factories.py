@@ -6,7 +6,7 @@ from game.models.game_models import (
     Warrior, Clearing, Suit, FactionChoiceEntry, Item, CraftedItemEntry,
     DiscardPileEntry
 )
-from game.game_data.general.game_enums import ItemTypes
+from game.models.game_models import ItemTypes
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.birds.turn import BirdTurn
 from game.models.cats.turn import CatTurn
@@ -222,6 +222,33 @@ class GameSetupFactory(factory.django.DjangoModelFactory):
         
         return game
 
+class MolesGameSetupFactory(GameSetupFactory):
+    """Setup for Moles + Birds, both with complete setup."""
+    class Meta:
+        model = Game
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        # Create game with Moles + Birds
+        game = super()._create(model_class, *args, factions=[Faction.MOLES, Faction.BIRDS], **kwargs)
+
+        # Birds setup: pick corner 1, choose builder
+        birds_player = Player.objects.get(game=game, faction=Faction.BIRDS)
+        from game.transactions.birds_setup import pick_corner as birds_pick_corner, choose_leader_initial, confirm_completed_setup as birds_confirm
+        from game.models.birds.player import BirdLeader
+        birds_pick_corner(birds_player, Clearing.objects.get(game=game, clearing_number=1))
+        choose_leader_initial(birds_player, BirdLeader.BirdLeaders.BUILDER)
+        birds_confirm(birds_player)
+
+        # Moles setup: pick corner 3 (opposite of Birds)
+        moles_player = Player.objects.get(game=game, faction=Faction.MOLES)
+        from game.transactions.moles_setup import pick_corner as moles_pick_corner, confirm_completed_setup as moles_confirm
+        moles_pick_corner(moles_player, Clearing.objects.get(game=game, clearing_number=3))
+        moles_confirm(moles_player)
+
+        return game
+
+
 class GameSetupWithFactionsFactory(GameSetupFactory):
     class Meta:
         model = Game
@@ -280,3 +307,79 @@ class GameSetupWithFactionsFactory(GameSetupFactory):
             place_initial_warrior(crows_player, rabbit_c)
             place_initial_warrior(crows_player, mouse_c)
             confirm_completed_setup(crows_player)
+
+
+class MolesWAGameSetupFactory(GameSetupFactory):
+    """Setup for Moles + Woodland Alliance."""
+    class Meta:
+        model = Game
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        game = super()._create(model_class, *args, factions=[Faction.MOLES, Faction.WOODLAND_ALLIANCE], **kwargs)
+
+        from game.models.events.setup import GameSimpleSetup
+        from game.transactions.moles_setup import pick_corner as moles_pick_corner, confirm_completed_setup as moles_confirm
+
+        moles_player = Player.objects.get(game=game, faction=Faction.MOLES)
+
+        # Update setup status to MOLES_SETUP
+        setup = GameSimpleSetup.objects.get(game=game)
+        setup.status = GameSimpleSetup.GameSetupStatus.MOLES_SETUP
+        setup.save()
+
+        moles_pick_corner(moles_player, Clearing.objects.get(game=game, clearing_number=3))
+        moles_confirm(moles_player)
+
+        return game
+
+
+class MolesCrowsGameSetupFactory(GameSetupFactory):
+    """Setup for Moles + Corvid Conspiracy."""
+    class Meta:
+        model = Game
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        game = super()._create(model_class, *args, factions=[Faction.MOLES, Faction.CROWS], **kwargs)
+
+        from game.models.events.setup import GameSimpleSetup
+        from game.transactions.moles_setup import pick_corner as moles_pick_corner, confirm_completed_setup as moles_confirm
+        from game.transactions.crows_setup import place_initial_warrior, confirm_completed_setup as crows_confirm
+
+        moles_player = Player.objects.get(game=game, faction=Faction.MOLES)
+        crows_player = Player.objects.get(game=game, faction=Faction.CROWS)
+
+        # Update setup status to MOLES_SETUP
+        setup = GameSimpleSetup.objects.get(game=game)
+        setup.status = GameSimpleSetup.GameSetupStatus.MOLES_SETUP
+        setup.save()
+
+        moles_pick_corner(moles_player, Clearing.objects.get(game=game, clearing_number=3))
+        moles_confirm(moles_player)
+
+        # Now handle Crows setup
+        setup.status = GameSimpleSetup.GameSetupStatus.CROWS_SETUP
+        setup.save()
+
+        fox_c = Clearing.objects.get(game=game, suit=Suit.RED.value, clearing_number=6)
+        rabbit_c = Clearing.objects.get(game=game, suit=Suit.YELLOW.value, clearing_number=4)
+        mouse_c = Clearing.objects.get(game=game, suit=Suit.ORANGE.value, clearing_number=2)
+        place_initial_warrior(crows_player, fox_c)
+        place_initial_warrior(crows_player, rabbit_c)
+        place_initial_warrior(crows_player, mouse_c)
+        crows_confirm(crows_player)
+
+        return game
+
+
+class MolesBirdsGameSetupFactory(GameSetupFactory):
+    """Setup for Moles + Eyrie Dynasties (for battle tests). Same as MolesGameSetupFactory."""
+    class Meta:
+        model = Game
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        # Delegates to MolesGameSetupFactory since it's identical
+        game = MolesGameSetupFactory._create(model_class, *args, **kwargs)
+        return game

@@ -8,6 +8,7 @@ from game.transactions.birds import emergency_draw, add_card_to_decree, end_add_
 from game.tests.logging_mixin import LoggingTestMixin
 from game.models.game_log import LogType
 from game.game_data.cards.exiles_and_partisans import CardsEP
+from game.errors import InternalGameError, IllegalActionError, UnavailableActionError
 
 class BirdBirdsongBaseTestCase(TestCase, LoggingTestMixin):
     def setUp(self):
@@ -89,7 +90,7 @@ class BirdDecreeTests(BirdBirdsongBaseTestCase):
         bird_card_2 = CardFactory(game=self.game, card_type=CardsEP.SABOTEURS.name) # Saboteurs is Wild (Bird)
         HandEntry.objects.create(player=self.player, card=bird_card_2)
         
-        with self.assertRaisesMessage(ValueError, "Bird card already added to decree"):
+        with self.assertRaises(IllegalActionError):
             add_card_to_decree(self.player, CardsEP.SABOTEURS, DecreeEntry.Column.MOVE)
 
     def test_add_three_cards_fails(self):
@@ -104,12 +105,12 @@ class BirdDecreeTests(BirdBirdsongBaseTestCase):
         c3 = CardFactory(game=self.game, card_type=CardsEP.AMBUSH_ORANGE.name)
         HandEntry.objects.create(player=self.player, card=c3)
         
-        with self.assertRaisesMessage(ValueError, "Two cards already added to decree"):
+        with self.assertRaises(InternalGameError):
              add_card_to_decree(self.player, CardsEP.AMBUSH_ORANGE, DecreeEntry.Column.BATTLE)
 
 
     def test_end_add_to_decree_with_zero_cards_fails(self):
-        with self.assertRaisesMessage(ValueError, "Must add at least one card to decree"):
+        with self.assertRaises(IllegalActionError):
             end_add_to_decree_step(self.player)
 
 
@@ -147,7 +148,7 @@ class BirdEmergencyRoostTests(BirdBirdsongBaseTestCase):
         c1 = Clearing.objects.get(game=self.game, clearing_number=1)
         Warrior.objects.create(player=self.cats_player, clearing=c1)
         
-        with self.assertRaisesMessage(ValueError, "Chosen clearing does not have the fewest total warriors"):
+        with self.assertRaises(IllegalActionError):
             emergency_roost(self.player, c1)
 
     def test_try_auto_emergency_roost_unique_best(self):

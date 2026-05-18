@@ -37,7 +37,7 @@ class CharmOffensiveViewTestCase(TestCase):
         daylight.step = BirdDaylight.BirdDaylightSteps.COMPLETED
         daylight.save()
         evening = BirdEvening.objects.get(turn=turn)
-        evening.step = BirdEvening.BirdEveningSteps.SCORING
+        evening.step = BirdEvening.BirdEveningSteps.NOT_STARTED
         evening.save()
 
         # Create the event

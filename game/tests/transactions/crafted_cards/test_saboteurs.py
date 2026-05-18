@@ -5,6 +5,7 @@ from game.transactions.crafted_cards.saboteurs import use_saboteurs
 from game.tests.my_factories import (
     GameSetupFactory, BirdTurnFactory, CardFactory, CraftedCardEntryFactory
 )
+from game.errors import UnavailableActionError, IllegalActionError
 
 class TestSaboteursTransaction(TestCase):
     def setUp(self):
@@ -38,7 +39,7 @@ class TestSaboteursTransaction(TestCase):
         self.turn = BirdTurnFactory(player=self.player, turn_number=1)
         from game.models.birds.turn import BirdBirdsong
         birdsong = BirdBirdsong.objects.filter(turn=self.turn).first()
-        birdsong.step = "1" # Start of Birdsong
+        birdsong.step = BirdBirdsong.BirdBirdsongSteps.NOT_STARTED
         birdsong.save()
         
         # Transaction
@@ -59,18 +60,18 @@ class TestSaboteursTransaction(TestCase):
         from game.models.birds.turn import BirdBirdsong, BirdDaylight
         BirdBirdsong.objects.filter(turn=self.turn).update(step=BirdBirdsong.BirdBirdsongSteps.COMPLETED)
         BirdDaylight.objects.filter(turn=self.turn).update(step=BirdDaylight.BirdDaylightSteps.CRAFTING)
-        
-        with self.assertRaisesMessage(ValueError, "Saboteurs cannot be used right now"):
+
+        with self.assertRaises(UnavailableActionError):
             use_saboteurs(self.player, self.crafted_target)
 
     def test_use_saboteurs_target_own_card(self):
         # Setup another card for player
         own_card = CardFactory(game=self.game, card_type=CardsEP.MOUSE_PARTISANS.name)
         crafted_own = CraftedCardEntryFactory(player=self.player, card=own_card)
-        
+
         self.turn = BirdTurnFactory(player=self.player, turn_number=1)
         from game.models.birds.turn import BirdBirdsong
-        BirdBirdsong.objects.filter(turn=self.turn).update(step="1")
-        
-        with self.assertRaisesMessage(ValueError, "You cannot discard your own crafted card"):
+        BirdBirdsong.objects.filter(turn=self.turn).update(step=BirdBirdsong.BirdBirdsongSteps.NOT_STARTED)
+
+        with self.assertRaises(IllegalActionError):
              use_saboteurs(self.player, crafted_own)

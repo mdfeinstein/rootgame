@@ -91,10 +91,7 @@ class CrowsDaylightActionsView(GameActionView):
         player = self.player(request, game_id)
         action = request.data["action"]
         if action == "":
-            try:
-                atomic_game_action(end_daylight_action_step)(player)
-            except ValueError as e:
-                raise ValidationError({"detail": str(e)})
+            atomic_game_action(end_daylight_action_step)(player)
             return self.generate_completed_step()
 
         match action:
@@ -170,12 +167,9 @@ class CrowsDaylightActionsView(GameActionView):
         game = self.game(game_id)
         clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
 
-        try:
-            atomic_game_action(do_daylight_action)(
-                player, "plot", clearing=clearing, plot_type=plot_type
-            )
-        except ValueError as e:
-            raise ValidationError({"detail": str(e)})
+        atomic_game_action(do_daylight_action)(
+            player, "plot", clearing=clearing, plot_type=plot_type
+        )
         return self.generate_completed_step()
 
     # TRICK
@@ -205,10 +199,7 @@ class CrowsDaylightActionsView(GameActionView):
         except PlotToken.DoesNotExist:
             raise ValidationError("Could not find plot tokens in one or both clearings")
 
-        try:
-            atomic_game_action(do_daylight_action)(player, "trick", plot1=p1, plot2=p2)
-        except ValueError as e:
-            raise ValidationError({"detail": str(e)})
+        atomic_game_action(do_daylight_action)(player, "trick", plot1=p1, plot2=p2)
         return self.generate_completed_step()
 
     # MOVE
@@ -243,12 +234,9 @@ class CrowsDaylightActionsView(GameActionView):
         origin = Clearing.objects.get(game=game, clearing_number=origin_num)
         dest = Clearing.objects.get(game=game, clearing_number=dest_num)
 
-        try:
-            atomic_game_action(do_daylight_action)(
-                player, "move", origin=origin, destination=dest, count=count
-            )
-        except ValueError as e:
-            raise ValidationError({"detail": str(e)})
+        atomic_game_action(do_daylight_action)(
+            player, "move", origin=origin, destination=dest, count=count
+        )
         return self.generate_completed_step()
 
     # BATTLE
@@ -284,12 +272,9 @@ class CrowsDaylightActionsView(GameActionView):
         game = self.game(game_id)
         clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
 
-        try:
-            atomic_game_action(do_daylight_action)(
-                player, "battle", defender_faction=defender_faction, clearing=clearing
-            )
-        except ValueError as e:
-            raise ValidationError({"detail": str(e)})
+        atomic_game_action(do_daylight_action)(
+            player, "battle", defender_faction=defender_faction, clearing=clearing
+        )
         return self.generate_completed_step()
 
     def validate_timing(self, request, game_id: int, *args, **kwargs):

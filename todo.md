@@ -1,4 +1,17 @@
 # Todo List
+- [ ] Frontend typing: player boards should use types
+- [x] Critical Feature: Crafted items
+    - [x] Frontend: display of crafted items box
+    - [x] Backend: endpoint to get crafted items, with exhausted or not status
+- [x] Bug, WA, Frontend: Bases are displaying on player board whether or not they are on the map (should not be on player board if on the map)
+- [ ] 
+- [ ] Cats turn queries
+  - [ ] add queries to validate timing, turn
+  - [ ] refactor transactions to use these validators 
+
+- [ ] review transaction file split refactors. code is in strange places
+- [ ] review all transactions to use validators
+  - [ ] perhaps we can make a timing decorator. maybe one to cross check that args are part of the same game too.
 
 Game Lobby:
 
@@ -20,8 +33,8 @@ Game Lobby:
   - [x] Frontend display of revealed cards
 - [x] Discard Pile: Frontend display
 - [x] Items: Frontend display and backend implementation
-- [ ] Game Log
-- [ ] Custom Errors
+- [x] Game Log
+- [x] Custom Errors
 
 - [ ] New Factions
   - [ ] Moles

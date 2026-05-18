@@ -121,6 +121,37 @@ const useGameActionQuery = (gameId: number, enabled: boolean = true) => {
         }
         return;
       }
+
+      // Handle redirect: if response contains new_base_endpoint, fetch the first step from new endpoint
+      if (data.new_base_endpoint) {
+        const newBaseEndpoint = data.new_base_endpoint;
+        const redirectResponse = await fetch(
+          `${djangoUrl}${newBaseEndpoint}?game_id=${gameId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          },
+        );
+        if (!redirectResponse.ok) {
+          throw new Error("Failed to load action from redirect");
+        }
+        const redirectData = await redirectResponse.json();
+
+        // Update the current action route to the new base endpoint
+        queryClient.setQueryData(gameKeys.currentAction(gameId), {
+          route: newBaseEndpoint,
+        });
+
+        // Update actionInfo with the new step data
+        queryClient.setQueryData(
+          gameKeys.currentActionInfo(gameId, newBaseEndpoint, username),
+          redirectData,
+        );
+        console.log("redirect success", redirectData);
+        return;
+      }
+
       //update actionInfo
       queryClient.setQueryData(
         gameKeys.currentActionInfo(gameId, actionRoute?.route ?? null, username),

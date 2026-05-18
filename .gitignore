@@ -16,3 +16,7 @@ frontend/dist/
 # Environment Variables
 .env
 .env.local
+
+#claude worktree
+.claude/worktrees/
+test_output.txt

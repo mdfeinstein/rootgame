@@ -1,4 +1,5 @@
 import logging
+from game.errors import IllegalActionError
 from django.test import TestCase
 from game.models import (
     Faction,
@@ -146,8 +147,8 @@ class WADaylightTests(WADaylightBaseTestCase):
     def test_mobilize_fail_card_not_in_hand(self):
         card_enum = CardsEP.AMBUSH_RED
         # Don't add to hand
-        
-        with self.assertRaisesRegex(ValueError, "Player does not have card"):
+
+        with self.assertRaises(IllegalActionError):
             mobilize_supporter(self.player, card_enum)
 
     def test_training_success_fox(self):
@@ -182,8 +183,8 @@ class WADaylightTests(WADaylightBaseTestCase):
     def test_training_fail_card_not_in_hand(self):
         self.add_base(self.fox_clearing)
         card_enum = CardsEP.AMBUSH_RED
-        
-        with self.assertRaisesRegex(ValueError, "Player does not have card"):
+
+        with self.assertRaises(IllegalActionError):
             training(self.player, card_enum)
 
     def test_training_fail_no_base(self):
@@ -191,19 +192,19 @@ class WADaylightTests(WADaylightBaseTestCase):
         self.add_base(self.rabbit_clearing)
         card_enum = CardsEP.AMBUSH_RED
         self.add_card_to_hand(card_enum)
-        
-        with self.assertRaisesRegex(ValueError, "Suit does not match a base on the board"):
+
+        with self.assertRaises(IllegalActionError):
             training(self.player, card_enum)
 
     def test_training_fail_no_reserve(self):
         self.add_base(self.fox_clearing)
         card_enum = CardsEP.AMBUSH_RED
         self.add_card_to_hand(card_enum)
-        
+
         # Empty the reserve
         Warrior.objects.filter(player=self.player, clearing=None).delete()
-        
-        with self.assertRaisesRegex(ValueError, "No warriors in reserve"):
+
+        with self.assertRaises(IllegalActionError):
             training(self.player, card_enum)
 
     def test_end_daylight_advances_to_evening(self):

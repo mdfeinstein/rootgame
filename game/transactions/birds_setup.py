@@ -3,6 +3,7 @@ from game.models.birds.player import BirdLeader, Vizier
 from game.models.birds.setup import BirdsSimpleSetup
 from game.models import Clearing, Player, Warrior
 from django.db import transaction
+from game.errors import UnavailableActionError, IllegalActionError
 
 from game.models.birds.turn import BirdTurn
 from game.queries.general import available_building_slot
@@ -53,11 +54,11 @@ def pick_corner(player: Player, clearing: Clearing):
     # check that it is birds setup
     simple_setup = GameSimpleSetup.objects.get(game=player.game)
     if simple_setup.status != GameSimpleSetup.GameSetupStatus.BIRDS_SETUP:
-        raise ValueError("Not this player's setup turn")
+        raise UnavailableActionError("Not this player's setup turn")
 
     birds_setup = BirdsSimpleSetup.objects.get(player=player)
     if birds_setup.step != BirdsSimpleSetup.Steps.PICKING_CORNER:
-        raise ValueError("this has been triggered at the wrong step")
+        raise UnavailableActionError("this has been triggered at the wrong step")
     # If cats keep is out, pick roost opposite
     game = player.game
     validate_corner(game, clearing)
@@ -66,7 +67,7 @@ def pick_corner(player: Player, clearing: Clearing):
     assert roost is not None, "no available roost found in setup!"
     building_slot = available_building_slot(clearing)
     if building_slot is None:
-        raise ValueError("No free building slot")
+        raise IllegalActionError("No free building slot")
     roost.building_slot = building_slot
     roost.save()
 
@@ -92,11 +93,11 @@ def choose_leader_initial(player: Player, leader: BirdLeader.BirdLeaders):
     # check that it is birds setup
     simple_setup = GameSimpleSetup.objects.get(game=player.game)
     if simple_setup.status != GameSimpleSetup.GameSetupStatus.BIRDS_SETUP:
-        raise ValueError("Not this player's setup turn")
+        raise UnavailableActionError("Not this player's setup turn")
 
     bird_setup = BirdsSimpleSetup.objects.get(player=player)
     if bird_setup.step != BirdsSimpleSetup.Steps.CHOOSING_LEADER:
-        raise ValueError("this has been triggered at the wrong step")
+        raise UnavailableActionError("this has been triggered at the wrong step")
     # set chosen leader as active
     picked_leader = BirdLeader.objects.get(player=player, leader=leader)
     picked_leader.active = True
@@ -115,7 +116,7 @@ def choose_leader_initial(player: Player, leader: BirdLeader.BirdLeaders):
 def confirm_completed_setup(player: Player):
     setup = BirdsSimpleSetup.objects.get(player=player)
     if setup.step != BirdsSimpleSetup.Steps.PENDING_CONFIRMATION:
-        raise ValueError("this has been triggered at the wrong step")
+        raise UnavailableActionError("this has been triggered at the wrong step")
     setup.step = BirdsSimpleSetup.Steps.COMPLETED
     setup.save()
     # move to next step in general setup (next player, perhaps)

@@ -1,6 +1,7 @@
 from typing import Union, cast
 from django.db import transaction
 
+from game.errors import IllegalActionError, InternalGameError
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.game_models import (
     Faction,
@@ -30,6 +31,8 @@ from game.transactions.removal import (
     player_removes_warriors,
     player_removes_token,
     player_removes_building,
+    start_removal_event,
+    cleanup_removal_event,
 )
 
 
@@ -55,29 +58,28 @@ def resolve_bomb(player: Player, token: PlotToken, **kwargs):
     """resolves a bomb plot token"""
     parent = kwargs.get("parent")
     from game.models.game_models import Building, Token
-    from game.transactions.removal import (
-        player_removes_building,
-        player_removes_token,
-        player_removes_warriors,
-    )
 
     clearing = token.clearing
-    # remove all enemy pieces
-    for player_ in Player.objects.filter(game=player.game):
-        if player_ != player:
-            count = Warrior.objects.filter(clearing=clearing, player=player_).count()
-            if count > 0:
-                player_removes_warriors(clearing, player, player_, count, parent=parent)
-            for enemy_token in Token.objects.filter(clearing=clearing, player=player_):
-                player_removes_token(player.game, enemy_token, player, parent=parent)
-            for enemy_building in Building.objects.filter(
-                building_slot__clearing=clearing, player=player_
-            ):
-                player_removes_building(player.game, enemy_building, player, parent=parent)
+    start_removal_event(player.game)
+    try:
+        # remove all enemy pieces
+        for player_ in Player.objects.filter(game=player.game):
+            if player_ != player:
+                count = Warrior.objects.filter(clearing=clearing, player=player_).count()
+                if count > 0:
+                    player_removes_warriors(clearing, player, player_, count, parent=parent)
+                for enemy_token in Token.objects.filter(clearing=clearing, player=player_):
+                    player_removes_token(player.game, enemy_token, player, parent=parent)
+                for enemy_building in Building.objects.filter(
+                    building_slot__clearing=clearing, player=player_
+                ):
+                    player_removes_building(player.game, enemy_building, player, parent=parent)
 
-    # remove the bomb token itself
-    token.clearing = None
-    token.save()
+        # remove the bomb token itself
+        token.clearing = None
+        token.save()
+    finally:
+        cleanup_removal_event(player.game)
 
 
 @transaction.atomic
@@ -118,7 +120,7 @@ def flip_plot(player: Player, token: PlotToken, **kwargs):
         raise ValueError("Token is not on the board")
 
     if not Warrior.objects.filter(clearing=token.clearing, player=player).exists():
-        raise ValueError("Must have a Crow warrior present to flip a plot token")
+        raise IllegalActionError("Must have a Crow warrior present to flip a plot token")
 
     token.is_facedown = False
     token.save()
@@ -218,7 +220,7 @@ def crows_recruit(player: Player, card: CardsEP, suit: Suit | None = None):
                 try:
                     place_piece_from_supply_into_clearing(warrior, clearing)
                     placed_count += 1
-                except ValueError:
+                except (IllegalActionError, InternalGameError):
                     pass
         next_step(player)
 

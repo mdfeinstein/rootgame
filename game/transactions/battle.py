@@ -1,8 +1,11 @@
+from game.errors.action_errors import UnavailableActionError
+from game.errors.system_errors import InternalGameError
 from game.models import GameLog
-from game.game_data.general.game_enums import Suit
+from game.models.game_models import Suit
 from game.queries.general import validate_player_has_card_in_hand
 from random import randint
 from django.db import transaction
+from game.errors import IllegalActionError
 
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.birds.player import BirdLeader
@@ -34,6 +37,8 @@ from game.transactions.removal import (
     player_removes_building,
     player_removes_token,
     player_removes_warriors,
+    start_removal_event,
+    cleanup_removal_event,
 )
 
 
@@ -42,21 +47,21 @@ def start_battle(game: Game, attacker: Faction, defender: Faction, clearing: Cle
     """starts a battle between the given factions at the given clearing"""
     # check that attacker and defender are not the same faction
     if attacker == defender:
-        raise ValueError("Attacker and defender cannot be the same faction")
+        raise IllegalActionError("Attacker and defender cannot be the same faction")
     # check that attacker has warriors in the clearing
-    player = Player.objects.get(game=game, faction=attacker)
+    player = Player.objects.get(game=game, faction=attacker.value)
 
     if not player_has_warriors_in_clearing(player, clearing):
-        raise ValueError("Attacker does not have warriors in that clearing")
+        raise IllegalActionError("Attacker does not have warriors in that clearing")
     # check that defender has pieces in the clearing
-    defender_player = Player.objects.get(game=game, faction=defender)
+    defender_player = Player.objects.get(game=game, faction=defender.value)
     if not player_has_pieces_in_clearing(defender_player, clearing):
-        raise ValueError("Defender does not have pieces in that clearing")
+        raise IllegalActionError("Defender does not have pieces in that clearing")
 
     # create battle
     event = Event.objects.create(game=game, type=EventType.BATTLE)
     battle = Battle(
-        attacker=attacker, defender=defender, clearing=clearing, event=event
+        attacker=attacker.value, defender=defender.value, clearing=clearing, event=event
     )
     battle.save()
     return battle
@@ -73,7 +78,7 @@ def log_battle_start(
         player,
         battle.clearing.clearing_number,
         battle.defender,
-        battle_id=battle.id,
+        battle_id=battle.pk,
         parent=parent,
     )
     return log
@@ -87,7 +92,7 @@ def defender_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
     """
     # check the timing
     if battle.step != Battle.BattleSteps.DEFENDER_AMBUSH_CHECK:
-        raise ValueError("Not defender ambush check step")
+        raise UnavailableActionError("Not defender ambush check step")
     # if ambush_card is None, defender chooses not to ambush
     if ambush_card is None:
         battle.defender_ambush = False
@@ -101,13 +106,13 @@ def defender_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
         card_in_hand = validate_player_has_card_in_hand(defender_player, ambush_card)
         # check that card is actually an ambush
         if ambush_card.value.ambush is False:
-            raise ValueError("Card is not an ambush")
+            raise IllegalActionError("Card is not an ambush")
         # check that suit matches clearing
         if (
             card_in_hand.card.suit != battle.clearing.suit
             and card_in_hand.card.suit != Suit.WILD
         ):
-            raise ValueError("Card suit does not match clearing suit")
+            raise IllegalActionError("Card suit does not match clearing suit")
         # flag the battle as ambushed
         battle.defender_ambush = True
         battle.step = Battle.BattleSteps.ATTACKER_AMBUSH_CANCEL_CHECK
@@ -121,7 +126,7 @@ def defender_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
             game,
             defender_player,
             card_in_hand.card,
-            parent=get_battle_log(game, battle.id),
+            parent=get_battle_log(game, battle.pk),
         )
 
 
@@ -133,7 +138,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
     """
     # check the timing
     if battle.step != Battle.BattleSteps.ATTACKER_AMBUSH_CANCEL_CHECK:
-        raise ValueError("Not attacker ambush cancel check step")
+        raise UnavailableActionError("Not attacker ambush cancel check step")
     # if no ambush card, attacker chooses not to cancel ambush
     defending_player = Player.objects.get(game=game, faction=battle.defender)
     attacking_player = Player.objects.get(game=game, faction=battle.attacker)
@@ -147,7 +152,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
             # resolve ambush by removing attacking warriors and proceeding to roll
             from game.serializers.logs.general import get_battle_log
 
-            parent_log = get_battle_log(game, battle.id)
+            parent_log = get_battle_log(game, battle.pk)
             player_removes_warriors(
                 battle.clearing,
                 defending_player,
@@ -168,7 +173,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
                 defending_player,
                 attacking_player,
                 2,
-                parent=get_battle_log(game, battle.id),
+                parent=get_battle_log(game, battle.pk),
             )
             end_battle(game, battle)
             return
@@ -181,20 +186,21 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
                 defending_player,
                 attacking_player,
                 1,
-                parent=get_battle_log(game, battle.id),
+                parent=get_battle_log(game, battle.pk),
             )
             # do i need to convey that attacker must choose one hit, or is this kind of guaranteed to only be one?
+            start_removal_event(game)
             battle.step = Battle.BattleSteps.ATTACKER_CHOOSE_AMBUSH_HITS
             battle.save()
             return
     # if ambush, check that card is actually an ambush and get the hand entry
     if ambush_card.value.ambush is False:
-        raise ValueError("Card is not an ambush")
+        raise IllegalActionError("Card is not an ambush")
     if (
         ambush_card.value.suit != battle.clearing.suit
         and ambush_card.value.suit != Suit.WILD
     ):
-        raise ValueError("Card suit does not match clearing suit")
+        raise IllegalActionError("Card suit does not match clearing suit")
     attacker_player = Player.objects.get(game=game, faction=battle.attacker)
     card_in_hand = validate_player_has_card_in_hand(attacker_player, ambush_card)
     # spend card
@@ -203,7 +209,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
     from game.serializers.logs.general import log_ambush, get_battle_log
 
     log_ambush(
-        game, attacker_player, card_in_hand.card, parent=get_battle_log(game, battle.id)
+        game, attacker_player, card_in_hand.card, parent=get_battle_log(game, battle.pk)
     )
     # flag the battle as ambushed
     battle.attacker_cancel_ambush = True
@@ -220,34 +226,34 @@ def attacker_choose_ambush_hit(game: Game, battle: Battle, piece: Piece):
     a building or token to remove for the remaining hit.
     """
     if battle.step != Battle.BattleSteps.ATTACKER_CHOOSE_AMBUSH_HITS:
-        raise ValueError("Not attacker choose ambush hits step")
+        raise UnavailableActionError("Not attacker choose ambush hits step")
 
     attacking_player = Player.objects.get(game=game, faction=battle.attacker)
     defending_player = Player.objects.get(game=game, faction=battle.defender)
 
     if piece.player != attacking_player:
-        raise ValueError("Piece must belong to the attacker")
+        raise IllegalActionError("Piece must belong to the attacker")
 
     if isinstance(piece, Warrior):
-        raise ValueError("Cannot choose a warrior")
+        raise IllegalActionError("Cannot choose a warrior")
 
     # Verify piece is in the battle clearing
     from game.serializers.logs.general import get_battle_log
 
-    parent_log = get_battle_log(game, battle.id)
+    parent_log = get_battle_log(game, battle.pk)
     if isinstance(piece, Building):
         if (
             getattr(piece, "building_slot", None) is None
             or getattr(piece.building_slot, "clearing", None) != battle.clearing
         ):
-            raise ValueError("Piece is not in the battle clearing")
+            raise IllegalActionError("Piece is not in the battle clearing")
         player_removes_building(game, piece, defending_player, parent=parent_log)
     elif isinstance(piece, Token):
         if piece.clearing != battle.clearing:
-            raise ValueError("Piece is not in the battle clearing")
+            raise IllegalActionError("Piece is not in the battle clearing")
         player_removes_token(game, piece, defending_player, parent=parent_log)
     else:
-        raise ValueError("Piece must be a building or token")
+        raise IllegalActionError("Piece must be a building or token")
 
     end_battle(game, battle)
 
@@ -268,7 +274,7 @@ def can_use_partisans(player: Player, clearing: Clearing) -> bool:
     try:
         validate_player_has_crafted_card(player, card_type)
         return True
-    except ValueError:
+    except IllegalActionError:
         return False
 
 
@@ -312,7 +318,7 @@ def roll_dice(game: Game, battle: Battle):
     """rolls the dice for the battle and determines base hits"""
     # check the timing
     if battle.step != Battle.BattleSteps.ROLL_DICE:
-        raise ValueError("Not roll dice step")
+        raise UnavailableActionError("Not roll dice step")
     die1 = randint(0, 3)
     die2 = randint(0, 3)
     print(f"dice rolled: {die1}, {die2}")
@@ -372,7 +378,7 @@ def roll_dice(game: Game, battle: Battle):
         die2,
         battle.attacker_hits_taken,
         battle.defender_hits_taken,
-        parent=get_battle_log(game, battle.id),
+        parent=get_battle_log(game, battle.pk),
     )
     battle.save()
 
@@ -386,9 +392,9 @@ def roll_dice(game: Game, battle: Battle):
 def use_partisans(game: Game, battle: Battle, partisans_event: PartisansEvent):
     """resolves a partisans event by dealing an extra hit and discarding"""
     if partisans_event.battle != battle:
-        raise ValueError("Partisans event does not belong to this battle")
+        raise InternalGameError("Partisans event does not belong to this battle")
     if partisans_event.event.is_resolved:
-        raise ValueError("Partisans event already resolved")
+        raise UnavailableActionError("Partisans event already resolved")
 
     player = partisans_event.crafted_card_entry.player
     # extra hit: dealing it to the OTHER player
@@ -418,9 +424,9 @@ def use_partisans(game: Game, battle: Battle, partisans_event: PartisansEvent):
 def skip_partisans(game: Game, battle: Battle, partisans_event: PartisansEvent):
     """resolves a partisans event by skipping it"""
     if partisans_event.battle != battle:
-        raise ValueError("Partisans event does not belong to this battle")
+        raise InternalGameError("Partisans event does not belong to this battle")
     if partisans_event.event.is_resolved:
-        raise ValueError("Partisans event already resolved")
+        raise UnavailableActionError("Partisans event already resolved")
 
     # resolve event
     partisans_event.event.is_resolved = True
@@ -445,7 +451,7 @@ def apply_dice_hits(game: Game, battle: Battle):
 
     from game.serializers.logs.general import get_battle_log
 
-    parent_log = get_battle_log(game, battle.id)
+    parent_log = get_battle_log(game, battle.pk)
 
     # assign hits automatically if possible. otherwise, go to choice steps
     if defending_warriors_count >= battle.defender_hits_taken:
@@ -475,6 +481,7 @@ def apply_dice_hits(game: Game, battle: Battle):
         )
         if defender_hits_left_to_assign > 0 and pieces_left_to_hit > 0:
             if pieces_left_to_hit <= defender_hits_left_to_assign:
+                start_removal_event(game)
                 tokens = Token.objects.filter(
                     clearing=battle.clearing, player=defending_player
                 )
@@ -491,6 +498,7 @@ def apply_dice_hits(game: Game, battle: Battle):
                     )
 
             else:  # more pieces than hits, go to choice step
+                start_removal_event(game)
                 battle.step = Battle.BattleSteps.DEFENDER_CHOOSE_HITS
                 battle.save()
 
@@ -522,6 +530,7 @@ def apply_dice_hits(game: Game, battle: Battle):
         if attacking_hits_left_to_assign > 0 and attacking_pieces_count > 0:
             if attacking_pieces_count <= attacking_hits_left_to_assign:
                 # remove all pieces, don't need to do choice step
+                start_removal_event(game)
                 tokens = Token.objects.filter(
                     clearing=battle.clearing, player=attacking_player
                 )
@@ -538,6 +547,7 @@ def apply_dice_hits(game: Game, battle: Battle):
                     )
             else:  # more pieces than hits, go to choice step if not already on defender choice step
                 if battle.step != Battle.BattleSteps.DEFENDER_CHOOSE_HITS:
+                    start_removal_event(game)
                     battle.step = Battle.BattleSteps.ATTACKER_CHOOSE_HITS
 
     if battle.step == Battle.BattleSteps.ROLL_DICE:
@@ -548,33 +558,33 @@ def apply_dice_hits(game: Game, battle: Battle):
 
 def defender_chooses_hit(game: Game, battle: Battle, piece: Piece):
     if battle.step != Battle.BattleSteps.DEFENDER_CHOOSE_HITS:
-        raise ValueError("Not defender choose hits step")
+        raise UnavailableActionError("Not defender choose hits step")
     defending_player = Player.objects.get(game=game, faction=battle.defender)
     attacking_player = Player.objects.get(game=game, faction=battle.attacker)
     if piece.player != defending_player:
-        raise ValueError("Piece must belong to the defender")
+        raise IllegalActionError("Piece must belong to the defender")
     if isinstance(piece, Warrior):
-        raise ValueError("Cannot choose a warrior")
+        raise IllegalActionError("Cannot choose a warrior")
 
     if isinstance(piece, Building):
         from game.serializers.logs.general import get_battle_log
 
-        parent_log = get_battle_log(game, battle.id)
+        parent_log = get_battle_log(game, battle.pk)
         if (
             getattr(piece, "building_slot", None) is None
             or getattr(piece.building_slot, "clearing", None) != battle.clearing
         ):
-            raise ValueError("Piece is not in the battle clearing")
+            raise IllegalActionError("Piece is not in the battle clearing")
         player_removes_building(game, piece, attacking_player, parent=parent_log)
     elif isinstance(piece, Token):
         from game.serializers.logs.general import get_battle_log
 
-        parent_log = get_battle_log(game, battle.id)
+        parent_log = get_battle_log(game, battle.pk)
         if piece.clearing != battle.clearing:
-            raise ValueError("Piece is not in the battle clearing")
+            raise IllegalActionError("Piece is not in the battle clearing")
         player_removes_token(game, piece, attacking_player, parent=parent_log)
     else:
-        raise ValueError("Piece must be a building or token")
+        raise IllegalActionError("Piece must be a building or token")
 
     battle.defender_hits_assigned += 1
     if battle.defender_hits_assigned >= battle.defender_hits_taken:
@@ -586,6 +596,8 @@ def defender_chooses_hit(game: Game, battle: Battle, piece: Piece):
             battle.attacker_hits_taken - battle.attacker_hits_assigned
         )
         if attacking_hits_left_to_assign > 0 and attacking_pieces_count > 0:
+            cleanup_removal_event(game)
+            start_removal_event(game)
             battle.step = Battle.BattleSteps.ATTACKER_CHOOSE_HITS
         else:
             end_battle(game, battle)
@@ -594,33 +606,33 @@ def defender_chooses_hit(game: Game, battle: Battle, piece: Piece):
 
 def attacker_chooses_hit(game: Game, battle: Battle, piece: Piece):
     if battle.step != Battle.BattleSteps.ATTACKER_CHOOSE_HITS:
-        raise ValueError("Not attacker choose hits step")
+        raise UnavailableActionError("Not attacker choose hits step")
     attacking_player = Player.objects.get(game=game, faction=battle.attacker)
     defending_player = Player.objects.get(game=game, faction=battle.defender)
     if piece.player != attacking_player:
-        raise ValueError("Piece must belong to the attacker")
+        raise IllegalActionError("Piece must belong to the attacker")
     if isinstance(piece, Warrior):
-        raise ValueError("Cannot choose a warrior")
+        raise IllegalActionError("Cannot choose a warrior")
 
     if isinstance(piece, Building):
         from game.serializers.logs.general import get_battle_log
 
-        parent_log = get_battle_log(game, battle.id)
+        parent_log = get_battle_log(game, battle.pk)
         if (
             getattr(piece, "building_slot", None) is None
             or getattr(piece.building_slot, "clearing", None) != battle.clearing
         ):
-            raise ValueError("Piece is not in the battle clearing")
+            raise IllegalActionError("Piece is not in the battle clearing")
         player_removes_building(game, piece, defending_player, parent=parent_log)
     elif isinstance(piece, Token):
         from game.serializers.logs.general import get_battle_log
 
-        parent_log = get_battle_log(game, battle.id)
+        parent_log = get_battle_log(game, battle.pk)
         if piece.clearing != battle.clearing:
-            raise ValueError("Piece is not in the battle clearing")
+            raise IllegalActionError("Piece is not in the battle clearing")
         player_removes_token(game, piece, defending_player, parent=parent_log)
     else:
-        raise ValueError("Piece must be a building or token")
+        raise IllegalActionError("Piece must be a building or token")
 
     battle.attacker_hits_assigned += 1
     if battle.attacker_hits_assigned >= battle.attacker_hits_taken:
@@ -630,6 +642,7 @@ def attacker_chooses_hit(game: Game, battle: Battle, piece: Piece):
 
 def end_battle(game: Game, battle: Battle):
     """ends the battle and updates the battle and event objects"""
+    cleanup_removal_event(game)
     # update battle
     battle.step = Battle.BattleSteps.COMPLETED
     battle.save()

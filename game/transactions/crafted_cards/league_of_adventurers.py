@@ -24,8 +24,9 @@ def use_league_of_adventurers(
         
     # 2. Check if card can be used now (Daylight)
     from game.queries.general import is_phase
+    from game.errors import UnavailableActionError
     if not is_phase(player, "Daylight"):
-        raise ValueError("League of Adventurers cannot be used right now. It must be in your Daylight.")
+        raise UnavailableActionError("League of Adventurers cannot be used right now. It must be in your Daylight.")
     
     if crafted_card_entry.used == CraftedCardEntry.UsedChoice.USED:
         raise ValueError("This card has already been used this turn.")
@@ -34,7 +35,8 @@ def use_league_of_adventurers(
     if crafted_item_entry.player != player:
         raise ValueError("Player does not own this crafted item.")
     if crafted_item_entry.exhausted:
-        raise ValueError("This item is already exhausted.")
+        from game.errors import IllegalActionError
+        raise IllegalActionError("This item is already exhausted.")
         
     # 4. Validate move/battle data
     if move_data and battle_data:

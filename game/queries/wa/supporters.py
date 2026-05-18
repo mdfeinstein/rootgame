@@ -1,3 +1,4 @@
+from game.errors.action_errors import IllegalActionError
 from game.models.game_models import Clearing, Faction, Player, Suit
 from game.models.wa.buildings import WABase
 from game.models.wa.player import SupporterStackEntry
@@ -32,7 +33,7 @@ def get_supporters(
     if len(supporters) == count:
         return supporters
     # if we still don't have enough, raise error
-    raise ValueError("Not enough supporters")
+    raise IllegalActionError("Not enough supporters")
 
 
 def has_enough_to_revolt(player: Player) -> bool:
@@ -63,12 +64,12 @@ def validate_revolt(player: Player, clearing: Clearing) -> list[SupporterStackEn
     # check clearing for sympathy
     sympathy = WASympathy.objects.filter(player=player, clearing=clearing).first()
     if sympathy is None:
-        raise ValueError("No sympathy in that clearing")
+        raise IllegalActionError("No sympathy in that clearing")
     # check if matching base is on the board
     if WABase.objects.filter(
         player=player, suit=clearing.suit, building_slot__isnull=False
     ).exists():
-        raise ValueError("Matching base is on the board")
+        raise IllegalActionError("Matching base is on the board")
     # get suited supporters
     return get_supporters(player, clearing, 2)
 
@@ -141,7 +142,7 @@ def validate_sympathy_spread(
     # check clearing for sympathy
     sympathy = WASympathy.objects.filter(player=player, clearing=clearing).first()
     if sympathy is not None:
-        raise ValueError("Player already has a sympathy token in this clearing")
+        raise IllegalActionError("Player already has a sympathy token in this clearing")
     # check adjacent sympathies
     has_any_sympathies = WASympathy.objects.filter(
         player=player, clearing__isnull=False
@@ -159,7 +160,9 @@ def validate_sympathy_spread(
                 break
 
         if not has_adjacent:
-            raise ValueError("No adjacent sympathies, but sympathy on the board")
+            raise IllegalActionError(
+                "No adjacent sympathies, but sympathy on the board"
+            )
     # get cost of placing sympathy
     cost = get_sympathy_cost(player, clearing)
     # get suited supporters

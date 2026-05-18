@@ -35,7 +35,7 @@ class SaboteursViewTestCase(TestCase):
             
         turn = BirdTurn.objects.filter(player=self.birds_player).order_by("-turn_number").first()
         birdsong = BirdBirdsong.objects.get(turn=turn)
-        birdsong.step = BirdBirdsong.BirdBirdsongSteps.EMERGENCY_DRAWING
+        birdsong.step = BirdBirdsong.BirdBirdsongSteps.NOT_STARTED
         birdsong.save()
 
         # Create the event

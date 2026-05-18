@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from game.models.game_models import Game, Player, Clearing, Faction, Suit, BuildingSlot
+from game.models import ItemTypes
 from game.models.birds.buildings import BirdRoost
 from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.queries.birds.crafting import validate_crafting_pieces_satisfy_requirements
@@ -13,9 +14,10 @@ from game.models.game_models import (
     CraftedItemEntry,
 )
 from game.transactions.general import craft_card
-
+from game.errors import UnavailableActionError, IllegalActionError, InternalGameError
 
 from game.models.birds.player import BirdLeader
+
 
 class CraftingLogicTests(TestCase):
     def setUp(self):
@@ -24,7 +26,9 @@ class CraftingLogicTests(TestCase):
         self.player = Player.objects.create(
             game=self.game, faction=Faction.BIRDS, user=self.user
         )
-        BirdLeader.objects.create(player=self.player, leader=BirdLeader.BirdLeaders.DESPOT.value, active=True)
+        BirdLeader.objects.create(
+            player=self.player, leader=BirdLeader.BirdLeaders.DESPOT.value, active=True
+        )
         self.fox_clearing = Clearing.objects.create(
             game=self.game, suit=Suit.RED, clearing_number=1
         )  # RED=FOX
@@ -72,7 +76,8 @@ class CraftingLogicTests(TestCase):
         card = CardsEP.EYRIE_EMIGRE
         roosts = [roost_red, roost_red]  # Duplicate!
 
-        with self.assertRaises(ValueError):
+        from game.errors import IllegalActionError
+        with self.assertRaises(IllegalActionError):
             validate_crafting_pieces_satisfy_requirements(self.player, card, roosts)
 
     def test_cannot_craft_duplicate_card(self):
@@ -85,14 +90,13 @@ class CraftingLogicTests(TestCase):
         card_in_hand = Card.objects.create(game=self.game, card_type=card_type.name)
         hand_entry = HandEntry.objects.create(player=self.player, card=card_in_hand)
 
-        with self.assertRaises(ValueError) as cm:
+        with self.assertRaises(IllegalActionError):
             craft_card(hand_entry, [])
-        self.assertEqual(str(cm.exception), "player already has this card type crafted")
 
     def test_can_craft_duplicate_item_if_in_pool(self):
         # Player can craft an item if they already have that same item, provided it is in the pool.
         card_type = CardsEP.TRAVEL_GEAR_RED  # One of the boot cards
-        item_type = Item.ItemTypes.BOOTS
+        item_type = ItemTypes.BOOTS
 
         # Player already has a boot
         boot_item1 = Item.objects.create(game=self.game, item_type=item_type)
@@ -116,12 +120,86 @@ class CraftingLogicTests(TestCase):
     def test_cannot_craft_item_if_not_in_pool(self):
         # A player cannot craft an item that is no longer in the pool.
         card_type = CardsEP.FOXFOLK_STEEL
-        item_type = Item.ItemTypes.SWORD
+        item_type = ItemTypes.SWORD
 
         # Sword is NOT in the pool (CraftableItemEntry)
         card_in_hand = Card.objects.create(game=self.game, card_type=card_type.name)
         hand_entry = HandEntry.objects.create(player=self.player, card=card_in_hand)
 
-        with self.assertRaises(ValueError) as cm:
+        with self.assertRaises(IllegalActionError):
             craft_card(hand_entry, [])
-        self.assertEqual(str(cm.exception), "item is not in the craftable pool")
+
+    def test_craftable_item_removed_from_pool_after_crafting(self):
+        # When a player crafts an item, it should be removed from the pool.
+        # Start with 2 boots in the pool, craft 1, expect 1 remaining.
+        card_type = CardsEP.TRAVEL_GEAR_RED
+        item_type = ItemTypes.BOOTS
+
+        # Create 2 boots in the pool
+        boot1 = Item.objects.create(game=self.game, item_type=item_type)
+        boot2 = Item.objects.create(game=self.game, item_type=item_type)
+        CraftableItemEntry.objects.create(game=self.game, item=boot1)
+        CraftableItemEntry.objects.create(game=self.game, item=boot2)
+
+        # Verify 2 are in pool initially
+        self.assertEqual(
+            CraftableItemEntry.objects.filter(game=self.game, item__item_type=item_type).count(),
+            2,
+        )
+
+        # Craft the card
+        card_in_hand = Card.objects.create(game=self.game, card_type=card_type.name)
+        hand_entry = HandEntry.objects.create(player=self.player, card=card_in_hand)
+        craft_card(hand_entry, [])
+
+        # Verify only 1 is in pool after crafting
+        self.assertEqual(
+            CraftableItemEntry.objects.filter(game=self.game, item__item_type=item_type).count(),
+            1,
+        )
+
+        # Verify the player now has 1 crafted boot
+        self.assertEqual(
+            CraftedItemEntry.objects.filter(player=self.player, item__item_type=item_type).count(),
+            1,
+        )
+
+    def test_can_craft_second_duplicate_item_after_first_removed_from_pool(self):
+        # After crafting the first boot from the pool, a player should be able to craft a second
+        # boot if there's another one available in the pool.
+        card_type = CardsEP.TRAVEL_GEAR_RED
+        item_type = ItemTypes.BOOTS
+
+        # Create 2 boots in the pool
+        boot1 = Item.objects.create(game=self.game, item_type=item_type)
+        boot2 = Item.objects.create(game=self.game, item_type=item_type)
+        CraftableItemEntry.objects.create(game=self.game, item=boot1)
+        CraftableItemEntry.objects.create(game=self.game, item=boot2)
+
+        # Craft first boot
+        card1 = Card.objects.create(game=self.game, card_type=card_type.name)
+        hand_entry1 = HandEntry.objects.create(player=self.player, card=card1)
+        craft_card(hand_entry1, [])
+
+        # Verify 1 boot is left in pool
+        self.assertEqual(
+            CraftableItemEntry.objects.filter(game=self.game, item__item_type=item_type).count(),
+            1,
+        )
+
+        # Craft second boot
+        card2 = Card.objects.create(game=self.game, card_type=card_type.name)
+        hand_entry2 = HandEntry.objects.create(player=self.player, card=card2)
+        craft_card(hand_entry2, [])
+
+        # Verify 0 boots are left in pool
+        self.assertEqual(
+            CraftableItemEntry.objects.filter(game=self.game, item__item_type=item_type).count(),
+            0,
+        )
+
+        # Verify the player now has 2 crafted boots
+        self.assertEqual(
+            CraftedItemEntry.objects.filter(player=self.player, item__item_type=item_type).count(),
+            2,
+        )

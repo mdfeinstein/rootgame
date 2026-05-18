@@ -1777,6 +1777,796 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/moles/daylight/actions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_actions_retrieve"];
+        put?: never;
+        post: operations["moles_daylight_actions_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/actions/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_actions_retrieve_2"];
+        put?: never;
+        post: operations["moles_daylight_actions_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/actions/battle/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_actions_battle_retrieve"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_actions_battle_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/actions/battle/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_actions_battle_retrieve_2"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_actions_battle_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/actions/build/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_actions_build_retrieve"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_actions_build_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/actions/build/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_actions_build_retrieve_2"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_actions_build_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/actions/dig/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_actions_dig_retrieve"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_actions_dig_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/actions/dig/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_actions_dig_retrieve_2"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_actions_dig_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/actions/move/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_actions_move_retrieve"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_actions_move_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/actions/move/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_actions_move_retrieve_2"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_actions_move_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/actions/recruit/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_actions_recruit_retrieve"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_actions_recruit_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/actions/recruit/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_actions_recruit_retrieve_2"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_actions_recruit_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_retrieve"];
+        put?: never;
+        post: operations["moles_daylight_minister_actions_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_retrieve_2"];
+        put?: never;
+        post: operations["moles_daylight_minister_actions_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/banker/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_banker_retrieve"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_banker_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/banker/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_banker_retrieve_2"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_banker_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/baron/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_baron_retrieve"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_baron_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/baron/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_baron_retrieve_2"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_baron_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/brigadier/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_brigadier_retrieve"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_brigadier_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/brigadier/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_brigadier_retrieve_2"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_brigadier_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/captain/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_captain_retrieve"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_captain_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/captain/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_captain_retrieve_2"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_captain_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/duchess/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_duchess_retrieve"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_duchess_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/duchess/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_duchess_retrieve_2"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_duchess_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/earl/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_earl_retrieve"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_earl_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/earl/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_earl_retrieve_2"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_earl_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/foremole/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_foremole_retrieve"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_foremole_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/foremole/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_foremole_retrieve_2"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_foremole_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/marshal/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_marshal_retrieve"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_marshal_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/marshal/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_marshal_retrieve_2"];
+        put?: never;
+        /** @description Base class for sub-action views that delegate to parent validators. */
+        post: operations["moles_daylight_minister_actions_marshal_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/mayor/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_mayor_retrieve"];
+        put?: never;
+        post: operations["moles_daylight_minister_actions_mayor_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/minister-actions/mayor/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_minister_actions_mayor_retrieve_2"];
+        put?: never;
+        post: operations["moles_daylight_minister_actions_mayor_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/sway-minister/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_sway_minister_retrieve"];
+        put?: never;
+        post: operations["moles_daylight_sway_minister_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/daylight/sway-minister/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_daylight_sway_minister_retrieve_2"];
+        put?: never;
+        post: operations["moles_daylight_sway_minister_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/evening/craft/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_evening_craft_retrieve"];
+        put?: never;
+        post: operations["moles_evening_craft_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/evening/craft/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_evening_craft_retrieve_2"];
+        put?: never;
+        post: operations["moles_evening_craft_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/evening/discard/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_evening_discard_retrieve"];
+        put?: never;
+        post: operations["moles_evening_discard_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/evening/discard/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_evening_discard_retrieve_2"];
+        put?: never;
+        post: operations["moles_evening_discard_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/player-info/{game_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["moles_player_info_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/price-of-failure/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_price_of_failure_retrieve"];
+        put?: never;
+        post: operations["moles_price_of_failure_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/price-of-failure/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_price_of_failure_retrieve_2"];
+        put?: never;
+        post: operations["moles_price_of_failure_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/setup/confirm-completed-setup/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_setup_confirm_completed_setup_retrieve"];
+        put?: never;
+        post: operations["moles_setup_confirm_completed_setup_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/setup/confirm-completed-setup/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_setup_confirm_completed_setup_retrieve_2"];
+        put?: never;
+        post: operations["moles_setup_confirm_completed_setup_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/setup/pick-corner/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_setup_pick_corner_retrieve"];
+        put?: never;
+        post: operations["moles_setup_pick_corner_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/moles/setup/pick-corner/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["moles_setup_pick_corner_retrieve_2"];
+        put?: never;
+        post: operations["moles_setup_pick_corner_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/outrage/": {
         parameters: {
             query?: never;
@@ -2244,6 +3034,25 @@ export interface components {
                 label: "Bag" | "Boots" | "Coin" | "Crossbow" | "Hammer" | "Sword" | "Tea";
             };
         };
+        CraftedItemEntry: {
+            readonly id: number;
+            item: {
+                /**
+                 * @description * `0` - 0
+                 *     * `1` - 1
+                 *     * `2` - 2
+                 *     * `3` - 3
+                 *     * `4` - 4
+                 *     * `5` - 5
+                 *     * `6` - 6
+                 * @enum {string}
+                 */
+                value: "0" | "1" | "2" | "3" | "4" | "5" | "6";
+                /** @enum {string} */
+                label: "Bag" | "Boots" | "Coin" | "Crossbow" | "Hammer" | "Sword" | "Tea";
+            };
+            exhausted: boolean;
+        };
         /** @description Serializer to provide all (public) information about crows */
         Crows: {
             player: components["schemas"]["PlayerPublic"];
@@ -2276,11 +3085,12 @@ export interface components {
                  *     * `bi` - bi
                  *     * `wa` - wa
                  *     * `cr` - cr
+                 *     * `mo` - mo
                  * @enum {string}
                  */
-                value: "ca" | "bi" | "wa" | "cr";
+                value: "ca" | "bi" | "wa" | "cr" | "mo";
                 /** @enum {string} */
-                label: "Birds" | "Cats" | "Crows" | "Woodland Alliance";
+                label: "Birds" | "Cats" | "Crows" | "Moles" | "Woodland Alliance";
             };
             chosen?: boolean;
         };
@@ -2291,11 +3101,12 @@ export interface components {
                  *     * `bi` - bi
                  *     * `wa` - wa
                  *     * `cr` - cr
+                 *     * `mo` - mo
                  * @enum {string}
                  */
-                value: "ca" | "bi" | "wa" | "cr";
+                value: "ca" | "bi" | "wa" | "cr" | "mo";
                 /** @enum {string} */
-                label: "Birds" | "Cats" | "Crows" | "Woodland Alliance";
+                label: "Birds" | "Cats" | "Crows" | "Moles" | "Woodland Alliance";
             };
             name: string;
             prompt?: string;
@@ -2303,6 +3114,7 @@ export interface components {
             payload_details?: components["schemas"]["PayloadEntry"][];
             accumulated_payload?: unknown;
             options?: components["schemas"]["Option"][];
+            new_base_endpoint?: string | null;
         };
         GameLog: {
             readonly id: number;
@@ -2358,12 +3170,13 @@ export interface components {
                  *     * `WA` - WA
                  *     * `VB` - VB
                  *     * `CROW` - CROW
+                 *     * `MOL` - MOL
                  *     * `COMP` - COMP
                  * @enum {string}
                  */
-                value: "INIT" | "CAT" | "BIRD" | "WA" | "VB" | "CROW" | "COMP";
+                value: "INIT" | "CAT" | "BIRD" | "WA" | "VB" | "CROW" | "MOL" | "COMP";
                 /** @enum {string} */
-                label: "Birds Setup" | "Cats Setup" | "Completed" | "Crows Setup" | "Initial Setup" | "Vagabond Setup" | "Woodland Alliance Setup";
+                label: "Birds Setup" | "Cats Setup" | "Completed" | "Crows Setup" | "Initial Setup" | "Moles Setup" | "Vagabond Setup" | "Woodland Alliance Setup";
             };
             current_turn_player?: string;
         };
@@ -2391,21 +3204,102 @@ export interface components {
          *     * `CRAFT` - Craft
          *     * `DRAW` - Draw
          *     * `DISCARD` - Discard
+         *     * `AMBUSH` - Ambush
+         *     * `DICE_ROLL` - Dice Roll
+         *     * `PIECE_REMOVAL` - Piece Removal
          *     * `CATS_BIRDS_FOR_HIRE` - Cats Birds for Hire
          *     * `CATS_MARCH` - Cats March
          *     * `CATS_WOOD_PLACEMENT` - Cats Wood Placement
          *     * `CATS_BUILD` - Cats Build
          *     * `CATS_OVERWORK` - Cats Overwork
          *     * `CATS_RECRUIT` - Cats Recruit
+         *     * `CATS_SETUP_PICK_CORNER` - Cats Setup Pick Corner
+         *     * `CATS_SETUP_PLACE_BUILDING` - Cats Setup Place Building
          *     * `BIRDS_ADD_TO_DECREE` - Birds Add To Decree
          *     * `BIRDS_EMERGENCY_ROOST` - Birds Emergency Roost
          *     * `BIRDS_DECREE_ACTION` - Birds Decree Action
          *     * `BIRDS_SCORE_ROOSTS` - Birds Score Roosts
          *     * `BIRDS_TURMOIL` - Birds Turmoil
          *     * `BIRDS_NEW_LEADER` - Birds New Leader
+         *     * `BIRDS_SETUP_PICK_CORNER` - Birds Setup Pick Corner
+         *     * `BIRDS_SETUP_CHOOSE_LEADER` - Birds Setup Choose Leader
+         *     * `WA_REVOLT` - Woodland Revolt
+         *     * `WA_SPREAD_SYMPATHY` - Woodland Spread Sympathy
+         *     * `WA_MOBILIZE` - Woodland Mobilize
+         *     * `WA_TRAIN` - Woodland Train
+         *     * `WA_ORGANIZE` - Woodland Organize
+         *     * `WA_MILITARY_OPERATION` - Woodland Military Operation
+         *     * `WA_OUTRAGE` - Woodland Outrage
+         *     * `WA_BASE_REMOVED` - Woodland Base Removed
+         *     * `WA_OFFICERS_LOST` - Woodland Officers Lost
+         *     * `WA_SUPPORTERS_LOST` - Woodland Supporters Lost
+         *     * `CROWS_PLOT` - Crows Plot
+         *     * `CROWS_FLIP` - Crows Flip
+         *     * `CROWS_RECRUIT` - Crows Recruit
+         *     * `CROWS_TRICK` - Crows Trick
+         *     * `CROWS_EXPOSURE` - Crows Exposure
+         *     * `CROWS_RAID` - Crows Raid
+         *     * `CROWS_SETUP_PLACE_WARRIOR` - Crows Setup Place Warrior
+         *     * `CROWS_EXTORTION_STOLE_CARD` - Crows Extortion Stole Card
+         *     * `MOLES_SETUP_PICK_CORNER` - Moles Setup Pick Corner
+         *     * `CATS_FIELD_HOSPITALS` - Field Hospitals
+         *     * `CRAFTED_CARD_ACTION` - Crafted Card Action
          * @enum {string}
          */
-        LogTypeEnum: "TURN" | "PHASE" | "MOVE" | "BATTLE" | "CRAFT" | "DRAW" | "DISCARD" | "CATS_BIRDS_FOR_HIRE" | "CATS_MARCH" | "CATS_WOOD_PLACEMENT" | "CATS_BUILD" | "CATS_OVERWORK" | "CATS_RECRUIT" | "BIRDS_ADD_TO_DECREE" | "BIRDS_EMERGENCY_ROOST" | "BIRDS_DECREE_ACTION" | "BIRDS_SCORE_ROOSTS" | "BIRDS_TURMOIL" | "BIRDS_NEW_LEADER";
+        LogTypeEnum: "TURN" | "PHASE" | "MOVE" | "BATTLE" | "CRAFT" | "DRAW" | "DISCARD" | "AMBUSH" | "DICE_ROLL" | "PIECE_REMOVAL" | "CATS_BIRDS_FOR_HIRE" | "CATS_MARCH" | "CATS_WOOD_PLACEMENT" | "CATS_BUILD" | "CATS_OVERWORK" | "CATS_RECRUIT" | "CATS_SETUP_PICK_CORNER" | "CATS_SETUP_PLACE_BUILDING" | "BIRDS_ADD_TO_DECREE" | "BIRDS_EMERGENCY_ROOST" | "BIRDS_DECREE_ACTION" | "BIRDS_SCORE_ROOSTS" | "BIRDS_TURMOIL" | "BIRDS_NEW_LEADER" | "BIRDS_SETUP_PICK_CORNER" | "BIRDS_SETUP_CHOOSE_LEADER" | "WA_REVOLT" | "WA_SPREAD_SYMPATHY" | "WA_MOBILIZE" | "WA_TRAIN" | "WA_ORGANIZE" | "WA_MILITARY_OPERATION" | "WA_OUTRAGE" | "WA_BASE_REMOVED" | "WA_OFFICERS_LOST" | "WA_SUPPORTERS_LOST" | "CROWS_PLOT" | "CROWS_FLIP" | "CROWS_RECRUIT" | "CROWS_TRICK" | "CROWS_EXPOSURE" | "CROWS_RAID" | "CROWS_SETUP_PLACE_WARRIOR" | "CROWS_EXTORTION_STOLE_CARD" | "MOLES_SETUP_PICK_CORNER" | "CATS_FIELD_HOSPITALS" | "CRAFTED_CARD_ACTION";
+        /** @description Serializer to provide all (public) information about moles */
+        Moles: {
+            player: components["schemas"]["PlayerPublic"];
+            warriors: components["schemas"]["Warrior"][];
+            buildings: components["schemas"]["MolesBuildings"];
+            tokens: components["schemas"]["MolesTokens"];
+            ministers: components["schemas"]["MolesMinister"][];
+            crowns: components["schemas"]["MolesCrown"][];
+            readonly burrow_warriors: string;
+        };
+        /** @description Serializer for moles buildings. collects lists of all buildings */
+        MolesBuildings: {
+            citadels: components["schemas"]["MolesCitadel"][];
+            markets: components["schemas"]["MolesMarket"][];
+        };
+        MolesCitadel: {
+            building: components["schemas"]["Building"];
+            crafted_with?: boolean;
+        };
+        MolesCrown: {
+            readonly id: number;
+            type?: components["schemas"]["TypeEnum"];
+            used?: boolean;
+        };
+        MolesMarket: {
+            building: components["schemas"]["Building"];
+            crafted_with?: boolean;
+        };
+        MolesMinister: {
+            readonly id: number;
+            name: components["schemas"]["NameEnum"];
+            swayed?: boolean;
+            used?: boolean;
+            /** @description Returns the crown type (rank) for this minister. */
+            readonly crown_type: string;
+        };
+        /** @description Serializer for moles tokens. collects lists of all tokens */
+        MolesTokens: {
+            tunnels: components["schemas"]["NestedToken"][];
+        };
+        /**
+         * @description * `marshal` - Marshal
+         *     * `captain` - Captain
+         *     * `foremole` - Foremole
+         *     * `brigadier` - Brigadier
+         *     * `mayor` - Mayor
+         *     * `banker` - Banker
+         *     * `duchess` - Duchess of Mud
+         *     * `earl` - Earl of Stone
+         *     * `baron` - Baron of Dirt
+         * @enum {string}
+         */
+        NameEnum: "marshal" | "captain" | "foremole" | "brigadier" | "mayor" | "banker" | "duchess" | "earl" | "baron";
         NestedToken: {
             token: components["schemas"]["Token"];
         };
@@ -2427,16 +3321,18 @@ export interface components {
                  *     * `bi` - bi
                  *     * `wa` - wa
                  *     * `cr` - cr
+                 *     * `mo` - mo
                  * @enum {string}
                  */
-                value: "ca" | "bi" | "wa" | "cr";
+                value: "ca" | "bi" | "wa" | "cr" | "mo";
                 /** @enum {string} */
-                label: "Birds" | "Cats" | "Crows" | "Woodland Alliance";
+                label: "Birds" | "Cats" | "Crows" | "Moles" | "Woodland Alliance";
             };
             score: number;
             turn_order: number;
             readonly card_count: number;
             readonly active_dominance: string;
+            readonly crafted_items: components["schemas"]["CraftedItemEntry"][];
         };
         Recruiter: {
             building: components["schemas"]["Building"];
@@ -2451,11 +3347,12 @@ export interface components {
                  *     * `bi` - bi
                  *     * `wa` - wa
                  *     * `cr` - cr
+                 *     * `mo` - mo
                  * @enum {string}
                  */
-                value: "ca" | "bi" | "wa" | "cr";
+                value: "ca" | "bi" | "wa" | "cr" | "mo";
                 /** @enum {string} */
-                label: "Birds" | "Cats" | "Crows" | "Woodland Alliance";
+                label: "Birds" | "Cats" | "Crows" | "Moles" | "Woodland Alliance";
             };
             event_type: string;
             turns_ago: number;
@@ -2482,6 +3379,13 @@ export interface components {
             readonly access: string;
             refresh: string;
         };
+        /**
+         * @description * `squire` - Squire
+         *     * `noble` - Noble
+         *     * `lord` - Lord
+         * @enum {string}
+         */
+        TypeEnum: "squire" | "noble" | "lord";
         UndoResponse: {
             status: string;
         };
@@ -7035,6 +7939,2147 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    moles_daylight_actions_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_actions_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_actions_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_actions_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_actions_battle_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_actions_battle_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_actions_battle_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_actions_battle_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_actions_build_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_actions_build_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_actions_build_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_actions_build_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_actions_dig_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_actions_dig_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_actions_dig_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_actions_dig_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_actions_move_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_actions_move_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_actions_move_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_actions_move_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_actions_recruit_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_actions_recruit_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_actions_recruit_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_actions_recruit_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_banker_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_banker_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_banker_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_banker_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_baron_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_baron_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_baron_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_baron_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_brigadier_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_brigadier_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_brigadier_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_brigadier_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_captain_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_captain_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_captain_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_captain_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_duchess_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_duchess_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_duchess_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_duchess_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_earl_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_earl_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_earl_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_earl_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_foremole_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_foremole_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_foremole_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_foremole_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_marshal_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_marshal_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_marshal_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_marshal_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_mayor_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_mayor_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_minister_actions_mayor_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_minister_actions_mayor_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_sway_minister_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_sway_minister_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_daylight_sway_minister_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_daylight_sway_minister_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_evening_craft_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_evening_craft_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_evening_craft_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_evening_craft_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_evening_discard_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_evening_discard_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_evening_discard_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_evening_discard_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_player_info_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Moles"];
+                };
+            };
+        };
+    };
+    moles_price_of_failure_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_price_of_failure_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_price_of_failure_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_price_of_failure_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_setup_confirm_completed_setup_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    moles_setup_confirm_completed_setup_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_setup_confirm_completed_setup_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    moles_setup_confirm_completed_setup_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_setup_pick_corner_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_setup_pick_corner_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    moles_setup_pick_corner_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moles_setup_pick_corner_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
             };
         };
     };

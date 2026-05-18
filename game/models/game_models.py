@@ -3,30 +3,8 @@ from django.db import models
 
 # from django.contrib.auth.models import User
 
+from game.models.enums import Faction, Suit, DayPhase, ItemTypes
 from game.game_data.cards.exiles_and_partisans import CardsEP
-from game.game_data.general.game_enums import ItemTypes
-
-# from game.game_data.general.game_enums import Suit as SuitEnum
-
-
-class Faction(models.TextChoices):
-    CATS = "ca", "Cats"
-    BIRDS = "bi", "Birds"
-    WOODLAND_ALLIANCE = "wa", "Woodland Alliance"
-    CROWS = "cr", "Crows"
-
-
-class Suit(models.TextChoices):
-    RED = "r", "Fox"
-    YELLOW = "y", "Rabbit"
-    ORANGE = "o", "Mouse"
-    WILD = "b", "Bird"
-
-
-class DayPhase(models.TextChoices):
-    BIRDSONG = "0", "Birdsong"
-    DAYLIGHT = "1", "Daylight"
-    EVENING = "2", "Evening"
 
 
 class Game(models.Model):
@@ -346,15 +324,6 @@ class Player(models.Model):
 
 
 class Item(models.Model):
-    class ItemTypes(models.TextChoices):
-        BOOTS = "0", "Boots"
-        BAG = "1", "Bag"
-        CROSSBOW = "2", "Crossbow"
-        HAMMER = "3", "Hammer"
-        SWORD = "4", "Sword"
-        TEA = "5", "Tea"
-        COIN = "6", "Coin"
-
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     item_type = models.CharField(
         max_length=1,
@@ -396,3 +365,52 @@ class CraftedCardEntry(models.Model):
 class HandEntry(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
+
+
+class RevealedCardEntry(models.Model):
+    """
+    Represents a card that has been revealed/removed from a player's hand.
+    Used by factions (e.g., Moles) that reveal cards from hand for various effects.
+    The card is effectively out of play until it's either returned to hand or discarded.
+    """
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    card = models.ForeignKey(Card, on_delete=models.CASCADE)
+    turn_revealed = models.IntegerField(default=0)
+    returned_to_hand = models.BooleanField(default=False)
+    turn_revealed = models.IntegerField(default=0)
+    returned_to_hand = models.BooleanField(default=False)
+
+    @classmethod
+    def hand_to_revealed(cls, hand_entry: HandEntry) -> "RevealedCardEntry":
+        """Convert a HandEntry to a RevealedCardEntry, deleting the hand entry."""
+        from game.queries.general import get_current_turn_number
+
+        card = hand_entry.card
+        player = hand_entry.player
+        turn_number = get_current_turn_number(player.game)
+        hand_entry.delete()
+        return cls.objects.create(
+            player=player,
+            card=card,
+            turn_revealed=turn_number
+        )
+
+    def revealed_to_hand(self) -> HandEntry:
+        """Convert a RevealedCardEntry back to a HandEntry, marking as returned instead of deleting."""
+        if self.returned_to_hand:
+            raise ValueError(
+                f"RevealedCardEntry {self.pk} is already marked as returned."
+            )
+        card = self.card
+        player = self.player
+        self.returned_to_hand = True
+        self.save(update_fields=["returned_to_hand"])
+        return HandEntry.objects.create(player=player, card=card)
+
+    def revealed_to_discard(self) -> DiscardPileEntry:
+        """Convert a RevealedCardEntry to a DiscardPileEntry, deleting the revealed entry."""
+        card = self.card
+        game = self.player.game
+        self.delete()
+        spot = DiscardPileEntry.objects.filter(game=game).count()
+        return DiscardPileEntry.objects.create(game=game, card=card, spot=spot)
