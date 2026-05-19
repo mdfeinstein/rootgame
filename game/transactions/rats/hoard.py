@@ -1,0 +1,97 @@
+from django.db import transaction
+
+from game.errors import IllegalActionError, UnavailableActionError
+from game.models.enums import ItemTypes
+from game.models.events.rats import HoardTooFullEvent
+from game.models.game_models import Item, Player
+from game.models.rats.player import CommandItemEntry, ProwessItemEntry
+
+
+
+_COMMAND_ITEMS: set[str] = {ItemTypes.BOOTS, ItemTypes.BAG, ItemTypes.COIN}
+_PROWESS_ITEMS: set[str] = {
+    ItemTypes.HAMMER,
+    ItemTypes.TEA,
+    ItemTypes.SWORD,
+    ItemTypes.CROSSBOW,
+}
+
+
+@transaction.atomic
+def add_item_to_hoard(player: Player, item: Item) -> None:
+    """Add a single item to either the Command or Prowess track in the hoard.
+
+    If the track exceeds 4 items after adding, a HoardTooFullEvent is created
+    and the player must call discard_hoard_item to resolve it.
+    """
+    if item.item_type in _COMMAND_ITEMS:
+        CommandItemEntry.objects.create(player=player, item=item)
+        if CommandItemEntry.objects.filter(player=player).count() > 4:
+            HoardTooFullEvent.create(player, HoardTooFullEvent.Track.COMMAND)
+    elif item.item_type in _PROWESS_ITEMS:
+        ProwessItemEntry.objects.create(player=player, item=item)
+        if ProwessItemEntry.objects.filter(player=player).count() > 4:
+            HoardTooFullEvent.create(player, HoardTooFullEvent.Track.PROWESS)
+    # Items with types outside both sets are silently ignored (future-proofing)
+
+
+def _track_for_item(item: Item) -> HoardTooFullEvent.Track:
+    """Return which hoard track the item belongs to, raising if it is not a hoard item."""
+    if item.item_type in _COMMAND_ITEMS:
+        return HoardTooFullEvent.Track.COMMAND
+    if item.item_type in _PROWESS_ITEMS:
+        return HoardTooFullEvent.Track.PROWESS
+    raise IllegalActionError(
+        f"Item type '{item.item_type}' does not belong to either hoard track"
+    )
+
+
+@transaction.atomic
+def discard_hoard_item(player: Player, item: Item) -> None:
+    """Player discards one item from an overfull hoard track.
+
+    Validates that there is an unresolved HoardTooFullEvent for the track
+    corresponding to *item*'s type.  Removes the item from the hoard (and the
+    game entirely), scores the player 1 VP, and resolves the event.
+
+    Raises:
+        IllegalActionError: if the item does not belong to a hoard track, or
+            is not currently on the expected track for this player.
+        UnavailableActionError: if there is no unresolved HoardTooFullEvent for
+            the relevant track.
+    """
+    track = _track_for_item(item)
+
+    # Validate there is an unresolved HoardTooFull event for this track
+    hoard_event = HoardTooFullEvent.objects.filter(
+        player=player,
+        track=track,
+        event__is_resolved=False,
+    ).first()
+    if hoard_event is None:
+        raise UnavailableActionError(
+            f"No unresolved HoardTooFull event for the {track} track"
+        )
+
+    # Validate the item is actually on this player's track
+    if track == HoardTooFullEvent.Track.COMMAND:
+        entry = CommandItemEntry.objects.filter(player=player, item=item).first()
+        if entry is None:
+            raise IllegalActionError("Item is not on this player's Command track")
+        entry.delete()
+    else:
+        entry = ProwessItemEntry.objects.filter(player=player, item=item).first()
+        if entry is None:
+            raise IllegalActionError("Item is not on this player's Prowess track")
+        entry.delete()
+
+    # Remove the item from the game entirely
+    item.delete()
+
+    # Score 1 VP for the discard
+    from game.transactions.general import raise_score
+    raise_score(player, 1)
+
+    # Resolve the event
+    hoard_event.event.is_resolved = True
+    hoard_event.event.save()

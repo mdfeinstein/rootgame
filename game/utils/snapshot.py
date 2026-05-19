@@ -74,6 +74,7 @@ from game.models.events.crafted_cards import (
 )
 from game.models.events.crows import CrowRecruitEvent, CrowRaidEvent
 from game.models.events.moles import PriceOfFailureEvent
+from game.models.events.rats import HoardTooFullEvent
 from game.models.removal_tracker import RemovalEventTracker
 from game.models.game_log import GameLog
 
@@ -252,6 +253,7 @@ def get_all_game_objects(game: Game):
     objects.extend(CrowRecruitEvent.objects.filter(event__in=events))
     objects.extend(CrowRaidEvent.objects.filter(event__in=events))
     objects.extend(PriceOfFailureEvent.objects.filter(event__in=events))
+    objects.extend(HoardTooFullEvent.objects.filter(event__in=events))
 
     # 6. Game Logs
     objects.extend(GameLog.objects.filter(game=game).order_by("created_at"))

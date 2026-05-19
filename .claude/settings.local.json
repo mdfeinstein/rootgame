@@ -138,7 +138,11 @@
       "Bash(F:/python/envs/.venv_web/Scripts/python.exe manage.py check game)",
       "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_setup)",
       "Bash(Get-Content test_output.txt)",
-      "PowerShell(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_setup 2>&1)"
+      "PowerShell(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_setup 2>&1)",
+      "WebFetch(domain:www.therootdatabase.com)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_birdsong)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_hoard)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats)"
     ]
   },
   "enabledPlugins": {

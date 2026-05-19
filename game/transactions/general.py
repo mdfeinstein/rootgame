@@ -318,9 +318,9 @@ def create_turn(player: Player):
 
         create_moles_turn(player)
     elif player.faction == Faction.RATS:
-        from game.models.rats.turn import RatsTurn
+        from game.transactions.rats import create_rats_turn
 
-        RatsTurn.create_turn(player)
+        create_rats_turn(player)
     else:
         raise InternalGameError(
             f"Faction {player.faction} not supported for turn creation"
@@ -400,6 +400,10 @@ def next_step(player: Player):
             from game.transactions.moles import next_step
 
             next_step(player)
+        case Faction.RATS:
+            from game.transactions.rats import next_step
+
+            next_step(player)
 
 
 @transaction.atomic
@@ -425,5 +429,9 @@ def step_effect(player: Player):
 
         case Faction.MOLES:
             from game.transactions.moles import step_effect
+
+            step_effect(player)
+        case Faction.RATS:
+            from game.transactions.rats import step_effect
 
             step_effect(player)

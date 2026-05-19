@@ -1,5 +1,6 @@
 from django.db import models
 from game.models.game_models import Player
+from game.models.enums import Suit
 
 
 class RatsTurn(models.Model):
@@ -33,6 +34,13 @@ class RatsBirdsong(models.Model):
         max_length=1,
         choices=Steps.choices,
         default=Steps.NOT_STARTED,
+    )
+    mob_die_suit = models.CharField(
+        max_length=1,
+        choices=Suit.choices,
+        null=True,
+        blank=True,
+        default=None,
     )
 
 
