@@ -225,8 +225,14 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
         ).first()
         assert item_from_pool is not None, "item not in pool"
         item = item_from_pool.item
-        CraftedItemEntry(player=card_in_hand.player, item=item).save()
-        item_from_pool.delete()
+        if card_in_hand.player.faction == Faction.RATS:
+            from game.transactions.rats.hoard import add_item_to_hoard
+
+            item_from_pool.delete()
+            add_item_to_hoard(card_in_hand.player, item)
+        else:
+            CraftedItemEntry(player=card_in_hand.player, item=item).save()
+            item_from_pool.delete()
         try:
             master_engravers_card = validate_player_has_crafted_card(
                 card_in_hand.player, CardsEP.MASTER_ENGRAVERS
