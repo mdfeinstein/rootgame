@@ -181,7 +181,7 @@ def autumn_map_setup(game: Game):
         # this doesnt allow for more than one ruin per clearing
         # which is fine for all official maps
         building_slot = BuildingSlot.objects.filter(clearing=clearing).last()
-        item = Item(game=game, item_type=ruin_item_types[0])
+        item = Item(game=game, item_type=ruin_item_types[i])
         item.save()
         ruin = Ruin(game=game, building_slot=building_slot, item=item)
         ruin.save()

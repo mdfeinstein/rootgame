@@ -49,4 +49,9 @@ __all__ = [
     "CommandItemEntry",
     "CurrentMood",
     "ProwessItemEntry",
+    "RatsSimpleSetup",
+    "RatsTurn",
+    "RatsBirdsong",
+    "RatsDaylight",
+    "RatsEvening",
 ]

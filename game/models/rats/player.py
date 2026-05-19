@@ -28,7 +28,7 @@ class CommandItemEntry(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                condition=models.Q(
+                check=models.Q(
                     item__item_type__in=[
                         ItemTypes.BOOTS,
                         ItemTypes.BAG,
@@ -49,7 +49,7 @@ class ProwessItemEntry(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                condition=models.Q(
+                check=models.Q(
                     item__item_type__in=[
                         ItemTypes.HAMMER,
                         ItemTypes.SWORD,
