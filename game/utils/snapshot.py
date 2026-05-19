@@ -50,6 +50,12 @@ from game.models.moles.ministers import Minister
 from game.models.moles.turn import MoleTurn, MoleBirdsong, MoleDaylight, MoleEvening
 from game.models.moles.setup import MolesSimpleSetup
 
+from game.models.rats.setup import RatsSimpleSetup
+from game.models.rats.player import CurrentMood, CommandItemEntry, ProwessItemEntry
+from game.models.rats.buildings import Stronghold
+from game.models.rats.tokens import Mob, Warlord
+from game.models.rats.turn import RatsTurn, RatsBirdsong, RatsDaylight, RatsEvening
+
 from game.models.events.event import Event
 from game.models.events.battle import Battle
 from game.models.events.wa import OutrageEvent
@@ -122,6 +128,7 @@ def get_all_game_objects(game: Game):
         objects.extend(BirdsSimpleSetup.objects.filter(player=player))
         objects.extend(CrowsSimpleSetup.objects.filter(player=player))
         objects.extend(MolesSimpleSetup.objects.filter(player=player))
+        objects.extend(RatsSimpleSetup.objects.filter(player=player))
 
         # Pieces (Warriors, Buildings, Tokens)
         # For MTI (Multi-Table Inheritance), we MUST serialize the base models as well
@@ -205,6 +212,21 @@ def get_all_game_objects(game: Game):
         objects.extend(MoleBirdsong.objects.filter(turn__in=mole_turns))
         objects.extend(MoleDaylight.objects.filter(turn__in=mole_turns))
         objects.extend(MoleEvening.objects.filter(turn__in=mole_turns))
+
+        # Rats
+        objects.extend(CurrentMood.objects.filter(player=player))
+        objects.extend(CommandItemEntry.objects.filter(player=player))
+        objects.extend(ProwessItemEntry.objects.filter(player=player))
+        objects.extend(Stronghold.objects.filter(player=player))
+        objects.extend(Mob.objects.filter(player=player))
+        objects.extend(Warlord.objects.filter(player=player))
+
+        # Rats Turn History / State
+        rats_turns = RatsTurn.objects.filter(player=player)
+        objects.extend(rats_turns)
+        objects.extend(RatsBirdsong.objects.filter(turn__in=rats_turns))
+        objects.extend(RatsDaylight.objects.filter(turn__in=rats_turns))
+        objects.extend(RatsEvening.objects.filter(turn__in=rats_turns))
 
 
     # 4. Removal Tracker (depends on Game)

@@ -134,7 +134,11 @@
       "PowerShell(&\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" pr list --state open)",
       "Skill(openapi)",
       "Skill(openapi:*)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(F:/python/envs/.venv_web/Scripts/python.exe manage.py check game)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_setup)",
+      "Bash(Get-Content test_output.txt)",
+      "PowerShell(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_setup 2>&1)"
     ]
   },
   "enabledPlugins": {

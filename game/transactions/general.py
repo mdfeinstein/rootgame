@@ -317,6 +317,10 @@ def create_turn(player: Player):
         from game.transactions.moles.turn import create_moles_turn
 
         create_moles_turn(player)
+    elif player.faction == Faction.RATS:
+        from game.models.rats.turn import RatsTurn
+
+        RatsTurn.create_turn(player)
     else:
         raise InternalGameError(
             f"Faction {player.faction} not supported for turn creation"

@@ -176,12 +176,12 @@ def autumn_map_setup(game: Game):
         ItemTypes.SWORD,
     ]
     shuffle(ruin_item_types)
-    for i in ruin_clearings:
+    for idx, i in enumerate(ruin_clearings):
         clearing = clearings[i]
         # this doesnt allow for more than one ruin per clearing
         # which is fine for all official maps
         building_slot = BuildingSlot.objects.filter(clearing=clearing).last()
-        item = Item(game=game, item_type=ruin_item_types[i])
+        item = Item(game=game, item_type=ruin_item_types[idx])
         item.save()
         ruin = Ruin(game=game, building_slot=building_slot, item=item)
         ruin.save()
@@ -219,12 +219,14 @@ def create_game_setup(game: Game):
 
 @transaction.atomic
 def begin_faction_setup(game: Game):
+    from game.transactions.rats_setup import start_simple_rats_setup
     setup_func_dict = {
         Faction.CATS: start_simple_cats_setup,
         Faction.BIRDS: start_simple_birds_setup,
         Faction.WOODLAND_ALLIANCE: wa_setup,
         Faction.CROWS: start_simple_crows_setup,
         Faction.MOLES: start_simple_moles_setup,
+        Faction.RATS: start_simple_rats_setup,
     }
     players = Player.objects.filter(game=game)
     for player in players:

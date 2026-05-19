@@ -1,6 +1,5 @@
 from django.db import models
 
-from game.models.enums import ItemTypes
 from game.models.game_models import Item, Player
 
 
@@ -25,38 +24,9 @@ class CommandItemEntry(models.Model):
     )
     item = models.OneToOneField(Item, on_delete=models.CASCADE)
 
-    class Meta:
-        constraints = [
-            models.CheckConstraint(
-                check=models.Q(
-                    item__item_type__in=[
-                        ItemTypes.BOOTS,
-                        ItemTypes.BAG,
-                        ItemTypes.COIN,
-                    ]
-                ),
-                name="command_item_type_valid",
-            )
-        ]
-
 
 class ProwessItemEntry(models.Model):
     player = models.ForeignKey(
         Player, on_delete=models.CASCADE, related_name="prowess_items"
     )
     item = models.OneToOneField(Item, on_delete=models.CASCADE)
-
-    class Meta:
-        constraints = [
-            models.CheckConstraint(
-                check=models.Q(
-                    item__item_type__in=[
-                        ItemTypes.HAMMER,
-                        ItemTypes.SWORD,
-                        ItemTypes.TEA,
-                        ItemTypes.CROSSBOW,
-                    ]
-                ),
-                name="prowess_item_type_valid",
-            )
-        ]
