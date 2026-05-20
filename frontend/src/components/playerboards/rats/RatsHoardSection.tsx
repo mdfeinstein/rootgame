@@ -3,16 +3,6 @@ import type { components } from "../../../api/types";
 import { MOOD_DATA } from "../../../data/ratsMoodData";
 import { getItemIcon } from "../../../utils/itemIcons";
 
-/** "ROOT_TEA_RABBIT" → "Tea",  "ROOT_CROSSBOW_FOX" → "Crossbow" */
-function itemTypeToLabel(itemType: string): string {
-  const parts = itemType.split("_");
-  if (parts.length >= 2) {
-    const name = parts[1];
-    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-  }
-  return itemType;
-}
-
 const COMMAND_ITEMS = ["Boots", "Bag", "Coin"];
 const PROWESS_ITEMS = ["Hammer", "Tea", "Sword", "Crossbow"];
 
@@ -50,7 +40,7 @@ function ValueLabel({ value, active }: { value: number; active: boolean }) {
 
 interface HoardTrackProps {
   label: string;
-  items: { item_id: number; item_type: string }[];
+  items: { item: { value: string; label: string } }[];
   /** Labels of items that can fill this track, e.g. ["Boots", "Bag", "Coin"] */
   trackItems: string[];
 }
@@ -127,7 +117,7 @@ function HoardTrack({ label, items, trackItems }: HoardTrackProps) {
                 <Tooltip
                   label={
                     isFilled
-                      ? itemTypeToLabel(item.item_type)
+                      ? item.item.label
                       : `Accepts: ${trackItems.join(", ")}`
                   }
                   withArrow
@@ -155,7 +145,7 @@ function HoardTrack({ label, items, trackItems }: HoardTrackProps) {
                     }}
                   >
                     {isFilled ? (
-                      getItemIcon(itemTypeToLabel(item.item_type), 26)
+                      getItemIcon(item.item.label, 26)
                     ) : (
                       <div
                         style={{

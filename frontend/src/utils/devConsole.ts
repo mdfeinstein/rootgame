@@ -185,14 +185,14 @@ export function initDevConsole(queryClient: QueryClient, gameId: number) {
     fullHoard: () => {
       window.mockRats.setHoard(
         [
-          { item_id: 1, item_type: "ROOT_TEA_RABBIT" },
-          { item_id: 2, item_type: "ROOT_HAMMER_FOX" },
-          { item_id: 3, item_type: "ROOT_BOOTS_MOUSE" },
-          { item_id: 4, item_type: "ROOT_COIN_FOX" },
+          { item: { value: "3", label: "Tea" } },
+          { item: { value: "5", label: "Hammer" } },
+          { item: { value: "1", label: "Boots" } },
+          { item: { value: "2", label: "Coin" } },
         ],
         [
-          { item_id: 5, item_type: "ROOT_CROSSBOW_FOX" },
-          { item_id: 6, item_type: "ROOT_BAG_RABBIT" },
+          { item: { value: "4", label: "Crossbow" } },
+          { item: { value: "0", label: "Bag" } },
         ]
       );
     },
@@ -200,7 +200,7 @@ export function initDevConsole(queryClient: QueryClient, gameId: number) {
     partialHoard: () => {
       window.mockRats.setHoard(
         [
-          { item_id: 1, item_type: "ROOT_BOOTS_FOX" },
+          { item: { value: "1", label: "Boots" } },
         ],
         []
       );

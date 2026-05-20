@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from game.models.game_models import Player
+from game.models.game_models import Player, ItemTypes
 from game.models.rats.buildings import Stronghold
 from game.models.rats.tokens import Mob, Warlord
 from game.models.rats.player import CurrentMood, CommandItemEntry, ProwessItemEntry
@@ -10,6 +10,7 @@ from game.queries.rats.pieces import get_warlord, get_warriors
 from game.queries.rats.birdsong import get_valid_moods
 from game.serializers.general_serializers import (
     BuildingSerializer,
+    LabeledChoiceField,
     PlayerPublicSerializer,
     TokenSerializer,
     WarriorSerializer,
@@ -51,21 +52,19 @@ class CurrentMoodSerializer(serializers.ModelSerializer):
 
 
 class CommandItemEntrySerializer(serializers.ModelSerializer):
-    item_id = serializers.IntegerField(source="item.id")
-    item_type = serializers.CharField(source="item.item_type")
+    item = LabeledChoiceField(choices=ItemTypes.choices, source="item.item_type")
 
     class Meta:
         model = CommandItemEntry
-        fields = ["item_id", "item_type"]
+        fields = ["item"]
 
 
 class ProwessItemEntrySerializer(serializers.ModelSerializer):
-    item_id = serializers.IntegerField(source="item.id")
-    item_type = serializers.CharField(source="item.item_type")
+    item = LabeledChoiceField(choices=ItemTypes.choices, source="item.item_type")
 
     class Meta:
         model = ProwessItemEntry
-        fields = ["item_id", "item_type"]
+        fields = ["item"]
 
 
 class RatsBirdsongSerializer(serializers.ModelSerializer):
