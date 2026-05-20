@@ -58,6 +58,9 @@ class LogType(models.TextChoices):
     CROWS_SETUP_PLACE_WARRIOR = "CROWS_SETUP_PLACE_WARRIOR", "Crows Setup Place Warrior"
     CROWS_EXTORTION_STOLE_CARD = "CROWS_EXTORTION_STOLE_CARD", "Crows Extortion Stole Card"
 
+    # Rats specific action logs
+    RATS_BUILD = "RATS_BUILD", "Rats Build"
+
     # Moles specific action logs
     MOLES_SETUP_PICK_CORNER = "MOLES_SETUP_PICK_CORNER", "Moles Setup Pick Corner"
     MOLES_BIRDSONG_PLACE_WARRIORS = "MOLES_BIRDSONG_PLACE_WARRIORS", "Moles Birdsong Place Warriors"

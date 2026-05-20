@@ -8,6 +8,34 @@ from game.utility.textchoice import next_choice
 from game.transactions.general import next_players_turn
 
 
+def _next_daylight_step(player: Player, current_step: str) -> str:
+    """Return the next Daylight step, accounting for Grandiose mood.
+
+    Grandiose (tea) reverses Command and Advance:
+      Normal:    CRAFT → COMMAND → ADVANCE → BEFORE_END
+      Grandiose: CRAFT → ADVANCE → COMMAND → BEFORE_END
+    """
+    from game.models.rats.player import CurrentMood
+
+    Steps = RatsDaylight.Steps
+    try:
+        mood = CurrentMood.objects.get(player=player)
+        is_grandiose = mood.mood_type == CurrentMood.MoodType.GRANDIOSE
+    except CurrentMood.DoesNotExist:
+        is_grandiose = False
+
+    if is_grandiose:
+        match current_step:
+            case Steps.CRAFT:
+                return Steps.ADVANCE
+            case Steps.ADVANCE:
+                return Steps.COMMAND
+            case Steps.COMMAND:
+                return Steps.BEFORE_END
+
+    return next_choice(Steps, current_step)
+
+
 @transaction.atomic
 def next_step(player: Player):
     phase = get_phase(player)
@@ -15,7 +43,7 @@ def next_step(player: Player):
         case RatsBirdsong():
             phase.step = next_choice(RatsBirdsong.Steps, phase.step)
         case RatsDaylight():
-            phase.step = next_choice(RatsDaylight.Steps, phase.step)
+            phase.step = _next_daylight_step(player, phase.step)
         case RatsEvening():
             phase.step = next_choice(RatsEvening.Steps, phase.step)
         case _:
@@ -139,9 +167,11 @@ def step_effect(
                 case RatsEvening.Steps.INCITE:
                     pass
                 case RatsEvening.Steps.OPPRESS:
-                    pass
+                    from game.transactions.rats.evening import resolve_oppress
+                    resolve_oppress(player)
                 case RatsEvening.Steps.DRAW:
-                    pass
+                    from game.transactions.rats.evening import draw_cards
+                    draw_cards(player)
                 case RatsEvening.Steps.DISCARD:
                     hand_size = HandEntry.objects.filter(player=player).count()
                     if hand_size <= 5:

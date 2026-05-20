@@ -4,7 +4,7 @@ from game.models import Clearing, Player, Warrior
 from game.models.game_models import BuildingSlot
 from game.models.rats.buildings import Stronghold
 from game.models.rats.tokens import Mob, Warlord
-from game.models.rats.player import CurrentMood
+from game.models.rats.player import CurrentMood, RatsPlayerState
 from game.models.rats.setup import RatsSimpleSetup
 from game.models.cats.tokens import CatKeep
 from game.models.birds.buildings import BirdRoost
@@ -52,6 +52,12 @@ def create_rats_mood(player: Player):
 
 
 @transaction.atomic
+def create_rats_player_state(player: Player):
+    """create the RatsPlayerState object with default values"""
+    RatsPlayerState(player=player).save()
+
+
+@transaction.atomic
 def start_simple_rats_setup(player: Player) -> RatsSimpleSetup:
     """initialize all rats pieces for setup"""
     create_rats_warrior_supply(player)
@@ -59,6 +65,7 @@ def start_simple_rats_setup(player: Player) -> RatsSimpleSetup:
     create_rats_strongholds(player)
     create_rats_mobs(player)
     create_rats_mood(player)
+    create_rats_player_state(player)
     setup = RatsSimpleSetup(player=player, step=RatsSimpleSetup.Steps.PICKING_CORNER)
     setup.save()
     return setup

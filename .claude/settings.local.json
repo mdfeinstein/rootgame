@@ -142,7 +142,9 @@
       "WebFetch(domain:www.therootdatabase.com)",
       "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_birdsong)",
       "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_hoard)",
-      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats)"
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats)",
+      "Bash(F:\\\\python\\\\envs\\\\.venv_web\\\\scripts\\\\python.exe F:\\\\rootGame\\\\.agent\\\\scripts\\\\run_tests.py game.tests.transactions.rats.test_rats_advance)",
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_advance)"
     ]
   },
   "enabledPlugins": {

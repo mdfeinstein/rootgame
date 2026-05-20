@@ -20,6 +20,8 @@ class EventType(models.TextChoices):
     PLACE_RAID_WARRIORS = "place_raid_warriors"
     PRICE_OF_FAILURE = "price_of_failure"
     HOARD_TOO_FULL = "hoard_too_full"
+    LOOTING = "looting"
+    BITTER_RESOLVE = "bitter_resolve"
 
 
 class Event(models.Model):

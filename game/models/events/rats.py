@@ -1,7 +1,8 @@
 from django.db import models
 
+from game.models.events.battle import Battle
 from game.models.events.event import Event, EventType
-from game.models.game_models import Player
+from game.models.game_models import Player, Item
 
 
 class HoardTooFullEvent(models.Model):
@@ -23,3 +24,54 @@ class HoardTooFullEvent(models.Model):
             game=player.game, type=EventType.HOARD_TOO_FULL
         )
         return cls.objects.create(event=event, player=player, track=track)
+
+
+class LootingEvent(models.Model):
+    """Created when the Rats have declared looting and the defender has multiple
+    items in their Crafted Items box — the Rats player must choose which to take."""
+
+    event = models.OneToOneField(
+        Event, on_delete=models.CASCADE, related_name="looting"
+    )
+    looting_player = models.ForeignKey(
+        Player, on_delete=models.CASCADE, related_name="looting_events"
+    )
+    looted_player = models.ForeignKey(
+        Player, on_delete=models.CASCADE, related_name="being_looted_events"
+    )
+
+    @classmethod
+    def create(
+        cls, looting_player: Player, looted_player: Player
+    ) -> "LootingEvent":
+        event = Event.objects.create(
+            game=looting_player.game, type=EventType.LOOTING
+        )
+        return cls.objects.create(
+            event=event,
+            looting_player=looting_player,
+            looted_player=looted_player,
+        )
+
+
+class ResolveBitterEvent(models.Model):
+    """Launched before dice roll when the Rats have the Bitter mood and their
+    Warlord is in the battle clearing with Mob tokens nearby.  The Rats player
+    may call absorb_mob() one or more times, then end_bitter() to proceed."""
+
+    event = models.OneToOneField(
+        Event, on_delete=models.CASCADE, related_name="bitter"
+    )
+    player = models.ForeignKey(
+        Player, on_delete=models.CASCADE, related_name="bitter_events"
+    )
+    battle = models.ForeignKey(
+        Battle, on_delete=models.CASCADE, related_name="bitter_events"
+    )
+
+    @classmethod
+    def create(cls, player: Player, battle: Battle) -> "ResolveBitterEvent":
+        event = Event.objects.create(
+            game=player.game, type=EventType.BITTER_RESOLVE
+        )
+        return cls.objects.create(event=event, player=player, battle=battle)

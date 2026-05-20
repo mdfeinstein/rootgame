@@ -30,3 +30,12 @@ class ProwessItemEntry(models.Model):
         Player, on_delete=models.CASCADE, related_name="prowess_items"
     )
     item = models.OneToOneField(Item, on_delete=models.CASCADE)
+
+
+class RatsPlayerState(models.Model):
+    """Persistent per-player state for the Rats faction."""
+
+    player = models.OneToOneField(
+        Player, on_delete=models.CASCADE, related_name="rats_state"
+    )
+    looting_declared = models.BooleanField(default=False)

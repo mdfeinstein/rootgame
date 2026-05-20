@@ -96,9 +96,7 @@ def defender_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
     # if ambush_card is None, defender chooses not to ambush
     if ambush_card is None:
         battle.defender_ambush = False
-        battle.step = Battle.BattleSteps.ROLL_DICE
-        battle.save()
-        roll_dice(game, battle)
+        _check_bitter_or_roll(game, battle)
         return
     else:
         defender_player = Player.objects.get(game=game, faction=battle.defender)
@@ -160,9 +158,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
                 2,
                 parent=parent_log,
             )
-            battle.step = Battle.BattleSteps.ROLL_DICE
-            battle.save()
-            roll_dice(game, battle)
+            _check_bitter_or_roll(game, battle)
             return
         elif attacking_warriors == 2:
             # resolve ambush by removing attacking warriors and ending the battle
@@ -213,10 +209,7 @@ def attacker_ambush_choice(game: Game, battle: Battle, ambush_card: CardsEP | No
     )
     # flag the battle as ambushed
     battle.attacker_cancel_ambush = True
-    battle.step = Battle.BattleSteps.ROLL_DICE
-    battle.save()
-    # roll dice
-    roll_dice(game, battle)
+    _check_bitter_or_roll(game, battle)
 
 
 @transaction.atomic
@@ -313,6 +306,44 @@ def check_for_partisans_and_launch(game: Game, battle: Battle) -> bool:
     return False
 
 
+def _check_bitter_or_roll(game: Game, battle: Battle) -> None:
+    """Transition helper: launch the Rats Bitter mood check if applicable,
+    otherwise proceed directly to ROLL_DICE.
+
+    Called from every point in the battle flow that would otherwise set
+    battle.step = ROLL_DICE and call roll_dice().
+    """
+    if battle.attacker == Faction.RATS:
+        from game.models.rats.player import CurrentMood
+        from game.models.rats.tokens import Mob
+        from game.queries.rats.pieces import get_warlord
+
+        rats_player = Player.objects.get(game=game, faction=Faction.RATS)
+        mood = CurrentMood.objects.filter(player=rats_player).first()
+        if mood and mood.mood_type == CurrentMood.MoodType.BITTER:
+            warlord = get_warlord(rats_player)
+            if warlord.clearing == battle.clearing:
+                # Check for any mob tokens in the warlord's clearing or adjacent
+                adjacent_and_local = list(
+                    battle.clearing.connected_clearings.all()
+                ) + [battle.clearing]
+                has_mobs = Mob.objects.filter(
+                    player=rats_player,
+                    clearing__in=adjacent_and_local,
+                ).exists()
+                if has_mobs:
+                    from game.models.events.rats import ResolveBitterEvent
+                    battle.step = Battle.BattleSteps.RATS_BITTER_CHECK
+                    battle.save()
+                    ResolveBitterEvent.create(player=rats_player, battle=battle)
+                    return
+
+    # No bitter check — proceed straight to dice roll
+    battle.step = Battle.BattleSteps.ROLL_DICE
+    battle.save()
+    roll_dice(game, battle)
+
+
 @transaction.atomic
 def roll_dice(game: Game, battle: Battle):
     """rolls the dice for the battle and determines base hits"""
@@ -331,11 +362,21 @@ def roll_dice(game: Game, battle: Battle):
     defending_warriors_count = warrior_count_in_clearing(
         defending_player, battle.clearing
     )
+    # Rats Looters: if looting is declared, the attacker deals no rolled hits
+    rats_looting = False
+    if battle.attacker == Faction.RATS:
+        from game.models.rats.player import RatsPlayerState
+        state = RatsPlayerState.objects.filter(player=attacking_player).first()
+        if state and state.looting_declared:
+            rats_looting = True
+
     # assign hits, accounting for woodland alliance guerilla warfare
     if battle.defender != Faction.WOODLAND_ALLIANCE:
         # limit hits by warrior count
         hi = min(hi, attacking_warriors_count)
         lo = min(lo, defending_warriors_count)
+        if rats_looting:
+            hi = 0  # attacker deals no rolled hits
         # assign hits
         battle.defender_hits_taken += hi
         battle.attacker_hits_taken += lo
@@ -343,6 +384,8 @@ def roll_dice(game: Game, battle: Battle):
         # limit hits by warrior count
         hi = min(hi, defending_warriors_count)
         lo = min(lo, attacking_warriors_count)
+        if rats_looting:
+            lo = 0  # attacker deals no rolled hits (lo → defender in WA case)
         # assign hits
         battle.attacker_hits_taken += hi
         battle.defender_hits_taken += lo
@@ -368,6 +411,18 @@ def roll_dice(game: Game, battle: Battle):
             player=crows_player, clearing=battle.clearing, is_facedown=True
         ).exists():
             battle.attacker_hits_taken += 1
+
+    # Rats Wrathful: as attacker in Warlord's clearing, deal +1 hit
+    if battle.attacker == Faction.RATS:
+        from game.models.rats.player import CurrentMood
+        from game.queries.rats.pieces import get_warlord as get_rats_warlord
+
+        rats_player_wrathful = attacking_player
+        wrathful_mood = CurrentMood.objects.filter(player=rats_player_wrathful).first()
+        if wrathful_mood and wrathful_mood.mood_type == CurrentMood.MoodType.WRATHFUL:
+            warlord = get_rats_warlord(rats_player_wrathful)
+            if warlord.clearing == battle.clearing:
+                battle.defender_hits_taken += 1
 
     from game.serializers.logs.general import log_dice_roll, get_battle_log
 
@@ -442,6 +497,26 @@ def apply_dice_hits(game: Game, battle: Battle):
     """applies the hits calculated during roll_dice and partisan events"""
     attacking_player = Player.objects.get(game=game, faction=battle.attacker)
     defending_player = Player.objects.get(game=game, faction=battle.defender)
+
+    # Rats Stubborn: in the Warlord's clearing, ignore the first hit taken.
+    # Applied here (not in roll_dice) so it covers partisan hits too.
+    # Does not combine with other first-hit-ignore abilities.
+    if Faction.RATS in (battle.attacker, battle.defender):
+        from game.models.rats.player import CurrentMood
+        from game.queries.rats.pieces import get_warlord as get_rats_warlord
+
+        rats_is_attacker = battle.attacker == Faction.RATS
+        rats_player_stubborn = attacking_player if rats_is_attacker else defending_player
+        stubborn_mood = CurrentMood.objects.filter(player=rats_player_stubborn).first()
+        if stubborn_mood and stubborn_mood.mood_type == CurrentMood.MoodType.STUBBORN:
+            warlord = get_rats_warlord(rats_player_stubborn)
+            if warlord.clearing == battle.clearing:
+                if rats_is_attacker:
+                    battle.attacker_hits_taken = max(0, battle.attacker_hits_taken - 1)
+                else:
+                    battle.defender_hits_taken = max(0, battle.defender_hits_taken - 1)
+                battle.save()
+
     attacking_warriors_count = warrior_count_in_clearing(
         attacking_player, battle.clearing
     )
@@ -650,3 +725,47 @@ def end_battle(game: Game, battle: Battle):
     event = battle.event
     event.is_resolved = True
     event.save()
+    # Rats Looters: resolve looting if declared
+    if battle.attacker == Faction.RATS:
+        _resolve_looting_after_battle(game, battle)
+
+
+def _resolve_looting_after_battle(game: Game, battle: Battle) -> None:
+    """Check looting declaration and resolve: auto-loot, create choice event, or reset."""
+    from game.models.rats.player import RatsPlayerState
+    from game.models.game_models import CraftedItemEntry
+    from game.queries.general import determine_clearing_rule
+
+    rats_player = Player.objects.get(game=game, faction=Faction.RATS)
+    state = RatsPlayerState.objects.filter(player=rats_player).first()
+    if state is None or not state.looting_declared:
+        return
+
+    # Did the Rats earn the loot? They must rule the clearing.
+    if determine_clearing_rule(battle.clearing) != rats_player:
+        state.looting_declared = False
+        state.save()
+        return
+
+    defender_player = Player.objects.get(game=game, faction=battle.defender)
+    items = list(CraftedItemEntry.objects.filter(player=defender_player).select_related("item"))
+
+    if not items:
+        # Items may have been removed during the battle — nothing to loot.
+        state.looting_declared = False
+        state.save()
+        return
+
+    if len(items) == 1:
+        # Auto-loot: only one item available.
+        from game.transactions.rats.hoard import add_item_to_hoard
+        entry = items[0]
+        item = entry.item
+        entry.delete()
+        add_item_to_hoard(rats_player, item)
+        state.looting_declared = False
+        state.save()
+    else:
+        # Multiple items: create choice event (looting_declared stays True until resolved).
+        from game.models.events.rats import LootingEvent
+        LootingEvent.create(looting_player=rats_player, looted_player=defender_player)

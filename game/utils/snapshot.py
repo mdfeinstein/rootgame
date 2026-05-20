@@ -51,7 +51,7 @@ from game.models.moles.turn import MoleTurn, MoleBirdsong, MoleDaylight, MoleEve
 from game.models.moles.setup import MolesSimpleSetup
 
 from game.models.rats.setup import RatsSimpleSetup
-from game.models.rats.player import CurrentMood, CommandItemEntry, ProwessItemEntry
+from game.models.rats.player import CurrentMood, CommandItemEntry, ProwessItemEntry, RatsPlayerState
 from game.models.rats.buildings import Stronghold
 from game.models.rats.tokens import Mob, Warlord
 from game.models.rats.turn import RatsTurn, RatsBirdsong, RatsDaylight, RatsEvening
@@ -74,7 +74,7 @@ from game.models.events.crafted_cards import (
 )
 from game.models.events.crows import CrowRecruitEvent, CrowRaidEvent
 from game.models.events.moles import PriceOfFailureEvent
-from game.models.events.rats import HoardTooFullEvent
+from game.models.events.rats import HoardTooFullEvent, LootingEvent, ResolveBitterEvent
 from game.models.removal_tracker import RemovalEventTracker
 from game.models.game_log import GameLog
 
@@ -216,6 +216,7 @@ def get_all_game_objects(game: Game):
 
         # Rats
         objects.extend(CurrentMood.objects.filter(player=player))
+        objects.extend(RatsPlayerState.objects.filter(player=player))
         objects.extend(CommandItemEntry.objects.filter(player=player))
         objects.extend(ProwessItemEntry.objects.filter(player=player))
         objects.extend(Stronghold.objects.filter(player=player))
@@ -254,6 +255,8 @@ def get_all_game_objects(game: Game):
     objects.extend(CrowRaidEvent.objects.filter(event__in=events))
     objects.extend(PriceOfFailureEvent.objects.filter(event__in=events))
     objects.extend(HoardTooFullEvent.objects.filter(event__in=events))
+    objects.extend(LootingEvent.objects.filter(event__in=events))
+    objects.extend(ResolveBitterEvent.objects.filter(event__in=events))
 
     # 6. Game Logs
     objects.extend(GameLog.objects.filter(game=game).order_by("created_at"))

@@ -13,7 +13,8 @@ class RatsTurn(models.Model):
         turn = cls(player=player, turn_number=turn_counts)
         turn.save()
         RatsBirdsong.objects.create(turn=turn)
-        RatsDaylight.objects.create(turn=turn)
+        advance = RatsAdvance.objects.create()
+        RatsDaylight.objects.create(turn=turn, advance=advance)
         RatsEvening.objects.create(turn=turn)
         return turn
 
@@ -44,6 +45,34 @@ class RatsBirdsong(models.Model):
     )
 
 
+class RatsAdvance(models.Model):
+    """Tracks state for a single Advance the Warlord cycle within Daylight.
+
+    One record exists per RatsDaylight (created alongside it). It is reset
+    in-place at the start of each new advance cycle via reset().
+    """
+
+    class AdvanceStep(models.TextChoices):
+        MOVE = "move", "Move"
+        BATTLE = "battle", "Battle"
+        RELENTLESS_BONUS = "relentless", "Relentless Bonus"
+
+    move_used = models.BooleanField(default=False)
+    battle_used = models.BooleanField(default=False)
+    current_step = models.CharField(
+        max_length=10,
+        choices=AdvanceStep.choices,
+        default=AdvanceStep.MOVE,
+    )
+
+    def reset(self) -> None:
+        """Reset all fields to their defaults for a new advance cycle."""
+        self.move_used = False
+        self.battle_used = False
+        self.current_step = self.AdvanceStep.MOVE
+        self.save()
+
+
 class RatsDaylight(models.Model):
     class Steps(models.TextChoices):
         NOT_STARTED = "0", "Not Started"
@@ -54,6 +83,13 @@ class RatsDaylight(models.Model):
         COMPLETED = "4", "Completed"
 
     turn = models.ForeignKey(RatsTurn, on_delete=models.CASCADE, related_name="daylight")
+    advance = models.OneToOneField(
+        RatsAdvance,
+        on_delete=models.CASCADE,
+        related_name="daylight",
+        null=True,
+        blank=True,
+    )
     step = models.CharField(
         max_length=1,
         choices=Steps.choices,
