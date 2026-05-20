@@ -88,6 +88,7 @@ from game.views.gamestate_views import (
     get_player_hand,
     get_wa_player_public,
     get_moles_player_public,
+    get_rats_player_public,
 )
 from game.views.gamestate_views.crows import (
     get_crows_player_public,
@@ -159,6 +160,7 @@ urlpatterns = [
     path("api/crows/player-private-info/<int:game_id>/", get_crows_player_private),
     path("api/birds/player-info/<int:game_id>/", get_bird_player_public),
     path("api/moles/player-info/<int:game_id>/", get_moles_player_public),
+    path("api/rats/player-info/<int:game_id>/", get_rats_player_public),
     path("api/clearings/<int:game_id>/", get_clearings),
     path("api/discard-pile/<int:game_id>/", get_discard_pile),
     path("api/player-hand/<int:game_id>/", get_player_hand),

@@ -83,6 +83,7 @@ def assign_turn_order(game: Game):
         Faction.WOODLAND_ALLIANCE: 2,
         Faction.CROWS: 7,
         Faction.MOLES: 8,
+        Faction.RATS: 9,
     }
     # rank players by faction turn order value
     # this will be useful when there are more factions
@@ -220,6 +221,7 @@ def create_game_setup(game: Game):
 @transaction.atomic
 def begin_faction_setup(game: Game):
     from game.transactions.rats_setup import start_simple_rats_setup
+
     setup_func_dict = {
         Faction.CATS: start_simple_cats_setup,
         Faction.BIRDS: start_simple_birds_setup,

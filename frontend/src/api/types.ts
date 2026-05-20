@@ -2506,6 +2506,714 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/rats/birdsong/choose-mood/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_birdsong_choose_mood_retrieve"];
+        put?: never;
+        /** @description Shown at the CHOOSE_MOOD step so the player can select their mood. */
+        post: operations["rats_birdsong_choose_mood_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/birdsong/choose-mood/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_birdsong_choose_mood_retrieve_2"];
+        put?: never;
+        /** @description Shown at the CHOOSE_MOOD step so the player can select their mood. */
+        post: operations["rats_birdsong_choose_mood_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/birdsong/spread-mob/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_birdsong_spread_mob_retrieve"];
+        put?: never;
+        /**
+         * @description Shown when roll_mob_die_and_spread produced multiple valid targets.
+         *
+         *     step_effect auto-calls roll_mob_die_and_spread on entering SPREAD_MOB;
+         *     if a choice is required it stores mob_die_suit and pauses here.
+         */
+        post: operations["rats_birdsong_spread_mob_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/birdsong/spread-mob/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_birdsong_spread_mob_retrieve_2"];
+        put?: never;
+        /**
+         * @description Shown when roll_mob_die_and_spread produced multiple valid targets.
+         *
+         *     step_effect auto-calls roll_mob_die_and_spread on entering SPREAD_MOB;
+         *     if a choice is required it stores mob_die_suit and pauses here.
+         */
+        post: operations["rats_birdsong_spread_mob_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/advance/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_advance_retrieve"];
+        put?: never;
+        /**
+         * @description ADVANCE step: each cycle the Warlord may move then battle.
+         *
+         *     Shown at the start of every advance cycle (MOVE sub-step), after a move
+         *     (BATTLE sub-step), and for the optional Relentless bonus cycle
+         *     (RELENTLESS_BONUS sub-step).
+         */
+        post: operations["rats_daylight_advance_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/advance/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_advance_retrieve_2"];
+        put?: never;
+        /**
+         * @description ADVANCE step: each cycle the Warlord may move then battle.
+         *
+         *     Shown at the start of every advance cycle (MOVE sub-step), after a move
+         *     (BATTLE sub-step), and for the optional Relentless bonus cycle
+         *     (RELENTLESS_BONUS sub-step).
+         */
+        post: operations["rats_daylight_advance_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/advance/battle/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_advance_battle_retrieve"];
+        put?: never;
+        /** @description Advance Battle sub-action: pick defender faction in Warlord's clearing. */
+        post: operations["rats_daylight_advance_battle_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/advance/battle/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_advance_battle_retrieve_2"];
+        put?: never;
+        /** @description Advance Battle sub-action: pick defender faction in Warlord's clearing. */
+        post: operations["rats_daylight_advance_battle_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/advance/move/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_advance_move_retrieve"];
+        put?: never;
+        /**
+         * @description Advance Move sub-action: pick destination clearing, then warrior count.
+         *
+         *     Origin is always the Warlord's current clearing.
+         *     count=0 is valid (Warlord moves alone).
+         */
+        post: operations["rats_daylight_advance_move_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/advance/move/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_advance_move_retrieve_2"];
+        put?: never;
+        /**
+         * @description Advance Move sub-action: pick destination clearing, then warrior count.
+         *
+         *     Origin is always the Warlord's current clearing.
+         *     count=0 is valid (Warlord moves alone).
+         */
+        post: operations["rats_daylight_advance_move_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/command/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_command_retrieve"];
+        put?: never;
+        /** @description COMMAND step: choose Move / Battle / Build or end the command phase. */
+        post: operations["rats_daylight_command_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/command/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_command_retrieve_2"];
+        put?: never;
+        /** @description COMMAND step: choose Move / Battle / Build or end the command phase. */
+        post: operations["rats_daylight_command_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/command/battle/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_command_battle_retrieve"];
+        put?: never;
+        /** @description Command Battle sub-action: clearing → defender faction. */
+        post: operations["rats_daylight_command_battle_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/command/battle/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_command_battle_retrieve_2"];
+        put?: never;
+        /** @description Command Battle sub-action: clearing → defender faction. */
+        post: operations["rats_daylight_command_battle_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/command/build/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_command_build_retrieve"];
+        put?: never;
+        /** @description Command Build sub-action: card → clearing. */
+        post: operations["rats_daylight_command_build_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/command/build/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_command_build_retrieve_2"];
+        put?: never;
+        /** @description Command Build sub-action: card → clearing. */
+        post: operations["rats_daylight_command_build_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/command/move/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_command_move_retrieve"];
+        put?: never;
+        /** @description Command Move sub-action: origin → destination → count. */
+        post: operations["rats_daylight_command_move_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/command/move/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_command_move_retrieve_2"];
+        put?: never;
+        /** @description Command Move sub-action: origin → destination → count. */
+        post: operations["rats_daylight_command_move_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/craft/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_craft_retrieve"];
+        put?: never;
+        /** @description CRAFT step: select a card and use Strongholds to craft it. */
+        post: operations["rats_daylight_craft_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/daylight/craft/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_daylight_craft_retrieve_2"];
+        put?: never;
+        /** @description CRAFT step: select a card and use Strongholds to craft it. */
+        post: operations["rats_daylight_craft_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/evening/discard/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_evening_discard_retrieve"];
+        put?: never;
+        /**
+         * @description DISCARD step: discard cards until hand has 5 or fewer.
+         *
+         *     step_effect auto-advances past DISCARD when hand ≤ 5 on entry,
+         *     so this view only fires when the player genuinely has excess cards.
+         */
+        post: operations["rats_evening_discard_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/evening/discard/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_evening_discard_retrieve_2"];
+        put?: never;
+        /**
+         * @description DISCARD step: discard cards until hand has 5 or fewer.
+         *
+         *     step_effect auto-advances past DISCARD when hand ≤ 5 on entry,
+         *     so this view only fires when the player genuinely has excess cards.
+         */
+        post: operations["rats_evening_discard_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/evening/incite/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_evening_incite_retrieve"];
+        put?: never;
+        /**
+         * @description INCITE step: optionally spend a card to place a Mob token.
+         *
+         *     Two-step flow:
+         *       GET  → show eligible clearings + Skip option
+         *       POST clearing → show matching hand cards
+         *       POST card     → call incite(player, clearing, card)  or  end_incite_step
+         */
+        post: operations["rats_evening_incite_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/evening/incite/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_evening_incite_retrieve_2"];
+        put?: never;
+        /**
+         * @description INCITE step: optionally spend a card to place a Mob token.
+         *
+         *     Two-step flow:
+         *       GET  → show eligible clearings + Skip option
+         *       POST clearing → show matching hand cards
+         *       POST card     → call incite(player, clearing, card)  or  end_incite_step
+         */
+        post: operations["rats_evening_incite_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/events/bitter-resolve/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_events_bitter_resolve_retrieve"];
+        put?: never;
+        /**
+         * @description BITTER_RESOLVE event: optionally absorb mobs to reinforce the Warlord's clearing.
+         *
+         *     Player picks a clearing (Warlord's or adjacent) that contains a Mob token
+         *     to absorb — removing the mob and placing a warrior in the Warlord's clearing.
+         *     Repeat as desired, then press End to proceed to the dice roll.
+         */
+        post: operations["rats_events_bitter_resolve_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/events/bitter-resolve/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_events_bitter_resolve_retrieve_2"];
+        put?: never;
+        /**
+         * @description BITTER_RESOLVE event: optionally absorb mobs to reinforce the Warlord's clearing.
+         *
+         *     Player picks a clearing (Warlord's or adjacent) that contains a Mob token
+         *     to absorb — removing the mob and placing a warrior in the Warlord's clearing.
+         *     Repeat as desired, then press End to proceed to the dice roll.
+         */
+        post: operations["rats_events_bitter_resolve_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/events/hoard-too-full/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_events_hoard_too_full_retrieve"];
+        put?: never;
+        /**
+         * @description HOARD_TOO_FULL event: player must discard one item from the overfull track.
+         *
+         *     Scores 1 VP for the discarded item, then resolves the event.
+         */
+        post: operations["rats_events_hoard_too_full_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/events/hoard-too-full/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_events_hoard_too_full_retrieve_2"];
+        put?: never;
+        /**
+         * @description HOARD_TOO_FULL event: player must discard one item from the overfull track.
+         *
+         *     Scores 1 VP for the discarded item, then resolves the event.
+         */
+        post: operations["rats_events_hoard_too_full_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/events/looting/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_events_looting_retrieve"];
+        put?: never;
+        /**
+         * @description LOOTING event: player chooses which item to take from the looted player.
+         *
+         *     Only created when the defender has multiple items (single-item loot is auto-resolved).
+         */
+        post: operations["rats_events_looting_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/events/looting/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_events_looting_retrieve_2"];
+        put?: never;
+        /**
+         * @description LOOTING event: player chooses which item to take from the looted player.
+         *
+         *     Only created when the defender has multiple items (single-item loot is auto-resolved).
+         */
+        post: operations["rats_events_looting_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/player-info/{game_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["rats_player_info_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/setup/confirm-completed-setup/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_setup_confirm_completed_setup_retrieve"];
+        put?: never;
+        post: operations["rats_setup_confirm_completed_setup_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/setup/confirm-completed-setup/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_setup_confirm_completed_setup_retrieve_2"];
+        put?: never;
+        post: operations["rats_setup_confirm_completed_setup_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/setup/pick-corner/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_setup_pick_corner_retrieve"];
+        put?: never;
+        post: operations["rats_setup_pick_corner_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/setup/pick-corner/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_setup_pick_corner_retrieve_2"];
+        put?: never;
+        post: operations["rats_setup_pick_corner_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/token/": {
         parameters: {
             query?: never;
@@ -2873,6 +3581,10 @@ export interface components {
          * @enum {string}
          */
         ColumnEnum: "R" | "M" | "B" | "U";
+        CommandItemEntry: {
+            item_id: number;
+            item_type: string;
+        };
         CraftableItem: {
             item: {
                 /**
@@ -2924,6 +3636,9 @@ export interface components {
         CurrentAction: {
             route: string;
         };
+        CurrentMood: {
+            mood_type: components["schemas"]["MoodTypeEnum"];
+        };
         DominanceSupplyEntry: {
             card: components["schemas"]["Card"];
         };
@@ -2942,11 +3657,12 @@ export interface components {
                  *     * `wa` - wa
                  *     * `cr` - cr
                  *     * `mo` - mo
+                 *     * `ra` - ra
                  * @enum {string}
                  */
-                value: "ca" | "bi" | "wa" | "cr" | "mo";
+                value: "ca" | "bi" | "wa" | "cr" | "mo" | "ra";
                 /** @enum {string} */
-                label: "Birds" | "Cats" | "Crows" | "Moles" | "Woodland Alliance";
+                label: "Birds" | "Cats" | "Crows" | "Moles" | "Rats" | "Woodland Alliance";
             };
             chosen?: boolean;
         };
@@ -2958,11 +3674,12 @@ export interface components {
                  *     * `wa` - wa
                  *     * `cr` - cr
                  *     * `mo` - mo
+                 *     * `ra` - ra
                  * @enum {string}
                  */
-                value: "ca" | "bi" | "wa" | "cr" | "mo";
+                value: "ca" | "bi" | "wa" | "cr" | "mo" | "ra";
                 /** @enum {string} */
-                label: "Birds" | "Cats" | "Crows" | "Moles" | "Woodland Alliance";
+                label: "Birds" | "Cats" | "Crows" | "Moles" | "Rats" | "Woodland Alliance";
             };
             name: string;
             prompt?: string;
@@ -3027,12 +3744,13 @@ export interface components {
                  *     * `VB` - VB
                  *     * `CROW` - CROW
                  *     * `MOL` - MOL
+                 *     * `RAT` - RAT
                  *     * `COMP` - COMP
                  * @enum {string}
                  */
-                value: "INIT" | "CAT" | "BIRD" | "WA" | "VB" | "CROW" | "MOL" | "COMP";
+                value: "INIT" | "CAT" | "BIRD" | "WA" | "VB" | "CROW" | "MOL" | "RAT" | "COMP";
                 /** @enum {string} */
-                label: "Birds Setup" | "Cats Setup" | "Completed" | "Crows Setup" | "Initial Setup" | "Moles Setup" | "Vagabond Setup" | "Woodland Alliance Setup";
+                label: "Birds Setup" | "Cats Setup" | "Completed" | "Crows Setup" | "Initial Setup" | "Moles Setup" | "Rats Setup" | "Vagabond Setup" | "Woodland Alliance Setup";
             };
             current_turn_player?: string;
         };
@@ -3097,6 +3815,7 @@ export interface components {
          *     * `CROWS_RAID` - Crows Raid
          *     * `CROWS_SETUP_PLACE_WARRIOR` - Crows Setup Place Warrior
          *     * `CROWS_EXTORTION_STOLE_CARD` - Crows Extortion Stole Card
+         *     * `RATS_BUILD` - Rats Build
          *     * `MOLES_SETUP_PICK_CORNER` - Moles Setup Pick Corner
          *     * `MOLES_BIRDSONG_PLACE_WARRIORS` - Moles Birdsong Place Warriors
          *     * `MOLES_BUILD` - Moles Build
@@ -3118,7 +3837,10 @@ export interface components {
          *     * `CRAFTED_CARD_ACTION` - Crafted Card Action
          * @enum {string}
          */
-        LogTypeEnum: "TURN" | "PHASE" | "MOVE" | "BATTLE" | "CRAFT" | "DRAW" | "DISCARD" | "AMBUSH" | "DICE_ROLL" | "PIECE_REMOVAL" | "CATS_BIRDS_FOR_HIRE" | "CATS_MARCH" | "CATS_WOOD_PLACEMENT" | "CATS_BUILD" | "CATS_OVERWORK" | "CATS_RECRUIT" | "CATS_SETUP_PICK_CORNER" | "CATS_SETUP_PLACE_BUILDING" | "BIRDS_ADD_TO_DECREE" | "BIRDS_EMERGENCY_ROOST" | "BIRDS_DECREE_ACTION" | "BIRDS_SCORE_ROOSTS" | "BIRDS_TURMOIL" | "BIRDS_NEW_LEADER" | "BIRDS_SETUP_PICK_CORNER" | "BIRDS_SETUP_CHOOSE_LEADER" | "WA_REVOLT" | "WA_SPREAD_SYMPATHY" | "WA_MOBILIZE" | "WA_TRAIN" | "WA_ORGANIZE" | "WA_MILITARY_OPERATION" | "WA_OUTRAGE" | "WA_BASE_REMOVED" | "WA_OFFICERS_LOST" | "WA_SUPPORTERS_LOST" | "CROWS_PLOT" | "CROWS_FLIP" | "CROWS_RECRUIT" | "CROWS_TRICK" | "CROWS_EXPOSURE" | "CROWS_RAID" | "CROWS_SETUP_PLACE_WARRIOR" | "CROWS_EXTORTION_STOLE_CARD" | "MOLES_SETUP_PICK_CORNER" | "MOLES_BIRDSONG_PLACE_WARRIORS" | "MOLES_BUILD" | "MOLES_RECRUIT" | "MOLES_DIG" | "MOLES_SWAY_MINISTER" | "MOLES_MINISTER_MARSHAL" | "MOLES_MINISTER_CAPTAIN" | "MOLES_MINISTER_FOREMOLE" | "MOLES_MINISTER_BANKER" | "MOLES_MINISTER_DUCHESS" | "MOLES_MINISTER_BARON" | "MOLES_MINISTER_EARL" | "MOLES_MINISTER_BRIGADIER" | "MOLES_MINISTER_MAYOR" | "MOLES_EVENING_PROCESS_REVEALED" | "MOLES_PRICE_OF_FAILURE" | "CATS_FIELD_HOSPITALS" | "CRAFTED_CARD_ACTION";
+        LogTypeEnum: "TURN" | "PHASE" | "MOVE" | "BATTLE" | "CRAFT" | "DRAW" | "DISCARD" | "AMBUSH" | "DICE_ROLL" | "PIECE_REMOVAL" | "CATS_BIRDS_FOR_HIRE" | "CATS_MARCH" | "CATS_WOOD_PLACEMENT" | "CATS_BUILD" | "CATS_OVERWORK" | "CATS_RECRUIT" | "CATS_SETUP_PICK_CORNER" | "CATS_SETUP_PLACE_BUILDING" | "BIRDS_ADD_TO_DECREE" | "BIRDS_EMERGENCY_ROOST" | "BIRDS_DECREE_ACTION" | "BIRDS_SCORE_ROOSTS" | "BIRDS_TURMOIL" | "BIRDS_NEW_LEADER" | "BIRDS_SETUP_PICK_CORNER" | "BIRDS_SETUP_CHOOSE_LEADER" | "WA_REVOLT" | "WA_SPREAD_SYMPATHY" | "WA_MOBILIZE" | "WA_TRAIN" | "WA_ORGANIZE" | "WA_MILITARY_OPERATION" | "WA_OUTRAGE" | "WA_BASE_REMOVED" | "WA_OFFICERS_LOST" | "WA_SUPPORTERS_LOST" | "CROWS_PLOT" | "CROWS_FLIP" | "CROWS_RECRUIT" | "CROWS_TRICK" | "CROWS_EXPOSURE" | "CROWS_RAID" | "CROWS_SETUP_PLACE_WARRIOR" | "CROWS_EXTORTION_STOLE_CARD" | "RATS_BUILD" | "MOLES_SETUP_PICK_CORNER" | "MOLES_BIRDSONG_PLACE_WARRIORS" | "MOLES_BUILD" | "MOLES_RECRUIT" | "MOLES_DIG" | "MOLES_SWAY_MINISTER" | "MOLES_MINISTER_MARSHAL" | "MOLES_MINISTER_CAPTAIN" | "MOLES_MINISTER_FOREMOLE" | "MOLES_MINISTER_BANKER" | "MOLES_MINISTER_DUCHESS" | "MOLES_MINISTER_BARON" | "MOLES_MINISTER_EARL" | "MOLES_MINISTER_BRIGADIER" | "MOLES_MINISTER_MAYOR" | "MOLES_EVENING_PROCESS_REVEALED" | "MOLES_PRICE_OF_FAILURE" | "CATS_FIELD_HOSPITALS" | "CRAFTED_CARD_ACTION";
+        Mob: {
+            token: components["schemas"]["Token"];
+        };
         /** @description Serializer to provide all (public) information about moles */
         Moles: {
             player: components["schemas"]["PlayerPublic"];
@@ -3160,6 +3882,18 @@ export interface components {
         MolesTokens: {
             tunnels: components["schemas"]["MolesNestedToken"][];
         };
+        /**
+         * @description * `bitter` - Bitter
+         *     * `grandiose` - Grandiose
+         *     * `jubilant` - Jubilant
+         *     * `lavish` - Lavish
+         *     * `relentless` - Relentless
+         *     * `rowdy` - Rowdy
+         *     * `stubborn` - Stubborn
+         *     * `wrathful` - Wrathful
+         * @enum {string}
+         */
+        MoodTypeEnum: "bitter" | "grandiose" | "jubilant" | "lavish" | "relentless" | "rowdy" | "stubborn" | "wrathful";
         NestedToken: {
             token: components["schemas"]["Token"];
         };
@@ -3182,17 +3916,34 @@ export interface components {
                  *     * `wa` - wa
                  *     * `cr` - cr
                  *     * `mo` - mo
+                 *     * `ra` - ra
                  * @enum {string}
                  */
-                value: "ca" | "bi" | "wa" | "cr" | "mo";
+                value: "ca" | "bi" | "wa" | "cr" | "mo" | "ra";
                 /** @enum {string} */
-                label: "Birds" | "Cats" | "Crows" | "Moles" | "Woodland Alliance";
+                label: "Birds" | "Cats" | "Crows" | "Moles" | "Rats" | "Woodland Alliance";
             };
             score: number;
             turn_order: number;
             readonly card_count: number;
             readonly active_dominance: string;
             readonly crafted_items: components["schemas"]["CraftedItemEntry"][];
+        };
+        ProwessItemEntry: {
+            item_id: number;
+            item_type: string;
+        };
+        /** @description Serializer to provide all (public) information about rats (Lord of the Hundreds). */
+        Rats: {
+            player: components["schemas"]["PlayerPublic"];
+            warriors: components["schemas"]["Warrior"][];
+            warlord: components["schemas"]["Warlord"];
+            strongholds: components["schemas"]["Stronghold"][];
+            mobs: components["schemas"]["Mob"][];
+            mood: components["schemas"]["CurrentMood"];
+            valid_moods: components["schemas"]["ValidMoodsEnum"][];
+            command_items: components["schemas"]["CommandItemEntry"][];
+            prowess_items: components["schemas"]["ProwessItemEntry"][];
         };
         Recruiter: {
             building: components["schemas"]["Building"];
@@ -3208,11 +3959,12 @@ export interface components {
                  *     * `wa` - wa
                  *     * `cr` - cr
                  *     * `mo` - mo
+                 *     * `ra` - ra
                  * @enum {string}
                  */
-                value: "ca" | "bi" | "wa" | "cr" | "mo";
+                value: "ca" | "bi" | "wa" | "cr" | "mo" | "ra";
                 /** @enum {string} */
-                label: "Birds" | "Cats" | "Crows" | "Moles" | "Woodland Alliance";
+                label: "Birds" | "Cats" | "Crows" | "Moles" | "Rats" | "Woodland Alliance";
             };
             event_type: string;
             turns_ago: number;
@@ -3224,6 +3976,10 @@ export interface components {
         Sawmill: {
             building: components["schemas"]["Building"];
             used?: boolean;
+        };
+        Stronghold: {
+            building: components["schemas"]["Building"];
+            crafted_with?: boolean;
         };
         Token: {
             player_name: string;
@@ -3249,6 +4005,18 @@ export interface components {
         UndoResponse: {
             status: string;
         };
+        /**
+         * @description * `bitter` - Bitter
+         *     * `grandiose` - Grandiose
+         *     * `jubilant` - Jubilant
+         *     * `lavish` - Lavish
+         *     * `relentless` - Relentless
+         *     * `rowdy` - Rowdy
+         *     * `stubborn` - Stubborn
+         *     * `wrathful` - Wrathful
+         * @enum {string}
+         */
+        ValidMoodsEnum: "bitter" | "grandiose" | "jubilant" | "lavish" | "relentless" | "rowdy" | "stubborn" | "wrathful";
         ValidationError: {
             /** @description Error message or object. */
             detail: unknown;
@@ -3282,6 +4050,9 @@ export interface components {
         };
         WAToken: {
             sympathy: components["schemas"]["WASympathy"][];
+        };
+        Warlord: {
+            readonly clearing_number: number | null;
         };
         Warrior: {
             player_name: string;
@@ -9715,6 +10486,1665 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PlayerPublic"][];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_birdsong_choose_mood_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_birdsong_choose_mood_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_birdsong_choose_mood_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_birdsong_choose_mood_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_birdsong_spread_mob_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_birdsong_spread_mob_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_birdsong_spread_mob_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_birdsong_spread_mob_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_advance_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_daylight_advance_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_advance_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_daylight_advance_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_advance_battle_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_daylight_advance_battle_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_advance_battle_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_daylight_advance_battle_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_advance_move_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_daylight_advance_move_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_advance_move_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_daylight_advance_move_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_command_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_daylight_command_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_command_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_daylight_command_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_command_battle_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    rats_daylight_command_battle_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_command_battle_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    rats_daylight_command_battle_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_command_build_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_daylight_command_build_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_command_build_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_daylight_command_build_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_command_move_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    rats_daylight_command_move_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_command_move_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    rats_daylight_command_move_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_craft_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_daylight_craft_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_daylight_craft_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_daylight_craft_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_evening_discard_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_evening_discard_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_evening_discard_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_evening_discard_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_evening_incite_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_evening_incite_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_evening_incite_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_evening_incite_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_events_bitter_resolve_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_events_bitter_resolve_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_events_bitter_resolve_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_events_bitter_resolve_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_events_hoard_too_full_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_events_hoard_too_full_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_events_hoard_too_full_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_events_hoard_too_full_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_events_looting_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_events_looting_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_events_looting_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_events_looting_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_player_info_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Rats"];
+                };
+            };
+        };
+    };
+    rats_setup_confirm_completed_setup_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    rats_setup_confirm_completed_setup_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_setup_confirm_completed_setup_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+        };
+    };
+    rats_setup_confirm_completed_setup_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_setup_pick_corner_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_setup_pick_corner_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_setup_pick_corner_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_setup_pick_corner_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
                 };
             };
             400: {

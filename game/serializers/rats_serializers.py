@@ -7,6 +7,7 @@ from game.models.rats.player import CurrentMood, CommandItemEntry, ProwessItemEn
 from game.models.rats.turn import RatsTurn, RatsBirdsong, RatsDaylight, RatsEvening
 from game.models.rats.setup import RatsSimpleSetup
 from game.queries.rats.pieces import get_warlord, get_warriors
+from game.queries.rats.birdsong import get_valid_moods
 from game.serializers.general_serializers import (
     BuildingSerializer,
     PlayerPublicSerializer,
@@ -46,6 +47,7 @@ class CurrentMoodSerializer(serializers.ModelSerializer):
     class Meta:
         model = CurrentMood
         fields = ["mood_type"]
+
 
 
 class CommandItemEntrySerializer(serializers.ModelSerializer):
@@ -100,28 +102,38 @@ class RatsSetupSerializer(serializers.ModelSerializer):
         fields = ["step"]
 
 
+class RatsBuildingsSerializer(serializers.Serializer):
+    """Wraps Rats buildings under a 'buildings' key so the frontend buildingTable hook can tabulate them."""
+    strongholds = StrongholdSerializer(many=True)
+
+
 class RatsSerializer(serializers.Serializer):
     """Serializer to provide all (public) information about rats (Lord of the Hundreds)."""
 
     player = PlayerPublicSerializer()
     warriors = WarriorSerializer(many=True)
     warlord = WarlordSerializer()
-    strongholds = StrongholdSerializer(many=True)
+    buildings = RatsBuildingsSerializer()
     mobs = MobSerializer(many=True)
     mood = CurrentMoodSerializer()
+    valid_moods = serializers.ListField(
+        child=serializers.ChoiceField(choices=CurrentMood.MoodType.choices)
+    )
     command_items = CommandItemEntrySerializer(many=True)
     prowess_items = ProwessItemEntrySerializer(many=True)
 
     @classmethod
     def from_player(cls, player: Player):
+        strongholds = Stronghold.objects.filter(player=player)
         return cls(
             instance={
                 "player": player,
                 "warriors": get_warriors(player),
                 "warlord": get_warlord(player),
-                "strongholds": Stronghold.objects.filter(player=player),
+                "buildings": {"strongholds": strongholds},
                 "mobs": Mob.objects.filter(player=player),
                 "mood": CurrentMood.objects.get(player=player),
+                "valid_moods": [m.value for m in get_valid_moods(player)],
                 "command_items": CommandItemEntry.objects.filter(player=player),
                 "prowess_items": ProwessItemEntry.objects.filter(player=player),
             }
