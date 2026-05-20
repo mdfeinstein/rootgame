@@ -104,11 +104,49 @@ def player_removes_warriors(
     parent = kwargs.get("parent")
     if count == 0:
         return
-    warriors = list(
-        Warrior.objects.filter(clearing=clearing, player=removed_player)[:count]
-    )
-    if len(warriors) != count:
-        raise ValueError("Not enough warriors to remove")
+
+    if removed_player.faction == Faction.RATS:
+        from game.models.events.event import Event, EventType
+
+        in_battle = Event.objects.filter(
+            game=removed_player.game,
+            is_resolved=False,
+            type=EventType.BATTLE,
+        ).exists()
+
+        if not in_battle:
+            # Outside battle: Warlord is immune (rule 14.2.2).
+            warlord_here = Warrior.objects.filter(
+                clearing=clearing, player=removed_player, warlord__isnull=False
+            ).exists()
+            if warlord_here:
+                count -= 1  # exclude the Warlord slot; no ValueError for the mismatch
+            if count == 0:
+                return
+
+        # Regular warriors sort first (is_warlord=0); Warlord sorts last (is_warlord=1).
+        # In battle this ensures the Warlord is only taken after regulars are exhausted.
+        from django.db.models import Case, IntegerField, Value, When
+
+        warriors = list(
+            Warrior.objects.filter(clearing=clearing, player=removed_player)
+            .annotate(
+                is_warlord=Case(
+                    When(warlord__isnull=False, then=Value(1)),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                )
+            )
+            .order_by("is_warlord")[:count]
+        )
+        if len(warriors) != count:
+            raise ValueError("Not enough warriors to remove")
+    else:
+        warriors = list(
+            Warrior.objects.filter(clearing=clearing, player=removed_player)[:count]
+        )
+        if len(warriors) != count:
+            raise ValueError("Not enough warriors to remove")
 
     # For Cats, we launch Field Hospital event if keep is not destroyed.
     # Warriors are temporarily moved to clearing=None (supply) so they can be saved to keep.
