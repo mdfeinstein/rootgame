@@ -106,15 +106,41 @@ def move_warriors(
     clearing_end: Clearing,
     number: int,
     ignore_rule: bool = False,
+    move_warlord: bool = False,
 ):
-    """moves warriors from one clearing to another"""
+    """moves warriors from one clearing to another.
+
+    move_warlord=True (Rats only): the Warlord counts as one of the *number*
+    pieces being moved and will always be included first.  The queryset is
+    annotated so the Warlord sorts before regular warriors.
+
+    move_warlord=False (default): for Rats, the Warlord is explicitly excluded
+    from the queryset so it cannot be accidentally moved.
+    """
     from game.transactions.outrage import create_outrage_event
+    from django.db.models import Case, When, Value, IntegerField
 
     if number <= 0:
         raise IllegalActionError("Cannot move 0 warriors")
-    warriors = list(
-        Warrior.objects.filter(clearing=clearing_start, player=player)[:number]
-    )
+
+    qs = Warrior.objects.filter(clearing=clearing_start, player=player)
+
+    if move_warlord:
+        if player.faction != Faction.RATS:
+            raise IllegalActionError("move_warlord is only valid for the Rats faction")
+        # Warlord sorts first (is_warlord=0), regular warriors after (is_warlord=1)
+        qs = qs.annotate(
+            is_warlord=Case(
+                When(warlord__isnull=False, then=Value(0)),
+                default=Value(1),
+                output_field=IntegerField(),
+            )
+        ).order_by("is_warlord")
+    elif player.faction == Faction.RATS:
+        # Ensure the Warlord is never accidentally moved when player chose not to
+        qs = qs.filter(warlord__isnull=True)
+
+    warriors = list(qs[:number])
     if len(warriors) != number:
         raise IllegalActionError("not enough warriors in clearing to move")
     # check adjacency and rulership

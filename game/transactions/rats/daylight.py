@@ -7,7 +7,6 @@ from game.game_data.cards.exiles_and_partisans import CardsEP
 from game.models.enums import Faction
 from game.models.game_models import Clearing, Player
 from game.models.rats.buildings import Stronghold
-from game.models.rats.tokens import Warlord
 from game.models.rats.turn import RatsAdvance, RatsDaylight
 from game.queries.general import (
     available_building_slot,
@@ -189,15 +188,17 @@ def _command_move(
     origin: Clearing,
     destination: Clearing,
     count: int,
+    move_warlord: bool = False,
 ) -> None:
-    """Move *count* warriors from *origin* to *destination*.
+    """Move *count* pieces from *origin* to *destination*.
 
-    Delegates to the general move_warriors transaction.  Logs the move.
+    When *move_warlord* is True the Warlord counts as one of the *count*
+    pieces and will be moved alongside regular warriors.
 
     Raises:
         IllegalActionError: if the move is illegal (adjacency, rulership, count).
     """
-    move_warriors(player, origin, destination, count)
+    move_warriors(player, origin, destination, count, move_warlord=move_warlord)
     phase_log = get_current_phase_log(player.game, player)
     log_move(
         player.game,
@@ -388,16 +389,8 @@ def advance_move(player: Player, destination: Clearing, count: int) -> None:
 
     origin = warlord.clearing
 
-    # Validate adjacency, rulership, and snares (the warlord counts as a warrior).
-    validate_legal_move(player, origin, destination)
-
-    # Move the warlord directly so move_warriors only sees regular warriors.
-    warlord.clearing = destination
-    warlord.save()
-
-    # Move additional regular warriors if requested
-    if count > 0:
-        move_warriors(player, origin, destination, count)
+    # Move Warlord + count warriors in one call (Warlord always moves during Advance)
+    move_warriors(player, origin, destination, count + 1, move_warlord=True)
 
     advance.move_used = True
 

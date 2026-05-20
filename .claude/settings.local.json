@@ -151,7 +151,9 @@
       "Read(//mnt/f/**)",
       "Bash(/mnt/f/python/envs/.venv_web/Scripts/python.exe .agent/scripts/run_tests.py game.tests.action_views.rats.test_rats_evening_flow)",
       "Bash(F:\\\\python\\\\envs\\\\.venv_web\\\\Scripts\\\\python.exe .agent\\\\scripts\\\\run_tests.py game.tests.transactions.rats.test_rats_craft)",
-      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_warlord_protection)"
+      "Bash(python .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_warlord_protection)",
+      "Bash(git stash *)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_craft.RatsCraftErrorTests.test_card_not_in_hand_raises)"
     ]
   },
   "enabledPlugins": {

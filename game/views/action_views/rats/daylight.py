@@ -327,6 +327,8 @@ class RatsCommandMoveView(SubGameActionView):
                 return self.post_destination(request, game_id)
             case "count":
                 return self.post_count(request, game_id)
+            case "warlord":
+                return self.post_warlord(request, game_id)
             case _:
                 return Response(
                     {"error": "Invalid route"}, status=status.HTTP_400_BAD_REQUEST
@@ -371,7 +373,38 @@ class RatsCommandMoveView(SubGameActionView):
         origin = Clearing.objects.get(game=game, clearing_number=request.data["origin_clearing"])
         dest = Clearing.objects.get(game=game, clearing_number=request.data["destination_clearing"])
         count = int(request.data["count"])
+
+        # If the Warlord is in the origin clearing, ask whether to move him too
+        warlord = get_warlord(player)
+        if warlord.clearing is not None and warlord.clearing == origin:
+            return self.generate_step(
+                name="move_warlord_choice",
+                prompt=f"Move the Warlord? (counts as 1 of your {count})",
+                endpoint="warlord",
+                payload_details=[{"type": "option", "name": "move_warlord"}],
+                options=[
+                    {"value": "yes", "label": f"Yes — move Warlord with the group"},
+                    {"value": "no",  "label": "No — leave Warlord behind"},
+                ],
+                accumulated_payload={
+                    "origin_clearing": request.data["origin_clearing"],
+                    "destination_clearing": request.data["destination_clearing"],
+                    "count": count,
+                },
+            )
+
+        # Warlord not in origin — execute immediately
         atomic_game_action(use_command)(player, "move", origin, dest, count)
+        return self.generate_completed_step()
+
+    def post_warlord(self, request, game_id: int):
+        player = self.player(request, game_id)
+        game = self.game(game_id)
+        origin = Clearing.objects.get(game=game, clearing_number=request.data["origin_clearing"])
+        dest = Clearing.objects.get(game=game, clearing_number=request.data["destination_clearing"])
+        count = int(request.data["count"])
+        move_warlord = request.data.get("move_warlord") == "yes"
+        atomic_game_action(use_command)(player, "move", origin, dest, count, move_warlord=move_warlord)
         return self.generate_completed_step()
 
 
