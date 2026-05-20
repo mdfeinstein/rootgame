@@ -204,9 +204,20 @@ class RatsDaylightCraftSingleCardTestCase(RatsDaylightBaseTestCase):
         self._create_turn_at_craft()
         # Give the player a Mouse-in-a-Sack (cost: 1 orange/mouse) — crafted using C2 stronghold.
         self._add_card_to_hand(CardsEP.MOUSE_IN_A_SACK)
+        # Ensure BAG is in the craftable pool.
+        from game.models.game_models import CraftableItemEntry, Item
+        from game.models.enums import ItemTypes
+        if not CraftableItemEntry.objects.filter(
+            game=self.game, item__item_type=ItemTypes.BAG.value
+        ).exists():
+            item = Item.objects.create(game=self.game, item_type=ItemTypes.BAG.value)
+            CraftableItemEntry.objects.create(game=self.game, item=item)
 
     def test_craft_single_stronghold_card(self):
-        """Crafting a 1-orange card using the C2 stronghold should succeed."""
+        """Crafting a 1-orange item card (MOUSE_IN_A_SACK) using the C2 stronghold should succeed.
+
+        Flow: card → hoard_choice (add to hoard) → clearing.
+        """
         # Verify the C2 stronghold is placed and not yet used.
         stronghold = Stronghold.objects.filter(
             player=self.player,
@@ -217,15 +228,21 @@ class RatsDaylightCraftSingleCardTestCase(RatsDaylightBaseTestCase):
 
         self.rats_client.get_action()
 
-        # Step 1: pick the card.
+        # Step 1: pick the card — should now show hoard_choice (MOUSE_IN_A_SACK has item=BAG).
         response = self.rats_client.submit_action({"card": CardsEP.MOUSE_IN_A_SACK.name})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data.get("name"), "hoard_choice", "Item card should show hoard_choice step")
+
+        # Step 2: choose to add to hoard.
+        response = self.rats_client.submit_action({"choice": "true"})
         self.assertEqual(response.status_code, 200)
         data = response.json()
         # Should now be at the clearing-selection step.
         self.assertIn("endpoint", data)
         self.assertEqual(data["endpoint"], "clearing")
 
-        # Step 2: pick clearing 2 (the C2 orange stronghold).
+        # Step 3: pick clearing 2 (the C2 orange stronghold).
         response = self.rats_client.submit_action({"clearing_number": 2})
         self.assertEqual(response.status_code, 200)
 
@@ -464,3 +481,122 @@ class RatsDaylightCommandBuildTestCase(RatsDaylightBaseTestCase):
         # commands_used should have incremented.
         self.daylight.refresh_from_db()
         self.assertEqual(self.daylight.commands_used, 1)
+
+
+# ===========================================================================
+# Craft — Contempt for Trade (hoard choice) tests
+# ===========================================================================
+
+
+class RatsDaylightCraftContemptForTradeTestCase(RatsDaylightBaseTestCase):
+    """Tests for the Contempt for Trade hoard-vs-score choice in the craft flow.
+
+    ROOT_TEA_ORANGE: orange suit, cost=[ORANGE], item=TEA → goes to prowess track.
+    MOUSE_IN_A_SACK: orange suit, cost=[ORANGE], item=BAG → goes to command track.
+    A non-item craftable card (MURINE_BROKERS) should skip the hoard-choice step.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self._create_turn_at_craft()
+        # Ensure the craftable pool has what we need.
+        from game.models.game_models import CraftableItemEntry, Item
+        from game.models.enums import ItemTypes
+
+        def _ensure_pool(item_type):
+            if not CraftableItemEntry.objects.filter(
+                game=self.game, item__item_type=item_type.value
+            ).exists():
+                item = Item.objects.create(game=self.game, item_type=item_type.value)
+                CraftableItemEntry.objects.create(game=self.game, item=item)
+
+        _ensure_pool(ItemTypes.TEA)
+        _ensure_pool(ItemTypes.BAG)
+
+    def test_item_card_shows_hoard_choice_step(self):
+        """Selecting an item card (ROOT_TEA_ORANGE) should show the hoard-choice step."""
+        self._add_card_to_hand(CardsEP.ROOT_TEA_ORANGE)
+        self.rats_client.get_action()
+
+        response = self.rats_client.submit_action({"card": CardsEP.ROOT_TEA_ORANGE.name})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+
+        # Should be at hoard_choice step, not clearing selection yet.
+        self.assertEqual(data.get("name"), "hoard_choice")
+        self.assertIn("options", data)
+        option_values = {opt["value"] for opt in data["options"]}
+        self.assertIn("true", option_values)
+        self.assertIn("false", option_values)
+
+    def test_non_item_card_skips_hoard_choice(self):
+        """Selecting a non-item card should go straight to clearing selection."""
+        # MURINE_BROKERS is a non-item craftable card (suit=ORANGE, cost=[ORANGE]).
+        self._add_card_to_hand(CardsEP.MURINE_BROKERS)
+        self.rats_client.get_action()
+
+        response = self.rats_client.submit_action({"card": CardsEP.MURINE_BROKERS.name})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+
+        # Should jump straight to clearing selection.
+        self.assertEqual(data.get("endpoint"), "clearing")
+
+    def test_hoard_choice_add_to_hoard_places_item_on_track(self):
+        """Full flow with add_to_hoard=true places item on prowess track (0 VP)."""
+        from game.models.rats.player import ProwessItemEntry
+
+        self._add_card_to_hand(CardsEP.ROOT_TEA_ORANGE)
+        score_before = self.player.score
+        self.rats_client.get_action()
+
+        # Step 1: pick card → hoard choice step.
+        self.rats_client.submit_action({"card": CardsEP.ROOT_TEA_ORANGE.name})
+        # Step 2: choose hoard.
+        self.rats_client.submit_action({"choice": "true"})
+        # Step 3: pick clearing 2 (C2 has the orange stronghold).
+        response = self.rats_client.submit_action({"clearing_number": 2})
+        self.assertEqual(response.status_code, 200)
+
+        # Item should be on prowess track.
+        self.assertTrue(
+            ProwessItemEntry.objects.filter(player=self.player).exists(),
+            "Item should be on prowess track after hoard craft",
+        )
+        # No VP scored.
+        self.player.refresh_from_db()
+        self.assertEqual(
+            self.player.score, score_before, "No VP scored when adding to hoard"
+        )
+
+    def test_hoard_choice_score_adds_vp_and_crafted_item(self):
+        """Full flow with add_to_hoard=false scores VP and puts item in CraftedItemEntry."""
+        from game.models.game_models import CraftedItemEntry
+        from game.models.rats.player import ProwessItemEntry
+
+        self._add_card_to_hand(CardsEP.ROOT_TEA_ORANGE)
+        score_before = self.player.score
+        self.rats_client.get_action()
+
+        # Step 1: pick card → hoard choice step.
+        self.rats_client.submit_action({"card": CardsEP.ROOT_TEA_ORANGE.name})
+        # Step 2: choose score (not hoard).
+        self.rats_client.submit_action({"choice": "false"})
+        # Step 3: pick clearing 2.
+        response = self.rats_client.submit_action({"clearing_number": 2})
+        self.assertEqual(response.status_code, 200)
+
+        # VP should have increased.
+        self.player.refresh_from_db()
+        self.assertGreater(
+            self.player.score, score_before, "VP should be scored when not adding to hoard"
+        )
+        # Item in CraftedItemEntry, NOT on hoard track.
+        self.assertTrue(
+            CraftedItemEntry.objects.filter(player=self.player).exists(),
+            "Item should appear in CraftedItemEntry when not adding to hoard",
+        )
+        self.assertFalse(
+            ProwessItemEntry.objects.filter(player=self.player).exists(),
+            "Item should NOT be on prowess track when scoring VP",
+        )

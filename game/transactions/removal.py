@@ -236,8 +236,13 @@ def player_removes_building(
 
     # Check for Moles price of failure
     from game.models.moles.buildings import Citadel, Market
-    if Citadel.objects.filter(pk=building.pk).exists() or Market.objects.filter(pk=building.pk).exists():
+
+    if (
+        Citadel.objects.filter(pk=building.pk).exists()
+        or Market.objects.filter(pk=building.pk).exists()
+    ):
         from game.transactions.moles.price_of_failure import trigger_price_of_failure
+
         trigger_price_of_failure(building.player)
 
 
@@ -248,6 +253,7 @@ def start_removal_event(game: Game):
     Raises InternalGameError if one already exists.
     """
     from game.models.removal_tracker import RemovalEventTracker
+
     if RemovalEventTracker.objects.filter(game=game).exists():
         raise InternalGameError("RemovalEventTracker already exists for this game")
     RemovalEventTracker.objects.create(game=game)
@@ -260,6 +266,7 @@ def cleanup_removal_event(game: Game):
     Safe to call even if no tracker exists (no-op in that case).
     """
     from game.models.removal_tracker import RemovalEventTracker
+
     tracker = RemovalEventTracker.objects.filter(game=game).first()
     if tracker:
         tracker.delete()

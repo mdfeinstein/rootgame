@@ -199,3 +199,20 @@ def discard_card(player: Player, card_entry: HandEntry) -> None:
 
     if get_player_hand_size(player) <= 5:
         next_step(player)
+
+
+@transaction.atomic
+def end_discard(player: Player) -> None:
+    """Explicitly end the DISCARD step when the hand is already at or below 5 cards.
+
+    Raises:
+        UnavailableActionError: if not the DISCARD step, or hand still exceeds 5 cards.
+    """
+    validate_step(player, RatsEvening.Steps.DISCARD)
+
+    if get_player_hand_size(player) > 5:
+        raise UnavailableActionError(
+            "Cannot end discard: hand still has more than 5 cards"
+        )
+
+    next_step(player)

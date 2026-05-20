@@ -37,6 +37,12 @@ def get_current_event_action(game: Game) -> str | None:
             return reverse("crows-place-raid-warriors")
         case EventType.PRICE_OF_FAILURE:
             return reverse("moles-price-of-failure")
+        case EventType.HOARD_TOO_FULL:
+            return reverse("rats-hoard-too-full")
+        case EventType.BITTER_RESOLVE:
+            return reverse("rats-bitter-resolve")
+        case EventType.LOOTING:
+            return reverse("rats-looting")
         case _:
             raise ValueError("Invalid event type")
 

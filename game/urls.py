@@ -75,6 +75,11 @@ from game.views.action_views.rats.evening import (
     RatsEveningInciteView,
     RatsEveningDiscardView,
 )
+from game.views.action_views.rats.events import (
+    RatsHoardTooFullView,
+    RatsResolveBitterView,
+    RatsLootingView,
+)
 from game.views.gamestate_views import (
     get_bird_player_public,
     get_cat_player_public,
@@ -362,6 +367,25 @@ register_action(
     "rats-evening-discard",
     RatsEveningDiscardView,
     "api/rats/evening/discard/",
+    urlpatterns,
+)
+# Rats events
+register_action(
+    "rats-hoard-too-full",
+    RatsHoardTooFullView,
+    "api/rats/events/hoard-too-full/",
+    urlpatterns,
+)
+register_action(
+    "rats-bitter-resolve",
+    RatsResolveBitterView,
+    "api/rats/events/bitter-resolve/",
+    urlpatterns,
+)
+register_action(
+    "rats-looting",
+    RatsLootingView,
+    "api/rats/events/looting/",
     urlpatterns,
 )
 

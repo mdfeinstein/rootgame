@@ -172,7 +172,7 @@ def place_warriors_into_clearing(player: Player, clearing: Clearing, number: int
 
 
 @transaction.atomic
-def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
+def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece], **kwargs):
     """crafts a card with the given pieces. If it is an item, scores the points and discards it
     If not, moves the card to the player's crafted card box.
     NOTE: this function does not check if the player has enough crafting pieces to craft the card.
@@ -225,11 +225,16 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
         ).first()
         assert item_from_pool is not None, "item not in pool"
         item = item_from_pool.item
+        adding_to_hoard = kwargs.get("adding_to_hoard", False)
         if card_in_hand.player.faction == Faction.RATS:
-            from game.transactions.rats.hoard import add_item_to_hoard
+            if adding_to_hoard:
+                from game.transactions.rats.hoard import add_item_to_hoard
 
-            item_from_pool.delete()
-            add_item_to_hoard(card_in_hand.player, item)
+                item_from_pool.delete()
+                add_item_to_hoard(card_in_hand.player, item)
+            else:
+                # delete from game
+                item.delete()  # should cascade and delete craftable item entry
         else:
             CraftedItemEntry(player=card_in_hand.player, item=item).save()
             item_from_pool.delete()
@@ -250,6 +255,9 @@ def craft_card(card_in_hand: HandEntry, crafting_pieces: list[Piece]):
             leader = BirdLeader.objects.get(player=card_in_hand.player, active=True)
             if leader.leader != BirdLeader.BirdLeaders.BUILDER.value:
                 points = 1
+        # Rats Contempt for Trade: No listed points if adding to hoard.
+        elif card_in_hand.player.faction == Faction.RATS and adding_to_hoard:
+            points = 0
 
         card_in_hand.player.score += points
         if has_master_engravers:

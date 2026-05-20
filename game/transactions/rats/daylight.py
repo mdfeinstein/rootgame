@@ -32,21 +32,29 @@ from game.transactions.rats.turn import next_step
 
 
 @transaction.atomic
-def craft_card(player: Player, card: CardsEP, strongholds: list[Stronghold]) -> None:
+def craft_card(
+    player: Player,
+    card: CardsEP,
+    strongholds: list[Stronghold],
+    add_to_hoard: bool = False,
+) -> None:
     """Craft a card using the given Strongholds as crafting pieces.
 
     Each Stronghold must be deployed (have a building_slot) and not yet used
     this turn (crafted_with=False). The combined clearing suits of the Strongholds
     must satisfy the card's crafting cost.
 
-    Crafted items are routed to the Rats hoard (Command or Prowess track) instead
-    of the standard CraftedItemEntry box; this is handled inside the general
-    craft_card transaction via a faction check.
+    For item cards, the player may choose to add the item to the hoard (score no VP)
+    or remove it permanently to score the listed VP (Contempt for Trade rule).
+    Pass ``add_to_hoard=True`` to route the item onto the hoard instead of scoring.
 
     Args:
         player: The Rats player performing the craft action.
         card: The card enum value to craft from hand.
         strongholds: The Strongholds whose clearings satisfy the card's cost.
+        add_to_hoard: If True and the card yields an item, route it to the hoard
+            (Command or Prowess track) and score 0 VP.  If False, remove the item
+            permanently and score the listed VP.  Has no effect for non-item cards.
 
     Raises:
         UnavailableActionError: if it is not the CRAFT step.
@@ -66,7 +74,7 @@ def craft_card(player: Player, card: CardsEP, strongholds: list[Stronghold]) -> 
     validate_crafting_pieces_satisfy_requirements(player, card, strongholds)
 
     card_model = card_in_hand.card
-    general_craft_card(card_in_hand, strongholds)
+    general_craft_card(card_in_hand, strongholds, adding_to_hoard=add_to_hoard)
 
     phase_log = get_current_phase_log(player.game, player)
     log_craft(player.game, player, card_model, parent=phase_log)

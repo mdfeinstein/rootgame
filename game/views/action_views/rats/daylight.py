@@ -84,6 +84,8 @@ class RatsDaylightCraftView(GameActionView):
         match route:
             case "card":
                 return self.post_card(request, game_id)
+            case "hoard_choice":
+                return self.post_hoard_choice(request, game_id)
             case "clearing":
                 return self.post_clearing(request, game_id)
             case _:
@@ -104,6 +106,23 @@ class RatsDaylightCraftView(GameActionView):
         except KeyError:
             raise ValidationError({"detail": f"Unknown card: {card_name}"})
 
+        # Contempt for Trade: if this card yields an item, ask hoard or score first.
+        if card_enum.value.item is not None:
+            return self.generate_step(
+                name="hoard_choice",
+                prompt=(
+                    f"{card_enum.value.title}: Add to hoard (0 VP) "
+                    f"or remove permanently to score {card_enum.value.crafted_points} VP?"
+                ),
+                endpoint="hoard_choice",
+                payload_details=[{"type": "choice", "name": "add_to_hoard"}],
+                accumulated_payload={"card_to_craft": card_name},
+                options=[
+                    {"value": "true", "label": "Add to Hoard (0 VP)"},
+                    {"value": "false", "label": f"Score {card_enum.value.crafted_points} VP (remove permanently)"},
+                ],
+            )
+
         cost = card_enum.value.cost
         cost_labels = [c.label for c in cost]
         return self.generate_step(
@@ -111,7 +130,36 @@ class RatsDaylightCraftView(GameActionView):
             prompt=f"Select clearing for {card_enum.value.title} (cost: {cost_labels}).",
             endpoint="clearing",
             payload_details=[{"type": "clearing_number", "name": "clearing_number"}],
-            accumulated_payload={"card_to_craft": card_name, "clearing_numbers": []},
+            accumulated_payload={"card_to_craft": card_name, "clearing_numbers": [], "add_to_hoard": False},
+            options=self._clearing_options(player),
+        )
+
+    def post_hoard_choice(self, request, game_id: int):
+        player = self.player(request, game_id)
+        card_name = request.data.get("card_to_craft", "")
+        add_to_hoard_str = request.data.get("add_to_hoard", "false")
+        add_to_hoard = add_to_hoard_str == "true"
+
+        if not card_name:
+            raise ValidationError({"detail": "No card selected"})
+
+        try:
+            card_enum = CardsEP[card_name]
+        except KeyError:
+            raise ValidationError({"detail": f"Unknown card: {card_name}"})
+
+        cost = card_enum.value.cost
+        cost_labels = [c.label for c in cost]
+        return self.generate_step(
+            name="select_clearing",
+            prompt=f"Select clearing for {card_enum.value.title} (cost: {cost_labels}).",
+            endpoint="clearing",
+            payload_details=[{"type": "clearing_number", "name": "clearing_number"}],
+            accumulated_payload={
+                "card_to_craft": card_name,
+                "clearing_numbers": [],
+                "add_to_hoard": add_to_hoard,
+            },
             options=self._clearing_options(player),
         )
 
@@ -121,6 +169,7 @@ class RatsDaylightCraftView(GameActionView):
         card_name = request.data.get("card_to_craft", "")
         clearing_numbers_so_far = request.data.get("clearing_numbers", [])
         new_clearing_number = request.data.get("clearing_number", "")
+        add_to_hoard = request.data.get("add_to_hoard", False)
 
         if not card_name:
             raise ValidationError({"detail": "No card selected"})
@@ -160,7 +209,7 @@ class RatsDaylightCraftView(GameActionView):
 
         # If we have gathered enough, try to craft
         if len(strongholds) == len(cost):
-            atomic_game_action(craft_card)(player, card_enum, strongholds)
+            atomic_game_action(craft_card)(player, card_enum, strongholds, add_to_hoard=bool(add_to_hoard))
             return self.generate_completed_step()
 
         # Still gathering — ask for the next clearing
@@ -178,6 +227,7 @@ class RatsDaylightCraftView(GameActionView):
             accumulated_payload={
                 "card_to_craft": card_name,
                 "clearing_numbers": clearing_numbers,
+                "add_to_hoard": add_to_hoard,
             },
             options=self._clearing_options(player),
         )

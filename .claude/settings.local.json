@@ -149,7 +149,8 @@
       "Bash(\"F:/python/envs/.venv_web/Scripts/python.exe\" .agent/scripts/run_tests.py game.tests.action_views.rats.test_rats_daylight_flow)",
       "Bash(python .agent/scripts/run_tests.py game.tests.action_views.rats.test_rats_advance_flow)",
       "Read(//mnt/f/**)",
-      "Bash(/mnt/f/python/envs/.venv_web/Scripts/python.exe .agent/scripts/run_tests.py game.tests.action_views.rats.test_rats_evening_flow)"
+      "Bash(/mnt/f/python/envs/.venv_web/Scripts/python.exe .agent/scripts/run_tests.py game.tests.action_views.rats.test_rats_evening_flow)",
+      "Bash(F:\\\\python\\\\envs\\\\.venv_web\\\\Scripts\\\\python.exe .agent\\\\scripts\\\\run_tests.py game.tests.transactions.rats.test_rats_craft)"
     ]
   },
   "enabledPlugins": {

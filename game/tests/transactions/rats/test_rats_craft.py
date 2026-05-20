@@ -29,6 +29,7 @@ from game.models.game_models import (
     BuildingSlot,
     Card,
     CraftableItemEntry,
+    CraftedItemEntry,
     Clearing,
     Faction,
     Game,
@@ -170,7 +171,7 @@ class RatsCraftSuccessTests(RatsCraftBaseTestCase):
         )
 
     def test_craft_item_placed_in_hoard(self):
-        """Crafting a card with an item places that item on the hoard (command or prowess track)."""
+        """Crafting with add_to_hoard=True places the item on the hoard track."""
         from game.transactions.rats.daylight import craft_card
 
         # ROOT_TEA_ORANGE → TEA → prowess track
@@ -182,7 +183,7 @@ class RatsCraftSuccessTests(RatsCraftBaseTestCase):
 
         before_prowess = ProwessItemEntry.objects.filter(player=self.player).count()
 
-        craft_card(self.player, CardsEP.ROOT_TEA_ORANGE, [stronghold])
+        craft_card(self.player, CardsEP.ROOT_TEA_ORANGE, [stronghold], add_to_hoard=True)
 
         after_prowess = ProwessItemEntry.objects.filter(player=self.player).count()
         self.assertEqual(
@@ -253,7 +254,7 @@ class RatsCraftHoardRoutingTests(RatsCraftBaseTestCase):
         self._add_card_to_hand(CardsEP.TRAVEL_GEAR_ORANGE)
         before = CommandItemEntry.objects.filter(player=self.player).count()
 
-        craft_card(self.player, CardsEP.TRAVEL_GEAR_ORANGE, [sh])
+        craft_card(self.player, CardsEP.TRAVEL_GEAR_ORANGE, [sh], add_to_hoard=True)
 
         after = CommandItemEntry.objects.filter(player=self.player).count()
         self.assertEqual(after, before + 1, "BOOTS should be added to command track")
@@ -275,7 +276,7 @@ class RatsCraftHoardRoutingTests(RatsCraftBaseTestCase):
         stronghold.save()
 
         before = CommandItemEntry.objects.filter(player=self.player).count()
-        craft_card(self.player, CardsEP.MOUSE_IN_A_SACK, [stronghold])
+        craft_card(self.player, CardsEP.MOUSE_IN_A_SACK, [stronghold], add_to_hoard=True)
 
         self.assertEqual(
             CommandItemEntry.objects.filter(player=self.player).count(),
@@ -306,7 +307,7 @@ class RatsCraftHoardRoutingTests(RatsCraftBaseTestCase):
 
         self._add_card_to_hand(CardsEP.BAKE_SALE)
         before = CommandItemEntry.objects.filter(player=self.player).count()
-        craft_card(self.player, CardsEP.BAKE_SALE, [sh1, sh2])
+        craft_card(self.player, CardsEP.BAKE_SALE, [sh1, sh2], add_to_hoard=True)
 
         self.assertEqual(
             CommandItemEntry.objects.filter(player=self.player).count(),
@@ -328,7 +329,7 @@ class RatsCraftHoardRoutingTests(RatsCraftBaseTestCase):
         stronghold.save()
 
         before = ProwessItemEntry.objects.filter(player=self.player).count()
-        craft_card(self.player, CardsEP.ROOT_TEA_ORANGE, [stronghold])
+        craft_card(self.player, CardsEP.ROOT_TEA_ORANGE, [stronghold], add_to_hoard=True)
 
         self.assertEqual(
             ProwessItemEntry.objects.filter(player=self.player).count(),
@@ -362,7 +363,7 @@ class RatsCraftHoardRoutingTests(RatsCraftBaseTestCase):
 
         self._add_card_to_hand(CardsEP.SWORD)
         before = ProwessItemEntry.objects.filter(player=self.player).count()
-        craft_card(self.player, CardsEP.SWORD, [sh1, sh2])
+        craft_card(self.player, CardsEP.SWORD, [sh1, sh2], add_to_hoard=True)
 
         self.assertEqual(
             ProwessItemEntry.objects.filter(player=self.player).count(),
@@ -387,7 +388,7 @@ class RatsCraftHoardRoutingTests(RatsCraftBaseTestCase):
 
         self._add_card_to_hand(CardsEP.ANVIL)
         before = ProwessItemEntry.objects.filter(player=self.player).count()
-        craft_card(self.player, CardsEP.ANVIL, [sh])
+        craft_card(self.player, CardsEP.ANVIL, [sh], add_to_hoard=True)
 
         self.assertEqual(
             ProwessItemEntry.objects.filter(player=self.player).count(),
@@ -412,7 +413,7 @@ class RatsCraftHoardRoutingTests(RatsCraftBaseTestCase):
 
         self._add_card_to_hand(CardsEP.CROSSBOW_ORANGE)
         before = ProwessItemEntry.objects.filter(player=self.player).count()
-        craft_card(self.player, CardsEP.CROSSBOW_ORANGE, [sh])
+        craft_card(self.player, CardsEP.CROSSBOW_ORANGE, [sh], add_to_hoard=True)
 
         self.assertEqual(
             ProwessItemEntry.objects.filter(player=self.player).count(),
@@ -566,3 +567,150 @@ class RatsCraftEndTests(RatsCraftBaseTestCase):
 
         with self.assertRaises(UnavailableActionError):
             end_crafting(self.player)
+
+
+# ===========================================================================
+# Contempt for Trade: hoard vs score choice
+# ===========================================================================
+
+
+class RatsCraftContemptForTradeTests(RatsCraftBaseTestCase):
+    """Verify Contempt for Trade: add_to_hoard=True vs add_to_hoard=False."""
+
+    def _setup_tea_craft(self):
+        """Return the C2 stronghold ready for crafting ROOT_TEA_ORANGE."""
+        from game.transactions.rats.daylight import craft_card  # noqa: F401
+        self._ensure_item_in_pool(ItemTypes.TEA)
+        self._add_card_to_hand(CardsEP.ROOT_TEA_ORANGE)
+        sh = self._stronghold_in_c2()
+        sh.crafted_with = False
+        sh.save()
+        return sh
+
+    def test_add_to_hoard_places_item_on_track(self):
+        """add_to_hoard=True routes the item to the prowess track."""
+        from game.transactions.rats.daylight import craft_card
+
+        sh = self._setup_tea_craft()
+        before = ProwessItemEntry.objects.filter(player=self.player).count()
+
+        craft_card(self.player, CardsEP.ROOT_TEA_ORANGE, [sh], add_to_hoard=True)
+
+        self.assertEqual(
+            ProwessItemEntry.objects.filter(player=self.player).count(),
+            before + 1,
+            "Item should be on prowess track when add_to_hoard=True",
+        )
+        # Item should NOT be in the generic crafted items box
+        self.assertFalse(
+            CraftedItemEntry.objects.filter(player=self.player).exists(),
+            "Item should NOT appear in CraftedItemEntry when add_to_hoard=True",
+        )
+
+    def test_add_to_hoard_scores_zero_vp(self):
+        """add_to_hoard=True scores 0 VP (Contempt for Trade)."""
+        from game.transactions.rats.daylight import craft_card
+
+        sh = self._setup_tea_craft()
+        score_before = self.player.score
+
+        craft_card(self.player, CardsEP.ROOT_TEA_ORANGE, [sh], add_to_hoard=True)
+
+        self.player.refresh_from_db()
+        self.assertEqual(
+            self.player.score,
+            score_before,
+            "Crafting with add_to_hoard=True should score 0 VP",
+        )
+
+    def test_score_removes_item_permanently(self):
+        """add_to_hoard=False scores listed VP and deletes the item from the game entirely."""
+        from game.transactions.rats.daylight import craft_card
+
+        sh = self._setup_tea_craft()
+        tea_item = self._ensure_item_in_pool(ItemTypes.TEA)  # get the Item pk
+        score_before = self.player.score
+
+        craft_card(self.player, CardsEP.ROOT_TEA_ORANGE, [sh], add_to_hoard=False)
+
+        self.player.refresh_from_db()
+        # Should have scored the listed points (TEA = 2 VP)
+        self.assertGreater(
+            self.player.score,
+            score_before,
+            "Crafting with add_to_hoard=False should score VP",
+        )
+        # Item is deleted from the game — not in CraftedItemEntry, not on hoard track
+        from game.models.game_models import Item
+        self.assertFalse(
+            Item.objects.filter(pk=tea_item.pk).exists(),
+            "Item should be deleted from the game when add_to_hoard=False",
+        )
+        self.assertFalse(
+            CraftedItemEntry.objects.filter(player=self.player).exists(),
+            "Rats do not have a CraftedItemEntry box",
+        )
+        self.assertEqual(
+            ProwessItemEntry.objects.filter(player=self.player).count(),
+            0,
+            "Item should NOT be on prowess track when add_to_hoard=False",
+        )
+
+    def test_default_does_not_add_to_hoard(self):
+        """Default (no add_to_hoard kwarg) deletes the item and scores VP — same as add_to_hoard=False."""
+        from game.transactions.rats.daylight import craft_card
+
+        sh = self._setup_tea_craft()
+        tea_item = self._ensure_item_in_pool(ItemTypes.TEA)
+        score_before = self.player.score
+
+        craft_card(self.player, CardsEP.ROOT_TEA_ORANGE, [sh])
+
+        self.player.refresh_from_db()
+        from game.models.game_models import Item
+        self.assertGreater(
+            self.player.score,
+            score_before,
+            "Default craft should score VP",
+        )
+        self.assertFalse(
+            Item.objects.filter(pk=tea_item.pk).exists(),
+            "Item should be deleted from the game on default (score) craft",
+        )
+        self.assertEqual(
+            ProwessItemEntry.objects.filter(player=self.player).count(),
+            0,
+            "Default craft should NOT add item to prowess track",
+        )
+        self.assertFalse(
+            CraftedItemEntry.objects.filter(player=self.player).exists(),
+            "Rats do not have a CraftedItemEntry box",
+        )
+
+    def test_non_item_card_unaffected_by_add_to_hoard(self):
+        """Non-item cards (e.g. crafted-card abilities) are not affected by add_to_hoard."""
+        from game.transactions.rats.daylight import craft_card
+        from game.models.game_models import CraftedCardEntry
+
+        # RABBIT_PARTISANS: suit=YELLOW, cost=[YELLOW], no item — always has matching clearings.
+        non_item_card = CardsEP.RABBIT_PARTISANS
+
+        self._add_card_to_hand(non_item_card)
+        cost = non_item_card.value.cost
+        # Deploy strongholds matching the cost suits
+        strongholds = []
+        for suit in cost:
+            target = Clearing.objects.filter(game=self.game, suit=suit.value).first()
+            self.assertIsNotNone(target, f"No clearing with suit {suit}")
+            sh = self._deploy_stronghold(target)
+            sh.crafted_with = False
+            sh.save()
+            strongholds.append(sh)
+
+        craft_card(self.player, non_item_card, strongholds, add_to_hoard=True)
+
+        # Card should land in CraftedCardEntry regardless of add_to_hoard
+        self.assertTrue(
+            CraftedCardEntry.objects.filter(player=self.player).exists(),
+            "Non-item card should go to CraftedCardEntry even when add_to_hoard=True",
+        )
