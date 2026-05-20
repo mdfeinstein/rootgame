@@ -1,9 +1,62 @@
-from game.models.game_models import Clearing, Player
+from game.game_data.cards.exiles_and_partisans import CardsEP
+from game.models.game_models import Clearing, HandEntry, Player
 from game.queries.general import (
+    card_matches_clearing,
     count_player_pieces_in_clearing,
     determine_clearing_rule,
     player_has_pieces_in_clearing,
 )
+
+
+def get_incite_eligible_clearings(player: Player) -> list[Clearing]:
+    """Return clearings where the player may incite (place a Mob token).
+
+    A clearing is eligible when:
+    - At least one Mob token is in supply (global; if none, returns []).
+    - The player has at least one Hundreds warrior (Warrior or Warlord) there.
+    - The clearing does not already hold a Mob token for this player.
+
+    Results are ordered by clearing_number.
+    """
+    from game.models.game_models import Warrior
+    from game.models.rats.tokens import Mob
+
+    if not Mob.objects.filter(player=player, clearing__isnull=True).exists():
+        return []
+
+    # IDs of clearings that already have a mob
+    mob_clearing_ids = set(
+        Mob.objects.filter(player=player, clearing__isnull=False)
+        .values_list("clearing_id", flat=True)
+    )
+    # IDs of clearings that have at least one Hundreds warrior
+    warrior_clearing_ids = set(
+        Warrior.objects.filter(player=player, clearing__isnull=False)
+        .values_list("clearing_id", flat=True)
+    )
+
+    eligible_ids = warrior_clearing_ids - mob_clearing_ids
+    return list(
+        Clearing.objects.filter(pk__in=eligible_ids, game=player.game)
+        .order_by("clearing_number")
+    )
+
+
+def get_cards_matching_clearing(player: Player, clearing: Clearing) -> list[HandEntry]:
+    """Return the player's HandEntry objects whose card suit matches *clearing*.
+
+    Includes bird / wild cards (they match any clearing).
+    """
+    entries = HandEntry.objects.filter(player=player).select_related("card")
+    result = []
+    for entry in entries:
+        try:
+            card_enum = CardsEP[entry.card.card_type]
+        except KeyError:
+            continue
+        if card_matches_clearing(card_enum, clearing):
+            result.append(entry)
+    return result
 
 
 def get_oppressed_clearing_count(player: Player) -> int:

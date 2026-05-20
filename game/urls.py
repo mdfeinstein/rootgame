@@ -53,6 +53,28 @@ from game.views.action_views.setup.moles import (
     MolesPickCornerView,
     MolesConfirmCompletedSetupView,
 )
+from game.views.action_views.setup.rats import (
+    RatsPickCornerView,
+    RatsConfirmCompletedSetupView,
+)
+from game.views.action_views.rats.birdsong import (
+    RatsBirdsongSpreadMobView,
+    RatsBirdsongChooseMoodView,
+)
+from game.views.action_views.rats.daylight import (
+    RatsDaylightCraftView,
+    RatsDaylightCommandView,
+    RatsCommandMoveView,
+    RatsCommandBattleView,
+    RatsCommandBuildView,
+    RatsDaylightAdvanceView,
+    RatsAdvanceMoveView,
+    RatsAdvanceBattleView,
+)
+from game.views.action_views.rats.evening import (
+    RatsEveningInciteView,
+    RatsEveningDiscardView,
+)
 from game.views.gamestate_views import (
     get_bird_player_public,
     get_cat_player_public,
@@ -248,6 +270,98 @@ register_action(
     "moles-setup-confirm-completed-setup",
     MolesConfirmCompletedSetupView,
     "api/moles/setup/confirm-completed-setup/",
+    urlpatterns,
+)
+
+# Rats setup
+register_action(
+    "rats-setup-pick-corner",
+    RatsPickCornerView,
+    "api/rats/setup/pick-corner/",
+    urlpatterns,
+)
+
+register_action(
+    "rats-setup-confirm-completed-setup",
+    RatsConfirmCompletedSetupView,
+    "api/rats/setup/confirm-completed-setup/",
+    urlpatterns,
+)
+
+# Rats birdsong
+register_action(
+    "rats-birdsong-spread-mob",
+    RatsBirdsongSpreadMobView,
+    "api/rats/birdsong/spread-mob/",
+    urlpatterns,
+)
+register_action(
+    "rats-birdsong-choose-mood",
+    RatsBirdsongChooseMoodView,
+    "api/rats/birdsong/choose-mood/",
+    urlpatterns,
+)
+
+# Rats daylight
+register_action(
+    "rats-daylight-craft",
+    RatsDaylightCraftView,
+    "api/rats/daylight/craft/",
+    urlpatterns,
+)
+register_action(
+    "rats-daylight-command",
+    RatsDaylightCommandView,
+    "api/rats/daylight/command/",
+    urlpatterns,
+)
+register_action(
+    "rats-daylight-command-move",
+    RatsCommandMoveView,
+    "api/rats/daylight/command/move/",
+    urlpatterns,
+)
+register_action(
+    "rats-daylight-command-battle",
+    RatsCommandBattleView,
+    "api/rats/daylight/command/battle/",
+    urlpatterns,
+)
+register_action(
+    "rats-daylight-command-build",
+    RatsCommandBuildView,
+    "api/rats/daylight/command/build/",
+    urlpatterns,
+)
+register_action(
+    "rats-daylight-advance",
+    RatsDaylightAdvanceView,
+    "api/rats/daylight/advance/",
+    urlpatterns,
+)
+register_action(
+    "rats-daylight-advance-move",
+    RatsAdvanceMoveView,
+    "api/rats/daylight/advance/move/",
+    urlpatterns,
+)
+register_action(
+    "rats-daylight-advance-battle",
+    RatsAdvanceBattleView,
+    "api/rats/daylight/advance/battle/",
+    urlpatterns,
+)
+# Rats evening
+register_action(
+    "rats-evening-incite",
+    RatsEveningInciteView,
+    "api/rats/evening/incite/",
+    urlpatterns,
+)
+register_action(
+    "rats-evening-discard",
+    RatsEveningDiscardView,
+    "api/rats/evening/discard/",
     urlpatterns,
 )
 

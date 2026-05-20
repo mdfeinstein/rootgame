@@ -10,7 +10,12 @@ from game.queries.general import (
     get_player_hand_size,
     validate_player_has_card_in_hand,
 )
-from game.queries.rats.evening import get_oppressed_clearing_count, get_rowdy_draw_count
+from game.queries.rats.evening import (
+    get_cards_matching_clearing,
+    get_incite_eligible_clearings,
+    get_oppressed_clearing_count,
+    get_rowdy_draw_count,
+)
 from game.queries.rats.turn import validate_step
 from game.serializers.logs.general import (
     get_current_phase_log,

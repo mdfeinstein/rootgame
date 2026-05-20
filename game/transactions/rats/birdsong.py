@@ -149,6 +149,8 @@ def choose_mob_clearing(player: Player, clearing: Clearing) -> None:
         raise IllegalActionError("Chosen clearing is not a valid mob spread target")
 
     _place_mob_in_clearing(player, clearing)
+    birdsong.mob_die_suit = None
+    birdsong.save()
     next_step(player)
 
 
