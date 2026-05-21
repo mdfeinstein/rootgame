@@ -4,7 +4,14 @@ from rest_framework.response import Response
 
 from game.decorators.transaction_decorator import atomic_game_action
 from game.models.enums import ItemTypes
-from game.models.events.rats import HoardTooFullEvent, LootingEvent, ResolveBitterEvent
+from game.models.enums import Suit
+from game.models.events.rats import HoardTooFullEvent, JubilantMobSpreadEvent, LootingEvent, ResolveBitterEvent
+from game.queries.rats.birdsong import get_mob_spread_targets
+from game.transactions.rats.jubilant import (
+    jubilant_choose_clearing,
+    jubilant_end,
+    jubilant_roll,
+)
 from game.models.game_models import CraftedItemEntry, Faction, Item
 from game.models.rats.player import CommandItemEntry, ProwessItemEntry
 from game.queries.rats.pieces import get_warlord
@@ -57,6 +64,14 @@ def _get_active_looting_event(player) -> LootingEvent | None:
             looting_player=player, event__is_resolved=False
         )
         .select_related("event", "looted_player")
+        .first()
+    )
+
+
+def _get_active_jubilant_event(player) -> JubilantMobSpreadEvent | None:
+    return (
+        JubilantMobSpreadEvent.objects.filter(player=player, event__is_resolved=False)
+        .select_related("event")
         .first()
     )
 
@@ -278,3 +293,107 @@ class RatsLootingView(GameActionView):
         player = self.player(request, game_id)
         if _get_active_looting_event(player) is None:
             raise ValidationError({"detail": "No active Looting event"})
+
+
+# ---------------------------------------------------------------------------
+# Jubilant mob spread view
+# ---------------------------------------------------------------------------
+
+
+class RatsJubilantMobSpreadView(GameActionView):
+    """JUBILANT_MOB_SPREAD event: after Incite in the Warlord's clearing (Jubilant mood),
+    the player may roll the mob die up to 4 times and place mobs in adjacent clearings.
+
+    States:
+      - current_roll is None → "roll or end" prompt
+      - current_roll is set  → clearing picker for that suit
+    """
+
+    action_name = "RATS_JUBILANT_MOB_SPREAD"
+    faction = Faction.RATS
+    faction_string = Faction.RATS.label
+
+    def get(self, request, *args, **kwargs):
+        game_id = int(request.query_params.get("game_id"))
+        player = self.player(request, game_id)
+        return self._render_current_state(player)
+
+    def route_post(self, request, game_id: int, route: str):
+        match route:
+            case "roll":
+                return self.post_roll(request, game_id)
+            case "choose":
+                return self.post_choose(request, game_id)
+            case _:
+                return Response(
+                    {"error": "Invalid route"}, status=status.HTTP_400_BAD_REQUEST
+                )
+
+    def post_roll(self, request, game_id: int):
+        player = self.player(request, game_id)
+        action = request.data.get("action", "roll")
+
+        if action == "end":
+            atomic_game_action(jubilant_end)(player)
+            return self.generate_completed_step()
+
+        atomic_game_action(jubilant_roll)(player)
+
+        # Check if event resolved (no targets, last roll, supply exhausted)
+        if _get_active_jubilant_event(player) is None:
+            return self.generate_completed_step()
+
+        return self._render_current_state(player)
+
+    def post_choose(self, request, game_id: int):
+        player = self.player(request, game_id)
+        game = self.game(game_id)
+        try:
+            clearing_number = int(request.data.get("clearing_number"))
+        except (ValueError, TypeError):
+            raise ValidationError({"detail": "Invalid clearing number"})
+
+        clearing = Clearing.objects.get(game=game, clearing_number=clearing_number)
+        atomic_game_action(jubilant_choose_clearing)(player, clearing)
+
+        if _get_active_jubilant_event(player) is None:
+            return self.generate_completed_step()
+
+        return self._render_current_state(player)
+
+    def _render_current_state(self, player):
+        """Build the appropriate step response based on the current event state."""
+        evt = _get_active_jubilant_event(player)
+        if evt is None:
+            return self.generate_completed_step()
+
+        if evt.current_roll is not None:
+            targets = get_mob_spread_targets(player, Suit(evt.current_roll))
+            options = [
+                {"value": str(c.clearing_number), "label": f"Clearing {c.clearing_number} ({c.suit})"}
+                for c in sorted(targets, key=lambda c: c.clearing_number)
+            ]
+            return self.generate_step(
+                name="choose_clearing",
+                prompt=f"Jubilant: rolled {evt.current_roll}. Choose a clearing to place a mob.",
+                endpoint="choose",
+                payload_details=[{"type": "clearing_number", "name": "clearing_number"}],
+                options=options,
+            )
+
+        options = [
+            {"value": "roll", "label": f"Roll the mob die ({evt.rolls_remaining} roll(s) remaining)"},
+            {"value": "end", "label": "End Jubilant spreading"},
+        ]
+        return self.generate_step(
+            name="roll_or_end",
+            prompt=f"Jubilant: you may roll the mob die to spread mobs. {evt.rolls_remaining} roll(s) remaining.",
+            endpoint="roll",
+            payload_details=[{"type": "action", "name": "action"}],
+            options=options,
+        )
+
+    def validate_timing(self, request, game_id: int, *args, **kwargs):
+        player = self.player(request, game_id)
+        if _get_active_jubilant_event(player) is None:
+            raise ValidationError({"detail": "No active Jubilant mob spread event"})

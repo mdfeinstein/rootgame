@@ -86,6 +86,23 @@ def incite(player: Player, clearing: Clearing, card: CardsEP) -> None:
 
     log_discard(player.game, player, card_model, parent=phase_log)
 
+    # Jubilant mood: if incite happened in the Warlord's clearing and mobs remain
+    # in supply, create a JubilantMobSpreadEvent for up to 4 bonus rolls.
+    from game.models.rats.player import CurrentMood
+    from game.models.events.rats import JubilantMobSpreadEvent
+
+    try:
+        mood = player.mood
+    except player.__class__.mood.RelatedObjectDoesNotExist:
+        mood = None
+    if mood is not None and mood.mood_type == CurrentMood.MoodType.JUBILANT:
+        from game.queries.rats.pieces import get_warlord
+        warlord = get_warlord(player)
+        if warlord.clearing == clearing:
+            mob_in_supply = Mob.objects.filter(player=player, clearing__isnull=True).exists()
+            if mob_in_supply:
+                JubilantMobSpreadEvent.create(player)
+
 
 @transaction.atomic
 def end_incite_step(player: Player) -> None:

@@ -2,6 +2,7 @@ from django.db import models
 
 from game.models.events.battle import Battle
 from game.models.events.event import Event, EventType
+from game.models.enums import Suit
 from game.models.game_models import Player, Item
 
 
@@ -75,3 +76,29 @@ class ResolveBitterEvent(models.Model):
             game=player.game, type=EventType.BITTER_RESOLVE
         )
         return cls.objects.create(event=event, player=player, battle=battle)
+
+
+class JubilantMobSpreadEvent(models.Model):
+    """Created after Incite in the Warlord's clearing when the Rats have Jubilant mood.
+
+    The player may roll the mob die up to four times and place a Mob token in a
+    matching clearing adjacent to any clearing that already has a mob.
+    """
+
+    event = models.OneToOneField(
+        Event, on_delete=models.CASCADE, related_name="jubilant_mob_spread"
+    )
+    player = models.ForeignKey(
+        Player, on_delete=models.CASCADE, related_name="jubilant_mob_spread_events"
+    )
+    rolls_remaining = models.PositiveSmallIntegerField(default=4)
+    current_roll = models.CharField(
+        max_length=10, choices=Suit.choices, null=True, blank=True
+    )
+
+    @classmethod
+    def create(cls, player: Player) -> "JubilantMobSpreadEvent":
+        event = Event.objects.create(
+            game=player.game, type=EventType.JUBILANT_MOB_SPREAD
+        )
+        return cls.objects.create(event=event, player=player)

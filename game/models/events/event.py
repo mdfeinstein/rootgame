@@ -22,6 +22,7 @@ class EventType(models.TextChoices):
     HOARD_TOO_FULL = "hoard_too_full"
     LOOTING = "looting"
     BITTER_RESOLVE = "bitter_resolve"
+    JUBILANT_MOB_SPREAD = "jubilant_mob_spread"
 
 
 class Event(models.Model):

@@ -77,8 +77,9 @@ from game.views.action_views.rats.evening import (
 )
 from game.views.action_views.rats.events import (
     RatsHoardTooFullView,
-    RatsResolveBitterView,
+    RatsJubilantMobSpreadView,
     RatsLootingView,
+    RatsResolveBitterView,
 )
 from game.views.gamestate_views import (
     get_bird_player_public,
@@ -388,6 +389,12 @@ register_action(
     "rats-looting",
     RatsLootingView,
     "api/rats/events/looting/",
+    urlpatterns,
+)
+register_action(
+    "rats-jubilant-mob-spread",
+    RatsJubilantMobSpreadView,
+    "api/rats/events/jubilant-mob-spread/",
     urlpatterns,
 )
 
