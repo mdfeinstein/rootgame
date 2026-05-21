@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from game.decorators.transaction_decorator import atomic_game_action
 from game.models.enums import ItemTypes
 from game.models.enums import Suit
-from game.models.events.rats import HoardTooFullEvent, JubilantMobSpreadEvent, LootingEvent, ResolveBitterEvent
+from game.models.events.rats import HoardTooFullEvent, JubilantMobSpreadEvent, LavishEvent, LootingEvent, ResolveBitterEvent
 from game.queries.rats.birdsong import get_mob_spread_targets
 from game.transactions.rats.jubilant import (
     jubilant_choose_clearing,
@@ -19,6 +19,7 @@ from game.models.rats.tokens import Mob
 from game.models.game_models import Clearing
 from game.transactions.rats.bitter import absorb_mob, end_bitter
 from game.transactions.rats.hoard import discard_hoard_item
+from game.transactions.rats.lavish import end_lavish_step, liquidate_hoard_item
 from game.transactions.rats.looting import choose_loot
 from game.views.action_views.general import GameActionView
 
@@ -64,6 +65,14 @@ def _get_active_looting_event(player) -> LootingEvent | None:
             looting_player=player, event__is_resolved=False
         )
         .select_related("event", "looted_player")
+        .first()
+    )
+
+
+def _get_active_lavish_event(player) -> LavishEvent | None:
+    return (
+        LavishEvent.objects.filter(player=player, event__is_resolved=False)
+        .select_related("event")
         .first()
     )
 
@@ -293,6 +302,89 @@ class RatsLootingView(GameActionView):
         player = self.player(request, game_id)
         if _get_active_looting_event(player) is None:
             raise ValidationError({"detail": "No active Looting event"})
+
+
+# ---------------------------------------------------------------------------
+# Lavish hoard liquidation view
+# ---------------------------------------------------------------------------
+
+
+class RatsLavishView(GameActionView):
+    """LAVISH event: at end of Birdsong, player may remove any number of Hoard
+    items permanently — each yields 2 warriors in the Warlord's clearing.
+
+    Single-step UI: show all remaining Hoard items as options plus an End option.
+    Posting an empty item_id ends the event; posting an item_id liquidates that item.
+    Re-renders after each liquidation until the player ends or the Hoard is empty.
+    """
+
+    action_name = "RATS_LAVISH"
+    faction = Faction.RATS
+    faction_string = Faction.RATS.label
+
+    def get(self, request, *args, **kwargs):
+        game_id = int(request.query_params.get("game_id"))
+        player = self.player(request, game_id)
+        options = self._item_options(player)
+        options.append({"value": "", "label": "End (keep remaining items)"})
+        return self.generate_step(
+            name="select_item",
+            prompt="Lavish: remove items from your Hoard (each yields 2 warriors in your Warlord's clearing), or end.",
+            endpoint="select",
+            payload_details=[{"type": "item_id", "name": "item_id"}],
+            options=options,
+        )
+
+    def _item_options(self, player):
+        options = []
+        for entry in CommandItemEntry.objects.filter(player=player).select_related("item"):
+            options.append({"value": str(entry.item.id), "label": _item_label(entry.item)})
+        for entry in ProwessItemEntry.objects.filter(player=player).select_related("item"):
+            options.append({"value": str(entry.item.id), "label": _item_label(entry.item)})
+        return options
+
+    def route_post(self, request, game_id: int, route: str):
+        match route:
+            case "select":
+                return self.post_select(request, game_id)
+            case _:
+                return Response(
+                    {"error": "Invalid route"}, status=status.HTTP_400_BAD_REQUEST
+                )
+
+    def post_select(self, request, game_id: int):
+        player = self.player(request, game_id)
+        item_id = request.data.get("item_id", "")
+
+        if item_id == "" or item_id is None:
+            atomic_game_action(end_lavish_step)(player)
+            return self.generate_completed_step()
+
+        try:
+            item = Item.objects.get(id=int(item_id), game=player.game)
+        except (Item.DoesNotExist, ValueError, TypeError):
+            raise ValidationError({"detail": "Item not found"})
+
+        atomic_game_action(liquidate_hoard_item)(player, item)
+
+        # Auto-resolved if hoard emptied
+        if _get_active_lavish_event(player) is None:
+            return self.generate_completed_step()
+
+        options = self._item_options(player)
+        options.append({"value": "", "label": "End (keep remaining items)"})
+        return self.generate_step(
+            name="select_item",
+            prompt="Lavish: remove another item, or end.",
+            endpoint="select",
+            payload_details=[{"type": "item_id", "name": "item_id"}],
+            options=options,
+        )
+
+    def validate_timing(self, request, game_id: int, *args, **kwargs):
+        player = self.player(request, game_id)
+        if _get_active_lavish_event(player) is None:
+            raise ValidationError({"detail": "No active Lavish event"})
 
 
 # ---------------------------------------------------------------------------

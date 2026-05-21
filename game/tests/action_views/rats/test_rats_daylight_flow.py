@@ -362,6 +362,10 @@ class RatsDaylightCommandMoveTestCase(RatsDaylightBaseTestCase):
         # Pick count = 1.
         response = self.rats_client.submit_action({"number": 1})
         self.assertEqual(response.status_code, 200)
+        # Warlord is in C2 (the origin), so the view asks whether to bring the
+        # Warlord along. Choose "no" — leave the Warlord behind.
+        response = self.rats_client.submit_action({"option": "no"})
+        self.assertEqual(response.status_code, 200)
 
         # Warrior count should have shifted.
         warriors_in_c2_after = Warrior.objects.filter(
@@ -569,13 +573,27 @@ class RatsDaylightCraftContemptForTradeTestCase(RatsDaylightBaseTestCase):
             self.player.score, score_before, "No VP scored when adding to hoard"
         )
 
-    def test_hoard_choice_score_adds_vp_and_crafted_item(self):
-        """Full flow with add_to_hoard=false scores VP and puts item in CraftedItemEntry."""
-        from game.models.game_models import CraftedItemEntry
+    def test_hoard_choice_score_removes_item_and_scores_vp(self):
+        """Full flow with add_to_hoard=false scores VP and permanently removes the item.
+
+        Rule 14.2.3 — Contempt for Trade: the Hundreds may remove the item permanently
+        to score the listed VP. The specific item consumed is deleted from the game; it
+        does NOT appear in CraftedItemEntry and is NOT added to a hoard track.
+        Note: the game starts with 2 Tea items in the pool, so 1 remains after crafting.
+        """
+        from game.models.enums import ItemTypes
+        from game.models.game_models import CraftedItemEntry, Item
         from game.models.rats.player import ProwessItemEntry
 
         self._add_card_to_hand(CardsEP.ROOT_TEA_ORANGE)
         score_before = self.player.score
+
+        # Capture which specific Tea item will be consumed by the craft.
+        tea_item_id = Item.objects.filter(
+            game=self.game, item_type=ItemTypes.TEA
+        ).values_list("id", flat=True).first()
+        tea_count_before = Item.objects.filter(game=self.game, item_type=ItemTypes.TEA).count()
+
         self.rats_client.get_action()
 
         # Step 1: pick card → hoard choice step.
@@ -591,12 +609,22 @@ class RatsDaylightCraftContemptForTradeTestCase(RatsDaylightBaseTestCase):
         self.assertGreater(
             self.player.score, score_before, "VP should be scored when not adding to hoard"
         )
-        # Item in CraftedItemEntry, NOT on hoard track.
-        self.assertTrue(
-            CraftedItemEntry.objects.filter(player=self.player).exists(),
-            "Item should appear in CraftedItemEntry when not adding to hoard",
+        # The consumed item is permanently deleted from the game.
+        self.assertFalse(
+            Item.objects.filter(id=tea_item_id).exists(),
+            "The crafted Tea item should be deleted from the game",
         )
+        self.assertEqual(
+            Item.objects.filter(game=self.game, item_type=ItemTypes.TEA).count(),
+            tea_count_before - 1,
+            "Exactly one Tea item should have been removed",
+        )
+        # Item is NOT on hoard track and NOT in CraftedItemEntry.
         self.assertFalse(
             ProwessItemEntry.objects.filter(player=self.player).exists(),
             "Item should NOT be on prowess track when scoring VP",
+        )
+        self.assertFalse(
+            CraftedItemEntry.objects.filter(player=self.player).exists(),
+            "Item should NOT appear in CraftedItemEntry — it is removed permanently",
         )

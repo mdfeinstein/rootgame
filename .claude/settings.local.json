@@ -153,7 +153,8 @@
       "Bash(F:\\\\python\\\\envs\\\\.venv_web\\\\Scripts\\\\python.exe .agent\\\\scripts\\\\run_tests.py game.tests.transactions.rats.test_rats_craft)",
       "Bash(python .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_warlord_protection)",
       "Bash(git stash *)",
-      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_craft.RatsCraftErrorTests.test_card_not_in_hand_raises)"
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_craft.RatsCraftErrorTests.test_card_not_in_hand_raises)",
+      "Bash(F:/python/envs/.venv_web/scripts/python.exe .agent/scripts/run_tests.py game.tests.transactions.rats.test_rats_command.RatsCommandBuildTests.test_build_removes_card_from_hand)"
     ]
   },
   "enabledPlugins": {

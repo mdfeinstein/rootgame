@@ -111,6 +111,23 @@ def step_effect(
                 case RatsBirdsong.Steps.CHOOSE_MOOD:
                     pass
                 case RatsBirdsong.Steps.BEFORE_END:
+                    if not phase.lavish_complete:
+                        from game.models.rats.player import CurrentMood, CommandItemEntry, ProwessItemEntry
+                        from game.models.events.rats import LavishEvent
+                        try:
+                            mood = player.mood
+                        except player.__class__.mood.RelatedObjectDoesNotExist:
+                            mood = None
+                        has_items = (
+                            CommandItemEntry.objects.filter(player=player).exists()
+                            or ProwessItemEntry.objects.filter(player=player).exists()
+                        )
+                        if mood is not None and mood.mood_type == CurrentMood.MoodType.LAVISH and has_items:
+                            LavishEvent.create(player)
+                            return  # event interrupts; do not advance
+                        # Not lavish or no items — mark done and fall through
+                        phase.lavish_complete = True
+                        phase.save()
                     if not is_emigre(player):
                         next_step(player)
                 case RatsBirdsong.Steps.COMPLETED:

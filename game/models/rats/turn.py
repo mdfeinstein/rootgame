@@ -43,6 +43,7 @@ class RatsBirdsong(models.Model):
         blank=True,
         default=None,
     )
+    lavish_complete = models.BooleanField(default=False)
 
 
 class RatsAdvance(models.Model):

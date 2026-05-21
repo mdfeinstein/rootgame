@@ -23,6 +23,7 @@ class EventType(models.TextChoices):
     LOOTING = "looting"
     BITTER_RESOLVE = "bitter_resolve"
     JUBILANT_MOB_SPREAD = "jubilant_mob_spread"
+    LAVISH = "lavish"
 
 
 class Event(models.Model):

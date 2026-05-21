@@ -78,6 +78,7 @@ from game.views.action_views.rats.evening import (
 from game.views.action_views.rats.events import (
     RatsHoardTooFullView,
     RatsJubilantMobSpreadView,
+    RatsLavishView,
     RatsLootingView,
     RatsResolveBitterView,
 )
@@ -395,6 +396,12 @@ register_action(
     "rats-jubilant-mob-spread",
     RatsJubilantMobSpreadView,
     "api/rats/events/jubilant-mob-spread/",
+    urlpatterns,
+)
+register_action(
+    "rats-lavish",
+    RatsLavishView,
+    "api/rats/events/lavish/",
     urlpatterns,
 )
 

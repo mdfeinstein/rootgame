@@ -78,6 +78,25 @@ class ResolveBitterEvent(models.Model):
         return cls.objects.create(event=event, player=player, battle=battle)
 
 
+class LavishEvent(models.Model):
+    """Created at the BEFORE_END step of Birdsong when the player is Lavish and
+    has at least one Hoard item.  The player may liquidate items one at a time
+    (each yields 2 warriors in the Warlord's clearing) then end voluntarily or
+    when the Hoard is empty."""
+
+    event = models.OneToOneField(
+        Event, on_delete=models.CASCADE, related_name="lavish"
+    )
+    player = models.ForeignKey(
+        Player, on_delete=models.CASCADE, related_name="lavish_events"
+    )
+
+    @classmethod
+    def create(cls, player: Player) -> "LavishEvent":
+        event = Event.objects.create(game=player.game, type=EventType.LAVISH)
+        return cls.objects.create(event=event, player=player)
+
+
 class JubilantMobSpreadEvent(models.Model):
     """Created after Incite in the Warlord's clearing when the Rats have Jubilant mood.
 
