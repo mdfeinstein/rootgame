@@ -3086,6 +3086,106 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/rats/events/jubilant-mob-spread/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_events_jubilant_mob_spread_retrieve"];
+        put?: never;
+        /**
+         * @description JUBILANT_MOB_SPREAD event: after Incite in the Warlord's clearing (Jubilant mood),
+         *     the player may roll the mob die up to 4 times and place mobs in adjacent clearings.
+         *
+         *     States:
+         *       - current_roll is None → "roll or end" prompt
+         *       - current_roll is set  → clearing picker for that suit
+         */
+        post: operations["rats_events_jubilant_mob_spread_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/events/jubilant-mob-spread/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_events_jubilant_mob_spread_retrieve_2"];
+        put?: never;
+        /**
+         * @description JUBILANT_MOB_SPREAD event: after Incite in the Warlord's clearing (Jubilant mood),
+         *     the player may roll the mob die up to 4 times and place mobs in adjacent clearings.
+         *
+         *     States:
+         *       - current_roll is None → "roll or end" prompt
+         *       - current_roll is set  → clearing picker for that suit
+         */
+        post: operations["rats_events_jubilant_mob_spread_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/events/lavish/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_events_lavish_retrieve"];
+        put?: never;
+        /**
+         * @description LAVISH event: at end of Birdsong, player may remove any number of Hoard
+         *     items permanently — each yields 2 warriors in the Warlord's clearing.
+         *
+         *     Single-step UI: show all remaining Hoard items as options plus an End option.
+         *     Posting an empty item_id ends the event; posting an item_id liquidates that item.
+         *     Re-renders after each liquidation until the player ends or the Hoard is empty.
+         */
+        post: operations["rats_events_lavish_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rats/events/lavish/{game_id}/{route}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Return initial step data. */
+        get: operations["rats_events_lavish_retrieve_2"];
+        put?: never;
+        /**
+         * @description LAVISH event: at end of Birdsong, player may remove any number of Hoard
+         *     items permanently — each yields 2 warriors in the Warlord's clearing.
+         *
+         *     Single-step UI: show all remaining Hoard items as options plus an End option.
+         *     Posting an empty item_id ends the event; posting an item_id liquidates that item.
+         *     Re-renders after each liquidation until the player ends or the Hoard is empty.
+         */
+        post: operations["rats_events_lavish_create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/rats/events/looting/": {
         parameters: {
             query?: never;
@@ -3582,8 +3682,21 @@ export interface components {
          */
         ColumnEnum: "R" | "M" | "B" | "U";
         CommandItemEntry: {
-            item_id: number;
-            item_type: string;
+            item: {
+                /**
+                 * @description * `0` - 0
+                 *     * `1` - 1
+                 *     * `2` - 2
+                 *     * `3` - 3
+                 *     * `4` - 4
+                 *     * `5` - 5
+                 *     * `6` - 6
+                 * @enum {string}
+                 */
+                value: "0" | "1" | "2" | "3" | "4" | "5" | "6";
+                /** @enum {string} */
+                label: "Bag" | "Boots" | "Coin" | "Crossbow" | "Hammer" | "Sword" | "Tea";
+            };
         };
         CraftableItem: {
             item: {
@@ -3930,20 +4043,37 @@ export interface components {
             readonly crafted_items: components["schemas"]["CraftedItemEntry"][];
         };
         ProwessItemEntry: {
-            item_id: number;
-            item_type: string;
+            item: {
+                /**
+                 * @description * `0` - 0
+                 *     * `1` - 1
+                 *     * `2` - 2
+                 *     * `3` - 3
+                 *     * `4` - 4
+                 *     * `5` - 5
+                 *     * `6` - 6
+                 * @enum {string}
+                 */
+                value: "0" | "1" | "2" | "3" | "4" | "5" | "6";
+                /** @enum {string} */
+                label: "Bag" | "Boots" | "Coin" | "Crossbow" | "Hammer" | "Sword" | "Tea";
+            };
         };
         /** @description Serializer to provide all (public) information about rats (Lord of the Hundreds). */
         Rats: {
             player: components["schemas"]["PlayerPublic"];
             warriors: components["schemas"]["Warrior"][];
             warlord: components["schemas"]["Warlord"];
-            strongholds: components["schemas"]["Stronghold"][];
+            buildings: components["schemas"]["RatsBuildings"];
             mobs: components["schemas"]["Mob"][];
             mood: components["schemas"]["CurrentMood"];
             valid_moods: components["schemas"]["ValidMoodsEnum"][];
             command_items: components["schemas"]["CommandItemEntry"][];
             prowess_items: components["schemas"]["ProwessItemEntry"][];
+        };
+        /** @description Wraps Rats buildings under a 'buildings' key so the frontend buildingTable hook can tabulate them. */
+        RatsBuildings: {
+            strongholds: components["schemas"]["Stronghold"][];
         };
         Recruiter: {
             building: components["schemas"]["Building"];
@@ -11817,6 +11947,198 @@ export interface operations {
         };
     };
     rats_events_hoard_too_full_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_events_jubilant_mob_spread_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_events_jubilant_mob_spread_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_events_jubilant_mob_spread_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_events_jubilant_mob_spread_create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_events_lavish_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_events_lavish_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GameActionStep"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    rats_events_lavish_retrieve_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                game_id: number;
+                route: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rats_events_lavish_create_2: {
         parameters: {
             query?: never;
             header?: never;

@@ -66,6 +66,14 @@ def create_rats_turn(player: Player):
 def step_effect(
     player: Player, phase: Union[RatsBirdsong, RatsDaylight, RatsEvening, None] = None
 ):
+    # Guard: if any events are still unresolved, don't advance the step machine.
+    # This prevents the phase from progressing mid-stack when multiple events are
+    # layered on top of each other.  The final event to resolve will call
+    # step_effect() again, find no more events, and resume normally.
+    from game.queries.current_action.events import get_current_event
+    if get_current_event(player.game) is not None:
+        return
+
     if phase is None:
         phase = get_phase(player)
 

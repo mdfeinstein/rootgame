@@ -7247,6 +7247,206 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationError'
           description: ''
+  /api/rats/events/jubilant-mob-spread/:
+    get:
+      operationId: rats_events_jubilant_mob_spread_retrieve
+      description: Return initial step data.
+      tags:
+      - rats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: rats_events_jubilant_mob_spread_create
+      description: |-
+        JUBILANT_MOB_SPREAD event: after Incite in the Warlord's clearing (Jubilant mood),
+        the player may roll the mob die up to 4 times and place mobs in adjacent clearings.
+
+        States:
+          - current_roll is None → "roll or end" prompt
+          - current_roll is set  → clearing picker for that suit
+      tags:
+      - rats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/rats/events/jubilant-mob-spread/{game_id}/{route}/:
+    get:
+      operationId: rats_events_jubilant_mob_spread_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - rats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: rats_events_jubilant_mob_spread_create_2
+      description: |-
+        JUBILANT_MOB_SPREAD event: after Incite in the Warlord's clearing (Jubilant mood),
+        the player may roll the mob die up to 4 times and place mobs in adjacent clearings.
+
+        States:
+          - current_roll is None → "roll or end" prompt
+          - current_roll is set  → clearing picker for that suit
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - rats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/rats/events/lavish/:
+    get:
+      operationId: rats_events_lavish_retrieve
+      description: Return initial step data.
+      tags:
+      - rats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: rats_events_lavish_create
+      description: |-
+        LAVISH event: at end of Birdsong, player may remove any number of Hoard
+        items permanently — each yields 2 warriors in the Warlord's clearing.
+
+        Single-step UI: show all remaining Hoard items as options plus an End option.
+        Posting an empty item_id ends the event; posting an item_id liquidates that item.
+        Re-renders after each liquidation until the player ends or the Hoard is empty.
+      tags:
+      - rats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/rats/events/lavish/{game_id}/{route}/:
+    get:
+      operationId: rats_events_lavish_retrieve_2
+      description: Return initial step data.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - rats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: rats_events_lavish_create_2
+      description: |-
+        LAVISH event: at end of Birdsong, player may remove any number of Hoard
+        items permanently — each yields 2 warriors in the Warlord's clearing.
+
+        Single-step UI: show all remaining Hoard items as options plus an End option.
+        Posting an empty item_id ends the event; posting an item_id liquidates that item.
+        Re-renders after each liquidation until the player ends or the Hoard is empty.
+      parameters:
+      - in: path
+        name: game_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: route
+        schema:
+          type: string
+        required: true
+      tags:
+      - rats
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameActionStep'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
   /api/rats/events/looting/:
     get:
       operationId: rats_events_looting_retrieve
@@ -8356,13 +8556,42 @@ components:
     CommandItemEntry:
       type: object
       properties:
-        item_id:
-          type: integer
-        item_type:
-          type: string
+        item:
+          type: object
+          properties:
+            value:
+              enum:
+              - '0'
+              - '1'
+              - '2'
+              - '3'
+              - '4'
+              - '5'
+              - '6'
+              type: string
+              description: |-
+                * `0` - 0
+                * `1` - 1
+                * `2` - 2
+                * `3` - 3
+                * `4` - 4
+                * `5` - 5
+                * `6` - 6
+            label:
+              type: string
+              enum:
+              - Bag
+              - Boots
+              - Coin
+              - Crossbow
+              - Hammer
+              - Sword
+              - Tea
+          required:
+          - value
+          - label
       required:
-      - item_id
-      - item_type
+      - item
     CraftableItem:
       type: object
       properties:
@@ -9165,13 +9394,42 @@ components:
     ProwessItemEntry:
       type: object
       properties:
-        item_id:
-          type: integer
-        item_type:
-          type: string
+        item:
+          type: object
+          properties:
+            value:
+              enum:
+              - '0'
+              - '1'
+              - '2'
+              - '3'
+              - '4'
+              - '5'
+              - '6'
+              type: string
+              description: |-
+                * `0` - 0
+                * `1` - 1
+                * `2` - 2
+                * `3` - 3
+                * `4` - 4
+                * `5` - 5
+                * `6` - 6
+            label:
+              type: string
+              enum:
+              - Bag
+              - Boots
+              - Coin
+              - Crossbow
+              - Hammer
+              - Sword
+              - Tea
+          required:
+          - value
+          - label
       required:
-      - item_id
-      - item_type
+      - item
     Rats:
       type: object
       description: Serializer to provide all (public) information about rats (Lord
@@ -9185,10 +9443,8 @@ components:
             $ref: '#/components/schemas/Warrior'
         warlord:
           $ref: '#/components/schemas/Warlord'
-        strongholds:
-          type: array
-          items:
-            $ref: '#/components/schemas/Stronghold'
+        buildings:
+          $ref: '#/components/schemas/RatsBuildings'
         mobs:
           type: array
           items:
@@ -9208,15 +9464,26 @@ components:
           items:
             $ref: '#/components/schemas/ProwessItemEntry'
       required:
+      - buildings
       - command_items
       - mobs
       - mood
       - player
       - prowess_items
-      - strongholds
       - valid_moods
       - warlord
       - warriors
+    RatsBuildings:
+      type: object
+      description: Wraps Rats buildings under a 'buildings' key so the frontend buildingTable
+        hook can tabulate them.
+      properties:
+        strongholds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Stronghold'
+      required:
+      - strongholds
     Recruiter:
       type: object
       properties:

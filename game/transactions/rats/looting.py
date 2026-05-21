@@ -62,3 +62,8 @@ def choose_loot(player: Player, item: Item) -> None:
     state = RatsPlayerState.objects.get(player=player)
     state.looting_declared = False
     state.save()
+
+    # Resume the phase step machine.  The guard in step_effect ensures this is a
+    # no-op if another event (e.g. the parent Battle event) is still unresolved.
+    from game.transactions.rats.turn import step_effect
+    step_effect(player)

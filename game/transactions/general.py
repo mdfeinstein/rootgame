@@ -448,6 +448,12 @@ def next_step(player: Player):
 
 @transaction.atomic
 def step_effect(player: Player):
+    # Guard: if any events are still unresolved, don't advance the step machine.
+    # This is the single choke-point for all cross-faction event resolutions.
+    from game.queries.current_action.events import get_current_event
+    if get_current_event(player.game) is not None:
+        return
+
     match player.faction:
         case Faction.CATS:
             from game.transactions.cats import step_effect

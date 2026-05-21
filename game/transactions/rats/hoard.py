@@ -95,3 +95,8 @@ def discard_hoard_item(player: Player, item: Item) -> None:
     # Resolve the event
     hoard_event.event.is_resolved = True
     hoard_event.event.save()
+
+    # Resume the phase step machine.  The guard in step_effect ensures this is a
+    # no-op if another HoardTooFull event (for the other track) is still unresolved.
+    from game.transactions.rats.turn import step_effect
+    step_effect(player)

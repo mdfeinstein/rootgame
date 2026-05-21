@@ -76,6 +76,9 @@ class RatsEveningBaseTestCase(TestCase):
 
         self.warlord = Warlord.objects.get(player=self.player)
 
+        # Clear any cards dealt to hand during setup so tests start with a clean hand.
+        HandEntry.objects.filter(player=self.player).delete()
+
         # Use a neutral mood (GRANDIOSE doesn't affect evening mechanics)
         CurrentMood.objects.filter(player=self.player).update(
             mood_type=CurrentMood.MoodType.GRANDIOSE
