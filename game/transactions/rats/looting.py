@@ -53,8 +53,17 @@ def choose_loot(player: Player, item: Item) -> None:
     if entry is None:
         raise IllegalActionError("Item is not in the looted player's crafted items")
 
+    # Capture for logging before deletion
+    item_type = item.item_type
+    looted_faction = looted_player.faction
+
     entry.delete()
     add_item_to_hoard(player, item)
+
+    from game.serializers.logs.general import get_active_phase_log
+    from game.serializers.logs.rats import log_rats_loot
+    phase_log = get_active_phase_log(player.game)
+    log_rats_loot(player.game, player, item_type, looted_faction, parent=phase_log)
 
     looting_event.event.is_resolved = True
     looting_event.event.save()

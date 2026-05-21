@@ -72,12 +72,22 @@ def absorb_mob(player: Player, clearing: Clearing) -> None:
         raise IllegalActionError("No warriors left in supply")
 
     # Remove mob from board
+    mob_clearing_number = clearing.clearing_number
     mob.clearing = None
     mob.save()
 
     # Place warrior in warlord's clearing
     warrior.clearing = warlord_clearing
     warrior.save()
+
+    from game.serializers.logs.general import get_active_phase_log
+    from game.serializers.logs.rats import log_rats_bitter_absorb
+    phase_log = get_active_phase_log(player.game)
+    log_rats_bitter_absorb(
+        player.game, player,
+        mob_clearing_number, warlord_clearing.clearing_number,
+        parent=phase_log,
+    )
 
     # Auto-end if no more mobs available or no more supply warriors
     no_more_mobs = not _has_mobs_available(player, warlord_clearing)

@@ -85,12 +85,21 @@ def discard_hoard_item(player: Player, item: Item) -> None:
             raise IllegalActionError("Item is not on this player's Prowess track")
         entry.delete()
 
+    # Capture for logging before deleting
+    item_type = item.item_type
+    track_value = track.value if hasattr(track, "value") else str(track)
+
     # Remove the item from the game entirely
     item.delete()
 
     # Score 1 VP for the discard
     from game.transactions.general import raise_score
     raise_score(player, 1)
+
+    from game.serializers.logs.general import get_active_phase_log
+    from game.serializers.logs.rats import log_rats_hoard_discard
+    phase_log = get_active_phase_log(player.game)
+    log_rats_hoard_discard(player.game, player, item_type, track_value, parent=phase_log)
 
     # Resolve the event
     hoard_event.event.is_resolved = True

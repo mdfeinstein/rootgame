@@ -78,6 +78,11 @@ def raze(player: Player) -> None:
     finally:
         cleanup_removal_event(player.game)
 
+    from game.serializers.logs.general import get_current_phase_log
+    from game.serializers.logs.rats import log_rats_raze
+    phase_log = get_current_phase_log(player.game, player)
+    log_rats_raze(player.game, player, len(mob_clearings), parent=phase_log)
+
     next_step(player)
 
 
@@ -107,7 +112,12 @@ def roll_mob_die_and_spread(player: Player) -> None:
         return
 
     if len(targets) == 1:
-        _place_mob_in_clearing(player, targets.pop())
+        clearing = targets.pop()
+        _place_mob_in_clearing(player, clearing)
+        from game.serializers.logs.general import get_current_phase_log
+        from game.serializers.logs.rats import log_rats_mob_spread
+        phase_log = get_current_phase_log(player.game, player)
+        log_rats_mob_spread(player.game, player, clearing.clearing_number, rolled_suit, parent=phase_log)
         next_step(player)
         return
 
@@ -148,9 +158,16 @@ def choose_mob_clearing(player: Player, clearing: Clearing) -> None:
     if clearing not in valid_targets:
         raise IllegalActionError("Chosen clearing is not a valid mob spread target")
 
+    suit_rolled = birdsong.mob_die_suit  # capture before clearing
     _place_mob_in_clearing(player, clearing)
     birdsong.mob_die_suit = None
     birdsong.save()
+
+    from game.serializers.logs.general import get_current_phase_log
+    from game.serializers.logs.rats import log_rats_mob_spread
+    phase_log = get_current_phase_log(player.game, player)
+    log_rats_mob_spread(player.game, player, clearing.clearing_number, suit_rolled, parent=phase_log)
+
     next_step(player)
 
 
@@ -204,17 +221,33 @@ def recruit(player: Player) -> None:
 
     # Phase 1: Warlord clearing
     warlord = get_warlord(player)
+    warlord_warriors = 0
     if warlord.clearing is not None:
         supply = get_warrior_supply_count(player)
         to_place = min(prowess_value, supply)
         if to_place > 0:
             _place_warriors_excluding_warlord(player, warlord.clearing, to_place)
+            warlord_warriors = to_place
 
     # Phase 2: Strongholds
     if recruit_needs_choice(player):
+        if warlord_warriors > 0:
+            from game.serializers.logs.general import get_current_phase_log
+            from game.serializers.logs.rats import log_rats_recruit
+            phase_log = get_current_phase_log(player.game, player)
+            log_rats_recruit(player.game, player, warlord_warriors, parent=phase_log)
         return  # Pause — player must call recruit_stronghold()
 
+    supply_before_strongholds = get_warrior_supply_count(player)
     _auto_place_strongholds(player)
+    stronghold_warriors = supply_before_strongholds - get_warrior_supply_count(player)
+    total_warriors = warlord_warriors + stronghold_warriors
+
+    from game.serializers.logs.general import get_current_phase_log
+    from game.serializers.logs.rats import log_rats_recruit
+    phase_log = get_current_phase_log(player.game, player)
+    log_rats_recruit(player.game, player, total_warriors, parent=phase_log)
+
     next_step(player)
 
 
@@ -252,9 +285,21 @@ def recruit_stronghold(player: Player, clearing: Clearing) -> None:
 
     # Re-evaluate: auto-finish if possible, otherwise wait for next choice
     if recruit_needs_choice(player):
+        from game.serializers.logs.general import get_current_phase_log
+        from game.serializers.logs.rats import log_rats_recruit
+        phase_log = get_current_phase_log(player.game, player)
+        log_rats_recruit(player.game, player, 1, parent=phase_log)
         return
 
+    supply_before = get_warrior_supply_count(player)
     _auto_place_strongholds(player)
+    auto_placed = supply_before - get_warrior_supply_count(player)
+
+    from game.serializers.logs.general import get_current_phase_log
+    from game.serializers.logs.rats import log_rats_recruit
+    phase_log = get_current_phase_log(player.game, player)
+    log_rats_recruit(player.game, player, 1 + auto_placed, parent=phase_log)
+
     next_step(player)
 
 
@@ -278,6 +323,7 @@ def anoint(player: Player, clearing: Clearing) -> None:
         player=player, clearing__isnull=False, warlord__isnull=True
     ).exists()
 
+    consumed_warrior = False
     if warriors_on_board:
         # A warrior must be present in the chosen clearing to be converted
         warrior_in_clearing = Warrior.objects.filter(
@@ -288,9 +334,16 @@ def anoint(player: Player, clearing: Clearing) -> None:
                 "No warrior in the chosen clearing to anoint as Warlord"
             )
         warrior_in_clearing.delete()
+        consumed_warrior = True
 
     warlord.clearing = clearing
     warlord.save()
+
+    from game.serializers.logs.general import get_current_phase_log
+    from game.serializers.logs.rats import log_rats_anoint
+    phase_log = get_current_phase_log(player.game, player)
+    log_rats_anoint(player.game, player, clearing.clearing_number, consumed_warrior, parent=phase_log)
+
     next_step(player)
 
 
@@ -308,5 +361,10 @@ def choose_mood(player: Player, mood_type: CurrentMood.MoodType) -> None:
     mood = CurrentMood.objects.get(player=player)
     mood.mood_type = mood_type
     mood.save()
+
+    from game.serializers.logs.general import get_current_phase_log
+    from game.serializers.logs.rats import log_rats_choose_mood
+    phase_log = get_current_phase_log(player.game, player)
+    log_rats_choose_mood(player.game, player, mood_type.value, parent=phase_log)
 
     next_step(player)

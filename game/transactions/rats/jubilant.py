@@ -76,7 +76,16 @@ def jubilant_roll(player: Player) -> None:
 
     if len(targets) == 1:
         # Auto-place the mob
-        _place_mob_in_clearing(player, targets.pop())
+        target_clearing = targets.pop()
+        _place_mob_in_clearing(player, target_clearing)
+        from game.serializers.logs.general import get_active_phase_log
+        from game.serializers.logs.rats import log_rats_jubilant_spread
+        phase_log = get_active_phase_log(player.game)
+        log_rats_jubilant_spread(
+            player.game, player,
+            target_clearing.clearing_number, evt.rolls_remaining,
+            parent=phase_log,
+        )
         evt.current_roll = None
         if evt.rolls_remaining == 0 or not Mob.objects.filter(player=player, clearing__isnull=True).exists():
             _resolve_event(evt)
@@ -102,6 +111,16 @@ def jubilant_choose_clearing(player: Player, clearing: Clearing) -> None:
         raise IllegalActionError("Chosen clearing is not a valid mob spread target")
 
     _place_mob_in_clearing(player, clearing)
+
+    from game.serializers.logs.general import get_active_phase_log
+    from game.serializers.logs.rats import log_rats_jubilant_spread
+    phase_log = get_active_phase_log(player.game)
+    log_rats_jubilant_spread(
+        player.game, player,
+        clearing.clearing_number, evt.rolls_remaining,
+        parent=phase_log,
+    )
+
     evt.current_roll = None
 
     if evt.rolls_remaining == 0 or not Mob.objects.filter(player=player, clearing__isnull=True).exists():

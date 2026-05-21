@@ -102,6 +102,9 @@ class RatsCommandBaseTestCase(TestCase):
         self.daylight.step = RatsDaylight.Steps.COMMAND
         self.daylight.save()
 
+        # Clear any cards dealt during setup so hand-state assertions are reliable.
+        HandEntry.objects.filter(player=self.player).delete()
+
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------

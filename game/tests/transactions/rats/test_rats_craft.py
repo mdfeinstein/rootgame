@@ -78,6 +78,10 @@ class RatsCraftBaseTestCase(TestCase):
         self.daylight.step = RatsDaylight.Steps.CRAFT
         self.daylight.save()
 
+        # Clear any cards dealt during setup so hand-state assertions are reliable.
+        from game.models.game_models import HandEntry
+        HandEntry.objects.filter(player=self.player).delete()
+
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------

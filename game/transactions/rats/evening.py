@@ -82,9 +82,9 @@ def incite(player: Player, clearing: Clearing, card: CardsEP) -> None:
     mob.save()
 
     phase_log = get_current_phase_log(player.game, player)
-    from game.serializers.logs.general import log_discard
+    from game.serializers.logs.rats import log_rats_incite
 
-    log_discard(player.game, player, card_model, parent=phase_log)
+    log_rats_incite(player.game, player, clearing.clearing_number, card_model, parent=phase_log)
 
     # Jubilant mood: if incite happened in the Warlord's clearing and mobs remain
     # in supply, create a JubilantMobSpreadEvent for up to 4 bonus rolls.
@@ -152,6 +152,10 @@ def resolve_oppress(player: Player) -> None:
 
     if vp > 0:
         raise_score(player, vp)
+
+    from game.serializers.logs.rats import log_rats_oppress
+    phase_log = get_current_phase_log(player.game, player)
+    log_rats_oppress(player.game, player, count, vp, parent=phase_log)
 
     next_step(player)
 

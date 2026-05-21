@@ -49,6 +49,10 @@ def liquidate_hoard_item(player: Player, item: Item) -> None:
             "No warriors in supply — cannot liquidate a Hoard item for 0 warriors"
         )
 
+    # Capture for logging before deletion
+    item_type = item.item_type
+    track = "Command" if cmd_entry else "Prowess"
+
     if cmd_entry:
         cmd_entry.delete()
     else:
@@ -56,8 +60,21 @@ def liquidate_hoard_item(player: Player, item: Item) -> None:
     item.delete()
 
     warlord = get_warlord(player)
+    supply_before = get_warrior_supply_count(player)
+    clearing_number = None
     if warlord.clearing is not None:
+        clearing_number = warlord.clearing.clearing_number
         _place_warriors_excluding_warlord(player, warlord.clearing, 2)
+    warriors_placed = supply_before - get_warrior_supply_count(player)
+
+    from game.serializers.logs.general import get_active_phase_log
+    from game.serializers.logs.rats import log_rats_lavish_liquidate
+    phase_log = get_active_phase_log(player.game)
+    log_rats_lavish_liquidate(
+        player.game, player,
+        item_type, track, warriors_placed, clearing_number,
+        parent=phase_log,
+    )
 
     if not _has_hoard_items(player):
         end_lavish_step(player)
