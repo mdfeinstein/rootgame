@@ -3,9 +3,20 @@ Table of Contents
 - [Introduction](#introduction)
   - [Tech Stack and design philosophy](#tech-stack-and-design-philosophy)
     - [Project Structure](#project-structure)
+      - [Backend](#backend)
     - [Action Flow](#action-flow)
   - [State of the Project](#state-of-the-project)
+      - [Implemented Features:](#implemented-features)
+      - [Not yet implemented:](#not-yet-implemented)
+    - [Frontend](#frontend)
+      - [MAP](#map)
+      - [Action Prompter](#action-prompter)
+      - [Cards In Hand](#cards-in-hand)
+      - [Top Row](#top-row)
+      - [Player Boards](#player-boards)
 - [Running Locally/Development](#running-locallydevelopment)
+  - [Prerequisites](#prerequisites)
+  - [Setup](#setup)
 
 # Introduction
 
@@ -59,17 +70,17 @@ Validation of timing and the player making requests is handled by the custom Gam
 
 ## State of the Project
 
-Games can be created and played, but right now there are only 4 factions: Cats, Birds, Woodland Alliance, and Crows. All basic game features are implemented and the core functions have been well tested. More factions will be added, more features will be provided, and the UI will be improved over time.
+Games can be created and played with 6 fully implemented factions. All basic game features are implemented and the core functions have been well tested. More factions will be added, more features will be provided, and the UI will be improved over time.
 
 #### Implemented Features:
 
 - Basic Setup Rules
-- 4 factions have been fully implemented: Cats, Birds, Woodland Alliance, and Crows.
+- 6 factions have been fully implemented: Cats, Birds, Woodland Alliance, Crows, Underground Duchy (Moles), and Riverfolk Company (Rats).
 - Cards can be crafted.
   - Cards with passive effects are checked for and handled in the appropriate business logic.
   - Cards with active effects also work, launching events if the action has a narrow timing window or are simply made available when usable if they have a broader timing window.
 - Game end conditions have been added.
-- Game Browser to create, join, and switch between games.
+- Game Browser to create, join, switch between, and delete games.
 - Undo functionality
 - Dominance Conditions/Dominance Swapping
 - Game Logs
@@ -118,6 +129,11 @@ Decree actions have a checkbox to indicate if the decree is used.
 ![Woodland Alliance Player Board](images/wa_board.png)
 
 ![Crows Player Board](images/crow_board.png)
+
+
+![Moles Player Board](images/moles_board.png)
+
+![Rats Player Board](images/rats_board.png)
 
 # Running Locally/Development
 

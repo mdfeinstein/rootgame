@@ -10,6 +10,7 @@ class Battle(models.Model):
         DEFENDER_AMBUSH_CHECK = "1", "Defender Ambush"
         ATTACKER_AMBUSH_CANCEL_CHECK = "2", "Attacker Ambush"
         ATTACKER_CHOOSE_AMBUSH_HITS = "3", "Attacker Chooses Ambush Hits"
+        RATS_BITTER_CHECK = "8", "Rats Bitter Check"
         ROLL_DICE = "4", "Roll Dice"
         DEFENDER_CHOOSE_HITS = "5", "Defender Chooses Hits"
         ATTACKER_CHOOSE_HITS = "6", "Attacker Chooses Hits"
