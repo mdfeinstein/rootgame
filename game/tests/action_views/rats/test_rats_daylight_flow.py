@@ -42,6 +42,7 @@ from game.models.game_models import (
     Warrior,
 )
 from game.models.rats.buildings import Stronghold
+from game.models.rats.tokens import Warlord
 from game.models.rats.player import CurrentMood
 from game.models.rats.turn import RatsBirdsong, RatsDaylight, RatsTurn
 from game.tests.client import RootGameClient
@@ -362,9 +363,9 @@ class RatsDaylightCommandMoveTestCase(RatsDaylightBaseTestCase):
         # Pick count = 1.
         response = self.rats_client.submit_action({"number": 1})
         self.assertEqual(response.status_code, 200)
-        # Warlord is in C2 (the origin), so the view asks whether to bring the
-        # Warlord along. Choose "no" — leave the Warlord behind.
-        response = self.rats_client.submit_action({"option": "no"})
+        # Warlord is in C2 (the origin), so the interceptor asks whether to bring
+        # the Warlord along. Choose False — leave the Warlord behind.
+        response = self.rats_client.submit_action({"option": False})
         self.assertEqual(response.status_code, 200)
 
         # Warrior count should have shifted.
@@ -627,4 +628,139 @@ class RatsDaylightCraftContemptForTradeTestCase(RatsDaylightBaseTestCase):
         self.assertFalse(
             CraftedItemEntry.objects.filter(player=self.player).exists(),
             "Item should NOT appear in CraftedItemEntry — it is removed permanently",
+        )
+
+
+# ===========================================================================
+# WarlordMoveInterceptor tests
+# ===========================================================================
+
+
+class RatsDaylightMoveInterceptorTestCase(RatsDaylightBaseTestCase):
+    """Tests for WarlordMoveInterceptorView injected into RatsCommandMoveView.
+
+    Two scenarios:
+      A) Warlord IS in the origin clearing  → interceptor fires, warlord_choice step shown.
+      B) Warlord is NOT in the origin clearing → interceptor silent, move executes directly.
+
+    After setup the Warlord starts in C2.
+    C2 adjacencies: C5 (rabbit), C6 (fox), C10 (rabbit).
+    """
+
+    def setUp(self):
+        super().setUp()
+        self._create_turn_at_command()
+        self.c5 = Clearing.objects.get(game=self.game, clearing_number=5)
+        self.c6 = Clearing.objects.get(game=self.game, clearing_number=6)
+
+    # ------------------------------------------------------------------
+    # Navigation helper
+    # ------------------------------------------------------------------
+
+    def _navigate_to_move_view(self):
+        """Drive the client from the command view to the move sub-view."""
+        self.rats_client.get_action()
+        self.rats_client.step = {
+            "endpoint": "select",
+            "payload_details": [{"type": "action_type", "name": "action"}],
+        }
+        self.rats_client.post_action({"action": "move"})
+        # Client has now followed the redirect; self.rats_client.step is the origin step.
+
+    # ------------------------------------------------------------------
+    # Scenario A: warlord in origin clearing
+    # ------------------------------------------------------------------
+
+    def test_interceptor_fires_when_warlord_in_origin(self):
+        """Submitting count when the Warlord is in the origin clearing should
+        return the warlord_choice step (not completed)."""
+        # Warlord is in C2 from setup.
+        self._navigate_to_move_view()
+        self.rats_client.submit_action({"clearing_number": 2})  # origin = C2
+        self.rats_client.submit_action({"clearing_number": 5})  # dest  = C5
+
+        response = self.rats_client.submit_action({"number": 1})  # count → interceptor fires
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+
+        self.assertEqual(data["name"], "move_warlord_choice",
+                         "Interceptor should inject the warlord choice step")
+        self.assertEqual(data["endpoint"], "warlord")
+
+        option_values = {opt["value"] for opt in data["options"]}
+        self.assertIn(True, option_values)
+        self.assertIn(False, option_values)
+
+    def test_move_warlord_yes_moves_warlord_to_destination(self):
+        """Choosing True (yes) after the interceptor fires should move the Warlord."""
+        warlord = Warlord.objects.get(player=self.player)
+        self.assertEqual(warlord.clearing, self.c2, "Warlord should start in C2")
+
+        self._navigate_to_move_view()
+        self.rats_client.submit_action({"clearing_number": 2})  # origin
+        self.rats_client.submit_action({"clearing_number": 5})  # dest
+        self.rats_client.submit_action({"number": 1})           # count → interceptor fires
+        response = self.rats_client.submit_action({"option": True})  # move warlord
+        self.assertEqual(response.status_code, 200)
+
+        warlord.refresh_from_db()
+        self.assertEqual(warlord.clearing, self.c5,
+                         "Warlord should have moved to C5 after yes")
+
+    def test_move_warlord_no_leaves_warlord_in_origin(self):
+        """Choosing False (no) after the interceptor fires should leave the Warlord behind."""
+        warlord = Warlord.objects.get(player=self.player)
+        self.assertEqual(warlord.clearing, self.c2, "Warlord should start in C2")
+
+        self._navigate_to_move_view()
+        self.rats_client.submit_action({"clearing_number": 2})  # origin
+        self.rats_client.submit_action({"clearing_number": 5})  # dest
+        self.rats_client.submit_action({"number": 1})           # count → interceptor fires
+        response = self.rats_client.submit_action({"option": False})  # leave warlord
+        self.assertEqual(response.status_code, 200)
+
+        warlord.refresh_from_db()
+        self.assertEqual(warlord.clearing, self.c2,
+                         "Warlord should remain in C2 after no")
+
+        # The warrior should still have moved to C5.
+        self.assertEqual(
+            Warrior.objects.filter(player=self.player, clearing=self.c5).count(), 1,
+            "One warrior should have moved to C5",
+        )
+
+    # ------------------------------------------------------------------
+    # Scenario B: warlord NOT in origin clearing
+    # ------------------------------------------------------------------
+
+    def test_interceptor_silent_when_warlord_not_in_origin(self):
+        """When the Warlord is absent from the origin clearing, count submission
+        should execute immediately and return completed without a warlord step."""
+        # Move Warlord to C5 so it is not in the origin (C2 → C6 move).
+        warlord = Warlord.objects.get(player=self.player)
+        warlord.clearing = self.c5
+        warlord.save()
+
+        # Move 1 warrior from C2 to C6 (warlord is in C5, not C2).
+        warriors_before = Warrior.objects.filter(
+            player=self.player, clearing=self.c2
+        ).count()
+
+        self._navigate_to_move_view()
+        self.rats_client.submit_action({"clearing_number": 2})  # origin = C2 (no warlord)
+        self.rats_client.submit_action({"clearing_number": 6})  # dest  = C6
+        response = self.rats_client.submit_action({"number": 1})  # count → no interceptor
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["name"], "completed",
+                         "Move should complete immediately when warlord not in origin")
+
+        # One warrior should have moved to C6.
+        self.assertEqual(
+            Warrior.objects.filter(player=self.player, clearing=self.c6).count(), 1,
+        )
+        self.assertEqual(
+            Warrior.objects.filter(player=self.player, clearing=self.c2).count(),
+            warriors_before - 1,
         )

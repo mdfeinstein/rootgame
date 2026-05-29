@@ -122,15 +122,15 @@ class RatsBirdsongSpreadMobFlowTestCase(RatsBirdsongBaseTestCase):
         data = response.json()
 
         self.assertIn("options", data)
-        # Values are serialized as strings
+        # Values are integers (preserved by _PassThroughField)
         option_values = {opt["value"] for opt in data["options"]}
         # C1, C6, C12 are fox clearings adjacent to C9/C11 and not already holding a mob.
-        self.assertIn("1", option_values)
-        self.assertIn("6", option_values)
-        self.assertIn("12", option_values)
+        self.assertIn(1, option_values)
+        self.assertIn(6, option_values)
+        self.assertIn(12, option_values)
         # C9 and C11 already have mobs — must not appear as targets.
-        self.assertNotIn("9", option_values)
-        self.assertNotIn("11", option_values)
+        self.assertNotIn(9, option_values)
+        self.assertNotIn(11, option_values)
 
     def test_post_valid_clearing_places_mob(self):
         """Submitting a valid clearing should place a mob there."""

@@ -364,8 +364,21 @@ class PayloadEntry(serializers.Serializer):
             return None
 
 
+class _PassThroughField(serializers.Field):
+    """Serializes any JSON-compatible value without type coercion.
+
+    Unlike CharField (which calls str()), this preserves booleans, integers,
+    and other JSON-serializable types exactly as provided.
+    """
+    def to_representation(self, value):
+        return value
+
+    def to_internal_value(self, data):
+        return data
+
+
 class OptionSerializer(serializers.Serializer):
-    value = serializers.CharField()
+    value = _PassThroughField()
     label = serializers.CharField(required=False)
     info = serializers.CharField(required=False, allow_null=True)
 
